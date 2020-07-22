@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Simulador_Toma_de_Ramos_Uandes.iml" filepath="$PROJECT_DIR$/.idea/modules/Simulador_Toma_de_Ramos_Uandes.iml" group="Simulador_Toma_de_Ramos_Uandes" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="Simulador Toma de Ramos Uandes/app" />
+    </modules>
+  </component>
+</project>
