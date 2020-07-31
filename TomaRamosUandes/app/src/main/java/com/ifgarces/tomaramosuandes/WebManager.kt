@@ -1,11 +1,11 @@
 package com.ifgarces.tomaramosuandes
 
-import com.ifgarces.tomaramosuandes.utils.Logf
 import java.net.URL
 
 
 object WebManager {
     private const val APP_METADATA_URL :String = "..."
+    private const val APK_DOWNLOAD_URL :String = "..."
     private const val ONLINE_CSV_URL   :String = "https://sites.google.com/site/test156885/CAT%C3%81LOGO%20COMPLETO%20ING.csv?attredirects=0&d=1"
 
     fun init() {

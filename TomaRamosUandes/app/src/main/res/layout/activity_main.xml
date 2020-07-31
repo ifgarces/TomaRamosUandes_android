@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +28,7 @@
         <TextView
             android:id="@+id/main_appName"
             android:text="@string/APP_NAME"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:fontFamily="sans-serif-condensed"
 
             android:layout_width="wrap_content"

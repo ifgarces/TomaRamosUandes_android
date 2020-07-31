@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
+import java.util.Locale
 import java.lang.String.format as sprintf
 
 
@@ -27,13 +28,32 @@ fun EditText.setTextf(format :String, vararg args :Any?) {
     this.text = SpannableStringBuilder( sprintf(format, *args) )
 }
 
+fun String.spanishUpperCase() : String {
+    return this.toUpperCase( Locale("ES", "ES") )
+}
+
+fun String.spanishLowerCase() : String {
+    return this.toLowerCase( Locale("ES", "ES") )
+}
+
+fun String.spanishNonAccent() : String {
+    val accents    :String = "áéíóúü"
+    val nonAccents :String = "aeiouu"
+    val result = this.spanishLowerCase()
+    // TODO: finish this
+    return "{TODO}"
+}
+
 /* Dialog simple que muestra un texto */
-fun Context.infoDialogf(title :String, msg_format :String, vararg msg_args :Any?) {
+fun Context.infoDialog(title :String, message :String, onDismiss :() -> Unit = {}) {
     val diag_builder :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
-        .setMessage(sprintf(msg_format, *msg_args))
+        .setMessage(message)
         .setCancelable(false)
-        .setPositiveButton("OK") { dialog :DialogInterface, _ :Int -> dialog.dismiss() }
+        .setPositiveButton(android.R.string.ok) { dialog :DialogInterface, _ :Int ->
+            onDismiss.invoke()
+            dialog.dismiss()
+        }
     diag_builder.create().show()
 }
 
@@ -41,19 +61,19 @@ fun Context.infoDialogf(title :String, msg_format :String, vararg msg_args :Any?
 fun Context.yesNoDialog(
     title :String,
     message :String,
-    onYes :() -> Unit, // al presionar SÍ
-    onNo :() -> Unit   // al presionar NO
+    onYesClicked :() -> Unit,
+    onNoClicked :() -> Unit
 ) {
     val diag_builder :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
         .setPositiveButton(android.R.string.yes) { dialog :DialogInterface, _ :Int ->
-            onYes.invoke()
+            onYesClicked.invoke()
             dialog.dismiss()
         }
         .setNegativeButton(android.R.string.no) { dialog :DialogInterface, _ :Int ->
-            onNo.invoke()
+            onNoClicked.invoke()
             dialog.dismiss()
         }
     diag_builder.create().show()
