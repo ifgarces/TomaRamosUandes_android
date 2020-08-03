@@ -2,9 +2,6 @@ package com.ifgarces.tomaramosuandes.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.util.*
 
 
 /* Representa la sección de un ramo que se puede tomar */
@@ -20,14 +17,15 @@ data class Curso(
     val planEstudios :String, // plan de estudios
     val connectLiga  :String, // conector liga
     val listaCruz    :String,  // lista cruzada
-
     var clases       :MutableList<CursoEvent> = mutableListOf(),
     var ayudantías   :MutableList<CursoEvent> = mutableListOf(),
     var evaluaciones :MutableList<CursoEvent> = mutableListOf(),
     var laboratorios :MutableList<CursoEvent> = mutableListOf()
 
 ) {
-    companion object { const val TABLE_NAME :String = "curso" }
+    companion object {
+        const val TABLE_NAME :String = "curso"
+    }
 
     public fun getShortInfo() : String {
         var profe :String = this.profesor

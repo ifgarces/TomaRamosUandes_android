@@ -16,8 +16,10 @@ object WebManager {
         // TODO: check for updates
     }
 
-    /** Tries to fetch the catalog CSV from the web.
-    * @exception java.net.UnknownHostException internet on connection failure */
+    /**
+     * Tries to fetch the catalog CSV from the web.
+     * @exception java.net.UnknownHostException internet on connection failure
+     */
     public fun FetchOnlineDataCSV() : String {
         return URL(this.ONLINE_CSV_URL).readText(charset=Charsets.UTF_8)
     }

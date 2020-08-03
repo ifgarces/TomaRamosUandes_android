@@ -10,6 +10,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 
 
@@ -64,10 +65,9 @@ object CSVWorker {
 
     /**
     * Converts the contents of the CSV (holding the period catalog) into a collection of `Curso`.
-    * On fatal parsing error (invalid `csv_contents`), prompts a dialog that informs it to the user
-    * and terminates the app.
+    * On fatal parsing error (invalid `csv_contents`), returns null.
     */
-    public fun parseCSV(activity :Activity, csv_contents :String) : List<Curso> {
+    public fun parseCSV(activity :Activity, csv_lines :List<String>) : List<Curso>? {
         val catalogResult :MutableList<Curso> = mutableListOf()
 
         val NRCs :MutableList<Int> = mutableListOf()
@@ -83,15 +83,15 @@ object CSVWorker {
         var splitterAux :List<String>
         var eventAux :CursoEvent
         var eventsCounter :Int = 0
+        var lineNum :Int = 0
 
+        try {
+            while (lineNum++ < csv_lines.count()) {
+                line = csv_lines[lineNum].split(",")
+                current.NRC = line[this.csv_columns.NRC].toInt()
 
-        for (lineNum :Int in (0..csv_contents.length-1)) {
-            line = csv_contents.split(",")
-            current.NRC = line[this.csv_columns.NRC].toInt()
-
-            if (! NRCs.contains(current.NRC)) {
-                NRCs.add(current.NRC)
-                try {
+                if (! NRCs.contains(current.NRC)) {
+                    NRCs.add(current.NRC)
                     catalogResult.add(
                         Curso(
                             NRC = current.NRC,
@@ -107,68 +107,75 @@ object CSVWorker {
                         )
                     )
                 }
-                catch (e :NumberFormatException) { // `String.toInt()` error
-                    Logf("[DataMaster] Fatal error: integer cast exception at CSV line %d (%s). Details: %s", lineNum, line, e)
-                    this.parseErrorDialog(activity)
-                }
-            }
 
-            // getting day of week and time interval of the event
-            for ( column :Int in (this.csv_columns.LUNES .. this.csv_columns.VIERNES) ) {
-                stringAux = line[column].replace(" ", "")
-                if (stringAux != "") {
-                    current.dayOfWeek = this.csv_columns.toDayOfWeek(column)!!
-                    splitterAux = stringAux.split(this.TIME_SEPARATOR)
-                    if (splitterAux.count() != 2) {
-                        Logf("[DataMaster] Error: unexpected split result on row %d ('%s'). Could not get time interval for event.", lineNum, line)
-                        this.parseErrorDialog(activity)
+                // getting day of week and time interval of the event
+                for ( column :Int in (this.csv_columns.LUNES .. this.csv_columns.VIERNES) ) {
+                    stringAux = line[column].replace(" ", "")
+                    if (stringAux != "") {
+                        current.dayOfWeek = this.csv_columns.toDayOfWeek(column)!!
+                        splitterAux = stringAux.split(this.TIME_SEPARATOR)
+                        if (splitterAux.count() != 2) {
+                            Logf("[CSVWorker] Error: unexpected split result on row %d ('%s'). Could not get time interval for event.", lineNum, line)
+                            return null //this.fatalErrorDialog(activity)
+                        }
+
+                        current.startTime = LocalTime.parse(splitterAux[0], this.time_format)
+                        current.endTime = LocalTime.parse(splitterAux[1], this.time_format)
+                        break
                     }
+                }
 
-                    current.startTime = LocalTime.parse(splitterAux[0], this.time_format)
-                    current.endTime = LocalTime.parse(splitterAux[1], this.time_format)
-                    break
+                current.eventType = line[this.csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
+                eventAux = CursoEvent(
+                    ID = eventsCounter++,
+                    cursoNRC = current.NRC,
+                    day = current.dayOfWeek,
+                    startTime = current.startTime,
+                    endTime = current.endTime
+                )
+
+                when ( current.eventType.replace(regex=Regex("[0-9 ]"), replacement="") ) { // "PRON1" -> "PRON", etc.
+                    this.event_types.PRUEBA, this.event_types.EXAMEN -> {
+                        eventAux.date = LocalDate.parse(line[this.csv_columns.FECHA_INICIO], this.date_format)
+                        catalogResult.last().evaluaciones.add( eventAux )
+                    }
+                    this.event_types.CLASE -> {
+                        catalogResult.last().clases.add( eventAux )
+                    }
+                    this.event_types.LABORATORIO -> {
+                        catalogResult.last().laboratorios.add( eventAux )
+                    }
+                    this.event_types.AYUDANTÍA, this.event_types.TUTORIAL -> {
+                        catalogResult.last().ayudantías.add( eventAux )
+                    }
+                    else -> {
+                        Logf("[CSVWorker] Error at CSV line %d ('%s'): unknown event type '%s'", lineNum, line, current.eventType)
+                        return null //this.fatalErrorDialog(activity)
+                    }
                 }
             }
-
-            current.eventType = line[this.csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
-            eventAux = CursoEvent(
-                ID = eventsCounter++,
-                cursoNRC = current.NRC,
-                day = current.dayOfWeek,
-                startTime = current.startTime,
-                endTime = current.endTime
-            )
-
-            when (current.eventType) {
-                this.event_types.PRUEBA, this.event_types.EXAMEN -> {
-                    eventAux.date = LocalDate.parse(line[this.csv_columns.FECHA_INICIO], DateTimeFormatter.ISO_DATE)
-                    catalogResult.last().evaluaciones.add( eventAux )
-                }
-                this.event_types.CLASE -> {
-                    catalogResult.last().clases.add( eventAux )
-                }
-                this.event_types.LABORATORIO -> {
-                    catalogResult.last().laboratorios.add( eventAux )
-                }
-                this.event_types.AYUDANTÍA, this.event_types.TUTORIAL -> {
-                    catalogResult.last().ayudantías.add( eventAux )
-                }
-                else -> {
-                    Logf("[CSVWorker] Error at CSV line %d ('%s'): unknown event type '%s'", lineNum, line, current.eventType)
-                    this.parseErrorDialog(activity)
-                }
-            }
+        }
+        catch (e :NumberFormatException) { // `String.toInt()` error
+            Logf("[CSVWorker] Error: integer cast exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
+            return null //this.fatalErrorDialog(activity)
+        }
+        catch (e :DateTimeParseException) {
+            Logf("[CSVWorker] Error: Time parsing exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
+            return null //this.fatalErrorDialog(activity)
         }
 
         return catalogResult
     }
 
     /* Shows a dialog informing of a fatal error when processing CSV data and terminates the hole program. */
-    public fun parseErrorDialog(activity :Activity) {
-        activity.infoDialog(
-            title = "Error fatal",
-            message = "No se pudo obtener el catálogo de ramos para este periodo. Intente más tarde.",
-            onDismiss = { activity.finishAffinity() }
-        )
+    public fun fatalErrorDialog(activity :Activity) {
+        Logf("[CSVWorker] Launching fatal error dialog...")
+        activity.runOnUiThread {
+            activity.infoDialog(
+                title = "Error fatal",
+                message = "No se pudo obtener el catálogo de ramos para este periodo. Intente más tarde.",
+                onDismiss = { activity.finishAffinity() }
+            )
+        }
     }
 }

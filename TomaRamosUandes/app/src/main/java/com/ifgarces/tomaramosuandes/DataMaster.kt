@@ -13,7 +13,14 @@ TODO: enhance modularization (model and controller)
 object DataMaster {
     private lateinit var catalog :List<Curso>
 
-    fun init(activity : Activity, clear_database :Boolean) {
+    /**
+     * Fetches the `catalog` from a internet resource.
+     * @param activity Caller activity.
+     * @param clear_database If true, deletes the local Room database.
+     * @param onSuccess Executed when successfully finished database initialization.
+     * @param onInternetError Executed when the data file can't be fetched or its elements are invalid somehow.
+     */
+    fun init(activity :Activity, clear_database :Boolean, onSuccess :() -> Unit, onInternetError :() -> Unit) {
         this.catalog = listOf()
         var csv_body :String = ""
         AsyncTask.execute {
@@ -22,15 +29,23 @@ object DataMaster {
                 csv_body = WebManager.FetchOnlineDataCSV()
 
                 Logf("[DataMaster] Parsing CSV...")
-                this.catalog = CSVWorker.parseCSV(activity=activity, csv_contents=csv_body)
+                this.catalog = CSVWorker.parseCSV(activity=activity, csv_lines=csv_body.split("\n"))!!
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog.count())
+
+                // TODO: load/clear user collection(s) of `Curso` (Room DB)
+
+                onSuccess.invoke()
             }
             catch (e :java.net.UnknownHostException) {
-                Logf("[DataMaster] Could not load online CSV. Details: %s", e)
+                Logf("[DataMaster] Could not load online CSV (internet connection error)")
+                onInternetError.invoke()
+            }
+            catch (e :NullPointerException) {
+                Logf("[DataMaster] Invalid online CSV data.")
+                onInternetError.invoke()
             }
         }
     }
-
 
     /* Uses Room database to locally save the given collection of `Curso`. */
     public fun saveCursos(user_cursos :List<Curso>) {}

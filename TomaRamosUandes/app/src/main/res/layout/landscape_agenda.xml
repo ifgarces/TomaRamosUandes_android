@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AgendaActivity"
+    android:background="@color/almostWhite">
+
+    <TableLayout
+        android:id="@+id/bigAgenda_headersLayout"
+        android:shrinkColumns="*"
+        android:stretchColumns="1,2,3,4,5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow
+            android:id="@+id/bigAgenda_headersRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:elevation="10dp">
+
+            <TextView
+                style="@style/agendaButton_title"
+                android:text="Hora" />
+
+            <TextView
+                style="@style/agendaButton_title"
+                android:text="Lunes" />
+
+            <TextView
+                style="@style/agendaButton_title"
+                android:text="Martes" />
+
+            <TextView
+                style="@style/agendaButton_title"
+                android:text="Miércoles" />
+
+            <TextView
+                style="@style/agendaButton_title"
+                android:text="Jueves" />
+
+            <TextView
+                style="@style/agendaButton_title"
+                android:text="Viernes" />
+        </TableRow>
+    </TableLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bigAgenda_headersLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:shrinkColumns="*"
+                android:stretchColumns="1,2,3,4,5">
+
+                <TableRow
+                    android:id="@+id/row1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  8:30 - 9:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun0"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar0"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie0"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue0"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie0"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row2"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  9:30 - 10:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun1"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar1"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie1"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue1"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie1"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  10:30 - 11:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun2"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar2"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie2"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue2"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie2"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row4"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  11:30 - 12:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun3"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar3"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie3"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue3"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie3"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  12:30 - 13:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun4"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar4"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie4"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue4"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie4"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row6"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  13:30 - 14:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun5"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar5"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie5"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue5"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie5"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  14:30 - 15:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun6"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar6"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie6"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue6"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie6"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row8"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  15:30 - 16:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun7"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar7"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie7"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue7"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie7"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row9"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  16:30 - 17:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun8"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar8"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie8"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue8"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie8"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row10"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  17:30 - 18:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun9"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar9"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie9"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue9"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie9"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  18:30 - 19:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun10"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar10"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie10"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue10"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie10"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row12"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  19:30 - 20:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun11"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar11"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie11"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue11"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie11"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row13"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  20:30 - 21:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun12"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar12"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie12"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue12"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie12"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row14"
+                    android:background="@color/lightGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/agendaButton_blockTime"
+                        android:text="  21:30 - 22:20" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lun13"
+                        style="@style/agendaButton_block"
+                        android:text="[lun]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mar13"
+                        style="@style/agendaButton_block"
+                        android:text="[mar]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mie13"
+                        style="@style/agendaButton_block"
+                        android:text="[mie]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jue13"
+                        style="@style/agendaButton_block"
+                        android:text="[jue]" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/vie13"
+                        style="@style/agendaButton_block"
+                        android:text="[vie]" />
+                </TableRow>
+            </TableLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
