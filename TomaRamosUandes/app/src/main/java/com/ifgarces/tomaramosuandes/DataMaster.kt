@@ -10,6 +10,11 @@ import com.ifgarces.tomaramosuandes.utils.Logf
 TODO: enhance modularization (model and controller)
 ***************** */
 
+
+/**
+ * Handles the database.
+ * @property catalog Contains the collection of `Curso` available for the current period.
+ */
 object DataMaster {
     private lateinit var catalog :List<Curso>
 

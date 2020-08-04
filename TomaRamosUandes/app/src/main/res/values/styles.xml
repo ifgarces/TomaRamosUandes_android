@@ -47,4 +47,19 @@
         <item name="android:layout_marginTop">12dp</item>
     </style>
 
+    <style name="agendaPortrait_cursoName">
+        <item name="fontFamily">@font/lato</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="agendaPortrait_time">
+        <item name="fontFamily">@font/lato</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/almostBlack</item>
+    </style>
+
 </resources>

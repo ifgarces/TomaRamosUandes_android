@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/almostWhite"
+        android:padding="4dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/agendaPblock_nombre"
+            style="@style/agendaPortrait_cursoName"
+            android:text="[Curso.nombre]"
+            
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/agendaPblock_hi"
+            style="@style/agendaPortrait_time"
+            android:text="[start time]"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/agendaPblock_nombre" />
+
+        <TextView
+            android:id="@+id/agendaPblock_hSep"
+            style="@style/agendaPortrait_time"
+            android:text=" - "
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/agendaPblock_hi"
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_hi" />
+
+        <TextView
+            android:id="@+id/agendaPblock_hf"
+            style="@style/agendaPortrait_time"
+            android:text="[end time]"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/agendaPblock_hSep"
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_hi" />
+
+        <TextView
+            android:id="@+id/agendaPblock_type"
+            android:text="[event type]"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="3dp"
+            android:background="@color/gray"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_hi" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

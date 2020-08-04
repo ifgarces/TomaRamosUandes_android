@@ -16,7 +16,7 @@ data class Curso(
     val secciónNum   :Int,    // N° de sección ramo
     val planEstudios :String, // plan de estudios
     val connectLiga  :String, // conector liga
-    val listaCruz    :String,  // lista cruzada
+    val listaCruz    :String, // lista cruzada
     var clases       :MutableList<CursoEvent> = mutableListOf(),
     var ayudantías   :MutableList<CursoEvent> = mutableListOf(),
     var evaluaciones :MutableList<CursoEvent> = mutableListOf(),
@@ -30,11 +30,9 @@ data class Curso(
     public fun getShortInfo() : String {
         var profe :String = this.profesor
         if (profe == "") { profe = "<No asignado>" }
-        return """
-            NRC: %d
-            Nombre: %s
-            Sección: %d
-            Profesor: %s
-        """.trimIndent().format(this.NRC, this.nombre, this.secciónNum, profe)
+        return """NRC: %d
+Nombre: %s
+Sección: %d
+Profesor: %s""".format(this.NRC, this.nombre, this.secciónNum, profe)
     }
 }

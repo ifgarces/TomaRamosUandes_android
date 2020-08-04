@@ -131,7 +131,7 @@ class AgendaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-        // TODO: call `loadToAgenda()`
+
     }
 
     override fun onResume() {
@@ -139,9 +139,11 @@ class AgendaActivity : AppCompatActivity() {
 
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             this.portraitModeInnit()
+            // TODO: build portrait agenda
         }
         else {
             this.landscapeModeInit()
+            // TODO: build landscape agenda
         }
     }
 
