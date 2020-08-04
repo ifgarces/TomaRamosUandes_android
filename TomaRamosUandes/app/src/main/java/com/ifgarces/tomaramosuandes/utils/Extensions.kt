@@ -36,6 +36,13 @@ fun String.spanishLowerCase() : String {
     return this.toLowerCase( Locale("ES", "ES") )
 }
 
+/* For large block literal strings. Makes possible to continue a line with "\\" character, ignoring extra whitespaces. */
+fun String.multilineFormat() : String { // Note: does not ignore tabs "\t".
+    return this
+        .replace("\\\n", "") // continuing line
+        .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces. References: https://stackoverflow.com/a/37070443
+}
+
 fun String.spanishNonAccent() : String {
     val accents    :String = "áéíóúü"
     val nonAccents :String = "aeiouu"

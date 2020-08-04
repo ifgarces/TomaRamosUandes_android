@@ -67,7 +67,7 @@ object CSVWorker {
     * Converts the contents of the CSV (holding the period catalog) into a collection of `Curso`.
     * On fatal parsing error (invalid `csv_contents`), returns null.
     */
-    public fun parseCSV(activity :Activity, csv_lines :List<String>) : List<Curso>? {
+    public fun parseCSV(csv_lines :List<String>) : List<Curso>? {
         val catalogResult :MutableList<Curso> = mutableListOf()
 
         val NRCs :MutableList<Int> = mutableListOf()

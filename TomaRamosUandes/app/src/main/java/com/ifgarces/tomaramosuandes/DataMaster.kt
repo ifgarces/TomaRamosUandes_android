@@ -15,12 +15,17 @@ object DataMaster {
 
     /**
      * Fetches the `catalog` from a internet resource.
-     * @param activity Caller activity.
      * @param clear_database If true, deletes the local Room database.
      * @param onSuccess Executed when successfully finished database initialization.
      * @param onInternetError Executed when the data file can't be fetched or its elements are invalid somehow.
+     * @param onRoomError Executed when it is not possible to load user's local Room database.
      */
-    fun init(activity :Activity, clear_database :Boolean, onSuccess :() -> Unit, onInternetError :() -> Unit) {
+    fun init(
+        clear_database :Boolean,
+        onSuccess :() -> Unit,
+        onInternetError :() -> Unit,
+        onRoomError :() -> Unit
+    ) {
         this.catalog = listOf()
         var csv_body :String = ""
         AsyncTask.execute {
@@ -29,7 +34,7 @@ object DataMaster {
                 csv_body = WebManager.FetchOnlineDataCSV()
 
                 Logf("[DataMaster] Parsing CSV...")
-                this.catalog = CSVWorker.parseCSV(activity=activity, csv_lines=csv_body.split("\n"))!!
+                this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog.count())
 
                 // TODO: load/clear user collection(s) of `Curso` (Room DB)

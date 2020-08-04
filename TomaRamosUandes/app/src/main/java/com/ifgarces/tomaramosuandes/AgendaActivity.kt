@@ -1,15 +1,25 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import com.ifgarces.tomaramosuandes.models.Curso
 
 
 class AgendaActivity : AppCompatActivity() {
 
-    private object UI {
+    private object portUI { // portrait orientation widgets
+        // TODO: fill
+
+        fun init(owner :AppCompatActivity) {
+
+        }
+    }
+
+    private object landUI { // landscape orientation widgets
         lateinit var lun :List<Button>
         lateinit var mar :List<Button>
         lateinit var mie :List<Button>
@@ -17,7 +27,7 @@ class AgendaActivity : AppCompatActivity() {
         lateinit var vie :List<Button>
 
         fun init(owner :AppCompatActivity) {
-            lun = listOf(
+            this.lun = listOf(
                 owner.findViewById(R.id.lun0),
                 owner.findViewById(R.id.lun1),
                 owner.findViewById(R.id.lun2),
@@ -33,7 +43,7 @@ class AgendaActivity : AppCompatActivity() {
                 owner.findViewById(R.id.lun12),
                 owner.findViewById(R.id.lun13)
             )
-            mar = listOf(
+            this.mar = listOf(
                 owner.findViewById(R.id.mar0),
                 owner.findViewById(R.id.mar1),
                 owner.findViewById(R.id.mar2),
@@ -49,7 +59,7 @@ class AgendaActivity : AppCompatActivity() {
                 owner.findViewById(R.id.mar12),
                 owner.findViewById(R.id.mar13)
             )
-            mie = listOf(
+            this.mie = listOf(
                 owner.findViewById(R.id.mie0),
                 owner.findViewById(R.id.mie1),
                 owner.findViewById(R.id.mie2),
@@ -65,7 +75,7 @@ class AgendaActivity : AppCompatActivity() {
                 owner.findViewById(R.id.mie12),
                 owner.findViewById(R.id.mie13)
             )
-            jue = listOf(
+            this.jue = listOf(
                 owner.findViewById(R.id.jue0),
                 owner.findViewById(R.id.jue1),
                 owner.findViewById(R.id.jue2),
@@ -81,7 +91,7 @@ class AgendaActivity : AppCompatActivity() {
                 owner.findViewById(R.id.jue12),
                 owner.findViewById(R.id.jue13)
             )
-            vie = listOf(
+            this.vie = listOf(
                 owner.findViewById(R.id.vie0),
                 owner.findViewById(R.id.vie1),
                 owner.findViewById(R.id.vie2),
@@ -119,11 +129,38 @@ class AgendaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setContentView(R.layout.landscape_agenda) // <- !!
-        UI.init(owner=this)
+
+
+        // TODO: call `loadToAgenda()`
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            this.portraitModeInnit()
+        }
+        else {
+            this.landscapeModeInit()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //this.exitFullScreen() // <- unnecessary, I suposse
+    }
+
+    private fun portraitModeInnit() {
+        this.setContentView(R.layout.agenda_portrait)
+        portUI.init(owner=this)
+    }
+
+    private fun landscapeModeInit() {
+        this.setContentView(R.layout.agenda_landscape)
+        landUI.init(owner=this)
 
         for (k :Int in (0..13)) {
-            for (collection :List<Button> in listOf(UI.lun, UI.mar, UI.mie, UI.jue, UI.vie)) {
+            for (collection :List<Button> in listOf(landUI.lun, landUI.mar, landUI.mie, landUI.jue, landUI.vie)) {
                 collection[k].text = ""
                 collection[k].setOnClickListener { this.blockClick(sender=collection[k]) }
             }
@@ -131,9 +168,8 @@ class AgendaActivity : AppCompatActivity() {
         this.enterFullScreen()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        this.exitFullScreen()
+    private fun updateAgenda(cursos :List<Curso>) {
+        // TODO: make agenda construction algorithm
     }
 
     private fun blockClick(sender :Button) {
@@ -151,7 +187,7 @@ class AgendaActivity : AppCompatActivity() {
         return -1
     }
 
-    /* Enters "inmersive mode", hiding system UI elements (and forcing landscape orientation) */
+    /* Enters "inmersive mode", hiding system landUI elements (and forcing landscape orientation) */
     private fun enterFullScreen() { /// references: https://developer.android.com/training/system-ui/immersive.html
         this.window.decorView.systemUiVisibility = (
             View.SYSTEM_UI_FLAG_IMMERSIVE
