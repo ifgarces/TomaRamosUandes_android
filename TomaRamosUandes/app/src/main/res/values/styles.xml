@@ -1,4 +1,5 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -14,6 +15,7 @@
         <item name="elevation">0dp</item>
         <item name="backgroundTint">@android:color/transparent</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
     <style name="agendaLandscape_block" parent="Widget.MaterialComponents.Button.TextButton">
@@ -27,12 +29,12 @@
         <item name="android:textColor">@color/almostBlack</item>
         <item name="fontFamily">@font/lato</item>
         <item name="android:textSize">12sp</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
     <style name="agendaLandscape_timeBlock" parent="agendaLandscape_block">
         <item name="fontFamily">sans-serif-condensed</item>
         <item name="android:textSize">14.5sp</item>
-        <item name="android:textAlignment">viewStart</item>
     </style>
 
     <style name="agendaPortrait_header">

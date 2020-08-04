@@ -127,19 +127,12 @@ class AgendaActivity : AppCompatActivity() {
         "21:30"
     )
 
-    override fun onCreate(savedInstanceState :Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-
-    }
-
     override fun onResume() {
         super.onResume()
 
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             this.portraitModeInnit()
-            // TODO: build portrait agenda
+            // TODO: build portrait agenda (use different frafments instead)
         }
         else {
             this.landscapeModeInit()

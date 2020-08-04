@@ -2,4 +2,5 @@
 <resources>
     <dimen name="font_normal">16sp</dimen>
     <dimen name="font_title">20sp</dimen>
+    <dimen name="toolbar_elevation">5dp</dimen>
 </resources>
