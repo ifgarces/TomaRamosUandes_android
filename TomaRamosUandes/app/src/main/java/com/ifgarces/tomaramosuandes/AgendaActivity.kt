@@ -2,31 +2,57 @@ package com.ifgarces.tomaramosuandes
 
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.models.Curso
 
 
 class AgendaActivity : AppCompatActivity() {
 
-    private object portUI { // portrait orientation widgets
-        // TODO: fill
+    private object PortraitUI { // portrait orientation widgets
+        lateinit var fullScreenAction :FloatingActionButton
+        lateinit var dayRecyclers     :List<RecyclerView>
+        lateinit var dayHeaders       :List<TextView>
+        val MON :Int = 0 // lists indexes (day markers)
+        val TUE :Int = 1
+        val WED :Int = 2
+        val THU :Int = 3
+        val FRI :Int = 4
 
         fun init(owner :AppCompatActivity) {
-
+            this.fullScreenAction = owner.findViewById(R.id.agendaP_fullScreen)
+            this.dayRecyclers = listOf(
+                owner.findViewById(R.id.agendaP_mondayRecycler),
+                owner.findViewById(R.id.agendaP_tuesdayRecycler),
+                owner.findViewById(R.id.agendaP_wednesdayRecycler),
+                owner.findViewById(R.id.agendaP_thursdayRecycler),
+                owner.findViewById(R.id.agendaP_fridayRecycler)
+            )
+            this.dayHeaders = listOf(
+                owner.findViewById(R.id.agendaP_mondayHead),
+                owner.findViewById(R.id.agendaP_tuesdayHead),
+                owner.findViewById(R.id.agendaP_wednesdayHead),
+                owner.findViewById(R.id.agendaP_thursdayHead),
+                owner.findViewById(R.id.agendaP_fridayHead)
+            )
         }
     }
 
-    private object landUI { // landscape orientation widgets
-        lateinit var lun :List<Button>
-        lateinit var mar :List<Button>
-        lateinit var mie :List<Button>
-        lateinit var jue :List<Button>
-        lateinit var vie :List<Button>
+    private object LandscapeUI { // landscape orientation widgets
+        lateinit var saveAsImgAction :FloatingActionButton
+        lateinit var lun             :List<Button>
+        lateinit var mar             :List<Button>
+        lateinit var mie             :List<Button>
+        lateinit var jue             :List<Button>
+        lateinit var vie             :List<Button>
 
         fun init(owner :AppCompatActivity) {
+            this.saveAsImgAction = owner.findViewById(R.id.bigAgenda_saveAsImage)
             this.lun = listOf(
                 owner.findViewById(R.id.lun0),
                 owner.findViewById(R.id.lun1),
@@ -132,7 +158,7 @@ class AgendaActivity : AppCompatActivity() {
 
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             this.portraitModeInnit()
-            // TODO: build portrait agenda (use different frafments instead)
+            // TODO: build portrait agenda (use different frafments instead?)
         }
         else {
             this.landscapeModeInit()
@@ -147,20 +173,29 @@ class AgendaActivity : AppCompatActivity() {
 
     private fun portraitModeInnit() {
         this.setContentView(R.layout.agenda_portrait)
-        portUI.init(owner=this)
+        PortraitUI.init(owner = this)
+
+        PortraitUI.fullScreenAction.setColorFilter(Color.WHITE)
+        PortraitUI.fullScreenAction.setOnClickListener { this.landscapeModeInit() }
     }
 
     private fun landscapeModeInit() {
         this.setContentView(R.layout.agenda_landscape)
-        landUI.init(owner=this)
+        this.enterFullScreen()
+        LandscapeUI.init(owner=this)
 
+        LandscapeUI.saveAsImgAction.setColorFilter(Color.WHITE)
+        LandscapeUI.saveAsImgAction.setOnClickListener { this.exportAgendaImage() }
         for (k :Int in (0..13)) {
-            for (collection :List<Button> in listOf(landUI.lun, landUI.mar, landUI.mie, landUI.jue, landUI.vie)) {
+            for (collection :List<Button> in listOf(LandscapeUI.lun, LandscapeUI.mar, LandscapeUI.mie, LandscapeUI.jue, LandscapeUI.vie)) {
                 collection[k].text = ""
                 collection[k].setOnClickListener { this.blockClick(sender=collection[k]) }
             }
         }
-        this.enterFullScreen()
+    }
+
+    private fun exportAgendaImage() {
+
     }
 
     private fun updateAgenda(cursos :List<Curso>) {
@@ -182,7 +217,7 @@ class AgendaActivity : AppCompatActivity() {
         return -1
     }
 
-    /* Enters "inmersive mode", hiding system landUI elements (and forcing landscape orientation) */
+    /* Enters "inmersive mode", hiding system LandscapeUI elements (and forcing landscape orientation) */
     private fun enterFullScreen() { /// references: https://developer.android.com/training/system-ui/immersive.html
         this.window.decorView.systemUiVisibility = (
             View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -193,15 +228,5 @@ class AgendaActivity : AppCompatActivity() {
             or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
         this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-    }
-
-    /* Undoes `enterFullScreen()` */
-    private fun exitFullScreen() {
-        this.window.decorView.systemUiVisibility = (
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        )
-        this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
     }
 }

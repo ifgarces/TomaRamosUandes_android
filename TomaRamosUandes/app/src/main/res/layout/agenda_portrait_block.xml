@@ -9,7 +9,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:background="@color/almostWhite"
         android:padding="4dp"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,7 +16,7 @@
             android:id="@+id/agendaPblock_nombre"
             style="@style/agendaPortrait_cursoName"
             android:text="[Curso.nombre]"
-            
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -27,11 +26,12 @@
         <TextView
             android:id="@+id/agendaPblock_hi"
             style="@style/agendaPortrait_time"
-            android:text="[start time]"
-
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
+            android:text="[start time]"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/agendaPblock_nombre" />
 
@@ -60,8 +60,8 @@
             android:text="[event type]"
             android:paddingHorizontal="5dp"
             android:paddingVertical="3dp"
-            android:background="@color/gray"
-            android:textColor="@android:color/white"
+            android:background="@drawable/box_event_clas"
+            android:textColor="@color/gray"
             android:textStyle="bold"
             android:textAllCaps="true"
             android:textSize="14sp"

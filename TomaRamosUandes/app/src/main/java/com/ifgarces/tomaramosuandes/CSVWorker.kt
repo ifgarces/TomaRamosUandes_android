@@ -16,7 +16,8 @@ import java.util.Locale
 
 /* Handles CSV parsing */
 object CSVWorker {
-    private val DATE_SEPARATOR :String = "/" // e.g. "09/10/2020"
+    private val EXPLICIT_COMMA_MARKER :String = ";;" // used to have elements like "element with;; comma" instead of "\"element with, comma\"" (harder to parse)
+
     private val TIME_SEPARATOR :String = "-" // e.g. "10:30 - 12:20"
     private val date_format = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("ES", "ES"))
     private val time_format = DateTimeFormatter.ISO_TIME
@@ -73,7 +74,8 @@ object CSVWorker {
         val NRCs :MutableList<Int> = mutableListOf()
         var line :List<String>
         val current = object {
-            var NRC :Int = -1
+            var NRC :Int = 0
+            var cursoNum :Int = 0
             lateinit var dayOfWeek :DayOfWeek
             lateinit var eventType :String
             lateinit var startTime :LocalTime
@@ -84,84 +86,110 @@ object CSVWorker {
         var eventAux :CursoEvent
         var eventsCounter :Int = 0
         var lineNum :Int = 0
+        var badNRCsCount :Int = 0
 
-        try {
-            while (lineNum++ < csv_lines.count()) {
-                line = csv_lines[lineNum].split(",")
+        while (lineNum++ < csv_lines.count()-1) {
+            line = csv_lines[lineNum].split(",")
+
+            try {
                 current.NRC = line[this.csv_columns.NRC].toInt()
+            }
+            catch (e :NumberFormatException) {
+                Logf("[CSVWorker] Warning: NRC could not be parsed to integer at CSV line %d (%s). Details: %s. Assuming NRC assign is yet pending and assigning negative one.", lineNum, csv_lines[lineNum], e)
+                current.NRC = -(badNRCsCount++)
+            }
 
-                if (! NRCs.contains(current.NRC)) {
-                    NRCs.add(current.NRC)
+            try {
+                current.cursoNum = line[this.csv_columns.CURSONUM].toInt()
+            }
+            catch (e :NumberFormatException) {
+                Logf("[CSVWorker] Warning: CursoNum could not be parsed to integer at CSV line %d (%s). Details: %s. Assuming CursoNum assign is yet pending and assigning zero.", lineNum, csv_lines[lineNum], e)
+                current.cursoNum = 0
+            }
+
+
+            if (! NRCs.contains(current.NRC)) {
+                NRCs.add(current.NRC)
+                try {
                     catalogResult.add(
                         Curso(
                             NRC = current.NRC,
                             nombre = line[this.csv_columns.NOMBRE].trim(),
                             profesor = line[this.csv_columns.PROFESOR].trim(),
-                            créditos = line[this.csv_columns.CRÉDITO].trim().toInt(),
-                            materia = line[this.csv_columns.MATERIA].trim(),
-                            cursoNum = line[this.csv_columns.CURSONUM].trim().toInt(),
-                            secciónNum = line[this.csv_columns.SECCIÓN].trim().toInt(),
-                            planEstudios = line[this.csv_columns.PLAN_ESTUDIOS].trim(),
-                            connectLiga = line[this.csv_columns.CONECTOR_LIGA].trim(),
-                            listaCruz = line[this.csv_columns.LISTA_CRUZADA].trim()
+                            créditos = line[this.csv_columns.CRÉDITO].toInt(),
+                            materia = line[this.csv_columns.MATERIA].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
+                            cursoNum = current.cursoNum,
+                            secciónNum = line[this.csv_columns.SECCIÓN].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
+                            planEstudios = line[this.csv_columns.PLAN_ESTUDIOS].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
+                            connectLiga = line[this.csv_columns.CONECTOR_LIGA].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
+                            listaCruz = line[this.csv_columns.LISTA_CRUZADA].trim().replace(this.EXPLICIT_COMMA_MARKER, ",")
                         )
                     )
                 }
+                catch (e :NumberFormatException) { // `String.toInt()` error
+                    Logf("[CSVWorker] Error: integer cast exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
+                    return null
+                }
 
-                // getting day of week and time interval of the event
-                for ( column :Int in (this.csv_columns.LUNES .. this.csv_columns.VIERNES) ) {
-                    stringAux = line[column].replace(" ", "")
-                    if (stringAux != "") {
-                        current.dayOfWeek = this.csv_columns.toDayOfWeek(column)!!
-                        splitterAux = stringAux.split(this.TIME_SEPARATOR)
-                        if (splitterAux.count() != 2) {
-                            Logf("[CSVWorker] Error: unexpected split result on row %d ('%s'). Could not get time interval for event.", lineNum, line)
-                            return null //this.fatalErrorDialog(activity)
-                        }
+            }
 
+            // getting day of week and time interval of the event
+            for ( column :Int in (this.csv_columns.LUNES .. this.csv_columns.VIERNES) ) {
+                stringAux = line[column].replace(" ", "")
+                if (stringAux != "") {
+                    current.dayOfWeek = this.csv_columns.toDayOfWeek(column)!!
+                    splitterAux = stringAux.split(this.TIME_SEPARATOR)
+                    if (splitterAux.count() != 2) {
+                        Logf("[CSVWorker] Error: unexpected split result on row %d ('%s'). Could not get time interval for event.", lineNum, line)
+                        return null
+                    }
+
+                    try {
                         current.startTime = LocalTime.parse(splitterAux[0], this.time_format)
                         current.endTime = LocalTime.parse(splitterAux[1], this.time_format)
-                        break
                     }
-                }
-
-                current.eventType = line[this.csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
-                eventAux = CursoEvent(
-                    ID = eventsCounter++,
-                    cursoNRC = current.NRC,
-                    day = current.dayOfWeek,
-                    startTime = current.startTime,
-                    endTime = current.endTime
-                )
-
-                when ( current.eventType.replace(regex=Regex("[0-9 ]"), replacement="") ) { // "PRON1" -> "PRON", etc.
-                    this.event_types.PRUEBA, this.event_types.EXAMEN -> {
-                        eventAux.date = LocalDate.parse(line[this.csv_columns.FECHA_INICIO], this.date_format)
-                        catalogResult.last().evaluaciones.add( eventAux )
+                    catch (e :DateTimeParseException) {
+                        Logf("[CSVWorker] Error: Time parsing exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
+                        return null
                     }
-                    this.event_types.CLASE -> {
-                        catalogResult.last().clases.add( eventAux )
-                    }
-                    this.event_types.LABORATORIO -> {
-                        catalogResult.last().laboratorios.add( eventAux )
-                    }
-                    this.event_types.AYUDANTÍA, this.event_types.TUTORIAL -> {
-                        catalogResult.last().ayudantías.add( eventAux )
-                    }
-                    else -> {
-                        Logf("[CSVWorker] Error at CSV line %d ('%s'): unknown event type '%s'", lineNum, line, current.eventType)
-                        return null //this.fatalErrorDialog(activity)
-                    }
+                    break
                 }
             }
-        }
-        catch (e :NumberFormatException) { // `String.toInt()` error
-            Logf("[CSVWorker] Error: integer cast exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
-            return null //this.fatalErrorDialog(activity)
-        }
-        catch (e :DateTimeParseException) {
-            Logf("[CSVWorker] Error: Time parsing exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
-            return null //this.fatalErrorDialog(activity)
+
+            current.eventType = line[this.csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
+            eventAux = CursoEvent(
+                ID = eventsCounter++,
+                cursoNRC = current.NRC,
+                day = current.dayOfWeek,
+                startTime = current.startTime,
+                endTime = current.endTime
+            )
+
+            when ( current.eventType.replace(regex=Regex("[0-9 ]"), replacement="") ) { // "PRON1" -> "PRON", etc.
+                this.event_types.PRUEBA, this.event_types.EXAMEN -> {
+                    try {
+                        eventAux.date = LocalDate.parse(line[this.csv_columns.FECHA_INICIO], this.date_format)
+                    }
+                    catch (e :DateTimeParseException) {
+                        Logf("[CSVWorker] Error: Date parsing exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
+                        return null
+                    }
+                    catalogResult.last().evaluaciones.add( eventAux )
+                }
+                this.event_types.CLASE -> {
+                    catalogResult.last().clases.add( eventAux )
+                }
+                this.event_types.LABORATORIO -> {
+                    catalogResult.last().laboratorios.add( eventAux )
+                }
+                this.event_types.AYUDANTÍA, this.event_types.TUTORIAL -> {
+                    catalogResult.last().ayudantías.add( eventAux )
+                }
+                else -> {
+                    Logf("[CSVWorker] Error at CSV line %d ('%s'): unknown event type '%s'", lineNum, line, current.eventType)
+                    return null
+                }
+            }
         }
 
         return catalogResult

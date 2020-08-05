@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/almostWhite"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cursoItem_delete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/cursoItem_name"
+                android:text="[Curso.nombre]"
+                android:fontFamily="@font/lato"
+                android:textAlignment="viewStart"
+                android:textColor="@color/gray"
+                android:textSize="18sp"
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_materia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="[Curso.materia]"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView2" />
+
+            <TextView
+                android:id="@+id/textView2"
+                style="@style/curso_NRC"
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="[Curso.NRC]"
+                app:layout_constraintStart_toEndOf="@+id/cursoCatalog_materia"
+                app:layout_constraintTop_toBottomOf="@+id/cursoItem_name" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_seccionStatic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:text="Sección: "
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                app:layout_constraintEnd_toStartOf="@+id/cursoCatalog_seccionNum"
+                app:layout_constraintTop_toTopOf="@+id/textView2" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_seccionNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:text="[Curso.secciónNum]"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/cursoCatalog_seccionStatic" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageButton
+            android:id="@+id/cursoItem_delete"
+            app:srcCompat="@android:drawable/ic_delete"
+            android:tint="@color/almostBlack"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

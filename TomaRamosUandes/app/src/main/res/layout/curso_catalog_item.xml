@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="6dp"
+        android:background="@color/almostWhite">
+
+        <TextView
+            android:id="@+id/cursoCatalog_nombre"
+            android:layout_marginEnd="18dp"
+            android:text="[Curso.nombre]"
+            android:fontFamily="@font/lato"
+            android:textColor="@color/almostBlack"
+            android:textSize="18sp"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/cursoCatalog_pe"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cursoCatalog_pe"
+            android:text="[Curso.PE]"
+            android:fontFamily="@font/lato"
+            android:textSize="13sp"
+            android:textAllCaps="true"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/cursoCatalog_nombre"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cursoCatalog_nombre" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cursoCatalog_nombre">
+
+            <TextView
+                android:id="@+id/cursoCatalog_materia"
+                android:text="[Curso.materia]"
+                android:fontFamily="monospace"
+                android:textSize="14sp"
+                android:textColor="@color/gray"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_static01"
+                style="@style/curso_NRC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="5dp"
+                android:paddingEnd="0dp"
+                android:text="NRC:"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cursoCatalog_materia"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_NRC"
+                style="@style/curso_NRC"
+                android:text="[Curso.NRC]"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cursoCatalog_static01"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_static02"
+                android:text="Sección: "
+                android:fontFamily="@font/lato"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/cursoCatalog_seccionNum"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cursoCatalog_seccionNum"
+                android:text="[Curso.secciónNum]"
+                android:fontFamily="@font/lato"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

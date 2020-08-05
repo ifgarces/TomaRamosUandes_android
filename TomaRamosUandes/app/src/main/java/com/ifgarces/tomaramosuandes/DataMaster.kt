@@ -1,6 +1,5 @@
 package com.ifgarces.tomaramosuandes
 
-import android.app.Activity
 import android.os.AsyncTask
 import com.ifgarces.tomaramosuandes.models.Curso
 import com.ifgarces.tomaramosuandes.utils.Logf
@@ -16,10 +15,11 @@ TODO: enhance modularization (model and controller)
  * @property catalog Contains the collection of `Curso` available for the current period.
  */
 object DataMaster {
-    private lateinit var catalog :List<Curso>
+    private lateinit var catalog    :List<Curso>;        fun getCatalog() = this.catalog
+    private lateinit var userCursos :MutableList<Curso>; fun getUserCursos() = this.userCursos
 
     /**
-     * Fetches the `catalog` from a internet resource.
+     * Fetches the `catalog` from a the internet, calling `WebManager`.
      * @param clear_database If true, deletes the local Room database.
      * @param onSuccess Executed when successfully finished database initialization.
      * @param onInternetError Executed when the data file can't be fetched or its elements are invalid somehow.
@@ -32,6 +32,7 @@ object DataMaster {
         onRoomError :() -> Unit
     ) {
         this.catalog = listOf()
+        this.userCursos = mutableListOf()
         var csv_body :String = ""
         AsyncTask.execute {
             try {
@@ -60,12 +61,12 @@ object DataMaster {
     /* Uses Room database to locally save the given collection of `Curso`. */
     public fun saveCursos(user_cursos :List<Curso>) {}
 
-    public fun getCreditsCountOf(cursos :List<Curso>) : Int {
-        var creditsNum :Int = 0
-        for (cc :Curso in cursos) {
-            creditsNum += cc.créditos
+    public fun getUserCreditsCount() : Int {
+        var creditsTotal :Int = 0
+        for (cc :Curso in this.userCursos) {
+            creditsTotal += cc.créditos
         }
-        return creditsNum
+        return creditsTotal
     }
 
     /* Creates the ICS file for the tests and exams for all courses in `cursos`, storing it at `savePath` */

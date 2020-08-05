@@ -13,7 +13,7 @@ data class Curso(
     val créditos     :Int,    // N° de créditos
     val materia      :String, // N° materia
     val cursoNum     :Int,    // N° de curso ramo
-    val secciónNum   :Int,    // N° de sección ramo
+    val secciónNum   :String, // N° de sección ramo (en raras ocasiones no es un número...)
     val planEstudios :String, // plan de estudios
     val connectLiga  :String, // conector liga
     val listaCruz    :String, // lista cruzada
