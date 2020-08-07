@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/cursoPeek_nombre"
+        android:text="[nombre]"
+        android:fontFamily="@font/lato"
+        android:textAlignment="viewStart"
+        android:textColor="@color/almostBlack"
+        android:textSize="20sp"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/cursoAttrs_spacing"
+        app:layout_constraintEnd_toStartOf="@+id/cursoPeek_static01"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/cursoPeek_static01"
+        style="@style/curso_NRC"
+        android:paddingEnd="0dp"
+        android:text="NRC: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/cursoPeek_nombre"
+        app:layout_constraintEnd_toStartOf="@+id/cursoPeek_NRC"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/cursoPeek_NRC"
+        style="@style/curso_NRC"
+        android:text="[NRC]"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cursoPeek_static01" />
+
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/cursoAttrs_spacing"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cursoPeek_nombre">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/cursoPeek_static02"
+                    style="@style/standardTextView"
+                    android:text="Profesor: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_profesor"
+                    style="@style/standardTextView"
+                    android:text="[profesor]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static02"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static02" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_static03"
+                    style="@style/standardTextView"
+                    android:text="Créditos: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/cursoAttrs_spacing"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cursoPeek_static02" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_static04"
+                    style="@style/standardTextView"
+                    android:text="Materia: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/cursoAttrs_spacing"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cursoPeek_static03" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_materia"
+                    style="@style/standardTextView"
+                    android:text="[materia]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static04"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static04" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_creditosNum"
+                    style="@style/standardTextView"
+                    android:text="[créditos]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static03"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static03" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_static05"
+                    style="@style/standardTextView"
+                    android:text="Curso: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/cursoAttrs_spacing"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cursoPeek_static04" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_cursoNum"
+                    style="@style/standardTextView"
+                    android:text="[cursoNum]"
+                    android:textAlignment="viewStart"
+                    
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static05"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static05" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_static06"
+                    style="@style/standardTextView"
+                    android:text="Sección: "
+                    
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/cursoAttrs_spacing"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cursoPeek_static05" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_seccionNum"
+                    style="@style/standardTextView"
+                    android:text="[secciónNum]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static06"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static06" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/cursoPeek_static07"
+                    style="@style/standardTextView"
+                    android:text="Plan de estudios: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_PE"
+                    style="@style/standardTextView"
+                    android:text="[PE]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static07"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static07" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_static08"
+                    style="@style/standardTextView"
+                    android:text="Conector liga: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/cursoAttrs_spacing"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cursoPeek_static07" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_liga"
+                    style="@style/standardTextView"
+                    android:text="[liga]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static08"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static08" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_static09"
+                    style="@style/standardTextView"
+                    android:text="Lista cruzada: "
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/cursoAttrs_spacing"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cursoPeek_static08" />
+
+                <TextView
+                    android:id="@+id/cursoPeek_lCruz"
+                    style="@style/standardTextView"
+                    android:text="[LC]"
+                    android:textAlignment="viewStart"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cursoPeek_static09"
+                    app:layout_constraintTop_toTopOf="@+id/cursoPeek_static09" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/tableLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/cursoAttrs_spacing">
+
+            <TextView
+                android:id="@+id/cursoPeek_static10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:text="Clases: "
+                android:textAlignment="gravity" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cursoPeek_clasesRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/curso_event_item" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/cursoAttrs_spacing">
+
+            <TextView
+                android:id="@+id/cursoPeek_static11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:text="Ayudantías: "
+                android:textAlignment="gravity" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cursoPeek_ayudsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/curso_event_item" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/cursoAttrs_spacing">
+
+            <TextView
+                android:id="@+id/cursoPeek_static12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:text="Laboratorios: "
+                android:textAlignment="gravity" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cursoPeek_labsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/curso_event_item" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/cursoAttrs_spacing">
+
+            <TextView
+                android:id="@+id/cursoPeek_static13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:text="Evaluaciones: "
+                android:textAlignment="gravity" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cursoPeek_pruebasRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"
+
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/curso_event_item" />
+        </TableRow>
+    </TableLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/userTakeCurso_button"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/colorAccent"
+        android:elevation="@dimen/floatingButton_elevation"
+        android:outlineProvider="none"
+        android:text="Tomar ramo"
+        android:textAllCaps="false"
+        android:textSize="@dimen/buttonLower_textSize"
+        app:icon="@drawable/add_icon"
+
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

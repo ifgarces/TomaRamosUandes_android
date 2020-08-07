@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 this.runOnUiThread {
                     this.infoDialog(
                         title = "Error al obtener catálogo",
-                        message = """No se pudo obtener correctamente el catálogo de ramos (${AppMetadata.getCatalogPeriod()}). \
+                        message = """No se pudo obtener correctamente el catálogo de ramos ${AppMetadata.getCatalogPeriod()}. \
                             Revise su conexión a internet e intente más tarde.""".multilineFormat(),
                         onDismiss = {
                             this.finish()

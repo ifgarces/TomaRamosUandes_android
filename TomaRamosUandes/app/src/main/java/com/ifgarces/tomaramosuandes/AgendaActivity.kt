@@ -1,7 +1,6 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
@@ -153,23 +152,18 @@ class AgendaActivity : AppCompatActivity() {
         "21:30"
     )
 
-    override fun onResume() {
-        super.onResume()
-
-        if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            this.portraitModeInnit()
-            // TODO: build portrait agenda (use different frafments instead?)
-        }
-        else {
-            this.landscapeModeInit()
-            // TODO: build landscape agenda
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //this.exitFullScreen() // <- unnecessary, I suposse
-    }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            this.portraitModeInnit()
+//            // TODO: build portrait agenda (use different frafments instead?)
+//        }
+//        else {
+//            this.landscapeModeInit()
+//            // TODO: build landscape agenda
+//        }
+//    }
 
     private fun portraitModeInnit() {
         this.setContentView(R.layout.agenda_portrait)

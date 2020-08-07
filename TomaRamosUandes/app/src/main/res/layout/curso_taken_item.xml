@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp">
+    android:layout_margin="@dimen/recyclerItems_margin">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:background="@color/almostWhite"
@@ -16,12 +16,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/cursoItem_delete"
+            app:layout_constraintEnd_toStartOf="@+id/userCurso_delete"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/cursoItem_name"
+                android:id="@+id/userCurso_nombre"
                 android:text="[Curso.nombre]"
                 android:fontFamily="@font/lato"
                 android:textAlignment="viewStart"
@@ -35,42 +35,42 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cursoCatalog_materia"
+                android:id="@+id/userCurso_materia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
                 android:text="[Curso.materia]"
                 android:textColor="@color/gray"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                app:layout_constraintBottom_toBottomOf="@+id/userCurso_NRC"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView2" />
+                app:layout_constraintTop_toTopOf="@+id/userCurso_NRC" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/userCurso_NRC"
                 style="@style/curso_NRC"
                 android:layout_width="wrap_content"
 
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="[Curso.NRC]"
-                app:layout_constraintStart_toEndOf="@+id/cursoCatalog_materia"
-                app:layout_constraintTop_toBottomOf="@+id/cursoItem_name" />
+                app:layout_constraintStart_toEndOf="@+id/userCurso_materia"
+                app:layout_constraintTop_toBottomOf="@+id/userCurso_nombre" />
 
             <TextView
-                android:id="@+id/cursoCatalog_seccionStatic"
+                android:id="@+id/userCurso_static01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
                 android:text="Sección: "
                 android:textColor="@color/gray"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView2"
-                app:layout_constraintEnd_toStartOf="@+id/cursoCatalog_seccionNum"
-                app:layout_constraintTop_toTopOf="@+id/textView2" />
+                app:layout_constraintBottom_toBottomOf="@+id/userCurso_NRC"
+                app:layout_constraintEnd_toStartOf="@+id/userCurso_seccionNum"
+                app:layout_constraintTop_toTopOf="@+id/userCurso_NRC" />
 
             <TextView
-                android:id="@+id/cursoCatalog_seccionNum"
+                android:id="@+id/userCurso_seccionNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
@@ -78,17 +78,17 @@
                 android:textColor="@color/gray"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/cursoCatalog_seccionStatic" />
+                app:layout_constraintTop_toTopOf="@+id/userCurso_static01" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
-            android:id="@+id/cursoItem_delete"
-            app:srcCompat="@android:drawable/ic_delete"
+            android:id="@+id/userCurso_delete"
+            app:srcCompat="@drawable/trash_icon"
             android:tint="@color/almostBlack"
             android:backgroundTint="@android:color/transparent"
-            android:layout_width="40dp"
-            android:layout_height="0dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

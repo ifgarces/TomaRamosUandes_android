@@ -29,13 +29,14 @@
         <TextView
             android:id="@+id/main_appName"
             android:text="@string/APP_NAME"
-            android:textSize="24sp"
+            android:textSize="25sp"
             android:textAlignment="center"
             android:fontFamily="sans-serif-condensed"
-
-            android:layout_width="260dp"
+            
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="40dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_appImage" />
@@ -45,7 +46,7 @@
     after a set amount of time -->
 
     <View
-        android:id="@+id/main_loadFocusLayer"
+        android:id="@+id/main_loadBackground"
         style="@style/loadWait_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

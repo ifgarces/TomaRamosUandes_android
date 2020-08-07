@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".CatalogActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -23,14 +24,14 @@
             android:layout_height="?attr/actionBarSize"
             app:menu="@menu/menu_with_help"
             app:subtitle="@string/CATALOG_PERIOD"
-            app:title="Catálogo de ramos"></com.google.android.material.appbar.MaterialToolbar>
+            app:title="Catálogo de ramos" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/catalog_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
+        android:layout_marginTop="6dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,31 +41,45 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
-        android:layout_width="287dp"
-        android:layout_height="98dp"
-        android:layout_marginTop="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/catalog_topbar_layout">
 
-        <ImageButton
-            android:id="@+id/imageButton"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/catalog_searchBox_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:hint="Buscar ramo"
+            app:startIconCheckable="true"
+            app:startIconDrawable="@drawable/clear_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/catalog_searchBox"
+                android:backgroundTint="@android:color/transparent"
+                android:ems="15"
+                android:inputType="text"
+                android:text=""
+                android:textAlignment="viewStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/catalog_searchButton"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/catalog_searchBox_layout"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/search_icon" />
 
-        <EditText
-            android:id="@+id/editTextTextPersonName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

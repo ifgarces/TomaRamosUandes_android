@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.utils.Logf
@@ -49,16 +50,10 @@ class HomeActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_home)
         UI.init(owner=this)
 
-        UI.creditsCounter.text = DataMaster.getUserCreditsCount().toString()
-        UI.emptyRecyclerText.visibility = View.GONE
-        if (UI.creditsCounter.text == "0") {
-            this.toggleVisibility(UI.emptyRecyclerText)
-            this.toggleVisibility(UI.cursosRecycler)
-            this.toggleVisibility(UI.creditsStaticText)
-            this.toggleVisibility(UI.creditsCounter)
-        }
+        UI.cursosRecycler.layoutManager = LinearLayoutManager(this)
+        UI.cursosRecycler.adapter = TakenCursosAdapter(data=DataMaster.getUserCursos())
+        // [!] TODO: somehow set adapter data referenced to `DataMaster.userCursos`
 
-        // TODO: remove topBar left icon.
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {
@@ -88,6 +83,17 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         UI.loadBackground.visibility = View.GONE
         UI.loadProgressBar.visibility = View.GONE
+
+        UI.creditsCounter.text = DataMaster.getUserCreditsCount().toString()
+        UI.emptyRecyclerText.visibility = View.GONE
+        if (UI.creditsCounter.text == "0") {
+            this.toggleVisibility(UI.emptyRecyclerText)
+            this.toggleVisibility(UI.cursosRecycler)
+            this.toggleVisibility(UI.creditsStaticText)
+            this.toggleVisibility(UI.creditsCounter)
+        }
+
+        UI.cursosRecycler.adapter!!.notifyDataSetChanged() // <- as it is very hard to notify this adapter from another activity (`CatalogActivity`).
     }
 
     override fun onDestroy() {

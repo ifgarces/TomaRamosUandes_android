@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".HomeActivity"
+    android:background="@android:color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/home_topbar_layout"
@@ -20,7 +21,7 @@
             android:id="@+id/home_topbar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             app:menu="@menu/menu_with_help"
-            app:title="Sim. toma de ramos Uandes"
+            app:title="Simulador toma de ramos Uandes"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         </com.google.android.material.appbar.MaterialToolbar>
@@ -29,16 +30,16 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/home_catalogButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="Catálogo de ramos"
+        android:textAllCaps="false"
+        android:textSize="@dimen/buttonLower_textSize"
+        app:cornerRadius="@dimen/roundButton_radius"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="12dp"
-        android:text="Catálogo de ramos"
-        android:textAllCaps="false"
-        android:textSize="@dimen/text_normalSize"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
@@ -50,7 +51,7 @@
         android:text="Mis ramos"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="17sp"
+        android:textSize="18sp"
         android:gravity="center"
 
         android:layout_width="match_parent"
@@ -93,7 +94,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_cursosRecycler"
-            tools:listitem="@layout/curso_simple_item"
+            tools:listitem="@layout/curso_taken_item"
             android:scrollbars="vertical"
             android:elevation="0dp"
 
@@ -119,7 +120,7 @@
                 android:text="Horario"
                 android:textAllCaps="false"
 
-                android:textSize="@dimen/text_normalSize"
+                android:textSize="@dimen/buttonLower_textSize"
                 app:icon="@drawable/calendar_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -133,7 +134,7 @@
                 android:text="Evaluaciones"
 
                 android:textAllCaps="false"
-                android:textSize="@dimen/text_normalSize"
+                android:textSize="@dimen/buttonLower_textSize"
                 app:icon="@drawable/exam_icon"
                 app:layout_constraintStart_toEndOf="@+id/home_agendaButton"
                 app:layout_constraintTop_toTopOf="parent" />

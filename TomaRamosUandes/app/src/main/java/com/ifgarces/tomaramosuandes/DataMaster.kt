@@ -33,11 +33,10 @@ object DataMaster {
     ) {
         this.catalog = listOf()
         this.userCursos = mutableListOf()
-        var csv_body :String = ""
         AsyncTask.execute {
             try {
                 Logf("[DataMaster] Fetching CSV catalog data...")
-                csv_body = WebManager.FetchOnlineDataCSV()
+                val csv_body :String = WebManager.FetchOnlineDataCSV()
 
                 Logf("[DataMaster] Parsing CSV...")
                 this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
@@ -58,9 +57,6 @@ object DataMaster {
         }
     }
 
-    /* Uses Room database to locally save the given collection of `Curso`. */
-    public fun saveCursos(user_cursos :List<Curso>) {}
-
     public fun getUserCreditsCount() : Int {
         var creditsTotal :Int = 0
         for (cc :Curso in this.userCursos) {
@@ -71,6 +67,6 @@ object DataMaster {
 
     /* Creates the ICS file for the tests and exams for all courses in `cursos`, storing it at `savePath` */
     public fun exportICS(cursos :List<Curso>, savePath :String) {
-        // TODO: crear archivo ICS y guardar.
+        // TODO: create and save ICS file with all `Curso`s tests.
     }
 }
