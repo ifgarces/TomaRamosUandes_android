@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CatalogActivity"></activity>
+        <activity android:name=".CatalogActivity" />
         <activity android:name=".AgendaActivity" />
         <activity
             android:name=".HomeActivity"

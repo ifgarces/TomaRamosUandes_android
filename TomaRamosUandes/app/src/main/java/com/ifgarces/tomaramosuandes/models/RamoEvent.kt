@@ -8,10 +8,10 @@ import java.time.LocalTime
 
 
 /* Modela un evento de ramo (ayudantía, clase, laboratorio, tutorial, prueba o exámen) */
-@Entity(tableName=CursoEvent.TABLE_NAME)
-data class CursoEvent(
+@Entity(tableName=RamoEvent.TABLE_NAME)
+data class RamoEvent(
     @PrimaryKey(autoGenerate=false)  val ID :Int,
-    val cursoNRC  :Int, // (foreign key) referencia al curso al que pertenece el evento
+    val ramoNRC  :Int, // (foreign key) referencia al ramo al que pertenece el evento
     val day       :DayOfWeek,
     val startTime :LocalTime,
     val endTime   :LocalTime,
@@ -19,5 +19,5 @@ data class CursoEvent(
     // val location :String // <- cuando no haya pandemia, incluye la sala de eventos físicos
 
 ) {
-    companion object { const val TABLE_NAME :String = "curso_event" }
+    companion object { const val TABLE_NAME :String = "ramo_event" }
 }

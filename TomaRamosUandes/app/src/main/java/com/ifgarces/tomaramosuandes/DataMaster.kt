@@ -1,22 +1,17 @@
 package com.ifgarces.tomaramosuandes
 
 import android.os.AsyncTask
-import com.ifgarces.tomaramosuandes.models.Curso
+import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.Logf
-
-
-/* *****************
-TODO: enhance modularization (model and controller)
-***************** */
 
 
 /**
  * Handles the database.
- * @property catalog Contains the collection of `Curso` available for the current period.
+ * @property catalog Contains the collection of `Ramo` available for the current period.
  */
 object DataMaster {
-    private lateinit var catalog    :List<Curso>;        fun getCatalog() = this.catalog
-    private lateinit var userCursos :MutableList<Curso>; fun getUserCursos() = this.userCursos
+    private lateinit var catalog   :List<Ramo>;        fun getCatalog() = this.catalog
+    private lateinit var userRamos :MutableList<Ramo>; fun getUserRamos() = this.userRamos
 
     /**
      * Fetches the `catalog` from a the internet, calling `WebManager`.
@@ -32,7 +27,7 @@ object DataMaster {
         onRoomError :() -> Unit
     ) {
         this.catalog = listOf()
-        this.userCursos = mutableListOf()
+        this.userRamos = mutableListOf()
         AsyncTask.execute {
             try {
                 Logf("[DataMaster] Fetching CSV catalog data...")
@@ -42,7 +37,7 @@ object DataMaster {
                 this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog.count())
 
-                // TODO: load/clear user collection(s) of `Curso` (Room DB)
+                // TODO: load/clear user collection(s) of `Ramo` (Room DB)
 
                 onSuccess.invoke()
             }
@@ -57,16 +52,23 @@ object DataMaster {
         }
     }
 
-    public fun getUserCreditsCount() : Int {
-        var creditsTotal :Int = 0
-        for (cc :Curso in this.userCursos) {
-            creditsTotal += cc.créditos
+    public fun findRamoByNRC(nrc :Int) : Ramo? {
+        for (ramo :Ramo in this.catalog) {
+            if (ramo.NRC == nrc) { return ramo }
         }
-        return creditsTotal
+        return null
     }
 
-    /* Creates the ICS file for the tests and exams for all courses in `cursos`, storing it at `savePath` */
-    public fun exportICS(cursos :List<Curso>, savePath :String) {
-        // TODO: create and save ICS file with all `Curso`s tests.
+    public fun getUserCreditsCount() : Int {
+        var creditosTotal :Int = 0
+        for (cc :Ramo in this.userRamos) {
+            creditosTotal += cc.créditos
+        }
+        return creditosTotal
+    }
+
+    /* Creates the ICS file for the tests and exams for all courses in `ramos`, storing it at `savePath` */
+    public fun exportICS(ramos :List<Ramo>, savePath :String) {
+        // TODO: create and save ICS file with all `Ramo`s tests.
     }
 }

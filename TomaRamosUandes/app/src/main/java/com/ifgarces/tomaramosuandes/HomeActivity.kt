@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
+import com.ifgarces.tomaramosuandes.adapters.TakenRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 
 
@@ -21,10 +22,10 @@ class HomeActivity : AppCompatActivity() {
     private object UI {
         lateinit var topBar            :MaterialToolbar
         lateinit var catalogButton     :Button
-        lateinit var cursosRecycler    :RecyclerView
+        lateinit var ramosRecycler    :RecyclerView
         lateinit var emptyRecyclerText :TextView
-        lateinit var creditsStaticText :TextView
-        lateinit var creditsCounter    :TextView
+        lateinit var creditosStaticText :TextView
+        lateinit var creditosCounter    :TextView
         lateinit var agendaButton      :Button
         lateinit var pruebasButton     :Button
 
@@ -34,10 +35,10 @@ class HomeActivity : AppCompatActivity() {
         fun init(owner :AppCompatActivity) {
             this.topBar            = owner.findViewById(R.id.home_topbar)
             this.catalogButton     = owner.findViewById(R.id.home_catalogButton)
-            this.cursosRecycler    = owner.findViewById(R.id.home_cursosRecycler)
+            this.ramosRecycler    = owner.findViewById(R.id.home_ramosRecycler)
             this.emptyRecyclerText = owner.findViewById(R.id.home_emptyRecyclerText)
-            this.creditsStaticText = owner.findViewById(R.id.home_creditsStatic)
-            this.creditsCounter    = owner.findViewById(R.id.home_creditsNum)
+            this.creditosStaticText = owner.findViewById(R.id.home_creditosStatic)
+            this.creditosCounter    = owner.findViewById(R.id.home_creditos)
             this.agendaButton      = owner.findViewById(R.id.home_agendaButton)
             this.pruebasButton     = owner.findViewById(R.id.home_pruebasButton)
             this.loadBackground    = owner.findViewById(R.id.home_loadBackground)
@@ -50,9 +51,10 @@ class HomeActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_home)
         UI.init(owner=this)
 
-        UI.cursosRecycler.layoutManager = LinearLayoutManager(this)
-        UI.cursosRecycler.adapter = TakenCursosAdapter(data=DataMaster.getUserCursos())
-        // [!] TODO: somehow set adapter data referenced to `DataMaster.userCursos`
+        UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
+        UI.ramosRecycler.adapter =
+            TakenRamosAdapter(data = DataMaster.getUserRamos())
+        // [!] TODO: somehow set adapter data referenced to `DataMaster.userRamos`
 
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -84,16 +86,16 @@ class HomeActivity : AppCompatActivity() {
         UI.loadBackground.visibility = View.GONE
         UI.loadProgressBar.visibility = View.GONE
 
-        UI.creditsCounter.text = DataMaster.getUserCreditsCount().toString()
+        UI.creditosCounter.text = DataMaster.getUserCreditsCount().toString()
         UI.emptyRecyclerText.visibility = View.GONE
-        if (UI.creditsCounter.text == "0") {
+        if (UI.creditosCounter.text == "0") {
             this.toggleVisibility(UI.emptyRecyclerText)
-            this.toggleVisibility(UI.cursosRecycler)
-            this.toggleVisibility(UI.creditsStaticText)
-            this.toggleVisibility(UI.creditsCounter)
+            this.toggleVisibility(UI.ramosRecycler)
+            this.toggleVisibility(UI.creditosStaticText)
+            this.toggleVisibility(UI.creditosCounter)
         }
 
-        UI.cursosRecycler.adapter!!.notifyDataSetChanged() // <- as it is very hard to notify this adapter from another activity (`CatalogActivity`).
+        UI.ramosRecycler.adapter!!.notifyDataSetChanged() // <- as it is very hard to notify this adapter from another activity (`CatalogActivity`).
     }
 
     override fun onDestroy() {

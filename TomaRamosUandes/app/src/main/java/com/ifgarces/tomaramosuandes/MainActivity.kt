@@ -14,7 +14,7 @@ import com.ifgarces.tomaramosuandes.utils.multilineFormat
 /**
  * Waits for the initialization of all data and then, if successfull, launches `HomeActivity`.
  * If error, prompts dialog and terminates the program.
- * @property PROGRESSBAR_SPAWN_TIMEOUT The amount of milliseconds before the ProgressBar shows in front of the app icon.
+ * @property PROGRESSBAR_SPAWN_TIMEOUT The amount of milliseconds before the ProgressBar appears in front of the app icon.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var loadBar   :ProgressBar
 
         fun init(owner :AppCompatActivity) {
-            this.loadLayer = owner.findViewById(R.id.main_loadFocusLayer)
+            this.loadLayer = owner.findViewById(R.id.main_loadBackground)
             this.loadBar = owner.findViewById(R.id.main_progressBar)
         }
     }
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         UI.loadLayer.visibility = View.GONE
         UI.loadBar.visibility = View.GONE
 
-        UI.loadLayer.postDelayed({
+        UI.loadLayer.postDelayed({ // couldn't do it with `runOnUiThread`, for some reason
             UI.loadLayer.visibility = View.VISIBLE
             UI.loadBar.visibility = View.VISIBLE
         }, PROGRESSBAR_SPAWN_TIMEOUT)

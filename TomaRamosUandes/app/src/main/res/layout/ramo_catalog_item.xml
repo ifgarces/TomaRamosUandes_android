@@ -9,15 +9,15 @@
     app:cardCornerRadius="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cursoCatalog_container"
+        android:id="@+id/ramoCatalog_container"
         android:padding="6dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/cursoCatalog_nombre"
+            android:id="@+id/ramoCatalog_nombre"
             android:layout_marginEnd="18dp"
-            android:text="[Curso.nombre]"
+            android:text="[nombre]"
             android:fontFamily="@font/lato"
             android:textColor="@color/almostBlack"
             android:textSize="18sp"
@@ -25,23 +25,22 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/cursoCatalog_pe"
+            app:layout_constraintEnd_toStartOf="@+id/ramoCatalog_pe"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/cursoCatalog_pe"
-            android:text="[Curso.PE]"
+            android:id="@+id/ramoCatalog_pe"
+            android:text="[planEstudios]"
             android:fontFamily="@font/lato"
             android:textSize="13sp"
-            android:textAllCaps="true"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/cursoCatalog_nombre"
+            app:layout_constraintBottom_toBottomOf="@+id/ramoCatalog_nombre"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cursoCatalog_nombre" />
+            app:layout_constraintTop_toTopOf="@+id/ramoCatalog_nombre" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -49,11 +48,11 @@
             android:layout_marginTop="6dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cursoCatalog_nombre">
+            app:layout_constraintTop_toBottomOf="@+id/ramoCatalog_nombre">
 
             <TextView
-                android:id="@+id/cursoCatalog_materia"
-                android:text="[Curso.materia]"
+                android:id="@+id/ramoCatalog_materia"
+                android:text="[materia]"
                 android:fontFamily="monospace"
                 android:textSize="14sp"
                 android:textColor="@color/gray"
@@ -65,8 +64,8 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cursoCatalog_static01"
-                style="@style/curso_NRC"
+                android:id="@+id/ramoCatalog_static01"
+                style="@style/ramo_NRC"
                 android:paddingEnd="0dp"
                 android:text="NRC:"
 
@@ -74,22 +73,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cursoCatalog_materia"
+                app:layout_constraintStart_toEndOf="@+id/ramoCatalog_materia"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cursoCatalog_NRC"
-                style="@style/curso_NRC"
-                android:text="[Curso.NRC]"
+                android:id="@+id/ramoCatalog_NRC"
+                style="@style/ramo_NRC"
+                android:text="[NRC]"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cursoCatalog_static01"
+                app:layout_constraintStart_toEndOf="@+id/ramoCatalog_static01"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cursoCatalog_static02"
+                android:id="@+id/ramoCatalog_static02"
                 android:text="Sección: "
                 android:fontFamily="@font/lato"
                 android:textColor="@color/gray"
@@ -98,12 +97,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cursoCatalog_seccionNum"
+                app:layout_constraintEnd_toStartOf="@+id/ramoCatalog_seccion"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cursoCatalog_seccionNum"
-                android:text="[Curso.secciónNum]"
+                android:id="@+id/ramoCatalog_seccion"
+                android:text="[sección]"
                 android:fontFamily="@font/lato"
                 android:textColor="@color/gray"
                 android:textSize="14sp"

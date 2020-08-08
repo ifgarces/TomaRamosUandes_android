@@ -1,7 +1,6 @@
-# Temporal file used to commit quickly to Git, etc.
+# Temporal files used to commit quickly to Git, etc.
 commit*.bat
-
-TaskHandlerUltra.zip
+commit_message.txt
 
 # Built application files
 *.apk
@@ -11,6 +10,9 @@ TaskHandlerUltra.zip
 
 # Files for the ART/Dalvik VM
 *.dex
+
+# Java class files
+*.class
 
 # Generated files
 bin/
@@ -52,6 +54,11 @@ captures/
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
 
+# Keystore files
+# Uncomment the following lines if you do not want to check your keystore files in.
+#*.jks
+#*.keystore
+
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
 .cxx/
@@ -59,8 +66,27 @@ captures/
 # Google Services (e.g. APIs or Firebase)
 # google-services.json
 
+# Freeline
+freeline.py
+freeline/
+freeline_project_description.json
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/readme.md
+
+# Version control
+vcs.xml
+
 # lint
 lint/intermediates/
 lint/generated/
 lint/outputs/
 lint/tmp/
+# lint/reports/
+
+# Android Profiling
+*.hprof

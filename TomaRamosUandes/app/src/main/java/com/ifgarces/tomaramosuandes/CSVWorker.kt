@@ -1,10 +1,8 @@
 package com.ifgarces.tomaramosuandes
 
-import android.app.Activity
-import com.ifgarces.tomaramosuandes.models.Curso
-import com.ifgarces.tomaramosuandes.models.CursoEvent
+import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -65,25 +63,30 @@ object CSVWorker {
 
 
     /**
-    * Converts the contents of the CSV (holding the period catalog) into a collection of `Curso`.
+    * Converts the contents of the CSV (holding the period catalog) into a collection of `Ramo`.
     * On fatal parsing error (invalid `csv_contents`), returns null.
     */
-    public fun parseCSV(csv_lines :List<String>) : List<Curso>? {
-        val catalogResult :MutableList<Curso> = mutableListOf()
+    public fun parseCSV(csv_lines :List<String>) : List<Ramo>? {
+        val catalogResult :MutableList<Ramo> = mutableListOf()
 
         val NRCs :MutableList<Int> = mutableListOf()
         var line :List<String>
         val current = object {
-            var NRC :Int = 0
-            var cursoNum :Int = 0
+            var NRC   :Int = 0
+            var curso :Int = 0
             lateinit var dayOfWeek :DayOfWeek
             lateinit var eventType :String
             lateinit var startTime :LocalTime
             lateinit var endTime   :LocalTime
+
+            var clases :MutableList<RamoEvent>? = null
+            var ayuds  :MutableList<RamoEvent>? = null
+            var labs   :MutableList<RamoEvent>? = null
+            var evals  :MutableList<RamoEvent>? = null
         }
         var stringAux :String
         var splitterAux :List<String>
-        var eventAux :CursoEvent
+        var eventAux :RamoEvent
         var eventsCounter :Int = 0
         var lineNum :Int = 0
         var badNRCsCount :Int = 0
@@ -100,28 +103,41 @@ object CSVWorker {
             }
 
             try {
-                current.cursoNum = line[this.csv_columns.CURSONUM].toInt()
+                current.curso = line[this.csv_columns.CURSONUM].toInt()
             }
             catch (e :NumberFormatException) {
-                Logf("[CSVWorker] Warning: CursoNum could not be parsed to integer at CSV line %d (%s). Details: %s. Assuming CursoNum assign is yet pending and assigning zero.", lineNum, csv_lines[lineNum], e)
-                current.cursoNum = 0
+                Logf("[CSVWorker] Warning: RamoNum could not be parsed to integer at CSV line %d (%s). Details: %s. Assuming RamoNum assign is yet pending and assigning zero.", lineNum, csv_lines[lineNum], e)
+                current.curso = 0
             }
 
 
-            if (! NRCs.contains(current.NRC)) {
+            if (! NRCs.contains(current.NRC)) { // NUEVO `RAMO`
+                // finishing parsing of previus `Ramo`
+                if (catalogResult.count() > 0) {
+                    catalogResult.last().clases = current.clases!!
+                    catalogResult.last().ayudantías = current.ayuds!!
+                    catalogResult.last().laboratorios = current.labs!!
+                    catalogResult.last().evaluaciones = current.evals!!
+                }
+
+                // preparing parsing of new `Ramo`
                 NRCs.add(current.NRC)
+                current.clases = mutableListOf()
+                current.ayuds = mutableListOf()
+                current.labs = mutableListOf()
+                current.evals = mutableListOf()
                 try {
                     catalogResult.add(
-                        Curso(
+                        Ramo(
                             NRC = current.NRC,
                             nombre = line[this.csv_columns.NOMBRE].trim(),
                             profesor = line[this.csv_columns.PROFESOR].trim(),
                             créditos = line[this.csv_columns.CRÉDITO].toInt(),
                             materia = line[this.csv_columns.MATERIA].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
-                            cursoNum = current.cursoNum,
-                            secciónNum = line[this.csv_columns.SECCIÓN].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
+                            curso = current.curso,
+                            sección = line[this.csv_columns.SECCIÓN].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
                             planEstudios = line[this.csv_columns.PLAN_ESTUDIOS].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
-                            connectLiga = line[this.csv_columns.CONECTOR_LIGA].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
+                            conectLiga = line[this.csv_columns.CONECTOR_LIGA].trim().replace(this.EXPLICIT_COMMA_MARKER, ","),
                             listaCruz = line[this.csv_columns.LISTA_CRUZADA].trim().replace(this.EXPLICIT_COMMA_MARKER, ",")
                         )
                     )
@@ -157,9 +173,9 @@ object CSVWorker {
             }
 
             current.eventType = line[this.csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
-            eventAux = CursoEvent(
+            eventAux = RamoEvent(
                 ID = eventsCounter++,
-                cursoNRC = current.NRC,
+                ramoNRC = current.NRC,
                 day = current.dayOfWeek,
                 startTime = current.startTime,
                 endTime = current.endTime
@@ -174,16 +190,16 @@ object CSVWorker {
                         Logf("[CSVWorker] Error: Date parsing exception at CSV line %d (%s). Details: %s", lineNum, csv_lines[lineNum], e)
                         return null
                     }
-                    catalogResult.last().evaluaciones.add( eventAux )
+                    current.evals!!.add( eventAux )
                 }
                 this.event_types.CLASE -> {
-                    catalogResult.last().clases.add( eventAux )
+                    current.clases!!.add( eventAux )
                 }
                 this.event_types.LABORATORIO -> {
-                    catalogResult.last().laboratorios.add( eventAux )
+                    current.labs!!.add( eventAux )
                 }
                 this.event_types.AYUDANTÍA, this.event_types.TUTORIAL -> {
-                    catalogResult.last().ayudantías.add( eventAux )
+                    current.ayuds!!.add( eventAux )
                 }
                 else -> {
                     Logf("[CSVWorker] Error at CSV line %d ('%s'): unknown event type '%s'", lineNum, line, current.eventType)
@@ -193,17 +209,5 @@ object CSVWorker {
         }
 
         return catalogResult
-    }
-
-    /* Shows a dialog informing of a fatal error when processing CSV data and terminates the hole program. */
-    public fun fatalErrorDialog(activity :Activity) {
-        Logf("[CSVWorker] Launching fatal error dialog...")
-        activity.runOnUiThread {
-            activity.infoDialog(
-                title = "Error fatal",
-                message = "No se pudo obtener el catálogo de ramos para este periodo. Intente más tarde.",
-                onDismiss = { activity.finishAffinity() }
-            )
-        }
     }
 }

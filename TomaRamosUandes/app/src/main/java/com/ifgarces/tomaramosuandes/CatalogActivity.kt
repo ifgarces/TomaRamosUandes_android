@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputLayout
-import com.ifgarces.tomaramosuandes.models.Curso
+import com.ifgarces.tomaramosuandes.adapters.CatalogAdapter
+import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.spanishNonAccent
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
@@ -38,7 +39,8 @@ class CatalogActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_catalog)
         UI.init(owner=this)
 
-        UI.recycler.adapter = CatalogAdapter(data=DataMaster.getCatalog())
+        UI.recycler.adapter =
+            CatalogAdapter(data = DataMaster.getCatalog())
         UI.recycler.layoutManager = LinearLayoutManager(this)
         UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
         UI.searchBox_layout.setStartIconOnClickListener {
@@ -62,13 +64,13 @@ class CatalogActivity : AppCompatActivity() {
         // TODO: show catalog help. Maybe show BottomDialogFragment instead of regular dialog.
     }
 
-    /* Searches `Curso`s in the catalog by `nombre` */
+    /* Searches `Ramo`s in the catalog by `nombre` */
     private fun searchFilterCatalog() { // TODO: tests.
         // TODO: [BUG] nonAccent not working: "algebra" has no results, unlike "álgebra"
-        val results :MutableList<Curso> = mutableListOf()
+        val results :MutableList<Ramo> = mutableListOf()
         val keywords :List<String> = UI.searchBox.text.toString()
             .spanishNonAccent().spanishUpperCase().trim().split(" ")
-        for (cc :Curso in DataMaster.getCatalog()) {
+        for (cc :Ramo in DataMaster.getCatalog()) {
             for (word :String in keywords) {
                 if (word.length <= 1) { continue }
                 if (cc.nombre.spanishNonAccent().contains(word) && cc !in results) {

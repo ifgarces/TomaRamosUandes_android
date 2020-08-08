@@ -72,8 +72,8 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/home_creditsStatic"
-            style="@style/home_creditsCount"
+            android:id="@+id/home_creditosStatic"
+            style="@style/home_creditosCount"
             android:text="Créditos: "
 
             android:layout_width="wrap_content"
@@ -83,18 +83,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/home_creditsNum"
-            style="@style/home_creditsCount"
-            android:text="[User total credits count]"
+            android:id="@+id/home_creditos"
+            style="@style/home_creditosCount"
+            android:text="[User total creditos count]"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/home_creditsStatic"
-            app:layout_constraintTop_toTopOf="@+id/home_creditsStatic" />
+            app:layout_constraintStart_toEndOf="@+id/home_creditosStatic"
+            app:layout_constraintTop_toTopOf="@+id/home_creditosStatic" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_cursosRecycler"
-            tools:listitem="@layout/curso_taken_item"
+            android:id="@+id/home_ramosRecycler"
+            tools:listitem="@layout/ramo_taken_item"
             android:scrollbars="vertical"
             android:elevation="0dp"
 
@@ -103,7 +103,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_creditsStatic" />
+            app:layout_constraintTop_toBottomOf="@+id/home_creditosStatic" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -111,7 +111,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_cursosRecycler">
+            app:layout_constraintTop_toBottomOf="@+id/home_ramosRecycler">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_agendaButton"

@@ -67,7 +67,7 @@
         <item name="android:layout_marginTop">12dp</item>
     </style>
 
-    <style name="agendaPortrait_cursoName">
+    <style name="agendaPortrait_ramoName">
         <item name="fontFamily">@font/lato</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:textColor">@color/almostBlack</item>
@@ -82,14 +82,14 @@
         <item name="android:textColor">@color/almostBlack</item>
     </style>
 
-    <style name="home_creditsCount">
+    <style name="home_creditosCount">
         <item name="fontFamily">@font/lato</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#513100</item>
     </style>
 
-    <!-- TextView style for `Curso` NRC -->
-    <style name="curso_NRC">
+    <!-- TextView style for `Ramo` NRC -->
+    <style name="ramo_NRC">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:background">@color/lightGray</item>
         <item name="android:paddingVertical">1dp</item>
@@ -106,7 +106,7 @@
         <item name="android:textSize">15sp</item>
     </style>
 
-    <style name="cursoEvent_dateOrDay" parent="standardTextView">
+    <style name="ramoEvent_dateOrDay" parent="standardTextView">
         <item name="android:textAlignment">center</item>
         <item name="android:padding">2dp</item>
         <item name="android:background">#2A0065</item>

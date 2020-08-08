@@ -16,13 +16,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/userCurso_delete"
+            app:layout_constraintEnd_toStartOf="@+id/userRamo_delete"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/userCurso_nombre"
-                android:text="[Curso.nombre]"
+                android:id="@+id/userRamo_nombre"
+                android:text="[nombre]"
                 android:fontFamily="@font/lato"
                 android:textAlignment="viewStart"
                 android:textColor="@color/gray"
@@ -35,55 +35,54 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/userCurso_materia"
+                android:id="@+id/userRamo_materia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
-                android:text="[Curso.materia]"
+                android:text="[materia]"
                 android:textColor="@color/gray"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/userCurso_NRC"
+                app:layout_constraintBottom_toBottomOf="@+id/userRamo_NRC"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/userCurso_NRC" />
+                app:layout_constraintTop_toTopOf="@+id/userRamo_NRC" />
 
             <TextView
-                android:id="@+id/userCurso_NRC"
-                style="@style/curso_NRC"
+                android:id="@+id/userRamo_NRC"
+                style="@style/ramo_NRC"
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="[Curso.NRC]"
-                app:layout_constraintStart_toEndOf="@+id/userCurso_materia"
-                app:layout_constraintTop_toBottomOf="@+id/userCurso_nombre" />
+                android:text="[NRC]"
+                app:layout_constraintStart_toEndOf="@+id/userRamo_materia"
+                app:layout_constraintTop_toBottomOf="@+id/userRamo_nombre" />
 
             <TextView
-                android:id="@+id/userCurso_static01"
+                android:id="@+id/userRamo_static01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
                 android:text="Sección: "
                 android:textColor="@color/gray"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/userCurso_NRC"
-                app:layout_constraintEnd_toStartOf="@+id/userCurso_seccionNum"
-                app:layout_constraintTop_toTopOf="@+id/userCurso_NRC" />
+                app:layout_constraintBottom_toBottomOf="@+id/userRamo_NRC"
+                app:layout_constraintEnd_toStartOf="@+id/userRamo_seccion"
+                app:layout_constraintTop_toTopOf="@+id/userRamo_NRC" />
 
             <TextView
-                android:id="@+id/userCurso_seccionNum"
+                android:id="@+id/userRamo_seccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
-                android:text="[Curso.secciónNum]"
+                android:text="[sección]"
                 android:textColor="@color/gray"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/userCurso_static01" />
+                app:layout_constraintTop_toTopOf="@+id/userRamo_static01" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
-            android:id="@+id/userCurso_delete"
+            android:id="@+id/userRamo_delete"
             app:srcCompat="@drawable/trash_icon"
             android:tint="@color/almostBlack"
             android:backgroundTint="@android:color/transparent"

@@ -14,8 +14,8 @@
 
         <TextView
             android:id="@+id/agendaPblock_nombre"
-            style="@style/agendaPortrait_cursoName"
-            android:text="[Curso.nombre]"
+            style="@style/agendaPortrait_ramoName"
+            android:text="[Ramo.nombre]"
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
