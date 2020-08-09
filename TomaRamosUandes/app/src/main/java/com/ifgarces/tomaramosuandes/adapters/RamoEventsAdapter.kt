@@ -7,14 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.SpanishFormatter
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 
 
-class RamoEventAdapter(
-    private var data          :List<RamoEvent>,
-    private val dayOfWeekOnly :Boolean // true for tests/exams, false for other events
-) : RecyclerView.Adapter<RamoEventAdapter.EventViewHolder>() {
+class RamoEventsAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<RamoEventsAdapter.EventViewHolder>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : EventViewHolder {
         return EventViewHolder(
@@ -33,7 +31,6 @@ class RamoEventAdapter(
     }
 
     inner class EventViewHolder(v :View) : RecyclerView.ViewHolder(v) {
-        //private val parentView  :View     = v
         private val dateDisplay :TextView = v.findViewById(R.id.ramoEvent_when)
         private val ti          :TextView = v.findViewById(R.id.ramoEvent_ti)
         private val tf          :TextView = v.findViewById(R.id.ramoEvent_tf)
@@ -41,11 +38,11 @@ class RamoEventAdapter(
         fun bind(event :RamoEvent, position :Int) {
             this.ti.text = event.startTime.toString()
             this.tf.text = event.endTime.toString()
-            if (dayOfWeekOnly) { // prueba
-                this.dateDisplay.text = SpanishFormatter.dayOfWeek(event.day).spanishUpperCase()
+            if (event.type == RamoEventType.PRBA || event.type == RamoEventType.EXAM) { // evaluación
+                this.dateDisplay.text = SpanishFormatter.localDate(event.date!!) // e.g. "18/11/2020"
             }
             else { // clase, ayudantía o laboratorio
-                this.dateDisplay.text = SpanishFormatter.localDate(event.date!!)
+                this.dateDisplay.text = SpanishFormatter.dayOfWeek(event.dayofWeek).spanishUpperCase() // e.g. "viernes"
             }
         }
     }

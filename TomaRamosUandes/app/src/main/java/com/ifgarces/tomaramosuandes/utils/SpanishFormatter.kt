@@ -23,7 +23,7 @@ object SpanishFormatter {
 
     /* Returns stringed date with format "dd/MM/yyyy" */
     public fun localDate(date :LocalDate) : String {
-        val aux :List<String> = date.toString().split("-") // format: "MM-dd-yyyy"
-        return "${aux[1]}/${aux[0]}/${aux[2]}"
+        val aux :List<String> = date.toString().split("-") // "yyyy-MM-dd"
+        return "${aux[2]}/${aux[1]}/${aux[0]}" // "dd/MM/yyyy"
     }
 }

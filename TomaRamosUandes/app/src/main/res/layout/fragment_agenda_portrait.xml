@@ -5,15 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AgendaActivity">
+    android:background="@android:color/white">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/agendaP_fullScreen"
-        android:tint="@android:color/white"
+        android:id="@+id/portrAgenda_fullScreen"
         app:srcCompat="@drawable/fullscreen_icon"
+        android:tint="@android:color/white"
         android:clickable="true"
         android:elevation="@dimen/floatingButton_elevation"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorAccent"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,84 +23,85 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
+        android:orientation="vertical"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/agendaP_mondayHead"
+                android:id="@+id/portrAgenda_mondayHead"
                 style="@style/agendaPortrait_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Lunes" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/agendaP_mondayRecycler"
+                android:id="@+id/portrAgenda_mondayRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:itemCount="3"
                 tools:listitem="@layout/agenda_portrait_block" />
 
             <TextView
-                android:id="@+id/agendaP_tuesdayHead"
+                android:id="@+id/portrAgenda_tuesdayHead"
                 style="@style/agendaPortrait_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Martes" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/agendaP_tuesdayRecycler"
+                android:id="@+id/portrAgenda_tuesdayRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:itemCount="3"
                 tools:listitem="@layout/agenda_portrait_block" />
 
             <TextView
-                android:id="@+id/agendaP_wednesdayHead"
+                android:id="@+id/portrAgenda_wednesdayHead"
                 style="@style/agendaPortrait_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Miércoles" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/agendaP_wednesdayRecycler"
+                android:id="@+id/portrAgenda_wednesdayRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:itemCount="3"
                 tools:listitem="@layout/agenda_portrait_block" />
 
             <TextView
-                android:id="@+id/agendaP_thursdayHead"
+                android:id="@+id/portrAgenda_thursdayHead"
                 style="@style/agendaPortrait_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Jueves" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/agendaP_thursdayRecycler"
+                android:id="@+id/portrAgenda_thursdayRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:itemCount="3"
                 tools:listitem="@layout/agenda_portrait_block" />
 
             <TextView
-                android:id="@+id/agendaP_fridayHead"
+                android:id="@+id/portrAgenda_fridayHead"
                 style="@style/agendaPortrait_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Viernes" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/agendaP_fridayRecycler"
+                android:id="@+id/portrAgenda_fridayRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:itemCount="3"

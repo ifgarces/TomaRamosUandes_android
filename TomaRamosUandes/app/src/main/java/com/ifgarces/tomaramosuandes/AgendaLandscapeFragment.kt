@@ -8,12 +8,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class AgendaLandscapeFragment : Fragment() {
 
-    private object UI { // landscape orientation widgets
+    companion object {
+        public fun summon(caller :FragmentActivity, widget_id :Int) {
+            val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
+                .replace(widget_id, this.newInstance())
+            transactioner.commit()
+        }
+        private fun newInstance() = AgendaLandscapeFragment()
+    }
+
+    private object UI {
         lateinit var rootView        :View
         lateinit var saveAsImgAction :FloatingActionButton
         lateinit var lun             :List<Button>
@@ -24,7 +35,7 @@ class AgendaLandscapeFragment : Fragment() {
 
         fun init(owner :View) {
             this.rootView = owner
-            this.saveAsImgAction = owner.findViewById(R.id.bigAgenda_saveAsImage)
+            this.saveAsImgAction = owner.findViewById(R.id.landAgenda_saveAsImage)
             this.lun = listOf(
                 owner.findViewById(R.id.lun0),
                 owner.findViewById(R.id.lun1),
@@ -116,30 +127,30 @@ class AgendaLandscapeFragment : Fragment() {
         for (k :Int in (0..13)) {
             for (collection :List<Button> in listOf(UI.lun, UI.mar, UI.mie, UI.jue, UI.vie)) {
                 collection[k].text = ""
-                collection[k].setOnClickListener {
-                    this.blockClick(sender=collection[k])
-                }
+                collection[k].setOnClickListener { this.blockClick(sender=collection[k]) }
             }
         }
+
         this.enterFullScreen()
+        this.buildAgenda()
         return UI.rootView
     }
 
     /* Enters "inmersive mode", hiding system LandscapeUI elements (and forcing landscape orientation) */
     private fun enterFullScreen() { /// references: https://developer.android.com/training/system-ui/immersive.html
         this.activity!!.window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
+            View.SYSTEM_UI_FLAG_IMMERSIVE
+            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_FULLSCREEN
+        )
         this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     }
 
-    private fun blockClick(sender :View) {
-
+    private fun blockClick(sender :Button) {
+        // TODO: fill
     }
 
     private fun buildAgenda() {

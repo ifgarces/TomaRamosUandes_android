@@ -20,7 +20,7 @@ class TakenRamosAdapter(private var data :MutableList<Ramo>) : RecyclerView.Adap
 
     override fun getItemCount() = this.data.count()
 
-    override fun onBindViewHolder(holder : TakenViewHolder, position :Int) =
+    override fun onBindViewHolder(holder :TakenViewHolder, position :Int) =
         holder.bind(this.data[position], position)
 
     public fun updateData(data :MutableList<Ramo>) {

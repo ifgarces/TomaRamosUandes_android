@@ -2,7 +2,9 @@ package com.ifgarces.tomaramosuandes
 
 import android.os.AsyncTask
 import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.utils.CSVWorker
 import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.WebManager
 
 
 /**
@@ -52,11 +54,25 @@ object DataMaster {
         }
     }
 
-    public fun findRamoByNRC(nrc :Int) : Ramo? {
+    public fun findRamo(NRC :Int) : Ramo? {
         for (ramo :Ramo in this.catalog) {
-            if (ramo.NRC == nrc) { return ramo }
+            if (ramo.NRC == NRC) { return ramo }
         }
         return null
+    }
+
+    public fun addUserRamo(ramo :Ramo) {
+        this.userRamos.add(ramo)
+        // TODO: update Room DB
+    }
+
+    public fun deleteUserRamo(NRC :Int) {
+        for (ramo :Ramo in this.userRamos) {
+            if (ramo.NRC == NRC) {
+                this.userRamos.remove(ramo)
+                // TODO: update Room DB
+            }
+        }
     }
 
     public fun getUserCreditsCount() : Int {

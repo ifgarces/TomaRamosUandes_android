@@ -1,4 +1,4 @@
-package com.ifgarces.tomaramosuandes
+package com.ifgarces.tomaramosuandes.utils
 
 import java.net.URL
 
@@ -9,7 +9,7 @@ object WebManager {
     private const val ONLINE_CSV_URL   :String = "https://sites.google.com/site/test156885/CAT%C3%81LOGO%20COMPLETO%20ING.csv?attredirects=0&d=1"
 
     fun init() {
-        this.checkForUpdates()
+        checkForUpdates()
     }
 
     private fun checkForUpdates() {
@@ -21,6 +21,6 @@ object WebManager {
      * @exception java.net.UnknownHostException internet on connection failure
      */
     public fun FetchOnlineDataCSV() : String {
-        return URL(this.ONLINE_CSV_URL).readText(charset=Charsets.UTF_8)
+        return URL(ONLINE_CSV_URL).readText(charset=Charsets.UTF_8)
     }
 }

@@ -6,11 +6,11 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/recyclerItems_margin"
     app:cardBackgroundColor="@color/almostWhite"
-    app:cardCornerRadius="15dp">
+    app:cardCornerRadius="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ramoCatalog_container"
-        android:padding="6dp"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/home_topbar_layout"
@@ -60,50 +60,75 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/home_emptyRecyclerText"
+        style="@style/standardTextView"
+        android:text="Ningún ramo tomado aún"
+        android:elevation="2dp"
+        android:outlineProvider="none"
+        android:visibility="invisible"
+
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_userDataStatic" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:background="@drawable/box_thick"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/home_creditosStatic"
-            style="@style/home_creditosCount"
-            android:text="Créditos: "
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/home_creditos"
-            style="@style/home_creditosCount"
-            android:text="[User total creditos count]"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/home_creditosStatic"
-            app:layout_constraintTop_toTopOf="@+id/home_creditosStatic" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_ramosRecycler"
-            tools:listitem="@layout/ramo_taken_item"
-            android:scrollbars="vertical"
-            android:elevation="0dp"
-
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/home_userRamosContainer"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_creditosStatic" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/home_creditosStatic"
+                style="@style/home_creditosCount"
+                android:text="Créditos: "
+                android:layout_marginTop="6dp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/home_creditos"
+                style="@style/home_creditosCount"
+                android:text="[User total creditos count]"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@+id/home_creditosStatic"
+                app:layout_constraintTop_toTopOf="@+id/home_creditosStatic" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/home_ramosRecycler"
+                tools:listitem="@layout/ramo_taken_item"
+                android:scrollbars="vertical"
+                android:elevation="0dp"
+
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/home_creditosStatic" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -111,51 +136,34 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_ramosRecycler">
+            app:layout_constraintTop_toBottomOf="@+id/home_userRamosContainer">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_agendaButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                app:icon="@drawable/calendar_icon"
                 android:text="Horario"
                 android:textAllCaps="false"
-
                 android:textSize="@dimen/buttonLower_textSize"
-                app:icon="@drawable/calendar_icon"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_pruebasButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
+                app:icon="@drawable/exam_icon"
                 android:text="Evaluaciones"
-
                 android:textAllCaps="false"
                 android:textSize="@dimen/buttonLower_textSize"
-                app:icon="@drawable/exam_icon"
+
+                android:layout_marginStart="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@+id/home_agendaButton"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- Hidden by default -->
-        <TextView
-            android:id="@+id/home_emptyRecyclerText"
-            android:text="Ningún ramo tomado aún"
-            android:textAlignment="center"
-            android:fontFamily="@font/lato"
-            android:textSize="15sp"
-            android:textColor="@color/gray"
-            android:visibility="invisible"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -165,6 +173,7 @@
         android:id="@+id/home_loadBackground"
         style="@style/loadWait_background"
         android:visibility="gone"
+
         app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -174,6 +183,7 @@
         android:id="@+id/home_loadProgressBar"
         style="@style/loadWait_progressBar"
         android:visibility="gone"
+
         app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

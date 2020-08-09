@@ -51,6 +51,7 @@
                 style="@style/ramo_NRC"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ramoAttrs_spacing"
                 android:layout_marginTop="10dp"
                 android:text="[NRC]"
                 app:layout_constraintStart_toEndOf="@+id/userRamo_materia"

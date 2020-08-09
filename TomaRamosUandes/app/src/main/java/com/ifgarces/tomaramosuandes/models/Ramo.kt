@@ -16,16 +16,11 @@ data class Ramo(
     val sección      :String, // número de sección (en raras ocasiones no es un número, e.g. "A")
     val planEstudios :String, // plan de estudios
     val conectLiga   :String, // conector liga
-    val listaCruz    :String, // lista cruzada
-    var clases       :List<RamoEvent> = listOf(),
-    var ayudantías   :List<RamoEvent> = listOf(),
-    var laboratorios :List<RamoEvent> = listOf(),
-    var evaluaciones :List<RamoEvent> = listOf()
+    val listaCruzada :String, // lista cruzada
+    var events       :List<RamoEvent> = listOf() // clases, ayudantías, tutoriales, laboratorios, pruebas y exámenes
 
 ) {
-    companion object {
-        const val TABLE_NAME :String = "ramo"
-    }
+    companion object { const val TABLE_NAME :String = "ramo" }
 
     public fun getShortInfo() : String {
         var profe :String = this.profesor

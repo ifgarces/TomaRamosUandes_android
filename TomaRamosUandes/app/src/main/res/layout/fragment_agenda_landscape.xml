@@ -7,11 +7,11 @@
     android:background="@color/almostWhite">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/bigAgenda_saveAsImage"
+        android:id="@+id/landAgenda_saveAsImage"
         app:srcCompat="@drawable/add_image_icon"
         android:clickable="true"
         android:elevation="@dimen/floatingButton_elevation"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorAccent"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,21 +21,23 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TableLayout
-        android:id="@+id/bigAgenda_headersLayout"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:id="@+id/landAgenda_headersLayout"
         android:shrinkColumns="*"
         android:stretchColumns="1,2,3,4,5"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TableRow
-            android:id="@+id/bigAgenda_headersRow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/landAgenda_headersRow"
             android:background="@color/gray"
-            android:elevation="10dp">
+            android:elevation="2dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
                 style="@style/agendaLandscape_header"
@@ -64,13 +66,13 @@
     </TableLayout>
 
     <ScrollView
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bigAgenda_headersLayout">
+        app:layout_constraintTop_toBottomOf="@+id/landAgenda_headersLayout">
 
         <LinearLayout
             android:orientation="vertical"
@@ -80,6 +82,7 @@
             <TableLayout
                 android:shrinkColumns="*"
                 android:stretchColumns="1,2,3,4,5"
+                android:elevation="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -121,9 +124,9 @@
 
                 <TableRow
                     android:id="@+id/row2"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
@@ -192,9 +195,9 @@
 
                 <TableRow
                     android:id="@+id/row4"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
@@ -263,9 +266,9 @@
 
                 <TableRow
                     android:id="@+id/row6"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
@@ -334,9 +337,9 @@
 
                 <TableRow
                     android:id="@+id/row8"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
@@ -405,9 +408,9 @@
 
                 <TableRow
                     android:id="@+id/row10"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
@@ -476,9 +479,9 @@
 
                 <TableRow
                     android:id="@+id/row12"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
@@ -547,9 +550,9 @@
 
                 <TableRow
                     android:id="@+id/row14"
+                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lighterGray">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
