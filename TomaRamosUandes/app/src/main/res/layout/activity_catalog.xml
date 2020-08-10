@@ -27,59 +27,58 @@
             app:title="Catálogo de ramos" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/catalog_searchBox_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:hint="Buscar ramo"
+        app:startIconDrawable="@drawable/clear_icon"
+        app:startIconCheckable="true"
+
+        android:layout_marginHorizontal="36dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/catalog_topbar_layout">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/catalog_searchBox_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Buscar ramo"
-            app:startIconCheckable="true"
-            app:startIconDrawable="@drawable/clear_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/catalog_searchBox"
-                android:backgroundTint="@android:color/transparent"
-                android:ems="15"
-                android:inputType="text"
-                android:text=""
-                android:textAlignment="viewStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/catalog_searchBox"
+            android:text=""
+            android:backgroundTint="@android:color/transparent"
+            android:ems="15"
+            android:inputType="text"
+            android:textAlignment="viewStart"
 
-        <ImageButton
-            android:id="@+id/catalog_searchButton"
-            android:layout_width="60dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/catalog_searchBox_layout"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/search_icon" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/standardTextView"
+        android:text="Sin resultados"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_recycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_searchBox_layout"
+        app:layout_constraintVertical_bias="0.1" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/catalog_recycler"
+        tools:listitem="@layout/ramo_catalog_item"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        android:background="@android:color/white"
+
+        android:layout_marginTop="6dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
-        tools:listitem="@layout/ramo_catalog_item" />
+        app:layout_constraintTop_toBottomOf="@+id/catalog_searchBox_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

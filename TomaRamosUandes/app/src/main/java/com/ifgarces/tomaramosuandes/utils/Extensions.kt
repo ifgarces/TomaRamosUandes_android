@@ -3,7 +3,10 @@ package com.ifgarces.tomaramosuandes.utils
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 import java.util.Locale
 import java.lang.String.format as sprintf
@@ -56,10 +59,24 @@ fun String.spanishNonAccent() : String {
     return result
 }
 
+/* Executes `action` when the widget `text` is changed */
+fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
+    this.addTextChangedListener(
+        object : TextWatcher {
+            override fun afterTextChanged(s :Editable) {}
+            override fun beforeTextChanged(s :CharSequence, start :Int, count :Int, after :Int) {}
+
+            override fun onTextChanged(s :CharSequence, start :Int, before :Int, count :Int) {
+                action.invoke(s.toString())
+            }
+        }
+    )
+}
+
 /* Dialog simple que muestra un texto */
 fun Context.infoDialog(
-    title :String,
-    message :String,
+    title     :String,
+    message   :String,
     onDismiss :() -> Unit = {}
 ) {
     val diag_builder :AlertDialog.Builder = AlertDialog.Builder(this)
@@ -75,10 +92,10 @@ fun Context.infoDialog(
 
 /* Dialog con botónes SÍ/NO */
 fun Context.yesNoDialog(
-    title :String,
-    message :String,
+    title        :String,
+    message      :String,
     onYesClicked :() -> Unit,
-    onNoClicked :() -> Unit = {}
+    onNoClicked  :() -> Unit = {}
 ) {
     val diag_builder :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)

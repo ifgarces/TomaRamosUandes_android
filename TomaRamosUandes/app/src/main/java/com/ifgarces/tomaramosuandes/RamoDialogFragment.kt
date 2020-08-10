@@ -17,23 +17,17 @@ import com.ifgarces.tomaramosuandes.adapters.RamoEventsAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
-import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.toastf
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 
 
-class RamoPeekFragment : BottomSheetDialogFragment() {
+class RamoDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         public fun invoke(manager :FragmentManager) {
             this.newInstance().show(manager, this::class.simpleName)
         }
-        private fun newInstance() = RamoPeekFragment()
-    }
-
-    public object Mode { // open mode
-        const val UNTAKEN :Int = 0 // `Ramo` can be taken and added to user's list
-        const val TAKEN   :Int = 1 // `Ramo` is already in user's list
+        private fun newInstance() = RamoDialogFragment()
     }
 
     private object UI {
@@ -56,21 +50,21 @@ class RamoPeekFragment : BottomSheetDialogFragment() {
 
         fun init(owner :View) {
             this.rootView     = owner
-            this.nombre       = owner.findViewById(R.id.ramoPeek_nombre)
-            this.NRC          = owner.findViewById(R.id.ramoPeek_NRC)
-            this.profe        = owner.findViewById(R.id.ramoPeek_profesor)
-            this.créditos     = owner.findViewById(R.id.ramoPeek_creditosNum)
-            this.materia      = owner.findViewById(R.id.ramoPeek_materia)
-            this.curso        = owner.findViewById(R.id.ramoPeek_curso)
-            this.sección      = owner.findViewById(R.id.ramoPeek_seccion)
-            this.PE           = owner.findViewById(R.id.ramoPeek_PE)
-            this.conectLiga   = owner.findViewById(R.id.ramoPeek_liga)
-            this.listaCruz    = owner.findViewById(R.id.ramoPeek_lCruz)
-            this.clases       = owner.findViewById(R.id.ramoPeek_clasesRecycler)
-            this.ayuds        = owner.findViewById(R.id.ramoPeek_ayudsRecycler)
-            this.labs         = owner.findViewById(R.id.ramoPeek_labsRecycler)
-            this.pruebas      = owner.findViewById(R.id.ramoPeek_pruebasRecycler)
-            this.actionButton = owner.findViewById(R.id.ramoPeek_button)
+            this.nombre       = owner.findViewById(R.id.ramoDialog_nombre)
+            this.NRC          = owner.findViewById(R.id.ramoDialog_NRC)
+            this.profe        = owner.findViewById(R.id.ramoDialog_profesor)
+            this.créditos     = owner.findViewById(R.id.ramoDialog_creditosNum)
+            this.materia      = owner.findViewById(R.id.ramoDialog_materia)
+            this.curso        = owner.findViewById(R.id.ramoDialog_curso)
+            this.sección      = owner.findViewById(R.id.ramoDialog_seccion)
+            this.PE           = owner.findViewById(R.id.ramoDialog_PE)
+            this.conectLiga   = owner.findViewById(R.id.ramoDialog_liga)
+            this.listaCruz    = owner.findViewById(R.id.ramoDialog_lCruz)
+            this.clases       = owner.findViewById(R.id.ramoDialog_clasesRecycler)
+            this.ayuds        = owner.findViewById(R.id.ramoDialog_ayudsRecycler)
+            this.labs         = owner.findViewById(R.id.ramoDialog_labsRecycler)
+            this.pruebas      = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
+            this.actionButton = owner.findViewById(R.id.ramoDialog_button)
         }
     }
 
@@ -130,7 +124,7 @@ class RamoPeekFragment : BottomSheetDialogFragment() {
             val bottomSheet :View = dialog?.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
             val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from<View>(bottomSheet)
-            val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoPeek_linearLayout) as LinearLayout //rootLayout is root of your fragment layout.
+            val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout //rootLayout is root of your fragment layout.
             layout.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     try {
@@ -144,12 +138,13 @@ class RamoPeekFragment : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
-        return inflater.inflate(R.layout.fragment_ramo_peek, container, false)
+        return inflater.inflate(R.layout.fragment_ramo_dialog, container, false)
     }
 
     private fun actionTake(ramo :Ramo) {
         DataMaster.addUserRamo(ramo)
         this.context!!.toastf("%s tomado", ramo.nombre)
+        HomeActivity.RecyclerSync.updateRecycler()
         this.dismiss()
     }
 
@@ -160,6 +155,7 @@ class RamoPeekFragment : BottomSheetDialogFragment() {
             onYesClicked = {
                 DataMaster.deleteUserRamo(ramo.NRC)
                 this.context!!.toastf("%s eliminado", ramo.nombre)
+                HomeActivity.RecyclerSync.updateRecycler()
                 this.dismiss()
             }
         )

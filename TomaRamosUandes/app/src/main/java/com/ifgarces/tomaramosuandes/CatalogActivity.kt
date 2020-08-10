@@ -2,18 +2,15 @@ package com.ifgarces.tomaramosuandes
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
-import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputLayout
-import com.ifgarces.tomaramosuandes.adapters.CatalogAdapter
+import com.ifgarces.tomaramosuandes.adapters.RamosAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
-import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.spanishNonAccent
-import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
-import com.ifgarces.tomaramosuandes.utils.toastf
+import com.ifgarces.tomaramosuandes.utils.*
 
 
 class CatalogActivity : AppCompatActivity() {
@@ -23,14 +20,12 @@ class CatalogActivity : AppCompatActivity() {
         lateinit var recycler         :RecyclerView
         lateinit var searchBox_layout :TextInputLayout
         lateinit var searchBox        :EditText
-        lateinit var searchButton     :ImageButton
 
         fun init(owner :AppCompatActivity) {
             this.topBar           = owner.findViewById(R.id.catalog_topbar)
             this.recycler         = owner.findViewById(R.id.catalog_recycler)
             this.searchBox_layout = owner.findViewById(R.id.catalog_searchBox_layout)
             this.searchBox        = owner.findViewById(R.id.catalog_searchBox)
-            this.searchButton     = owner.findViewById(R.id.catalog_searchButton)
         }
     }
 
@@ -39,12 +34,12 @@ class CatalogActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_catalog)
         UI.init(owner=this)
 
-        UI.recycler.adapter =
-            CatalogAdapter(data = DataMaster.getCatalog())
+        UI.recycler.adapter = RamosAdapter(data = DataMaster.getCatalog())
         UI.recycler.layoutManager = LinearLayoutManager(this)
-        UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
-        UI.searchBox_layout.setStartIconOnClickListener {
-            this.clearSearch()
+        //UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
+        UI.searchBox_layout.setStartIconOnClickListener { this.clearSearch() }
+        UI.searchBox.onTextChangedListener {
+            if (it.length > 2) this.searchFilterCatalog(searchText=it)
         }
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -65,11 +60,10 @@ class CatalogActivity : AppCompatActivity() {
     }
 
     /* Searches `Ramo`s in the catalog by `nombre` */
-    private fun searchFilterCatalog() { // TODO: tests.
+    private fun searchFilterCatalog(searchText :String) { // TODO: tests.
         // TODO: [BUG] nonAccent not working: "algebra" has no results, unlike "álgebra"
         val results :MutableList<Ramo> = mutableListOf()
-        val keywords :List<String> = UI.searchBox.text.toString()
-            .spanishNonAccent().spanishUpperCase().trim().split(" ")
+        val keywords :List<String> = searchText.spanishNonAccent().spanishUpperCase().trim().split(" ")
         for (cc :Ramo in DataMaster.getCatalog()) {
             for (word :String in keywords) {
                 if (word.length <= 1) { continue }
@@ -78,16 +72,17 @@ class CatalogActivity : AppCompatActivity() {
                 }
             }
         }
-        (UI.recycler.adapter as CatalogAdapter).updateData(data=results)
-        Logf("[CatalogActivity] Got %d search results.", results.count())
+        (UI.recycler.adapter as RamosAdapter).updateData(data=results)
         if (results.count() == 0) {
-            this.toastf("Sin resultados")
+            UI.recycler.visibility = View.INVISIBLE
+        } else {
+            UI.recycler.visibility = View.VISIBLE
         }
     }
 
-    /* Undoes the search, showing again the full catalog */
+    /* Shows again the full catalog */
     private fun clearSearch() {
         UI.searchBox.setText("")
-        (UI.recycler.adapter as CatalogAdapter).updateData(data=DataMaster.getCatalog())
+        (UI.recycler.adapter as RamosAdapter).updateData(data=DataMaster.getCatalog())
     }
 }

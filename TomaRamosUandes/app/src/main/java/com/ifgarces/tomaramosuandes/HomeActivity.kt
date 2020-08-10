@@ -5,12 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import com.ifgarces.tomaramosuandes.adapters.TakenRamosAdapter
+import com.ifgarces.tomaramosuandes.adapters.RamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 
 
@@ -19,10 +18,25 @@ import com.ifgarces.tomaramosuandes.utils.Logf
  */
 class HomeActivity : AppCompatActivity() {
 
+    public object RecyclerSync {
+        private var updatePending :Boolean = false
+        private fun notifyAdapter() = UI.ramosRecycler.adapter!!.notifyDataSetChanged()
+        public fun updateRecycler() {
+            try {
+                this.notifyAdapter()
+                Logf("[HomeActivity] RecyclerSync: recycler updated")
+                this.updatePending = false
+            }
+            catch (e :NullPointerException) {
+                Logf("[HomeActivity] RecyclerSync: recycler update queued")
+                this.updatePending = true // update is queued and will be executed when this activity starts again
+            }
+        }
+    }
+
     private object UI {
         lateinit var topBar             :MaterialToolbar
         lateinit var catalogButton      :Button
-        lateinit var userRamosContainer :View // ConstraintLayout
         lateinit var ramosRecycler      :RecyclerView
         lateinit var emptyRecyclerText  :TextView
         lateinit var creditosCounter    :TextView
@@ -35,7 +49,6 @@ class HomeActivity : AppCompatActivity() {
         fun init(owner :AppCompatActivity) {
             this.topBar             = owner.findViewById(R.id.home_topbar)
             this.catalogButton      = owner.findViewById(R.id.home_catalogButton)
-            this.userRamosContainer = owner.findViewById(R.id.home_userRamosContainer)
             this.ramosRecycler      = owner.findViewById(R.id.home_ramosRecycler)
             this.emptyRecyclerText  = owner.findViewById(R.id.home_emptyRecyclerText)
             this.creditosCounter    = owner.findViewById(R.id.home_creditos)
@@ -52,7 +65,7 @@ class HomeActivity : AppCompatActivity() {
         UI.init(owner=this)
 
         UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
-        UI.ramosRecycler.adapter = TakenRamosAdapter(data=DataMaster.getUserRamos())
+        UI.ramosRecycler.adapter = RamosAdapter(data=DataMaster.getUserRamos())
         // [!] TODO: somehow set adapter data referenced to `DataMaster.userRamos`
 
         UI.topBar.setOnMenuItemClickListener {
@@ -74,19 +87,14 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        UI.loadBackground.visibility = View.GONE
-        UI.loadProgressBar.visibility = View.GONE
-
-        UI.emptyRecyclerText.visibility = View.INVISIBLE
-        UI.userRamosContainer.visibility = View.VISIBLE
+        this.exitLoadMode()
 
         UI.creditosCounter.text = DataMaster.getUserCreditsCount().toString()
         if (UI.creditosCounter.text == "0") {
-            UI.emptyRecyclerText.visibility = View.VISIBLE
-            UI.userRamosContainer.visibility = View.INVISIBLE
+            UI.ramosRecycler.visibility = View.INVISIBLE
         }
 
-        UI.ramosRecycler.adapter!!.notifyDataSetChanged() // <- as it is very hard to notify this adapter from another activity (`CatalogActivity`).
+        RecyclerSync.updateRecycler()
     }
 
     override fun onDestroy() {
@@ -98,6 +106,11 @@ class HomeActivity : AppCompatActivity() {
     private fun enterLoadMode() {
         UI.loadBackground.visibility = View.VISIBLE
         UI.loadProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun exitLoadMode() {
+        UI.loadBackground.visibility = View.GONE
+        UI.loadProgressBar.visibility = View.GONE
     }
 
     private fun launchCatalogView() {

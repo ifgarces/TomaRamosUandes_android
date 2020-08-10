@@ -31,18 +31,18 @@ class RamoEventsAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapte
     }
 
     inner class EventViewHolder(v :View) : RecyclerView.ViewHolder(v) {
-        private val dateDisplay :TextView = v.findViewById(R.id.ramoEvent_when)
-        private val ti          :TextView = v.findViewById(R.id.ramoEvent_ti)
-        private val tf          :TextView = v.findViewById(R.id.ramoEvent_tf)
+        private val dayData :TextView = v.findViewById(R.id.ramoEvent_when)
+        private val ti      :TextView = v.findViewById(R.id.ramoEvent_ti)
+        private val tf      :TextView = v.findViewById(R.id.ramoEvent_tf)
 
         fun bind(event :RamoEvent, position :Int) {
             this.ti.text = event.startTime.toString()
             this.tf.text = event.endTime.toString()
             if (event.type == RamoEventType.PRBA || event.type == RamoEventType.EXAM) { // evaluación
-                this.dateDisplay.text = SpanishFormatter.localDate(event.date!!) // e.g. "18/11/2020"
+                this.dayData.text = SpanishFormatter.localDate(event.date!!) // e.g. "18/11/2020"
             }
             else { // clase, ayudantía o laboratorio
-                this.dateDisplay.text = SpanishFormatter.dayOfWeek(event.dayofWeek).spanishUpperCase() // e.g. "viernes"
+                this.dayData.text = SpanishFormatter.dayOfWeek(event.dayofWeek).spanishUpperCase() // e.g. "viernes"
             }
         }
     }

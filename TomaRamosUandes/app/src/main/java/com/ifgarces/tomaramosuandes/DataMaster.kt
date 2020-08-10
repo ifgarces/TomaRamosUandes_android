@@ -39,7 +39,7 @@ object DataMaster {
                 this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog.count())
 
-                // TODO: load/clear user collection(s) of `Ramo` (Room DB)
+                // TODO: Room DB
 
                 onSuccess.invoke()
             }

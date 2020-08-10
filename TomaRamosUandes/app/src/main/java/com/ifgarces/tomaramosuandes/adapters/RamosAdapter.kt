@@ -8,12 +8,12 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.RamoPeekFragment
+import com.ifgarces.tomaramosuandes.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
-class CatalogAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<CatalogAdapter.CatalogViewHolder>() {
+class RamosAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<RamosAdapter.CatalogViewHolder>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : CatalogViewHolder {
         return CatalogViewHolder(
@@ -66,7 +66,7 @@ class CatalogAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<Catalo
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
                 helper.intent.putExtra(IntentKeys.RAMO_IS_TAKEN, ramo in DataMaster.getUserRamos())
-                RamoPeekFragment.invoke(manager=helper.supportFragmentManager)
+                RamoDialogFragment.invoke(manager=helper.supportFragmentManager)
             }
         }
     }
