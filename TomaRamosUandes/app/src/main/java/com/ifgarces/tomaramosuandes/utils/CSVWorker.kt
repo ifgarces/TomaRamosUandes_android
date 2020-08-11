@@ -212,6 +212,10 @@ object CSVWorker {
             )
         }
 
+
+        if (catalogResult.count() == 0) {
+            return null
+        } // happens when receiving one empty line
         return catalogResult
     }
 }

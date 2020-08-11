@@ -4,10 +4,11 @@ import org.junit.Test
 import org.junit.Assert
 
 
-class TestExtensions {
+class Test_Extensions {
 
-    data class StrTest(val paramIn :String, val expectedOut :String)
-    val errorMessageFormat :String = "Error in #%d test of %s.\n" +
+    private data class StrTest(val paramIn :String, val expectedOut :String)
+    private val errorMessageFormat :String =
+        "[${this::class.simpleName}] Error in #%d test of %s.\n" +
             "Expected: \"%s\"\n" +
             "Got: \"%s\"\n"
 
@@ -29,7 +30,7 @@ class TestExtensions {
             got = test.paramIn.spanishUpperCase()
             if (expected != got) {
                 Assert.fail(
-                    errorMessageFormat.format(k, "String.spanishUpperCase()", expected, got)
+                    this.errorMessageFormat.format(k, "String.spanishUpperCase()", expected, got)
                 )
             }
         }
@@ -53,7 +54,7 @@ class TestExtensions {
             got = test.paramIn.spanishLowerCase()
             if (expected != got) {
                 Assert.fail(
-                    errorMessageFormat.format(k, "String.spanishLowerCase()", expected, got)
+                    this.errorMessageFormat.format(k, "String.spanishLowerCase()", expected, got)
                 )
             }
         }
@@ -78,7 +79,7 @@ class TestExtensions {
             got = test.paramIn.spanishNonAccent()
             if (expected != got) {
                 Assert.fail(
-                    errorMessageFormat.format(k, "String.spanishNonAccent()", expected, got)
+                    this.errorMessageFormat.format(k, "String.spanishNonAccent()", expected, got)
                 )
             }
         }
@@ -129,7 +130,7 @@ class TestExtensions {
             got = test.paramIn.multilineFormat()
             if (expected != got) {
                 Assert.fail(
-                    errorMessageFormat.format(k, "String.multilineFormat()", expected, got)
+                    this.errorMessageFormat.format(k, "String.multilineFormat()", expected, got)
                 )
             }
         }
