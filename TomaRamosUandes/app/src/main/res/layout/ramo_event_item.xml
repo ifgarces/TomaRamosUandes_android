@@ -10,16 +10,16 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:padding="3dp"
-        android:minWidth="130dp"
-        android:maxWidth="160dp"
-        android:layout_width="130dp"
+        android:minWidth="140dp"
+        android:maxWidth="170dp"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/ramoEventItem_height">
 
         <!-- Date if it is a test/exam, DayOfWeek otherwise -->
         <TextView
             android:id="@+id/ramoEvent_when"
             style="@style/ramoEvent_dateOrDay"
-            android:text="[Date | DayOfWeek]"
+            android:text="[Date | Day]"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
             <TextView
                 android:id="@+id/ramoEvent_ti"
                 style="@style/standardTextView"
-                android:text="[startTime]"
+                android:text="[HH:mm]"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
             <TextView
                 android:id="@+id/ramoEvent_tf"
                 style="@style/standardTextView"
-                android:text="[endTime]"
+                android:text="[HH:mm]"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

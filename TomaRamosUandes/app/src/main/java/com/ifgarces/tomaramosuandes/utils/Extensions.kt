@@ -12,7 +12,7 @@ import java.util.Locale
 import java.lang.String.format as sprintf
 
 
-public const val LOG_TAG :String = "_DEBUGLOG_"
+public const val LOG_TAG :String = "_DEBUGLOG_" // logging is not heavy, all of it will be labeled with this string
 
 /* Toast + sprintf */
 fun Context.toastf(format :String, vararg args :Any?) {
@@ -25,36 +25,36 @@ fun Logf(format :String, vararg args :Any?) {
 }
 
 fun String.spanishUpperCase() : String {
-    return this.toUpperCase( Locale("ES", "ES") )
+    return this.toUpperCase( Locale("es", "ES") )
 }
 
 fun String.spanishLowerCase() : String {
-    return this.toLowerCase( Locale("ES", "ES") )
+    return this.toLowerCase( Locale("es", "ES") )
 }
 
 /* For large block literal strings. Makes possible to continue a line with "\\" character, ignoring extra whitespaces. */
 fun String.multilineFormat() : String { // Note: does not ignore tabs "\t".
+    val NEWLINE_MARKER :String = "+++|♣♦♠♥|+++"
     return this
         .replace("\\\n", "") // continuing line
-        .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces. References: https://stackoverflow.com/a/37070443
+        .replace("\n", NEWLINE_MARKER) // avoiding intentioned newlines to be erased next
+        .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
+        .replace(NEWLINE_MARKER, "\n") // recovering intentioned newlines
+        .trim()
 }
 
 /* Gets the equivalent non-accented spanish character, with the exception of "ñ"/"Ñ" */
 fun String.spanishNonAccent() : String {
     val lowerAccents    :String = "áéíóúü"
-    val upperAccents    :String = "ÁÉÍÓÚü"
+    val upperAccents    :String = "ÁÉÍÓÚÜ"
     val lowerNonAccents :String = "aeiouu"
     val upperNonAccents :String = "AEIOUU"
 
-    var result :String = ""
-    for (char :Char in this) {
-        for ( k :Int in (0 until lowerAccents.count()) ) {
-            when (char) {
-                lowerAccents[k] -> { result += lowerNonAccents[k] }
-                upperAccents[k] -> { result += upperNonAccents[k] }
-                else -> { result += char }
-            }
-        }
+    var result :String = this
+    for (k :Int in (0 until lowerAccents.length)) {
+        result = result
+            .replace(lowerAccents[k], lowerNonAccents[k])
+            .replace(upperAccents[k], upperNonAccents[k])
     }
     return result
 }
@@ -79,7 +79,7 @@ fun Context.infoDialog(
     message   :String,
     onDismiss :() -> Unit = {}
 ) {
-    val diag_builder :AlertDialog.Builder = AlertDialog.Builder(this)
+    val diag :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
@@ -87,7 +87,7 @@ fun Context.infoDialog(
             onDismiss.invoke()
             dialog.dismiss()
         }
-    diag_builder.create().show()
+    diag.create().show()
 }
 
 /* Dialog con botónes SÍ/NO */
@@ -97,7 +97,7 @@ fun Context.yesNoDialog(
     onYesClicked :() -> Unit,
     onNoClicked  :() -> Unit = {}
 ) {
-    val diag_builder :AlertDialog.Builder = AlertDialog.Builder(this)
+    val diag :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
@@ -109,5 +109,5 @@ fun Context.yesNoDialog(
             onNoClicked.invoke()
             dialog.dismiss()
         }
-    diag_builder.create().show()
+    diag.create().show()
 }

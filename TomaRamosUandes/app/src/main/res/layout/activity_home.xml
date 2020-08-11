@@ -45,23 +45,24 @@
         app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
 
     <TextView
-        android:id="@+id/home_userDataStatic"
+        android:id="@+id/home_static01"
         android:background="@color/gray"
         android:fontFamily="@font/lato"
         android:text="Mis ramos"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:gravity="center"
+        android:textSize="17sp"
+        android:textAllCaps="true"
 
+        android:paddingVertical="4dp"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/home_userRamosContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/home_userRamosContainer"
         android:background="@drawable/box_thick"
 
         android:layout_width="match_parent"
@@ -72,7 +73,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/home_creditosStatic"
+            android:id="@+id/home_static02"
             style="@style/home_creditosCount"
             android:text="Créditos: "
             android:layout_marginTop="6dp"
@@ -89,8 +90,8 @@
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/home_creditosStatic"
-            app:layout_constraintTop_toTopOf="@+id/home_creditosStatic" />
+            app:layout_constraintStart_toEndOf="@+id/home_static02"
+            app:layout_constraintTop_toTopOf="@+id/home_static02" />
 
         <TextView
             android:id="@+id/home_emptyRecyclerText"
@@ -117,7 +118,7 @@
             android:layout_height="300dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_creditosStatic" />
+            app:layout_constraintTop_toBottomOf="@+id/home_static02" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -163,7 +164,7 @@
         style="@style/loadWait_background"
         android:visibility="gone"
 
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/home_userRamosContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
@@ -173,7 +174,7 @@
         style="@style/loadWait_progressBar"
         android:visibility="gone"
 
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/home_userRamosContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
