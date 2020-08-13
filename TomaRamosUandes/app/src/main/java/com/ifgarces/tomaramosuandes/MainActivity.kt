@@ -1,10 +1,10 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 import com.ifgarces.tomaramosuandes.utils.infoDialog
@@ -61,7 +61,8 @@ class MainActivity : AppCompatActivity() {
                             Revise su conexión a internet e intente más tarde.""".multilineFormat(),
                         onDismiss = {
                             this.finish()
-                        }
+                        },
+                        icon = R.drawable.exclamation_icon
                     )
                 }
             },
@@ -73,7 +74,8 @@ class MainActivity : AppCompatActivity() {
                             Los datos están dañados o no compatibles con esta versión del programa.""".multilineFormat(),
                         onDismiss = {
                             // TODO: clear user data
-                        }
+                        },
+                        icon = R.drawable.exclamation_icon
                     )
                 }
             }

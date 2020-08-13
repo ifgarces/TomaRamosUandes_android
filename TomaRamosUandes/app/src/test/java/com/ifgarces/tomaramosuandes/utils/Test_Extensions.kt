@@ -1,7 +1,7 @@
 package com.ifgarces.tomaramosuandes.utils
 
-import org.junit.Test
 import org.junit.Assert
+import org.junit.Test
 
 
 class Test_Extensions {

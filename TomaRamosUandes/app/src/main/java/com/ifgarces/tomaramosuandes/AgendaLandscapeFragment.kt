@@ -3,19 +3,45 @@ package com.ifgarces.tomaramosuandes
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.models.RamoEvent
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 
 class AgendaLandscapeFragment : Fragment() {
 
-    companion object {
+
+    private val supportedHours :List<Int> = (8 until 22).toList() // [8, 22]
+    private data class AgendaBlock(
+        val day        :DayOfWeek,
+        val hour_index :Int, // corresponging index of `supportedHours`
+        val event      :RamoEvent
+    )
+    private fun time_toBlockIndexes(time : LocalTime) : Int? {
+        var blockIndex :Int = supportedHours.indexOf(element=time.hour)
+        if (blockIndex == -1) { return null }
+        if (time.minute >= 30) { blockIndex++ }
+        return blockIndex
+    }
+    private fun drawEvent(ramo : Ramo, event : RamoEvent) {
+        val startBlock :Int = time_toBlockIndexes(event.startTime)!!
+        val endBlock :Int = time_toBlockIndexes(event.endTime)!!
+        // TODO: may handle NullPointerException
+
+
+
+    }
+
+    public companion object {
         public fun summon(caller :FragmentActivity, widget_id :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(widget_id, this.newInstance())

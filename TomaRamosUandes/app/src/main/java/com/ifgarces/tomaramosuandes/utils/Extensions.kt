@@ -8,11 +8,12 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
-import java.util.Locale
 import java.lang.String.format as sprintf
+import java.util.Locale
 
 
-public const val LOG_TAG :String = "_DEBUGLOG_" // logging is not heavy, all of it will be labeled with this string
+public const val DEBUG_MODE :Boolean = true // turning to false during tests and release
+public const val LOG_TAG    :String = "_DEBUGLOG_" // logging is not heavy, all of it will be labeled with this string
 
 /* Toast + sprintf */
 fun Context.toastf(format :String, vararg args :Any?) {
@@ -21,7 +22,7 @@ fun Context.toastf(format :String, vararg args :Any?) {
 
 /* Debug log + sprintf */
 fun Logf(format :String, vararg args :Any?) {
-    Log.d(LOG_TAG, sprintf(format, *args))
+    if (DEBUG_MODE) { Log.d(LOG_TAG, sprintf(format, *args)) }
 }
 
 fun String.spanishUpperCase() : String {
@@ -77,7 +78,8 @@ fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
 fun Context.infoDialog(
     title     :String,
     message   :String,
-    onDismiss :() -> Unit = {}
+    onDismiss :() -> Unit = {},
+    icon      :Int? = null // resource reference
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
@@ -87,6 +89,9 @@ fun Context.infoDialog(
             onDismiss.invoke()
             dialog.dismiss()
         }
+    if (icon != null) {
+        diag.setIcon(icon)
+    }
     diag.create().show()
 }
 
@@ -95,7 +100,8 @@ fun Context.yesNoDialog(
     title        :String,
     message      :String,
     onYesClicked :() -> Unit,
-    onNoClicked  :() -> Unit = {}
+    onNoClicked  :() -> Unit = {},
+    icon         :Int? = null // resource reference
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
@@ -109,5 +115,8 @@ fun Context.yesNoDialog(
             onNoClicked.invoke()
             dialog.dismiss()
         }
+    if (icon != null) {
+        diag.setIcon(icon)
+    }
     diag.create().show()
 }

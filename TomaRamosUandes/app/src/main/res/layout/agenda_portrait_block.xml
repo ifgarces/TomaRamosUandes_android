@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/agendaPblock_nombre"
+            android:id="@+id/agendaPblock_ramo"
             style="@style/agendaPortrait_ramoName"
             android:text="[Ramo.nombre]"
 
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/agendaPblock_hi"
+            android:id="@+id/agendaPblock_ti"
             style="@style/agendaPortrait_time"
             android:layout_width="wrap_content"
 
@@ -33,27 +33,27 @@
             android:text="[start time]"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/agendaPblock_nombre" />
+            app:layout_constraintTop_toBottomOf="@+id/agendaPblock_ramo" />
 
         <TextView
-            android:id="@+id/agendaPblock_hSep"
+            android:id="@+id/agendaPblock_static01"
             style="@style/agendaPortrait_time"
             android:text=" - "
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/agendaPblock_hi"
-            app:layout_constraintTop_toTopOf="@+id/agendaPblock_hi" />
+            app:layout_constraintStart_toEndOf="@+id/agendaPblock_ti"
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_ti" />
 
         <TextView
-            android:id="@+id/agendaPblock_hf"
+            android:id="@+id/agendaPblock_tf"
             style="@style/agendaPortrait_time"
             android:text="[end time]"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/agendaPblock_hSep"
-            app:layout_constraintTop_toTopOf="@+id/agendaPblock_hi" />
+            app:layout_constraintStart_toEndOf="@+id/agendaPblock_static01"
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_ti" />
 
         <TextView
             android:id="@+id/agendaPblock_type"
@@ -69,6 +69,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/agendaPblock_hi" />
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_ti" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

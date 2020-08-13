@@ -35,7 +35,7 @@ object CSVWorker {
         val JUEVES        :Int = 12
         val VIERNES       :Int = 13
         val FECHA_INICIO  :Int = 14
-        val FECHA_FIN     :Int = 15 // <- EN DESUSO
+        val FECHA_FIN     :Int = 15 // <- UNUSED
         val TIPO_EVENTO   :Int = 16
         val PROFESOR      :Int = 17
 
@@ -65,10 +65,15 @@ object CSVWorker {
      * On fatal parsing error (invalid `csv_lines`), returns null.
      */
     public fun parseCSV(csv_lines :List<String>) : List<Ramo>? {
+
+        // [!] ---
+        // [!] TODO: fix last row not being successfully parsed
+        // [!] ---
+
         val catalogResult :MutableList<Ramo> = mutableListOf()
 
         val NRCs :MutableList<Int> = mutableListOf()
-        var line :List<String>
+        var line :List<String> = listOf()
         val current = object { // buffer-like object, temporal data holder
             var NRC   :Int = 0
             var curso :Int = 0
@@ -76,7 +81,7 @@ object CSVWorker {
             lateinit var eventType :String
             lateinit var startTime :LocalTime
             lateinit var endTime   :LocalTime
-            var date :LocalDate? = null
+            var date   :LocalDate? = null
             var events :MutableList<RamoEvent>? = null
         }
         var stringAux :String
@@ -211,7 +216,6 @@ object CSVWorker {
                 )
             )
         }
-
 
         if (catalogResult.count() == 0) {
             return null

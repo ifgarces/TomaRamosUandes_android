@@ -2,6 +2,7 @@ package com.ifgarces.tomaramosuandes.utils
 
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.models.RamoEventType
 import org.junit.Assert
 import org.junit.Test
 import java.time.DayOfWeek
@@ -18,14 +19,16 @@ class Test_CSVWorker {
 
     @Test
     fun parseCSV() {
-
         val testSet :List<Ttest> = listOf(
             Ttest(
                 paramIn = listOf(""),
                 expectedOut = null
             ),
             Ttest(
-                paramIn = listOf("ELECTIVOS TEOLOGÍA III,2209,,loquesea,FRM,,1,MUNDO;; TRABAJO Y REDENCIÓN,3,,17:30 - 19:20,,,,,,OLIN,AMADO/FERNÁNDEZ ANTONIO"),
+                paramIn = listOf(
+                    "ELECTIVOS TEOLOGÍA III,2209,,loquesea,FRM,,1,MUNDO;; TRABAJO Y REDENCIÓN,3,,17:30 - 19:20,,,,,,OLIN,AMADO/FERNÁNDEZ ANTONIO",
+                    "PE,123456,,,FACULTAD_COSA,,A,NOMBRE_RAMO,10,,21:30 - 22:20,,,,,,AYON,quiensea"
+                ),
                 expectedOut = listOf(
                     Ramo(
                         NRC = 2209,
@@ -42,16 +45,39 @@ class Test_CSVWorker {
                             RamoEvent(
                                 ID = 0,
                                 ramoNRC = 2209,
-                                type = 0,
+                                type = RamoEventType.CLAS,
                                 dayofWeek = DayOfWeek.TUESDAY,
                                 startTime = LocalTime.of(17, 30),
                                 endTime = LocalTime.of(19, 20),
                                 date = null
                             )
                         )
+                    ),
+                    Ramo(
+                        NRC = 123456,
+                        nombre = "NOMBRE_RAMO",
+                        profesor = "quiensea",
+                        créditos = 10,
+                        materia = "FACULTAD_COSA",
+                        curso = 0,
+                        sección = "A",
+                        planEstudios = "PE",
+                        conectLiga = "",
+                        listaCruzada = "",
+                        events = listOf(
+                            RamoEvent(
+                                ID = 1,
+                                ramoNRC = 2209,
+                                type = RamoEventType.AYUD,
+                                dayofWeek = DayOfWeek.TUESDAY,
+                                startTime = LocalTime.of(21, 30),
+                                endTime = LocalTime.of(22, 20),
+                                date = null
+                            )
+                        )
                     )
                 )
-            ),
+            )/*,
             Ttest(
                 paramIn = listOf("ELECTIVOS TEOLOGÍA III,2209q,,loquesea,FRM,,1,MUNDO;; TRABAJO Y REDENCIÓN,3,,17:30 - 19:20,,,,,,OLIN,AMADO/FERNÁNDEZ ANTONIO"),
                 expectedOut = null
@@ -81,13 +107,13 @@ PE2016,608,,,ING,1201,1,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,25/11/2020,25/11/202
 PE2016,608,,,ING,1201,1,ÁLGEBRA LINEAL,6,,,,19:30 - 22:20,,05/11/2020,05/11/2020,PRON 4,BALLESTEROS/VERGARA RAIMUNDO TOMÁS
 PE2016,608,,,ING,1201,1,ÁLGEBRA LINEAL,6,,,,,15:30 - 17:20,03/08/2020,25/11/2020,OLIN,BALLESTEROS/VERGARA RAIMUNDO TOMÁS
 PE2016,608,,,ING,1201,1,ÁLGEBRA LINEAL,6,,,,,19:30 - 22:20,21/08/2020,21/08/2020,PRON 1,BALLESTEROS/VERGARA RAIMUNDO TOMÁS
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,19:30 - 22:20,,,,,19/10/2020,19/10/2020,PRON 3,CARRASCO/BRIONES MIGUEL ÁNGEL 
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,09:30 - 11:20,,,,,07/12/2020,07/12/2020,EXON,CARRASCO/BRIONES MIGUEL ÁNGEL 
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,14:30 - 16:20,,14:30 - 16:20,,03/08/2020,25/11/2020,OLIN,CARRASCO/BRIONES MIGUEL ÁNGEL 
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,10/08/2020,25/11/2020,AYON,CARRASCO/BRIONES MIGUEL ÁNGEL 
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,23/09/2020,23/09/2020,PRON 2,CARRASCO/BRIONES MIGUEL ÁNGEL 
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,25/11/2020,25/11/2020,PRON 5,CARRASCO/BRIONES MIGUEL ÁNGEL 
-PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,,19:30 - 22:20,,05/11/2020,05/11/2020,PRON 4,CARRASCO/BRIONES MIGUEL ÁNGEL 
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,19:30 - 22:20,,,,,19/10/2020,19/10/2020,PRON 3,CARRASCO/BRIONES MIGUEL ÁNGEL
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,09:30 - 11:20,,,,,07/12/2020,07/12/2020,EXON,CARRASCO/BRIONES MIGUEL ÁNGEL
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,14:30 - 16:20,,14:30 - 16:20,,03/08/2020,25/11/2020,OLIN,CARRASCO/BRIONES MIGUEL ÁNGEL
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,10/08/2020,25/11/2020,AYON,CARRASCO/BRIONES MIGUEL ÁNGEL
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,23/09/2020,23/09/2020,PRON 2,CARRASCO/BRIONES MIGUEL ÁNGEL
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,12:30 - 14:20,,,25/11/2020,25/11/2020,PRON 5,CARRASCO/BRIONES MIGUEL ÁNGEL
+PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,,19:30 - 22:20,,05/11/2020,05/11/2020,PRON 4,CARRASCO/BRIONES MIGUEL ÁNGEL
 PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,,,19:30 - 22:20,21/08/2020,21/08/2020,PRON 1,CARRASCO/BRIONES MIGUEL ÁNGEL"""
                     .split("\n"),
                 expectedOut = listOf(
@@ -131,7 +157,7 @@ PE2016,609,,,ING,1201,2,ÁLGEBRA LINEAL,6,,,,,19:30 - 22:20,21/08/2020,21/08/202
                         events = listOf()
                     )
                 )
-            )
+            )*/
         )
 
         var expected :List<Ramo>?

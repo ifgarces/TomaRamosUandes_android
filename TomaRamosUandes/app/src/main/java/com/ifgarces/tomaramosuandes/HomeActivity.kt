@@ -1,11 +1,11 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
@@ -89,7 +89,7 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         this.exitLoadMode()
 
-        UI.creditosCounter.text = DataMaster.getUserCreditsCount().toString()
+        UI.creditosCounter.text = DataMaster.getUserTotalCredits().toString()
         if (UI.creditosCounter.text == "0") {
             UI.ramosRecycler.visibility = View.INVISIBLE
         }

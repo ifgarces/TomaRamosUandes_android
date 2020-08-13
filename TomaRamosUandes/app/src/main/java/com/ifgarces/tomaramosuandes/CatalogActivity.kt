@@ -1,16 +1,19 @@
 package com.ifgarces.tomaramosuandes
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputLayout
 import com.ifgarces.tomaramosuandes.adapters.RamosAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
-import com.ifgarces.tomaramosuandes.utils.*
+import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.onTextChangedListener
+import com.ifgarces.tomaramosuandes.utils.spanishNonAccent
+import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 
 
 class CatalogActivity : AppCompatActivity() {
