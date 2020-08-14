@@ -8,83 +8,47 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/landAgenda_saveAsImage"
-        app:srcCompat="@drawable/add_image_icon"
-        android:clickable="true"
-        android:elevation="@dimen/floatingButton_elevation"
-        android:backgroundTint="@color/colorAccent"
+        style="@style/standardFloatingButton"
+        app:srcCompat="@drawable/export_image_icon"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TableLayout
+    <LinearLayout
         android:id="@+id/landAgenda_headersLayout"
-        android:shrinkColumns="*"
-        android:stretchColumns="1,2,3,4,5"
-
+        android:elevation="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TableRow
-            android:id="@+id/landAgenda_headersRow"
-            android:background="@color/gray"
-            android:elevation="2dp"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                style="@style/agendaLandscape_header"
-                android:text="Hora" />
-
-            <TextView
-                style="@style/agendaLandscape_header"
-                android:text="Lunes" />
-
-            <TextView
-                style="@style/agendaLandscape_header"
-                android:text="Martes" />
-
-            <TextView
-                style="@style/agendaLandscape_header"
-                android:text="Miércoles" />
-
-            <TextView
-                style="@style/agendaLandscape_header"
-                android:text="Jueves" />
-
-            <TextView
-                style="@style/agendaLandscape_header"
-                android:text="Viernes" />
-        </TableRow>
-    </TableLayout>
+        <include layout="@layout/agenda_landscape_headers" />
+    </LinearLayout>
 
     <ScrollView
-        android:scrollbars="vertical"
+        android:id="@+id/landAgenda_bodyScrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/landAgenda_headersLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/landAgenda_bodyLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/agenda_landscape_headers" />
 
             <TableLayout
-                android:shrinkColumns="*"
-                android:stretchColumns="1,2,3,4,5"
-                android:elevation="0dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:elevation="0dp"
+                android:shrinkColumns="*"
+                android:stretchColumns="1,2,3,4,5">
 
                 <TableRow
                     android:id="@+id/row1"
@@ -93,67 +57,67 @@
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
-                        android:text="8:30 - 9:20"
-                        android:layout_marginVertical="10dp" />
+                        android:layout_marginVertical="10dp"
+                        android:text="8:30 - 9:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun0"
+                        android:id="@+id/landAgenda_lun0"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar0"
+                        android:id="@+id/landAgenda_mar0"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie0"
+                        android:id="@+id/landAgenda_mie0"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue0"
+                        android:id="@+id/landAgenda_jue0"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie0"
+                        android:id="@+id/landAgenda_vie0"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row2"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="9:30 - 10:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun1"
+                        android:id="@+id/landAgenda_lun1"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar1"
+                        android:id="@+id/landAgenda_mar1"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie1"
+                        android:id="@+id/landAgenda_mie1"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue1"
+                        android:id="@+id/landAgenda_jue1"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie1"
+                        android:id="@+id/landAgenda_vie1"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
@@ -168,63 +132,63 @@
                         android:text="10:30 - 11:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun2"
+                        android:id="@+id/landAgenda_lun2"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar2"
+                        android:id="@+id/landAgenda_mar2"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie2"
+                        android:id="@+id/landAgenda_mie2"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue2"
+                        android:id="@+id/landAgenda_jue2"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie2"
+                        android:id="@+id/landAgenda_vie2"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row4"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="11:30 - 12:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun3"
+                        android:id="@+id/landAgenda_lun3"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar3"
+                        android:id="@+id/landAgenda_mar3"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie3"
+                        android:id="@+id/landAgenda_mie3"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue3"
+                        android:id="@+id/landAgenda_jue3"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie3"
+                        android:id="@+id/landAgenda_vie3"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
@@ -239,63 +203,63 @@
                         android:text="12:30 - 13:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun4"
+                        android:id="@+id/landAgenda_lun4"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar4"
+                        android:id="@+id/landAgenda_mar4"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie4"
+                        android:id="@+id/landAgenda_mie4"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue4"
+                        android:id="@+id/landAgenda_jue4"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie4"
+                        android:id="@+id/landAgenda_vie4"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row6"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="13:30 - 14:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun5"
+                        android:id="@+id/landAgenda_lun5"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar5"
+                        android:id="@+id/landAgenda_mar5"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie5"
+                        android:id="@+id/landAgenda_mie5"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue5"
+                        android:id="@+id/landAgenda_jue5"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie5"
+                        android:id="@+id/landAgenda_vie5"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
@@ -310,63 +274,63 @@
                         android:text="14:30 - 15:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun6"
+                        android:id="@+id/landAgenda_lun6"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar6"
+                        android:id="@+id/landAgenda_mar6"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie6"
+                        android:id="@+id/landAgenda_mie6"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue6"
+                        android:id="@+id/landAgenda_jue6"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie6"
+                        android:id="@+id/landAgenda_vie6"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row8"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="15:30 - 16:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun7"
+                        android:id="@+id/landAgenda_lun7"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar7"
+                        android:id="@+id/landAgenda_mar7"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie7"
+                        android:id="@+id/landAgenda_mie7"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue7"
+                        android:id="@+id/landAgenda_jue7"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie7"
+                        android:id="@+id/landAgenda_vie7"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
@@ -381,63 +345,63 @@
                         android:text="16:30 - 17:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun8"
+                        android:id="@+id/landAgenda_lun8"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar8"
+                        android:id="@+id/landAgenda_mar8"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie8"
+                        android:id="@+id/landAgenda_mie8"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue8"
+                        android:id="@+id/landAgenda_jue8"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie8"
+                        android:id="@+id/landAgenda_vie8"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row10"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="17:30 - 18:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun9"
+                        android:id="@+id/landAgenda_lun9"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar9"
+                        android:id="@+id/landAgenda_mar9"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie9"
+                        android:id="@+id/landAgenda_mie9"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue9"
+                        android:id="@+id/landAgenda_jue9"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie9"
+                        android:id="@+id/landAgenda_vie9"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
@@ -452,63 +416,63 @@
                         android:text="18:30 - 19:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun10"
+                        android:id="@+id/landAgenda_lun10"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar10"
+                        android:id="@+id/landAgenda_mar10"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie10"
+                        android:id="@+id/landAgenda_mie10"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue10"
+                        android:id="@+id/landAgenda_jue10"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie10"
+                        android:id="@+id/landAgenda_vie10"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row12"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="19:30 - 20:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun11"
+                        android:id="@+id/landAgenda_lun11"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar11"
+                        android:id="@+id/landAgenda_mar11"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie11"
+                        android:id="@+id/landAgenda_mie11"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue11"
+                        android:id="@+id/landAgenda_jue11"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie11"
+                        android:id="@+id/landAgenda_vie11"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
@@ -523,63 +487,63 @@
                         android:text="20:30 - 21:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun12"
+                        android:id="@+id/landAgenda_lun12"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar12"
+                        android:id="@+id/landAgenda_mar12"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie12"
+                        android:id="@+id/landAgenda_mie12"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue12"
+                        android:id="@+id/landAgenda_jue12"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie12"
+                        android:id="@+id/landAgenda_vie12"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row14"
-                    android:background="@color/lighterGray"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/lighterGray">
 
                     <TextView
                         style="@style/agendaLandscape_timeBlock"
                         android:text="21:30 - 22:20" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lun13"
+                        android:id="@+id/landAgenda_lun13"
                         style="@style/agendaLandscape_block"
                         android:text="[lun]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mar13"
+                        android:id="@+id/landAgenda_mar13"
                         style="@style/agendaLandscape_block"
                         android:text="[mar]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/mie13"
+                        android:id="@+id/landAgenda_mie13"
                         style="@style/agendaLandscape_block"
                         android:text="[mie]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/jue13"
+                        android:id="@+id/landAgenda_jue13"
                         style="@style/agendaLandscape_block"
                         android:text="[jue]" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/vie13"
+                        android:id="@+id/landAgenda_vie13"
                         style="@style/agendaLandscape_block"
                         android:text="[vie]" />
                 </TableRow>

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -14,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.adapters.RamoEventCardsAdapter
-import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.utils.ImageWorker
 import com.ifgarces.tomaramosuandes.utils.Logf
 import java.time.DayOfWeek
 
@@ -23,9 +22,10 @@ import java.time.DayOfWeek
 class AgendaPortraitFragment : Fragment() {
 
     public companion object {
-        public fun summon(caller :FragmentActivity, widget_id :Int) {
+        /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
+        public fun showNow(caller :FragmentActivity, targetView :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
-                .replace(widget_id, this.newInstance())
+                .replace(targetView, this.newInstance())
             transactioner.commit()
         }
         private fun newInstance() = AgendaPortraitFragment()
@@ -33,7 +33,11 @@ class AgendaPortraitFragment : Fragment() {
 
     private object UI {
         lateinit var rootView         :View
+        lateinit var loadScreen       :View
+        lateinit var saveAsImgAction  :FloatingActionButton
         lateinit var fullScreenAction :FloatingActionButton
+        lateinit var agendaScroll     :View // ScrollView
+        lateinit var agendaLayout     :View // LinearLayout
         lateinit var dayHeaders       :List<TextView>
         lateinit var recyclerMon      :RecyclerView
         lateinit var recyclerTue      :RecyclerView
@@ -42,8 +46,12 @@ class AgendaPortraitFragment : Fragment() {
         lateinit var recyclerFri      :RecyclerView
 
         fun init(owner :View) {
-            this.rootView = owner
+            this.rootView         = owner
+            this.loadScreen       = owner.findViewById(R.id.portrAgenda_loadScreen)
+            this.saveAsImgAction  = owner.findViewById(R.id.portrAgenda_saveAsImage)
             this.fullScreenAction = owner.findViewById(R.id.portrAgenda_fullScreen)
+            this.agendaScroll     = owner.findViewById(R.id.portrAgenda_scrollView)
+            this.agendaLayout     = owner.findViewById(R.id.portrAgenda_layout)
             this.recyclerMon      = owner.findViewById(R.id.portrAgenda_mondayRecycler)
             this.recyclerTue      = owner.findViewById(R.id.portrAgenda_tuesdayRecycler)
             this.recyclerWed      = owner.findViewById(R.id.portrAgenda_wednesdayRecycler)
@@ -59,78 +67,48 @@ class AgendaPortraitFragment : Fragment() {
         }
     }
 
-    private object DayIndexes {
-        const val MON :Int = 0 // lists indexes (recyclers and headers day markers)
-        const val TUE :Int = 1
-        const val WED :Int = 2
-        const val THU :Int = 3
-        const val FRI :Int = 4
-    }
-
-    private object EventType {
-        const val CLAS :Int = 0
-        const val AYUD :Int = 1
-        const val LABT :Int = 2
-        const val PRBA :Int = 3
-    }
-
-
-    private val recyclerData = object {
-        val monday    :MutableList<RamoEvent> = mutableListOf()
-        val tuesday   :MutableList<RamoEvent> = mutableListOf()
-        val wednesday :MutableList<RamoEvent> = mutableListOf()
-        val thursday  :MutableList<RamoEvent> = mutableListOf()
-        val friday    :MutableList<RamoEvent> = mutableListOf()
-    }
+    lateinit var dayRecyclers :Map<DayOfWeek, RecyclerView>
 
     override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
         UI.init(owner=inflater.inflate(R.layout.fragment_agenda_portrait, container, false))
 
-        val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getAgendaEvents()
+        val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByDay()
 
-        UI.recyclerMon.layoutManager = LinearLayoutManager(this.context)
-        UI.recyclerMon.adapter = RamoEventCardsAdapter(data=agendaEvents[DayOfWeek.MONDAY])
-        UI.recyclerTue.layoutManager = LinearLayoutManager(this.context)
-        UI.recyclerMon.adapter = RamoEventCardsAdapter(data=agendaEvents[DayOfWeek.TUESDAY])
-        // ... TODO: finish
+        this.dayRecyclers = mapOf(
+            DayOfWeek.MONDAY to UI.recyclerMon,
+            DayOfWeek.TUESDAY to UI.recyclerTue,
+            DayOfWeek.WEDNESDAY to UI.recyclerWed,
+            DayOfWeek.THURSDAY to UI.recyclerThu,
+            DayOfWeek.FRIDAY to UI.recyclerFri
+        )
+        this.dayRecyclers.forEach { (day :DayOfWeek, recycler :RecyclerView) -> // building agenda here
+            recycler.layoutManager = LinearLayoutManager(this.context)
+            recycler.adapter = agendaEvents[day]?.let { RamoEventCardsAdapter(data=it) }
+        }
 
-//        for (recycler :RecyclerView in UI.dayRecyclers) {
-//            recycler.layoutManager = LinearLayoutManager(this.context)
-//            recycler.adapter = RamoEventCardsAdapter(data=DataMaster.getAgendaEvents())
-//        }
-
+        UI.saveAsImgAction.setColorFilter(Color.WHITE)
+        UI.saveAsImgAction.setOnClickListener {
+            Logf("[AgendaPortraitFragment] Exporting agenda as image...")
+            ImageWorker.exportAgendaImage(
+                context = this.context!!,
+                targetView = UI.agendaScroll,
+                largerView = UI.agendaLayout
+            )
+        }
         UI.fullScreenAction.setColorFilter(Color.WHITE)
         UI.fullScreenAction.setOnClickListener {
-            AgendaLandscapeFragment.summon(
-                caller=this.activity as FragmentActivity, // <- [!] Will crash?
-                widget_id=R.id.agenda_fragmentContainer
+            UI.loadScreen.visibility = View.VISIBLE
+            AgendaLandscapeFragment.showNow(
+                caller=this.activity as FragmentActivity,
+                targetView=R.id.agenda_fragmentContainer
             )
         }
 
-        this.buildAgenda(data=DataMaster.getUserRamos())
         return UI.rootView
     }
 
-    private fun buildAgenda(data :List<Ramo>) {
-        for (ramo :Ramo in data) {
-            for (event :RamoEvent in ramo.events) {
-                when(event.dayofWeek) {
-                    DayOfWeek.MONDAY    -> this.recyclerData.monday.add(event)
-                    DayOfWeek.TUESDAY   -> this.recyclerData.tuesday.add(event)
-                    DayOfWeek.WEDNESDAY -> this.recyclerData.wednesday.add(event)
-                    DayOfWeek.THURSDAY  -> this.recyclerData.thursday.add(event)
-                    DayOfWeek.FRIDAY    -> this.recyclerData.friday.add(event)
-                    else -> Logf("[AgendaPortraitFragment] Warning: agenda event on weekend: %s", event)
-                }
-            }
-        }
-    }
-
-    private fun blockClick(sender :Button) {
-        // TODO: fill
-    }
-
-    private fun exportImage() {
-        // TODO: fill
+    override fun onResume() {
+        super.onResume()
+        UI.loadScreen.visibility = View.GONE
     }
 }

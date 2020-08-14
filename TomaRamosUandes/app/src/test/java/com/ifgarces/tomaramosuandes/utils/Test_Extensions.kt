@@ -127,7 +127,7 @@ class Test_Extensions {
         var got :String
         testSet.forEachIndexed { k: Int, test :StrTest ->
             expected = test.expectedOut
-            got = test.paramIn.multilineFormat()
+            got = test.paramIn.multilineTrim()
             if (expected != got) {
                 Assert.fail(
                     this.errorMessageFormat.format(k, "String.multilineFormat()", expected, got)

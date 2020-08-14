@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shrinkColumns="*"
+    android:stretchColumns="1,2,3,4,5"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TableRow
+        android:id="@+id/landAgenda_headersRow"
+        android:background="@color/gray"
+        android:elevation="1dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/agendaLandscape_header"
+            android:text="Hora" />
+
+        <TextView
+            style="@style/agendaLandscape_header"
+            android:text="Lunes" />
+
+        <TextView
+            style="@style/agendaLandscape_header"
+            android:text="Martes" />
+
+        <TextView
+            style="@style/agendaLandscape_header"
+            android:text="Miércoles" />
+
+        <TextView
+            style="@style/agendaLandscape_header"
+            android:text="Jueves" />
+
+        <TextView
+            style="@style/agendaLandscape_header"
+            android:text="Viernes" />
+    </TableRow>
+
+</TableLayout>

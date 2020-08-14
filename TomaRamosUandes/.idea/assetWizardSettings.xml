@@ -319,8 +319,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="error_icon" />
-                            <entry key="sourceFile" value="C:\Users\ifgarces\Desktop\trash_icon.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="export_image_icon" />
+                            <entry key="sourceFile" value="C:\Users\ifgarces\Desktop\export_image_icon.svg" />
                           </map>
                         </option>
                       </PersistentState>

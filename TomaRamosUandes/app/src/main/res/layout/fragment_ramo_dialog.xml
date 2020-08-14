@@ -72,7 +72,7 @@
                     android:layout_width="wrap_content"
 
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
+                    android:layout_marginTop="20dp"
                     android:text="Profesor: "
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_nombre" />
@@ -91,32 +91,32 @@
                 <TextView
                     android:id="@+id/ramoDialog_static03"
                     style="@style/standardTextView"
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
                     android:text="Créditos: "
+
+                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_profesor" />
 
                 <TextView
                     android:id="@+id/ramoDialog_static04"
                     style="@style/standardTextView"
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
                     android:text="Materia: "
+
+                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_creditosNum" />
 
                 <TextView
                     android:id="@+id/ramoDialog_materia"
                     style="@style/standardTextView"
+                    android:text="[materia]"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:text="[materia]"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ramoDialog_static04"
                     app:layout_constraintTop_toTopOf="@+id/ramoDialog_static04" />
@@ -124,10 +124,10 @@
                 <TextView
                     android:id="@+id/ramoDialog_creditosNum"
                     style="@style/standardTextView"
+                    android:text="[créditos]"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:text="[créditos]"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ramoDialog_static03"
                     app:layout_constraintTop_toTopOf="@+id/ramoDialog_static03" />
@@ -135,21 +135,21 @@
                 <TextView
                     android:id="@+id/ramoDialog_static05"
                     style="@style/standardTextView"
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
                     android:text="Curso: "
+
+                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_materia" />
 
                 <TextView
                     android:id="@+id/ramoDialog_curso"
                     style="@style/standardTextView"
+                    android:text="[curso]"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:text="[curso]"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ramoDialog_static05"
                     app:layout_constraintTop_toTopOf="@+id/ramoDialog_static05" />
@@ -157,21 +157,21 @@
                 <TextView
                     android:id="@+id/ramoDialog_static06"
                     style="@style/standardTextView"
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
                     android:text="Sección: "
+
+                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_curso" />
 
                 <TextView
                     android:id="@+id/ramoDialog_seccion"
                     style="@style/standardTextView"
+                    android:text="[sección]"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:text="[sección]"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ramoDialog_static06"
                     app:layout_constraintTop_toTopOf="@+id/ramoDialog_static06" />
@@ -179,10 +179,11 @@
                 <TextView
                     android:id="@+id/ramoDialog_static07"
                     style="@style/standardTextView"
+                    android:text="Plan de estudios: "
+
+                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
-                    android:text="Plan de estudios: "
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_seccion" />
 
@@ -190,10 +191,10 @@
                 <TextView
                     android:id="@+id/ramoDialog_PE"
                     style="@style/standardTextView"
+                    android:text="[planEstudios]"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:text="[planEstudios]"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ramoDialog_static07"
                     app:layout_constraintTop_toTopOf="@+id/ramoDialog_static07" />
@@ -201,11 +202,11 @@
                 <TextView
                     android:id="@+id/ramoDialog_static08"
                     style="@style/standardTextView"
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
                     android:text="Conector liga: "
+
+                    android:layout_marginTop="@dimen/ramoAttrs_spacing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ramoDialog_PE" />
 
@@ -375,7 +376,6 @@
                 android:text="[delete | take]"
                 app:icon="@android:drawable/ic_menu_gallery"
                 android:backgroundTint="@color/colorAccent"
-                android:elevation="@dimen/floatingButton_elevation"
                 android:outlineProvider="none"
                 android:textAllCaps="true"
                 android:textSize="@dimen/buttonLower_textSize"

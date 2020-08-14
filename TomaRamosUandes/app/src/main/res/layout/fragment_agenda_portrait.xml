@@ -8,38 +8,42 @@
     android:background="@android:color/white">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/portrAgenda_fullScreen"
-        app:srcCompat="@drawable/fullscreen_icon"
-        android:tint="@android:color/white"
-        android:clickable="true"
-        android:elevation="@dimen/floatingButton_elevation"
-        android:backgroundTint="@color/colorAccent"
+        android:id="@+id/portrAgenda_saveAsImage"
+        style="@style/standardFloatingButton"
+        app:srcCompat="@drawable/export_image_icon"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/portrAgenda_fullScreen"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/portrAgenda_fullScreen"
+        style="@style/standardFloatingButton"
+        app:srcCompat="@drawable/fullscreen_icon"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
-        android:orientation="vertical"
-        android:scrollbars="vertical"
+        android:id="@+id/portrAgenda_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/portrAgenda_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/portrAgenda_mondayHead"
                 style="@style/agendaPortrait_header"
+                android:layout_marginTop="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Lunes" />
@@ -109,5 +113,16 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <include
+        android:id="@+id/portrAgenda_loadScreen"
+        layout="@layout/load_screen"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

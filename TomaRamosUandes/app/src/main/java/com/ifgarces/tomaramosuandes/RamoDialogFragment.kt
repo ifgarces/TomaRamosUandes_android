@@ -1,5 +1,6 @@
 package com.ifgarces.tomaramosuandes
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +25,14 @@ import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 class RamoDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
-        public fun invoke(manager :FragmentManager) {
+        /**
+         * Shows the dialog fragment.
+         * @param manager Needs the caller's `FragmentManager`.
+         * @param onDismiss This will be executed when dialog is dismissed by the user.
+         */
+        lateinit var dismissAction :() -> Unit
+        public fun showNow(manager :FragmentManager, onDismiss :() -> Unit = {}) {
+            this.dismissAction = onDismiss
             this.newInstance().show(manager, this::class.simpleName)
         }
         private fun newInstance() = RamoDialogFragment()
@@ -101,7 +109,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             data = ramo.events.filter{ it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR }
         )
         UI.pruebas.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.PRBA || it.type == RamoEventType.EXAM }
+            data = ramo.events.filter{ it.isEvaluation() }
         )
 
         if (ramo_isTaken) { // `ramo` already in user list
@@ -139,6 +147,11 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
         return inflater.inflate(R.layout.fragment_ramo_dialog, container, false)
+    }
+
+    override fun onDismiss(dialog :DialogInterface) {
+        super.onDismiss(dialog)
+        Companion.dismissAction.invoke()
     }
 
     private fun actionTake(ramo :Ramo) {

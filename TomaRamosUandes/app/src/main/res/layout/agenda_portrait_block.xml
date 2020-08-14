@@ -26,11 +26,11 @@
         <TextView
             android:id="@+id/agendaPblock_ti"
             style="@style/agendaPortrait_time"
-            android:layout_width="wrap_content"
-
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="[start time]"
+
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/agendaPblock_ramo" />
@@ -60,7 +60,7 @@
             android:text="[event type]"
             android:paddingHorizontal="5dp"
             android:paddingVertical="3dp"
-            android:background="@drawable/box_event_clas"
+            android:background="@drawable/box_event_type"
             android:textColor="@color/gray"
             android:textStyle="bold"
             android:textAllCaps="true"

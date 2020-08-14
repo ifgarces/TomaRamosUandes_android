@@ -23,7 +23,7 @@ class RamosAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<RamosAda
 
     override fun getItemCount() = this.data.count()
 
-    override fun onBindViewHolder(holder : RamosVH, position :Int) = holder.bind(this.data[position], position)
+    override fun onBindViewHolder(holder :RamosVH, position :Int) = holder.bind(this.data[position], position)
 
     public fun updateData(data :List<Ramo>) {
         this.data = data
@@ -62,10 +62,19 @@ class RamosAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<RamosAda
 
             /* showing `Ramo` details and actions on click */
             parentView.setOnClickListener {
+                this.parentView.isEnabled = false // preventing the dialog to be invoked more than one time if the user clicks two times (due load time, maybe)
+
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
                 helper.intent.putExtra(IntentKeys.RAMO_IS_TAKEN, ramo in DataMaster.getUserRamos())
-                RamoDialogFragment.invoke(manager=helper.supportFragmentManager)
+
+                RamoDialogFragment.showNow(
+                    manager = helper.supportFragmentManager,
+                    onDismiss = {
+                        this.parentView.isEnabled = true
+                        this@RamosAdapter.notifyItemChanged(position)
+                    }
+                )
             }
         }
     }

@@ -3,12 +3,11 @@ package com.ifgarces.tomaramosuandes
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 import com.ifgarces.tomaramosuandes.utils.infoDialog
-import com.ifgarces.tomaramosuandes.utils.multilineFormat
+import com.ifgarces.tomaramosuandes.utils.multilineTrim
 
 
 /**
@@ -21,12 +20,10 @@ class MainActivity : AppCompatActivity() {
     private val PROGRESSBAR_SPAWN_TIMEOUT :Long = 2*1000
 
     private object UI {
-        lateinit var loadLayer :View
-        lateinit var loadBar   :ProgressBar
+        lateinit var loadScreen :View
 
         fun init(owner :AppCompatActivity) {
-            this.loadLayer = owner.findViewById(R.id.main_loadBackground)
-            this.loadBar = owner.findViewById(R.id.main_progressBar)
+            this.loadScreen = owner.findViewById(R.id.main_loadScreen)
         }
     }
 
@@ -35,18 +32,16 @@ class MainActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_main)
         UI.init(owner=this)
 
-        UI.loadLayer.visibility = View.GONE
-        UI.loadBar.visibility = View.GONE
+        UI.loadScreen.visibility = View.GONE
 
-        UI.loadLayer.postDelayed({ // couldn't do it with `runOnUiThread`, for some reason
-            UI.loadLayer.visibility = View.VISIBLE
-            UI.loadBar.visibility = View.VISIBLE
+        UI.loadScreen.postDelayed({ // couldn't do this with `runOnUiThread`, for some reason
+            UI.loadScreen.visibility = View.VISIBLE
         }, PROGRESSBAR_SPAWN_TIMEOUT)
 
         AppMetadata.init(activity=this)
         WebManager.init()
         DataMaster.init(
-            clear_database = false,
+            clearDatabase = false,
             onSuccess = {
                 Logf("[MainActivity] DataMaster successfully initialized.")
                 this.startActivity(
@@ -58,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                     this.infoDialog(
                         title = "Error al obtener catálogo",
                         message = """No se pudo obtener correctamente el catálogo de ramos ${AppMetadata.getCatalogPeriod()}. \
-                            Revise su conexión a internet e intente más tarde.""".multilineFormat(),
+                            Revise su conexión a internet e intente más tarde.""".multilineTrim(),
                         onDismiss = {
                             this.finish()
                         },
@@ -71,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                     this.infoDialog(
                         title = "Error",
                         message = """Se encontraron datos de ramos guardados por el usuario, pero no se pudieron cargar. \
-                            Los datos están dañados o no compatibles con esta versión del programa.""".multilineFormat(),
+                            Los datos están dañados o no compatibles con esta versión del programa.""".multilineTrim(),
                         onDismiss = {
                             // TODO: clear user data
                         },

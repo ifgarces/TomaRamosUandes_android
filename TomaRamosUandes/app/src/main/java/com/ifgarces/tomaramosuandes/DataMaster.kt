@@ -4,11 +4,11 @@ import android.os.AsyncTask
 import com.ifgarces.tomaramosuandes.DataMaster.catalog
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
-import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.CSVWorker
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 import java.time.DayOfWeek
+import java.util.concurrent.locks.ReentrantLock
 
 
 /**
@@ -16,24 +16,31 @@ import java.time.DayOfWeek
  * @property catalog Contains the collection of `Ramo` available for the current period.
  */
 object DataMaster {
-    private lateinit var catalog   :List<Ramo>;        fun getCatalog() = this.catalog
-    private lateinit var userRamos :MutableList<Ramo>; fun getUserRamos() = this.userRamos
+
+    // ----
+    // TODO: be sure to manage concurrency for `userRamos` (and `catalog` and)?
+    // ----
+
+    @Volatile private lateinit var catalog   :List<Ramo>;        fun getCatalog() = this.catalog
+    @Volatile private lateinit var userRamos :MutableList<Ramo>; fun getUserRamos() = this.userRamos
+    private lateinit var writeLock :ReentrantLock // concurrency write lock for `userRamos`
 
     /**
      * Fetches the `catalog` from a the internet, calling `WebManager`.
-     * @param clear_database If true, deletes the local Room database.
+     * @param clearDatabase If true, deletes the local Room database.
      * @param onSuccess Executed when successfully finished database initialization.
      * @param onInternetError Executed when the data file can't be fetched or its elements are invalid somehow.
      * @param onRoomError Executed when it is not possible to load user's local Room database.
      */
     fun init(
-        clear_database  :Boolean,
+        clearDatabase   :Boolean,
         onSuccess       :() -> Unit,
         onInternetError :() -> Unit,
         onRoomError     :() -> Unit
     ) {
         this.catalog = listOf()
         this.userRamos = mutableListOf()
+        this.writeLock = ReentrantLock()
         AsyncTask.execute {
             try {
                 Logf("[DataMaster] Fetching CSV catalog data...")
@@ -43,7 +50,7 @@ object DataMaster {
                 this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog.count())
 
-                // TODO: Room DB
+                // TODO: load user Room DB
 
                 onSuccess.invoke()
             }
@@ -66,15 +73,25 @@ object DataMaster {
     }
 
     public fun addUserRamo(ramo :Ramo) {
-        this.userRamos.add(ramo)
-        // TODO: update Room DB
+        try {
+            this.writeLock.lock()
+            this.userRamos.add(ramo)
+            // TODO: update Room DB
+        } finally {
+            this.writeLock.unlock()
+        }
     }
 
     public fun deleteUserRamo(NRC :Int) {
-        for (ramo :Ramo in this.userRamos) {
+        this.userRamos.forEachIndexed { index :Int, ramo :Ramo ->
             if (ramo.NRC == NRC) {
-                this.userRamos.remove(ramo)
-                // TODO: update Room DB
+                try {
+                    this.writeLock.lock()
+                    this.userRamos.removeAt(index)
+                    // TODO: update Room DB
+                } finally {
+                    this.writeLock.unlock()
+                }
             }
         }
     }
@@ -88,7 +105,7 @@ object DataMaster {
     }
 
     /* Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek` */
-    public fun getAgendaEvents(ramos :List<Ramo> = this.userRamos) : Map<DayOfWeek, List<RamoEvent>> {
+    public fun getEventsByDay(ramos :List<Ramo> = this.userRamos) : Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(
             DayOfWeek.MONDAY to mutableListOf(),
             DayOfWeek.TUESDAY to mutableListOf(),
@@ -98,8 +115,8 @@ object DataMaster {
         )
         for (ramo :Ramo in ramos) {
             for (event :RamoEvent in ramo.events) {
-                if ( (event.type != RamoEventType.PRBA) && (event.type != RamoEventType.EXAM) ) {
-                    when(event.dayofWeek) {
+                if (! event.isEvaluation()) {
+                    when(event.dayOfWeek) {
                         DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
                         DayOfWeek.TUESDAY   -> { results[DayOfWeek.TUESDAY]?.add(event) }
                         DayOfWeek.WEDNESDAY -> { results[DayOfWeek.WEDNESDAY]?.add(event) }

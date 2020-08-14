@@ -42,9 +42,7 @@ class HomeActivity : AppCompatActivity() {
         lateinit var creditosCounter    :TextView
         lateinit var agendaButton       :Button
         lateinit var pruebasButton      :Button
-
-        lateinit var loadBackground  :View
-        lateinit var loadProgressBar :View //ProgressBar
+        lateinit var loadDisplay        :View
 
         fun init(owner :AppCompatActivity) {
             this.topBar             = owner.findViewById(R.id.home_topbar)
@@ -54,8 +52,7 @@ class HomeActivity : AppCompatActivity() {
             this.creditosCounter    = owner.findViewById(R.id.home_creditos)
             this.agendaButton       = owner.findViewById(R.id.home_agendaButton)
             this.pruebasButton      = owner.findViewById(R.id.home_pruebasButton)
-            this.loadBackground     = owner.findViewById(R.id.home_loadBackground)
-            this.loadProgressBar    = owner.findViewById(R.id.home_loadProgressBar)
+            this.loadDisplay        = owner.findViewById(R.id.home_loadScreen)
         }
     }
 
@@ -87,7 +84,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        this.exitLoadMode()
+        UI.loadDisplay.visibility = View.GONE
 
         UI.creditosCounter.text = DataMaster.getUserTotalCredits().toString()
         if (UI.creditosCounter.text == "0") {
@@ -102,19 +99,8 @@ class HomeActivity : AppCompatActivity() {
         this.finishAffinity()
     }
 
-    /* Displays a big `ProgressBar` spinner on top of everything */
-    private fun enterLoadMode() {
-        UI.loadBackground.visibility = View.VISIBLE
-        UI.loadProgressBar.visibility = View.VISIBLE
-    }
-
-    private fun exitLoadMode() {
-        UI.loadBackground.visibility = View.GONE
-        UI.loadProgressBar.visibility = View.GONE
-    }
-
     private fun launchCatalogView() {
-        this.enterLoadMode()
+        UI.loadDisplay.visibility = View.VISIBLE
         this.startActivity(
             Intent(this, CatalogActivity::class.java)
         )

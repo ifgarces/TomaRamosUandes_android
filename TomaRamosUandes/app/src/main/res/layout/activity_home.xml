@@ -148,7 +148,7 @@
                 android:textAllCaps="false"
                 android:textSize="@dimen/buttonLower_textSize"
 
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@+id/home_agendaButton"
@@ -157,26 +157,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include
+        android:id="@+id/home_loadScreen"
+        layout="@layout/load_screen"
 
-    <!-- The following widgets are only visible during loading times -->
-    <View
-        android:id="@+id/home_loadBackground"
-        style="@style/loadWait_background"
-        android:visibility="gone"
-
-        app:layout_constraintBottom_toBottomOf="@+id/home_userRamosContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
-
-    <ProgressBar
-        android:id="@+id/home_loadProgressBar"
-        style="@style/loadWait_progressBar"
-        android:visibility="gone"
-
-        app:layout_constraintBottom_toBottomOf="@+id/home_userRamosContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

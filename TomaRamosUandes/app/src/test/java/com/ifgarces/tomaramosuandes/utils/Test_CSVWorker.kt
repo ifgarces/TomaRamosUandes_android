@@ -46,7 +46,7 @@ class Test_CSVWorker {
                                 ID = 0,
                                 ramoNRC = 2209,
                                 type = RamoEventType.CLAS,
-                                dayofWeek = DayOfWeek.TUESDAY,
+                                dayOfWeek = DayOfWeek.TUESDAY,
                                 startTime = LocalTime.of(17, 30),
                                 endTime = LocalTime.of(19, 20),
                                 date = null
@@ -69,7 +69,7 @@ class Test_CSVWorker {
                                 ID = 1,
                                 ramoNRC = 2209,
                                 type = RamoEventType.AYUD,
-                                dayofWeek = DayOfWeek.TUESDAY,
+                                dayOfWeek = DayOfWeek.TUESDAY,
                                 startTime = LocalTime.of(21, 30),
                                 endTime = LocalTime.of(22, 20),
                                 date = null

@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import java.lang.String.format as sprintf
@@ -34,13 +35,14 @@ fun String.spanishLowerCase() : String {
 }
 
 /* For large block literal strings. Makes possible to continue a line with "\\" character, ignoring extra whitespaces. */
-fun String.multilineFormat() : String { // Note: does not ignore tabs "\t".
+fun String.multilineTrim() : String { // Note: does not ignore tabs "\t".
     val NEWLINE_MARKER :String = "+++|♣♦♠♥|+++"
     return this
         .replace("\\\n", "") // continuing line
         .replace("\n", NEWLINE_MARKER) // avoiding intentioned newlines to be erased next
         .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
         .replace(NEWLINE_MARKER, "\n") // recovering intentioned newlines
+        .replace("\n ", "\n")
         .trim()
 }
 
@@ -120,3 +122,9 @@ fun Context.yesNoDialog(
     }
     diag.create().show()
 }
+
+///* Switches between VISIBLE and GONE */
+//fun View.toggleVisibility() {
+//    if (this.visibility == View.GONE) { this.visibility = View.VISIBLE }
+//    else { this.visibility = View.GONE }
+//}

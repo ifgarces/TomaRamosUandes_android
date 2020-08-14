@@ -209,7 +209,7 @@ object CSVWorker {
                     ID = eventsCounter++,
                     type = eventTypeAux,
                     ramoNRC = current.NRC,
-                    dayofWeek = current.dayOfWeek,
+                    dayOfWeek = current.dayOfWeek,
                     startTime = current.startTime,
                     endTime = current.endTime,
                     date = current.date

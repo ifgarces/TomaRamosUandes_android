@@ -8,9 +8,10 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:elevation="0dp"
+        android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,44 +19,36 @@
 
         <ImageView
             android:id="@+id/main_appImage"
-            app:srcCompat="@drawable/gears_icon"
-
             android:layout_width="200dp"
+
             android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/gears_icon" />
 
         <TextView
             android:id="@+id/main_appName"
-            android:text="@string/APP_NAME"
-            android:textSize="25sp"
-            android:textAlignment="center"
-            android:fontFamily="sans-serif-condensed"
-            
-            android:layout_marginVertical="16dp"
-            android:layout_marginHorizontal="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginVertical="16dp"
+
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/APP_NAME"
+            android:textAlignment="center"
+            android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_appImage" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- The following views are supossed to be invisible at first, and appear
-    after a set amount of time -->
+    <include
+        android:id="@+id/main_loadScreen"
+        layout="@layout/load_screen"
 
-    <View
-        android:id="@+id/main_loadBackground"
-        style="@style/loadWait_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/main_progressBar"
-        style="@style/loadWait_progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
