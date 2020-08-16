@@ -20,6 +20,5 @@
     <color name="catalog_untaken">@color/almostWhite</color>
     <color name="catalog_taken">#73E3FF</color>
 
-    <color name="colorBad">#C50000</color>
-    <color name="colorOk">#30A300</color>
+    <color name="conflict_background">#FFC2B3</color> <!-- indicates RamoEvent collide with another -->
 </resources>

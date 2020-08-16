@@ -5,14 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ifgarces.tomaramosuandes.adapters.RamoEventCardsAdapter
+import com.ifgarces.tomaramosuandes.adapters.AgendaPortraitAdapter
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.ImageWorker
 import com.ifgarces.tomaramosuandes.utils.Logf
@@ -23,7 +22,7 @@ class AgendaPortraitFragment : Fragment() {
 
     public companion object {
         /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
-        public fun showNow(caller :FragmentActivity, targetView :Int) {
+        public fun summon(caller :FragmentActivity, targetView :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(targetView, this.newInstance())
             transactioner.commit()
@@ -38,12 +37,12 @@ class AgendaPortraitFragment : Fragment() {
         lateinit var fullScreenAction :FloatingActionButton
         lateinit var agendaScroll     :View // ScrollView
         lateinit var agendaLayout     :View // LinearLayout
-        lateinit var dayHeaders       :List<TextView>
-        lateinit var recyclerMon      :RecyclerView
-        lateinit var recyclerTue      :RecyclerView
-        lateinit var recyclerWed      :RecyclerView
-        lateinit var recyclerThu      :RecyclerView
-        lateinit var recyclerFri      :RecyclerView
+        lateinit var dayHeaders       :List<View>
+        lateinit var recyclerTeamMon  :Pair<View, RecyclerView> // these holds the header (TextView) and their recycler attatched. They're a team.
+        lateinit var recyclerTeamTue  :Pair<View, RecyclerView>
+        lateinit var recyclerTeamWed  :Pair<View, RecyclerView>
+        lateinit var recyclerTeamThu  :Pair<View, RecyclerView>
+        lateinit var recyclerTeamFri  :Pair<View, RecyclerView>
 
         fun init(owner :View) {
             this.rootView         = owner
@@ -52,11 +51,26 @@ class AgendaPortraitFragment : Fragment() {
             this.fullScreenAction = owner.findViewById(R.id.portrAgenda_fullScreen)
             this.agendaScroll     = owner.findViewById(R.id.portrAgenda_scrollView)
             this.agendaLayout     = owner.findViewById(R.id.portrAgenda_layout)
-            this.recyclerMon      = owner.findViewById(R.id.portrAgenda_mondayRecycler)
-            this.recyclerTue      = owner.findViewById(R.id.portrAgenda_tuesdayRecycler)
-            this.recyclerWed      = owner.findViewById(R.id.portrAgenda_wednesdayRecycler)
-            this.recyclerThu      = owner.findViewById(R.id.portrAgenda_thursdayRecycler)
-            this.recyclerFri      = owner.findViewById(R.id.portrAgenda_fridayRecycler)
+            this.recyclerTeamMon  = Pair(
+                owner.findViewById(R.id.portrAgenda_mondayHead),
+                owner.findViewById(R.id.portrAgenda_mondayRecycler)
+            )
+            this.recyclerTeamTue = Pair(
+                owner.findViewById(R.id.portrAgenda_tuesdayHead),
+                owner.findViewById(R.id.portrAgenda_tuesdayRecycler)
+            )
+            this.recyclerTeamWed = Pair(
+                owner.findViewById(R.id.portrAgenda_wednesdayHead),
+                owner.findViewById(R.id.portrAgenda_wednesdayRecycler)
+            )
+            this.recyclerTeamThu = Pair(
+                owner.findViewById(R.id.portrAgenda_thursdayHead),
+                owner.findViewById(R.id.portrAgenda_thursdayRecycler)
+            )
+            this.recyclerTeamFri = Pair(
+                owner.findViewById(R.id.portrAgenda_fridayHead),
+                owner.findViewById(R.id.portrAgenda_fridayRecycler)
+            )
             this.dayHeaders = listOf(
                 owner.findViewById(R.id.portrAgenda_mondayHead),
                 owner.findViewById(R.id.portrAgenda_tuesdayHead),
@@ -67,23 +81,25 @@ class AgendaPortraitFragment : Fragment() {
         }
     }
 
-    lateinit var dayRecyclers :Map<DayOfWeek, RecyclerView>
-
     override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
         UI.init(owner=inflater.inflate(R.layout.fragment_agenda_portrait, container, false))
 
         val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByDay()
 
-        this.dayRecyclers = mapOf(
-            DayOfWeek.MONDAY to UI.recyclerMon,
-            DayOfWeek.TUESDAY to UI.recyclerTue,
-            DayOfWeek.WEDNESDAY to UI.recyclerWed,
-            DayOfWeek.THURSDAY to UI.recyclerThu,
-            DayOfWeek.FRIDAY to UI.recyclerFri
+        val dayRecyclers :Map<DayOfWeek, Pair<View, RecyclerView>> = mapOf(
+            DayOfWeek.MONDAY    to UI.recyclerTeamMon,
+            DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
+            DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
+            DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
+            DayOfWeek.FRIDAY    to UI.recyclerTeamFri
         )
-        this.dayRecyclers.forEach { (day :DayOfWeek, recycler :RecyclerView) -> // building agenda here
-            recycler.layoutManager = LinearLayoutManager(this.context)
-            recycler.adapter = agendaEvents[day]?.let { RamoEventCardsAdapter(data=it) }
+        dayRecyclers.forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) -> // building agenda here
+            team.second.layoutManager = LinearLayoutManager(this.context)
+            team.second.adapter = agendaEvents[day]?.let { AgendaPortraitAdapter(data=it) } // <==> AgendaPortraitAdapter(agendaEvents[day]?)
+            if (agendaEvents[day]?.count() == 0) { // hiding the day if there is no event on it
+                team.first.visibility = View.GONE
+                team.second.visibility = View.GONE
+            }
         }
 
         UI.saveAsImgAction.setColorFilter(Color.WHITE)
@@ -98,9 +114,9 @@ class AgendaPortraitFragment : Fragment() {
         UI.fullScreenAction.setColorFilter(Color.WHITE)
         UI.fullScreenAction.setOnClickListener {
             UI.loadScreen.visibility = View.VISIBLE
-            AgendaLandscapeFragment.showNow(
-                caller=this.activity as FragmentActivity,
-                targetView=R.id.agenda_fragmentContainer
+            AgendaLandscapeFragment.summon(
+                caller = this.activity as FragmentActivity,
+                targetView = R.id.agenda_fragmentContainer
             )
         }
 

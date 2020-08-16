@@ -82,7 +82,8 @@ object ImageWorker {
             stream.close()
             Logf("[ImageWorker] Image successfully saved at Pictures/%s", this.saveFolder)
             context.toastf("¡Imagen guardada en Pictures/%s! Revise su galería".format(this.saveFolder))
-        } catch (e: Exception) {
+        }
+        catch (e :Exception) {
             Logf("[ImageWorker] Error: could not save agenda as image. %s", e)
             context.infoDialog(
                 title = "Error",

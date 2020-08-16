@@ -6,10 +6,8 @@ import android.content.DialogInterface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.widget.EditText
 import android.widget.Toast
-import java.lang.String.format as sprintf
 import java.util.Locale
 
 
@@ -18,12 +16,12 @@ public const val LOG_TAG    :String = "_DEBUGLOG_" // logging is not heavy, all 
 
 /* Toast + sprintf */
 fun Context.toastf(format :String, vararg args :Any?) {
-    Toast.makeText(this, sprintf(format, *args), Toast.LENGTH_LONG).show()
+    Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
 }
 
 /* Debug log + sprintf */
 fun Logf(format :String, vararg args :Any?) {
-    if (DEBUG_MODE) { Log.d(LOG_TAG, sprintf(format, *args)) }
+    if (DEBUG_MODE) { Log.d(LOG_TAG, format.format(*args)) }
 }
 
 fun String.spanishUpperCase() : String {

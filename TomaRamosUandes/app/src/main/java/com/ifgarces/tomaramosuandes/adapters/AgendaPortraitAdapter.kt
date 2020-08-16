@@ -14,7 +14,8 @@ import com.ifgarces.tomaramosuandes.utils.SpanishStringer
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 
 
-class RamoEventCardsAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<RamoEventCardsAdapter.EventCardVH>() {
+/* Adapter used to display events in the portrait agenda view */
+class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<AgendaPortraitAdapter.EventCardVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : EventCardVH {
         return EventCardVH(
@@ -53,7 +54,10 @@ class RamoEventCardsAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
             }
             this.type.setBackgroundColor(backColor!!) // exception if invalid event or evaluation event, which should not go here (agenda)
 
-            // TODO: change `parentView` backColor to red if the block is in conflict with another
+            if (DataMaster.isTakenEventConflicted(event)) {
+                Logf("<temporal> RamoEvent with ID=%d collides with another one. Colorizing background...", event.ID)
+                this.parentView.setBackgroundColor( this.parentView.context.getColor(R.color.conflict_background) )
+            }
 
             parentView.setOnClickListener {
                 this.parentView.context.infoDialog(

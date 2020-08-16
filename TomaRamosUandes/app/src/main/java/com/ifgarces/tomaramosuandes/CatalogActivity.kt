@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputLayout
-import com.ifgarces.tomaramosuandes.adapters.RamosAdapter
+import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.onTextChangedListener
@@ -37,7 +37,7 @@ class CatalogActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_catalog)
         UI.init(owner=this)
 
-        UI.recycler.adapter = RamosAdapter(data = DataMaster.getCatalog())
+        UI.recycler.adapter = CatalogRamosAdapter(data = DataMaster.getCatalog().toMutableList())
         UI.recycler.layoutManager = LinearLayoutManager(this)
         //UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
         UI.searchBox_layout.setStartIconOnClickListener { this.clearSearch() }
@@ -75,7 +75,7 @@ class CatalogActivity : AppCompatActivity() {
                 }
             }
         }
-        (UI.recycler.adapter as RamosAdapter).updateData(data=results)
+        (UI.recycler.adapter as CatalogRamosAdapter).updateData(data=results)
         if (results.count() == 0) {
             UI.recycler.visibility = View.INVISIBLE
         } else {
@@ -86,6 +86,7 @@ class CatalogActivity : AppCompatActivity() {
     /* Shows again the full catalog */
     private fun clearSearch() {
         UI.searchBox.setText("")
-        (UI.recycler.adapter as RamosAdapter).updateData(data=DataMaster.getCatalog())
+        (UI.recycler.adapter as CatalogRamosAdapter).updateData(data=DataMaster.getCatalog().toMutableList())
+        UI.recycler.visibility = View.VISIBLE
     }
 }

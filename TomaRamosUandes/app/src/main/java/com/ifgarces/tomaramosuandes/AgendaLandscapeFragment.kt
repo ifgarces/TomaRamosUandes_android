@@ -23,7 +23,7 @@ class AgendaLandscapeFragment : Fragment() {
 
     public companion object {
         /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
-        public fun showNow(caller :FragmentActivity, targetView :Int) {
+        public fun summon(caller :FragmentActivity, targetView :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(targetView, this.newInstance())
             transactioner.commit()
@@ -145,9 +145,9 @@ class AgendaLandscapeFragment : Fragment() {
         for (k :Int in (0..13)) {
             for (collection :List<Button> in listOf(UI.lun, UI.mar, UI.mie, UI.jue, UI.vie)) {
                 collection[k].text = ""
-                collection[k].setOnClickListener {
-                    //this.blockClick(sender=collection[k])
-                }
+//                collection[k].setOnClickListener {
+//                    this.blockClick(sender=collection[k])
+//                }
             }
         }
 
@@ -173,7 +173,7 @@ class AgendaLandscapeFragment : Fragment() {
     private object AgendaWorker { // encapsulating agenda builder-related functions, as it may be complex otherwise
         private data class AgendaBlock( // linking each agenda visible button to the event on it. If conflict, there will be multiple events on a block.
             val button :Button,
-            val events :MutableList<RamoEvent> // TODO: may convert to `List` instead of `MutableList`
+            val events :MutableList<RamoEvent>
         )
         private lateinit var data :MutableList<AgendaBlock>
 

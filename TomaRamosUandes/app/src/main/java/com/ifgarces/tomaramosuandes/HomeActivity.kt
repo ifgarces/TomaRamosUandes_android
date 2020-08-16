@@ -9,27 +9,42 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import com.ifgarces.tomaramosuandes.adapters.RamosAdapter
+import com.ifgarces.tomaramosuandes.adapters.TakenRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 
 
-/**
- * Holds the main menu, etc.
- */
 class HomeActivity : AppCompatActivity() {
 
-    public object RecyclerSync {
+    public object RecyclerSync { // allows to update the recycler from another activity/fragment
         private var updatePending :Boolean = false
         private fun notifyAdapter() = UI.ramosRecycler.adapter!!.notifyDataSetChanged()
-        public fun updateRecycler() {
+        public fun requestUpdate() {
             try {
                 this.notifyAdapter()
-                Logf("[HomeActivity] RecyclerSync: recycler updated")
-                this.updatePending = false
             }
-            catch (e :NullPointerException) {
+            catch (e :NullPointerException) { //
                 Logf("[HomeActivity] RecyclerSync: recycler update queued")
                 this.updatePending = true // update is queued and will be executed when this activity starts again
+                return
+            }
+            this.processRecyclerChange()
+            Logf("[HomeActivity] RecyclerSync: recycler updated")
+            this.updatePending = false
+        }
+        public fun updateLocal() {
+            if (this.updatePending) { this.notifyAdapter() }
+            this.processRecyclerChange()
+        }
+        private fun processRecyclerChange() {
+            UI.creditosCounter.text = DataMaster.getUserTotalCredits().toString()
+            if (UI.creditosCounter.text == "0") {
+                UI.ramosRecycler.visibility = View.INVISIBLE
+                UI.agendaButton.isEnabled = false
+                UI.evaluationsButton.isEnabled = false
+            } else {
+                UI.ramosRecycler.visibility = View.VISIBLE
+                UI.agendaButton.isEnabled = true
+                UI.evaluationsButton.isEnabled = true
             }
         }
     }
@@ -41,7 +56,7 @@ class HomeActivity : AppCompatActivity() {
         lateinit var emptyRecyclerText  :TextView
         lateinit var creditosCounter    :TextView
         lateinit var agendaButton       :Button
-        lateinit var pruebasButton      :Button
+        lateinit var evaluationsButton  :Button
         lateinit var loadDisplay        :View
 
         fun init(owner :AppCompatActivity) {
@@ -51,7 +66,7 @@ class HomeActivity : AppCompatActivity() {
             this.emptyRecyclerText  = owner.findViewById(R.id.home_emptyRecyclerText)
             this.creditosCounter    = owner.findViewById(R.id.home_creditos)
             this.agendaButton       = owner.findViewById(R.id.home_agendaButton)
-            this.pruebasButton      = owner.findViewById(R.id.home_pruebasButton)
+            this.evaluationsButton      = owner.findViewById(R.id.home_pruebasButton)
             this.loadDisplay        = owner.findViewById(R.id.home_loadScreen)
         }
     }
@@ -62,8 +77,7 @@ class HomeActivity : AppCompatActivity() {
         UI.init(owner=this)
 
         UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
-        UI.ramosRecycler.adapter = RamosAdapter(data=DataMaster.getUserRamos())
-        // [!] TODO: somehow set adapter data referenced to `DataMaster.userRamos`
+        UI.ramosRecycler.adapter = TakenRamosAdapter(data=DataMaster.getUserRamos())
 
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -79,19 +93,14 @@ class HomeActivity : AppCompatActivity() {
         }
         UI.catalogButton.setOnClickListener { this.launchCatalogView() }
         UI.agendaButton.setOnClickListener { this.launchAgendaView() }
-        UI.pruebasButton.setOnClickListener { this.launchPruebasView() }
+        UI.evaluationsButton.setOnClickListener { this.launchPruebasView() }
     }
 
     override fun onResume() {
         super.onResume()
         UI.loadDisplay.visibility = View.GONE
 
-        UI.creditosCounter.text = DataMaster.getUserTotalCredits().toString()
-        if (UI.creditosCounter.text == "0") {
-            UI.ramosRecycler.visibility = View.INVISIBLE
-        }
-
-        RecyclerSync.updateRecycler()
+        RecyclerSync.updateLocal()
     }
 
     override fun onDestroy() {

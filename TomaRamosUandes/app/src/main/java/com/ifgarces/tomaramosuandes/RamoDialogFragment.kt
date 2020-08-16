@@ -31,7 +31,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
          * @param onDismiss This will be executed when dialog is dismissed by the user.
          */
         lateinit var dismissAction :() -> Unit
-        public fun showNow(manager :FragmentManager, onDismiss :() -> Unit = {}) {
+        public fun summon(manager :FragmentManager, onDismiss :() -> Unit = {}) {
             this.dismissAction = onDismiss
             this.newInstance().show(manager, this::class.simpleName)
         }
@@ -157,7 +157,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
     private fun actionTake(ramo :Ramo) {
         DataMaster.addUserRamo(ramo)
         this.context!!.toastf("%s tomado", ramo.nombre)
-        HomeActivity.RecyclerSync.updateRecycler()
+        HomeActivity.RecyclerSync.requestUpdate()
         this.dismiss()
     }
 
@@ -168,7 +168,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             onYesClicked = {
                 DataMaster.deleteUserRamo(ramo.NRC)
                 this.context!!.toastf("%s eliminado", ramo.nombre)
-                HomeActivity.RecyclerSync.updateRecycler()
+                HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity`
                 this.dismiss()
             }
         )

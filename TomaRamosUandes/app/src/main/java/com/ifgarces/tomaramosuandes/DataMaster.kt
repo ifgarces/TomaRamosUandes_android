@@ -104,6 +104,40 @@ object DataMaster {
         return creditosTotal
     }
 
+    /**
+     * Checks if the two events are in conflict. Returns true if there exist an overlaping/collision
+     * between them. Will return null if invalid data is passed (error), such as if trying to pass
+     * an evaluation event with a non-evaluation event, or if their `date` is null (when
+     * passing evaluation evaluation).
+     */
+    public fun areEventsConflicted(ev1 :RamoEvent, ev2 :RamoEvent) : Boolean? {
+        val first_isEval :Boolean = ev1.isEvaluation()
+        val second_isEval :Boolean = ev2.isEvaluation()
+        if (first_isEval && second_isEval) { // comparing evaluation events (date and time)
+            if (ev1.date == null || ev2.date == null) { return null } // error: missing date
+            if (ev1.date != ev2.date) { return false }
+        }
+        else if ( (!first_isEval) && (!second_isEval) ) { // comparing non-evaluation events (dayOfWeek and time)
+            if (ev1.dayOfWeek != ev2.dayOfWeek) { return false }
+        }
+        else { return null } // unconsistent types: comparing evaluation with non-evaluation
+
+        // "does i starts before j finished and i finishes after j starts?"
+        return (ev1.startTime <= ev2.endTime) && (ev1.endTime >= ev2.startTime)
+    }
+
+    /* Iterates all user `Ramo` list and checks if `event` collide with another */
+    public fun isTakenEventConflicted(event :RamoEvent) : Boolean {
+        this.userRamos.forEach {
+            it.events.forEach { ev :RamoEvent ->
+                if (ev.ID != event.ID) {
+                    if (this.areEventsConflicted(ev, event) == true) { return true }
+                }
+            }
+        }
+        return false
+    }
+
     /* Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek` */
     public fun getEventsByDay(ramos :List<Ramo> = this.userRamos) : Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(
