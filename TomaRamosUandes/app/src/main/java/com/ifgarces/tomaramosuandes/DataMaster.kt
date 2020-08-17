@@ -1,12 +1,13 @@
 package com.ifgarces.tomaramosuandes
 
+import android.content.Context
 import android.os.AsyncTask
-import com.ifgarces.tomaramosuandes.DataMaster.catalog
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.CSVWorker
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
+import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 import java.time.DayOfWeek
 import java.util.concurrent.locks.ReentrantLock
 
@@ -18,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock
 object DataMaster {
 
     // ----
-    // TODO: be sure to manage concurrency for `userRamos` (and `catalog` and)?
+    // TODO: make sure to manage write concurrency for `userRamos`
     // ----
 
     @Volatile private lateinit var catalog   :List<Ramo>;        fun getCatalog() = this.catalog
@@ -65,24 +66,59 @@ object DataMaster {
         }
     }
 
-    public fun findRamo(NRC :Int) : Ramo? {
-        for (ramo :Ramo in this.catalog) {
-            if (ramo.NRC == NRC) { return ramo }
+    /**
+     * Searchs and returns the `Ramo` whose NRC (ID) matches.
+     * @param NRC The fiven ID.
+     * @param searchInUserList If true, will search just along the user taken `Ramo`s. If not, searches along the catalog.
+     * @return Returns null if not found.
+     */
+    public fun findRamo(NRC :Int, searchInUserList :Boolean = false) : Ramo? {
+        this.catalog.forEach {
+            if (it.NRC == NRC) { return it }
         }
         return null
     }
 
-    public fun addUserRamo(ramo :Ramo) {
+    /**
+     * Attemps to take `ramo` and add it to the user list. If any event of `ramo` collides with
+     * another already taken `Ramo`, prompts confirmation dialog and, if the user wants to continue
+     * neverdeless, finishes the action and returns true. If not, returns false.
+     */
+    public fun takeRamo(ramo :Ramo, context :Context) : Boolean {
+        // TODO: manage to sync this properly...
+        var conflictChecker :RamoEvent?
+        var userCancelled :Boolean = false
+        ramo.events.forEach {
+            if (userCancelled) { return false /* UNSYNCKED */ }
+            conflictChecker = this.checkEventConflicted(it)
+            if (conflictChecker != null) {
+                context.yesNoDialog(
+                    title = "Conflicto de eventos",
+                    message = "Advertencia: conflicto entre:\n• %s\n• %s\n\n¿Desea tomar %s de todas formas?"
+                        .format(it.toShortString(), conflictChecker!!.toShortString(), ramo.nombre),
+                    onYesClicked = {
+                        this.takeRamoInternal(ramo=ramo)
+                        return true /* UNSYNCKED */
+                    },
+                    onNoClicked = { userCancelled = true /* UNSYNCKED */ },
+                    icon = R.drawable.alert_icon
+                )
+            }
+        }
+
+        return true /* UNSYNCKED */
+    }
+    private fun takeRamoInternal(ramo :Ramo) {
         try {
             this.writeLock.lock()
             this.userRamos.add(ramo)
-            // TODO: update Room DB
+            // TODO: update Room DB here
         } finally {
             this.writeLock.unlock()
         }
     }
 
-    public fun deleteUserRamo(NRC :Int) {
+    public fun untakeRamo(NRC :Int) {
         this.userRamos.forEachIndexed { index :Int, ramo :Ramo ->
             if (ramo.NRC == NRC) {
                 try {
@@ -126,20 +162,24 @@ object DataMaster {
         return (ev1.startTime <= ev2.endTime) && (ev1.endTime >= ev2.startTime)
     }
 
-    /* Iterates all user `Ramo` list and checks if `event` collide with another */
-    public fun isTakenEventConflicted(event :RamoEvent) : Boolean {
+
+    /**
+     * Iterates all user taken `Ramo` list and checks if `event` collide with another.
+     * @return The first other event that collide with `event`, null if there is no conflict
+     */
+    public fun checkEventConflicted(event :RamoEvent) : RamoEvent? {
         this.userRamos.forEach {
             it.events.forEach { ev :RamoEvent ->
                 if (ev.ID != event.ID) {
-                    if (this.areEventsConflicted(ev, event) == true) { return true }
+                    if (this.areEventsConflicted(ev, event) == true) { return ev }
                 }
             }
         }
-        return false
+        return null
     }
 
     /* Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek` */
-    public fun getEventsByDay(ramos :List<Ramo> = this.userRamos) : Map<DayOfWeek, List<RamoEvent>> {
+    public fun getEventsByWeekDay(ramos :List<Ramo> = this.userRamos) : Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(
             DayOfWeek.MONDAY to mutableListOf(),
             DayOfWeek.TUESDAY to mutableListOf(),

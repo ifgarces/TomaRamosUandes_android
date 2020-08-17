@@ -13,10 +13,6 @@ import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
-/**
- * Handles `Ramo` display on RecyclerView.
- * @property catalogMode True if displaying catalog data, false if handling user taken data only.
- */
 class CatalogRamosAdapter(private var data :MutableList<Ramo>) : RecyclerView.Adapter<CatalogRamosAdapter.CatalogVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : CatalogVH {

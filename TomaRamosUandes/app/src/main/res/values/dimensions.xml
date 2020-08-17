@@ -6,5 +6,5 @@
     <dimen name="recyclerItems_margin">4dp</dimen> <!-- individual margin for all elements of a RecyclerView -->
     <dimen name="roundButton_radius">18dp</dimen> <!-- cornerRaduis for a rounded button -->
     <dimen name="ramoEventItem_height">65dp</dimen>
-    <dimen name="homeCatalogBtn_margins">30dp</dimen>
+    <dimen name="homeCatalogBtn_margins">36dp</dimen>
 </resources>

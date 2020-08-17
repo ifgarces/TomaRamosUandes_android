@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         UI.loadScreen.postDelayed({ // couldn't do this with `runOnUiThread`, for some reason
             UI.loadScreen.visibility = View.VISIBLE
-        }, PROGRESSBAR_SPAWN_TIMEOUT)
+        }, this.PROGRESSBAR_SPAWN_TIMEOUT)
 
         AppMetadata.init(activity=this)
         WebManager.init()
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                         onDismiss = {
                             this.finish()
                         },
-                        icon = R.drawable.exclamation_icon
+                        icon = R.drawable.alert_icon
                     )
                 }
             },
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                         onDismiss = {
                             // TODO: clear user data
                         },
-                        icon = R.drawable.exclamation_icon
+                        icon = R.drawable.alert_icon
                     )
                 }
             }

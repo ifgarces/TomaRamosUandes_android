@@ -26,7 +26,7 @@ data class RamoEvent(
 
     override fun toString() : String {
         val dateOrDay :String =
-            if (this.isEvaluation()) { this.date.toString() }
+            if (this.isEvaluation()) { this.date.toString() } // TODO: make sure to use "dd/MM/yyyy" format
             else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
         return """
                 Tipo: %s
@@ -37,13 +37,26 @@ data class RamoEvent(
             DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
             this.ramoNRC,
             dateOrDay,
-            this.startTime, // TODO: be sure to use "HH:mm" format
+            this.startTime, // TODO: make sure to use "HH:mm" format
+            this.endTime
+        )
+    }
+
+    public fun toShortString() : String { // used in event conflict reports
+        val dateOrDay :String =
+            if (this.isEvaluation()) { this.date.toString() }
+            else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
+        return "%s: %s (%s %s-%s)".format(
+            SpanishStringer.ramoEventType(eventType=this.type, shorten=false)!!,
+            DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
+            dateOrDay,
+            this.startTime,
             this.endTime
         )
     }
 
     /* Checks if the event is a test or exam */
-    fun isEvaluation() : Boolean {
+    public fun isEvaluation() : Boolean {
         return (this.type == RamoEventType.PRBA) || (this.type == RamoEventType.EXAM)
     }
 }

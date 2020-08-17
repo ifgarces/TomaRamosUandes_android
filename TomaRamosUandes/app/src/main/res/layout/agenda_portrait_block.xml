@@ -8,7 +8,8 @@
     app:cardBackgroundColor="@color/almostWhite">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:padding="4dp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,14 +27,13 @@
         <TextView
             android:id="@+id/agendaPblock_ti"
             style="@style/agendaPortrait_time"
-            android:text="[start time]"
-
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="[start time]"
+            app:layout_constraintBottom_toBottomOf="@+id/agendaPblock_type"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/agendaPblock_ramo" />
+            app:layout_constraintTop_toTopOf="@+id/agendaPblock_type" />
 
         <TextView
             android:id="@+id/agendaPblock_static01"
@@ -48,27 +48,28 @@
         <TextView
             android:id="@+id/agendaPblock_tf"
             style="@style/agendaPortrait_time"
-            android:text="[end time]"
-
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
+            android:text="[end time]"
             app:layout_constraintStart_toEndOf="@+id/agendaPblock_static01"
             app:layout_constraintTop_toTopOf="@+id/agendaPblock_ti" />
 
         <TextView
             android:id="@+id/agendaPblock_type"
-            android:text="[event type]"
-            android:paddingHorizontal="5dp"
-            android:paddingVertical="3dp"
-            android:background="@drawable/box_event_type"
-            android:textColor="@color/gray"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            android:textSize="14sp"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ramoAttrs_spacing"
+            android:background="@drawable/box_event_type"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="3dp"
+            android:text="[event type]"
+            android:textAllCaps="true"
+
+            android:textColor="@color/gray"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/agendaPblock_ti" />
+            app:layout_constraintTop_toBottomOf="@+id/agendaPblock_ramo" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -80,8 +80,8 @@ object ImageWorker {
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Logf("[ImageWorker] Image successfully saved at Pictures/%s", this.saveFolder)
-            context.toastf("¡Imagen guardada en Pictures/%s! Revise su galería".format(this.saveFolder))
+            Logf("[ImageWorker] Image successfully saved at Pictures/%s.", this.saveFolder)
+            context.toastf("Imagen guardada en carpeta Pictures/%s.\nRevise su galería.", this.saveFolder)
         }
         catch (e :Exception) {
             Logf("[ImageWorker] Error: could not save agenda as image. %s", e)

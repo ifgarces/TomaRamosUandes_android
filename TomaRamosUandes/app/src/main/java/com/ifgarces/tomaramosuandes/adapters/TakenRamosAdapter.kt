@@ -12,7 +12,7 @@ import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
-class TakenRamosAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<TakenRamosAdapter.TakenVH>() {
+class TakenRamosAdapter(private var data :MutableList<Ramo>) : RecyclerView.Adapter<TakenRamosAdapter.TakenVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : TakenVH {
         return TakenVH(
@@ -24,7 +24,7 @@ class TakenRamosAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<Tak
 
     override fun onBindViewHolder(holder :TakenVH, position :Int) = holder.bind(this.data[position], position)
 
-    fun updateData(data :List<Ramo>) {
+    fun updateData(data :MutableList<Ramo>) {
         this.data = data
         this.notifyDataSetChanged()
     }

@@ -28,7 +28,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         /**
          * Shows the dialog fragment.
          * @param manager Needs the caller's `FragmentManager`.
-         * @param onDismiss This will be executed when dialog is dismissed by the user.
+         * @param onDismiss Peace of code that will be executed when the dialog is dismissed by the user.
          */
         lateinit var dismissAction :() -> Unit
         public fun summon(manager :FragmentManager, onDismiss :() -> Unit = {}) {
@@ -132,11 +132,11 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             val bottomSheet :View = dialog?.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
             val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from<View>(bottomSheet)
-            val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout //rootLayout is root of your fragment layout.
+            val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout
             layout.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     try {
-                        layout.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                        layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                         behavior.peekHeight = layout.height
                         view?.requestLayout()
                     } catch (e: Exception) {}
@@ -154,9 +154,27 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         Companion.dismissAction.invoke()
     }
 
+    /* Attemps to take the chosen `Ramo`. If conflict, prompts confirmation dialog. */
     private fun actionTake(ramo :Ramo) {
-        DataMaster.addUserRamo(ramo)
-        this.context!!.toastf("%s tomado", ramo.nombre)
+        val conflictError :Error? = DataMaster.takeRamo(ramo=ramo, ignoreConflict=false)
+        if (conflictError != null) {
+            this.context!!.yesNoDialog(
+                title = "Conflicto de horario",
+                message = "Advertencia: %s\n¿Desea tomar %s de todas formas?".format(conflictError.message, ramo.nombre),
+                onYesClicked = {
+                    DataMaster.takeRamo(ramo=ramo, ignoreConflict=true)
+                    this.takeRamoConfirmed()
+                },
+                onNoClicked = { this.dismiss() },
+                icon = R.drawable.alert_icon
+            )
+        }
+        else {
+            this.takeRamoConfirmed()
+        }
+    }
+
+    private fun takeRamoConfirmed() {
         HomeActivity.RecyclerSync.requestUpdate()
         this.dismiss()
     }
@@ -166,9 +184,9 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             title = "Borrar ramo",
             message = "¿Está seguro que desea eliminar ${ramo.nombre} de su lista de ramos tomados?",
             onYesClicked = {
-                DataMaster.deleteUserRamo(ramo.NRC)
+                DataMaster.untakeRamo(ramo.NRC)
                 this.context!!.toastf("%s eliminado", ramo.nombre)
-                HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity`
+                HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView`
                 this.dismiss()
             }
         )

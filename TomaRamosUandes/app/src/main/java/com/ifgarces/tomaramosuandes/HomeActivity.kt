@@ -66,7 +66,7 @@ class HomeActivity : AppCompatActivity() {
             this.emptyRecyclerText  = owner.findViewById(R.id.home_emptyRecyclerText)
             this.creditosCounter    = owner.findViewById(R.id.home_creditos)
             this.agendaButton       = owner.findViewById(R.id.home_agendaButton)
-            this.evaluationsButton      = owner.findViewById(R.id.home_pruebasButton)
+            this.evaluationsButton  = owner.findViewById(R.id.home_pruebasButton)
             this.loadDisplay        = owner.findViewById(R.id.home_loadScreen)
         }
     }

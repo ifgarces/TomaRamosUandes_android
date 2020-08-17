@@ -9,7 +9,6 @@ import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.SpanishStringer
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 
@@ -54,8 +53,8 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
             }
             this.type.setBackgroundColor(backColor!!) // exception if invalid event or evaluation event, which should not go here (agenda)
 
-            if (DataMaster.isTakenEventConflicted(event)) {
-                Logf("<temporal> RamoEvent with ID=%d collides with another one. Colorizing background...", event.ID)
+            val conflicted :RamoEvent? = DataMaster.checkEventConflicted(event)
+            if (conflicted != null) { // colorizing conflicted events
                 this.parentView.setBackgroundColor( this.parentView.context.getColor(R.color.conflict_background) )
             }
 
