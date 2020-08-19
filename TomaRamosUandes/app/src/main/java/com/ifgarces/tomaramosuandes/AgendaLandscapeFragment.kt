@@ -3,14 +3,11 @@ package com.ifgarces.tomaramosuandes
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
@@ -23,6 +20,9 @@ import java.time.LocalTime
 
 
 class AgendaLandscapeFragment : Fragment() {
+
+    private val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 1500 // time passed between the FloatingActionButton dissapears due scrolling and it appears again (milliseconds)
+    private val ROWS_COUNT :Int = 14 // number of rows of agenda i.e. number of blocks per day of week
 
     public companion object {
         /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
@@ -133,18 +133,13 @@ class AgendaLandscapeFragment : Fragment() {
         }
     }
 
-    private val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 2000 // time passed between the FloatingActionButton dissapears due scrolling and it appears again
-    private val ROWS_COUNT :Int = 14 // number of rows of agenda i.e. number of blocks per day of week
     private var isFullScreenOn :Boolean = false // says if the system UI is hidden (i.e. full screen mode is activated).
 
-    override fun onCreateView(
-        inflater :LayoutInflater,
-        container :ViewGroup?,
-        savedInstanceState :Bundle?
-    ) : View? {
-        UI.init(
-            owner = inflater.inflate(R.layout.fragment_agenda_landscape, container, false)
-        )
+    override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
+        Logf("[AgendaLandscapeFragment] Initializing...")
+        this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // forcing landscape orientation
+
+        UI.init( owner=inflater.inflate(R.layout.fragment_agenda_landscape, container, false) )
 
         UI.saveAsImgAction.setColorFilter(Color.WHITE)
 
@@ -195,10 +190,14 @@ class AgendaLandscapeFragment : Fragment() {
 
         AgendaWorker.buildAgenda(context=this.context!!)
 
-        this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // forcing landscape orientation
         this.enterFullScreen()
         return UI.rootView
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR // reseting orientation when closing
+//    }
 
     private fun enterFullScreen() {
         this.activity!!.enterFullScreen()

@@ -74,7 +74,8 @@ class AgendaPortraitFragment : Fragment() {
     }
 
     override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
-        UI.init(owner=inflater.inflate(R.layout.fragment_agenda_portrait, container, false))
+        Logf("[AgendaPortraitFragment] Initializing...")
+        UI.init( owner=inflater.inflate(R.layout.fragment_agenda_portrait, container, false) )
 
         val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
 

@@ -126,8 +126,9 @@ object DataMaster {
     }
 
     public fun untakeRamo(NRC :Int) {
-        this.userRamos.forEachIndexed { index :Int, ramo :Ramo ->
-            if (ramo.NRC == NRC) {
+        var index :Int = 0
+        while (index < this.userRamos.count()) { // replace with range and test
+            if (this.userRamos[index].NRC == NRC) {
                 try {
                     this.writeLock.lock()
                     this.userRamos.removeAt(index)
@@ -136,6 +137,7 @@ object DataMaster {
                     this.writeLock.unlock()
                 }
             }
+            index++
         }
     }
 

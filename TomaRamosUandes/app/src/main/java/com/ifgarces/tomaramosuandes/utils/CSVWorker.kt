@@ -106,7 +106,7 @@ object CSVWorker {
                 current.curso = line[csv_columns.CURSONUM].toInt()
             }
             catch (e :NumberFormatException) {
-                Logf("[CSVWorker] Warning: RamoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming RamoNum assign is yet pending and assigning zero.", lineNum+1, csv_lines[lineNum], e)
+                Logf("[CSVWorker] Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.", lineNum+1, csv_lines[lineNum], e)
                 current.curso = 0
             }
 
