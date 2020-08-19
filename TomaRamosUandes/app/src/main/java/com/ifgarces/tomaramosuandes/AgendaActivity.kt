@@ -1,6 +1,5 @@
 package com.ifgarces.tomaramosuandes
 
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +8,7 @@ import com.ifgarces.tomaramosuandes.utils.enterFullScreen
 
 class AgendaActivity : AppCompatActivity() {
 
-    var inLandscapeMode :Boolean = false // indicates if `AgendaLandscapeFragment` is executing now
+    private var inLandscapeMode :Boolean = false // indicates if `AgendaLandscapeFragment` is executing now
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +18,7 @@ class AgendaActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // TODO: fix AgendaLandscapeFragment being initialized several times due the following orientation rule
+        // TODO: fix AgendaLandscapeFragment being initialized several times due the following orientation rule (use companion object?):
 
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             this.launchPortraitMode()

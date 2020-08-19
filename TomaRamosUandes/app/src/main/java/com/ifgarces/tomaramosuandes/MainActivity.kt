@@ -1,6 +1,7 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -34,12 +35,14 @@ class MainActivity : AppCompatActivity() {
 
         UI.loadScreen.visibility = View.GONE
 
-        UI.loadScreen.postDelayed({ // couldn't do this with `runOnUiThread`, for some reason
+        UI.loadScreen.postDelayed({ // couldn't do this with runOnUiThread + sleep, for some reason
             UI.loadScreen.visibility = View.VISIBLE
         }, this.PROGRESSBAR_SPAWN_TIMEOUT)
 
         AppMetadata.init(activity=this)
-        WebManager.init()
+        this.runOnUiThread {
+            WebManager.init(context=this)
+        }
         DataMaster.init(
             clearDatabase = false,
             onSuccess = {

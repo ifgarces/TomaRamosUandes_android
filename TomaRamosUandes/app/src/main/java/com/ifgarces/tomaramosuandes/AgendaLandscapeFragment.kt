@@ -14,7 +14,11 @@ import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import com.ifgarces.tomaramosuandes.utils.*
+import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.ImageWorker
+import com.ifgarces.tomaramosuandes.utils.infoDialog
+import com.ifgarces.tomaramosuandes.utils.enterFullScreen
+import com.ifgarces.tomaramosuandes.utils.exitFullScreen
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -26,7 +30,7 @@ class AgendaLandscapeFragment : Fragment() {
 
     public companion object {
         /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
-        public fun summon(caller: FragmentActivity, targetView: Int) {
+        public fun summon(caller :FragmentActivity, targetView :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(targetView, this.newInstance())
             transactioner.commit()
@@ -42,7 +46,7 @@ class AgendaLandscapeFragment : Fragment() {
         lateinit var agendaBodyLayout :View // LinearLayout
         lateinit var blocksMap        :Map<DayOfWeek, List<Button>>
 
-        fun init(owner: View) {
+        fun init(owner :View) {
             this.rootView = owner
             this.saveAsImgAction        = owner.findViewById(R.id.landAgenda_saveAsImage)
             this.toggleFullScreenAction = owner.findViewById(R.id.landAgenda_toggleFullScreen)
@@ -142,7 +146,6 @@ class AgendaLandscapeFragment : Fragment() {
         UI.init( owner=inflater.inflate(R.layout.fragment_agenda_landscape, container, false) )
 
         UI.saveAsImgAction.setColorFilter(Color.WHITE)
-
         UI.saveAsImgAction.setOnClickListener {
             Logf("[AgendaLandscapeFragment] Exporting agenda as image...")
             ImageWorker.exportAgendaImage(
@@ -194,11 +197,6 @@ class AgendaLandscapeFragment : Fragment() {
         return UI.rootView
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR // reseting orientation when closing
-//    }
-
     private fun enterFullScreen() {
         this.activity!!.enterFullScreen()
         this.isFullScreenOn = true
@@ -226,10 +224,10 @@ class AgendaLandscapeFragment : Fragment() {
         private val agendaData :MutableList<AgendaBlock> = mutableListOf()
 
         data class AgendaBlock(
-            val button: Button,
-            val events: MutableList<RamoEvent>
+            val button :Button,
+            val events :MutableList<RamoEvent>
         )
-        fun MutableList<AgendaBlock>.findEventsOf(button: Button) : MutableList<RamoEvent>? {
+        fun MutableList<AgendaBlock>.findEventsOf(button :Button) : MutableList<RamoEvent>? {
             this.forEach {
                 if (it.button == button) { return it.events }
             }
@@ -237,7 +235,7 @@ class AgendaLandscapeFragment : Fragment() {
         }
 
         /* Click listener for a block button */
-        public fun onBlockClicked(sender: Button, context: Context) {
+        public fun onBlockClicked(sender :Button, context :Context) {
             Logf("[AgendaLandscapeFragment] You clicked button with ID=%d", sender.id)
             val blockEvents :MutableList<RamoEvent> = this.agendaData.findEventsOf(button = sender)!!
             if (blockEvents.count() == 0) { return }
@@ -261,12 +259,12 @@ class AgendaLandscapeFragment : Fragment() {
         }
 
         /* Displays the non-evaluation events for each user taken `Ramo` in the agenda */
-        public fun buildAgenda(context: Context) {
+        public fun buildAgenda(context :Context) {
             Logf("[AgendaLandscapeFragment] Building agenda...")
 
             /* initializing */
             this.agendaData.clear()
-            UI.blocksMap.forEach { (_: DayOfWeek, buttons: List<Button>) ->
+            UI.blocksMap.forEach { (_ :DayOfWeek, buttons :List<Button>) ->
                 buttons.forEach {
                     this.agendaData.add(AgendaBlock(button = it, events = mutableListOf()))
                 }
@@ -274,9 +272,9 @@ class AgendaLandscapeFragment : Fragment() {
 
             /* filling `agendaData` i.e. mapping agenda block buttons with corresponding event(s) */
             var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
-            DataMaster.getEventsByWeekDay().forEach { (day: DayOfWeek, events: List<RamoEvent>) ->
+            DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
                 for (ev :RamoEvent in events) {
-                    rowInterval = timeInterval_toBlockRow(start = ev.startTime, end = ev.endTime)!!
+                    rowInterval = timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
                     for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
                         this.agendaData.findEventsOf(
                             button = UI.blocksMap.getValue(key = day)[rowNum]
@@ -286,8 +284,8 @@ class AgendaLandscapeFragment : Fragment() {
             }
 
             /* displaying events assigned to each block button */
-            this.agendaData.forEach { (block: Button, events: MutableList<RamoEvent>) ->
-                events.forEachIndexed { index: Int, event: RamoEvent ->
+            this.agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
+                events.forEachIndexed { index :Int, event :RamoEvent ->
                     if (index == 0) {
                         block.text = DataMaster.findRamo(
                             NRC = event.ramoNRC,
@@ -308,7 +306,7 @@ class AgendaLandscapeFragment : Fragment() {
                         block.setBackgroundColor(backColor!!)
                     }
                     else {
-                        block.setBackgroundColor(context.getColor(R.color.conflict_background)) // visibly marking block as conflicted
+                        block.setBackgroundColor( context.getColor(R.color.conflict_background) ) // visibly marking block as conflicted
                         // concatenating multiple events in same block
                         block.text = "%s + %s".format(
                             block.text, DataMaster.findRamo(
@@ -328,7 +326,7 @@ class AgendaLandscapeFragment : Fragment() {
 
         private val supportedHours_start :List<Int> = (8 until 21+1).toList() // [8, 21]
         private val supportedHours_end :List<Int> = (9 until 22).toList() // [9, 22]
-        private fun timeInterval_toBlockRow(start: LocalTime, end: LocalTime) : Pair<Int, Int>? {
+        private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) : Pair<Int, Int>? {
             var rowStart :Int = this.supportedHours_start.indexOf(start.hour)
             var rowEnd   :Int = this.supportedHours_end.indexOf(end.hour)+1
             if (rowStart == -1 || rowEnd == -1) { return null } // invalid hour(s): block wouldn't fit in agenda

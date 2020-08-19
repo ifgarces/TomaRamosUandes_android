@@ -1,6 +1,5 @@
 package com.ifgarces.tomaramosuandes
 
-import android.app.Activity
 import android.content.Context
 import android.os.AsyncTask
 import com.ifgarces.tomaramosuandes.models.Ramo
@@ -46,7 +45,7 @@ object DataMaster {
         AsyncTask.execute {
             try {
                 Logf("[DataMaster] Fetching CSV catalog data...")
-                val csv_body :String = WebManager.FetchOnlineDataCSV()
+                val csv_body :String = WebManager.fetchCatalogCSV()
 
                 Logf("[DataMaster] Parsing CSV...")
                 this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
@@ -126,8 +125,7 @@ object DataMaster {
     }
 
     public fun untakeRamo(NRC :Int) {
-        var index :Int = 0
-        while (index < this.userRamos.count()) { // replace with range and test
+        for ( index :Int in (0 until this.userRamos.count()) ) {
             if (this.userRamos[index].NRC == NRC) {
                 try {
                     this.writeLock.lock()
@@ -137,7 +135,6 @@ object DataMaster {
                     this.writeLock.unlock()
                 }
             }
-            index++
         }
     }
 

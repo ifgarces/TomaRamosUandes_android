@@ -8,31 +8,30 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
-import java.util.*
+import java.util.Locale
 
 
-public const val DEBUG_MODE :Boolean = true // turning to false during tests and release
-public const val LOG_TAG    :String = "_DEBUGLOG_" // logging is not heavy, all of it will be labeled with this string
+const val DEBUG_MODE :Boolean = true // turning to false during tests and release
+const val LOG_TAG    :String = "_DEBUGLOG_" // logging is not heavy, all of it will be labeled with this string
 
 /* Toast + sprintf */
-fun Context.toastf(format: String, vararg args: Any?) {
+fun Context.toastf(format :String, vararg args :Any?) {
     Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
 }
 
 /* Debug log + sprintf */
-fun Logf(format: String, vararg args: Any?) {
+fun Logf(format :String, vararg args :Any?) {
     if (DEBUG_MODE) { Log.d(LOG_TAG, format.format(*args)) }
 }
 
 fun String.spanishUpperCase() : String {
-    return this.toUpperCase(Locale("es", "ES"))
+    return this.toUpperCase( Locale("es", "ES") )
 }
 
 fun String.spanishLowerCase() : String {
-    return this.toLowerCase(Locale("es", "ES"))
+    return this.toLowerCase( Locale("es", "ES") )
 }
 
 /* For large block literal strings. Makes possible to continue a line with "\\" character, ignoring extra whitespaces. */
@@ -64,7 +63,7 @@ fun String.spanishNonAccent() : String {
 }
 
 /* Executes `action` when the widget `text` is changed */
-fun EditText.onTextChangedListener(action: (text: String) -> Unit) {
+fun EditText.onTextChangedListener(action : (text :String) -> Unit) {
     this.addTextChangedListener(
         object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -79,10 +78,10 @@ fun EditText.onTextChangedListener(action: (text: String) -> Unit) {
 
 /* Dialog simple que muestra un texto */
 fun Context.infoDialog(
-    title: String,
-    message: String,
-    onDismiss: () -> Unit = {},
-    icon: Int? = null // resource reference
+    title      :String,
+    message    :String,
+    onDismiss  :() -> Unit = {},
+    icon       :Int? = null // resource reference
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
@@ -100,11 +99,11 @@ fun Context.infoDialog(
 
 /* Dialog con botónes SÍ/NO */
 fun Context.yesNoDialog(
-    title: String,
-    message: String,
-    onYesClicked: () -> Unit,
-    onNoClicked: () -> Unit = {},
-    icon: Int? = null // resource reference
+    title         :String,
+    message       :String,
+    onYesClicked  :() -> Unit,
+    onNoClicked   :() -> Unit = {},
+    icon          :Int? = null // resource reference
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this)
         .setTitle(title)
@@ -144,12 +143,3 @@ fun Activity.exitFullScreen() { // references: https://developer.android.com/tra
         //or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     )
 }
-
-///* Switches between full screen and normal screen modes */
-//fun Activity.toggleFullScreen() {
-//     if (this.window.attributes.flags and WindowManager.LayoutParams.FLAG_FULLSCREEN !== 0) { // if fullscreeen
-//         this.exitFullScreen()
-//     } else {
-//         this.enterFullScreen()
-//     }
-//}
