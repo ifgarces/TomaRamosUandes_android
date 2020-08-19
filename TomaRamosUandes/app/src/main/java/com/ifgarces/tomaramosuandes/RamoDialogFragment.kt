@@ -1,6 +1,7 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.DialogInterface
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -156,37 +157,24 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
 
     /* Attemps to take the chosen `Ramo`. If conflict, prompts confirmation dialog. */
     private fun actionTake(ramo :Ramo) {
-        val conflictError :Error? = DataMaster.takeRamo(ramo=ramo, ignoreConflict=false)
-        if (conflictError != null) {
-            this.context!!.yesNoDialog(
-                title = "Conflicto de horario",
-                message = "Advertencia: %s\n¿Desea tomar %s de todas formas?".format(conflictError.message, ramo.nombre),
-                onYesClicked = {
-                    DataMaster.takeRamo(ramo=ramo, ignoreConflict=true)
-                    this.takeRamoConfirmed()
-                },
-                onNoClicked = { this.dismiss() },
-                icon = R.drawable.alert_icon
-            )
-        }
-        else {
-            this.takeRamoConfirmed()
-        }
+        DataMaster.takeRamo(
+            ramo = ramo,
+            context = this.context!!,
+            onClose = {
+                HomeActivity.RecyclerSync.requestUpdate()
+                this.dismiss()
+            }
+        )
     }
 
-    private fun takeRamoConfirmed() {
-        HomeActivity.RecyclerSync.requestUpdate()
-        this.dismiss()
-    }
-
+    /* Removes `ramo` from user's taken list. */
     private fun actionUntake(ramo :Ramo) {
         this.context!!.yesNoDialog(
             title = "Borrar ramo",
             message = "¿Está seguro que desea eliminar ${ramo.nombre} de su lista de ramos tomados?",
             onYesClicked = {
                 DataMaster.untakeRamo(ramo.NRC)
-                this.context!!.toastf("%s eliminado", ramo.nombre)
-                HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView`
+                HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView` i.e. its OnResume() won't execute when the dialog is dismissed.
                 this.dismiss()
             }
         )

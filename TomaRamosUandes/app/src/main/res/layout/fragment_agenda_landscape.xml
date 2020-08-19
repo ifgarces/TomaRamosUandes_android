@@ -12,6 +12,14 @@
         style="@style/standardFloatingButton"
         app:srcCompat="@drawable/export_image_icon"
 
+        app:layout_constraintBottom_toTopOf="@id/landAgenda_toggleFullScreen"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/landAgenda_toggleFullScreen"
+        style="@style/standardFloatingButton"
+        app:srcCompat="@drawable/fullscreen_icon"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

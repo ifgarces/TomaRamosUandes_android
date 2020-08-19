@@ -309,7 +309,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/error/baseline_error_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/fullscreen_exit/baseline_fullscreen_exit_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -319,8 +319,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="alert_icon" />
+                            <entry key="outputName" value="exit_fullscreen_icon" />
                             <entry key="sourceFile" value="C:\Users\ifgarces\Desktop\alert_icon.svg" />
                           </map>
                         </option>

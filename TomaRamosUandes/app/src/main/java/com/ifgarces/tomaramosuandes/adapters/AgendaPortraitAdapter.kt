@@ -53,15 +53,15 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
             }
             this.type.setBackgroundColor(backColor!!) // exception if invalid event or evaluation event, which should not go here (agenda)
 
-            val conflicted :RamoEvent? = DataMaster.checkEventConflicted(event)
-            if (conflicted != null) { // colorizing conflicted events
+            val conflicted :List<RamoEvent> = DataMaster.getConflictsOf(event)
+            if (conflicted.count() > 0) { // colorizing conflicted events
                 this.parentView.setBackgroundColor( this.parentView.context.getColor(R.color.conflict_background) )
             }
 
-            parentView.setOnClickListener {
+            this.parentView.setOnClickListener {
                 this.parentView.context.infoDialog(
                     title = "Detalle de evento",
-                    message = event.toString()
+                    message = event.toLargeString()
                 )
             }
         }

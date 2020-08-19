@@ -1,11 +1,13 @@
 package com.ifgarces.tomaramosuandes.utils
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import java.util.Locale
@@ -121,8 +123,23 @@ fun Context.yesNoDialog(
     diag.create().show()
 }
 
-///* Switches between VISIBLE and GONE */
-//fun View.toggleVisibility() {
-//    if (this.visibility == View.GONE) { this.visibility = View.VISIBLE }
-//    else { this.visibility = View.GONE }
-//}
+/* Enters 'inmersive mode', hiding system UI elements */
+fun Activity.enterFullScreen() { // references: https://developer.android.com/training/system-ui/immersive
+    this.window.decorView.systemUiVisibility = (
+        View.SYSTEM_UI_FLAG_IMMERSIVE
+        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        or View.SYSTEM_UI_FLAG_FULLSCREEN
+    )
+}
+
+/* Undoes `enterFullScreen()` */
+fun Activity.exitFullScreen() { // references: https://developer.android.com/training/system-ui/immersive
+    this.window.decorView.systemUiVisibility = (
+        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        //or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        //or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+    )
+}

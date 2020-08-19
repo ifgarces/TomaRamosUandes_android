@@ -3,28 +3,30 @@ package com.ifgarces.tomaramosuandes
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import java.time.LocalTime
-import com.ifgarces.tomaramosuandes.utils.ImageWorker
-import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.*
 import java.time.DayOfWeek
+import java.time.LocalTime
 
 
 class AgendaLandscapeFragment : Fragment() {
 
     public companion object {
         /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
-        public fun summon(caller :FragmentActivity, targetView :Int) {
+        public fun summon(caller: FragmentActivity, targetView: Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(targetView, this.newInstance())
             transactioner.commit()
@@ -35,15 +37,17 @@ class AgendaLandscapeFragment : Fragment() {
     private object UI {
         lateinit var rootView         :View
         lateinit var saveAsImgAction  :FloatingActionButton
+        lateinit var toggleFullScreenAction :FloatingActionButton
         lateinit var agendaBodyScroll :View // ScrollView
         lateinit var agendaBodyLayout :View // LinearLayout
         lateinit var blocksMap        :Map<DayOfWeek, List<Button>>
 
-        fun init(owner :View) {
+        fun init(owner: View) {
             this.rootView = owner
-            this.saveAsImgAction = owner.findViewById(R.id.landAgenda_saveAsImage)
-            this.agendaBodyScroll = owner.findViewById(R.id.landAgenda_bodyScrollView)
-            this.agendaBodyLayout = owner.findViewById(R.id.landAgenda_bodyLayout)
+            this.saveAsImgAction        = owner.findViewById(R.id.landAgenda_saveAsImage)
+            this.toggleFullScreenAction = owner.findViewById(R.id.landAgenda_toggleFullScreen)
+            this.agendaBodyScroll       = owner.findViewById(R.id.landAgenda_bodyScrollView)
+            this.agendaBodyLayout       = owner.findViewById(R.id.landAgenda_bodyLayout)
             this.blocksMap = mapOf(
                 DayOfWeek.MONDAY to listOf(
                     owner.findViewById(R.id.landAgenda_lun0),
@@ -129,134 +133,209 @@ class AgendaLandscapeFragment : Fragment() {
         }
     }
 
-    val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 1500 // time passed between the FloatingActionButton dissapears due scrolling and it appears again
-    val ROWS_COUNT :Int = 14 // number of rows of agenda i.e. number of blocks per day of week
+    private val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 2000 // time passed between the FloatingActionButton dissapears due scrolling and it appears again
+    private val ROWS_COUNT :Int = 14 // number of rows of agenda i.e. number of blocks per day of week
+    private var isFullScreenOn :Boolean = false // says if the system UI is hidden (i.e. full screen mode is activated).
 
-    override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
-        UI.init(owner=inflater.inflate(R.layout.fragment_agenda_landscape, container, false))
+    override fun onCreateView(
+        inflater :LayoutInflater,
+        container :ViewGroup?,
+        savedInstanceState :Bundle?
+    ) : View? {
+        UI.init(
+            owner = inflater.inflate(R.layout.fragment_agenda_landscape, container, false)
+        )
 
         UI.saveAsImgAction.setColorFilter(Color.WHITE)
 
-        //UI.rootView.postDelayed({ /*initialize things*/ }, 0)
-        this.activity!!.runOnUiThread { // <- will work??
-            UI.saveAsImgAction.setOnClickListener {
-                Logf("[AgendaLandscapeFragment] Exporting agenda as image...")
-                ImageWorker.exportAgendaImage(
-                    context = this.context!!,
-                    targetView = UI.agendaBodyScroll,
-                    largerView = UI.agendaBodyLayout
-                )
-            }
-            for (row :Int in (0 until this.ROWS_COUNT)) {
-                for (day :DayOfWeek in listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)) {
-                    (UI.blocksMap[day]?.get(row))!!.text = ""
-                    // TODO: handle OnClick event
+        UI.saveAsImgAction.setOnClickListener {
+            Logf("[AgendaLandscapeFragment] Exporting agenda as image...")
+            ImageWorker.exportAgendaImage(
+                context = this.context!!,
+                targetView = UI.agendaBodyScroll,
+                largerView = UI.agendaBodyLayout
+            )
+        }
+        UI.toggleFullScreenAction.setOnClickListener {
+            this.toggleFullScreen()
+        }
+        for (row :Int in (0 until this.ROWS_COUNT)) {
+            for (day :DayOfWeek in listOf(
+                DayOfWeek.MONDAY,
+                DayOfWeek.TUESDAY,
+                DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY,
+                DayOfWeek.FRIDAY
+            )) {
+                UI.blocksMap.getValue(key=day)[row].text = ""
+                UI.blocksMap.getValue(key=day)[row].setOnClickListener {
+                    AgendaWorker.onBlockClicked(
+                        sender = UI.blocksMap.getValue(key=day)[row],
+                        context = this.context!!
+                    )
                 }
             }
-
-            /* Hiding the floating button when user scrolls the agenda and showing it after some time */
-            UI.agendaBodyScroll.setOnScrollChangeListener { _ :View, _ :Int, _ :Int, _ :Int, _ :Int ->
-                if (UI.saveAsImgAction.visibility == View.VISIBLE) {
-                    UI.saveAsImgAction.visibility = View.GONE
-                    UI.saveAsImgAction.postDelayed({
-                        UI.saveAsImgAction.visibility = View.VISIBLE
-                    }, this.ONSCROLL_BUTTON_RESPAWN_TIME)
-                }
-            }
-
-            AgendaWorker.buildAgenda(context=this.context!!)
         }
 
+        /* Hiding the floating button when user scrolls the agenda and showing it after some time */
+        UI.agendaBodyScroll.setOnScrollChangeListener { _ :View, _ :Int, _ :Int, _ :Int, _ :Int ->
+            if (UI.toggleFullScreenAction.visibility == View.VISIBLE) {
+                UI.toggleFullScreenAction.visibility = View.GONE
+                UI.toggleFullScreenAction.postDelayed({
+                    UI.toggleFullScreenAction.visibility = View.VISIBLE
+                }, this.ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this extra delay causes a nice translation animation, besides the fade in, for this button
+            }
+            if (UI.saveAsImgAction.visibility == View.VISIBLE) {
+                UI.saveAsImgAction.visibility = View.GONE
+                UI.saveAsImgAction.postDelayed({
+                    UI.saveAsImgAction.visibility = View.VISIBLE
+                }, this.ONSCROLL_BUTTON_RESPAWN_TIME)
+            }
+        }
+
+        AgendaWorker.buildAgenda(context=this.context!!)
+
+        this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE // forcing landscape orientation
         this.enterFullScreen()
         return UI.rootView
     }
 
-    /* Enters 'inmersive mode', hiding system LandscapeUI elements (and forcing landscape orientation) */
-    private fun enterFullScreen() { /// references: https://developer.android.com/training/system-ui/immersive.html
-        this.activity!!.window.decorView.systemUiVisibility = (
-            View.SYSTEM_UI_FLAG_IMMERSIVE
-            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            or View.SYSTEM_UI_FLAG_FULLSCREEN
-        )
-        this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+    private fun enterFullScreen() {
+        this.activity!!.enterFullScreen()
+        this.isFullScreenOn = true
+        UI.toggleFullScreenAction.setImageResource(R.drawable.exit_fullscreen_icon)
+        UI.toggleFullScreenAction.setColorFilter(Color.WHITE)
+    }
+
+    private fun exitFullScreen() {
+        this.activity!!.exitFullScreen()
+        this.isFullScreenOn = false
+        UI.toggleFullScreenAction.setImageResource(R.drawable.fullscreen_icon)
+        UI.toggleFullScreenAction.setColorFilter(Color.WHITE)
+    }
+
+    /* Switches between full screen and normal screen modes */
+    private fun toggleFullScreen() {
+        if (this.isFullScreenOn) {
+            this.exitFullScreen()
+        } else {
+            this.enterFullScreen()
+        }
     }
 
     private object AgendaWorker {
-        private val agendaData :MutableMap<Button, MutableList<RamoEvent>> = mutableMapOf()
+        private val agendaData :MutableList<AgendaBlock> = mutableListOf()
 
-        public fun blockClick(sender :Button) {
-            val events :MutableList<RamoEvent>? = agendaData[sender]
+        data class AgendaBlock(
+            val button: Button,
+            val events: MutableList<RamoEvent>
+        )
+        fun MutableList<AgendaBlock>.findEventsOf(button: Button) : MutableList<RamoEvent>? {
+            this.forEach {
+                if (it.button == button) { return it.events }
+            }
+            return null
+        }
+
+        /* Click listener for a block button */
+        public fun onBlockClicked(sender: Button, context: Context) {
+            Logf("[AgendaLandscapeFragment] You clicked button with ID=%d", sender.id)
+            val blockEvents :MutableList<RamoEvent> = this.agendaData.findEventsOf(button = sender)!!
+            if (blockEvents.count() == 0) { return }
+
+            var info :String
+            if (blockEvents.count() == 1) {
+                info = blockEvents[0].toShortString()
+            }
+            else { // conflict: more than one event on the same block
+                info = "Múltiples eventos (conflicto):\n"
+                for (event :RamoEvent in blockEvents) {
+                    info += "• %s\n".format(event.toShortString())
+                }
+                info.trim() // removing last line break
+            }
+
+            context.infoDialog(
+                title = "Información de bloque",
+                message = info
+            )
         }
 
         /* Displays the non-evaluation events for each user taken `Ramo` in the agenda */
-        public fun buildAgenda(context :Context) {
+        public fun buildAgenda(context: Context) {
             Logf("[AgendaLandscapeFragment] Building agenda...")
 
-            /* initialization start --- */
+            /* initializing */
             this.agendaData.clear()
-            UI.blocksMap.forEach { (_ :DayOfWeek, buttons :List<Button>) ->
+            UI.blocksMap.forEach { (_: DayOfWeek, buttons: List<Button>) ->
                 buttons.forEach {
-                    this.agendaData[it] = mutableListOf()
+                    this.agendaData.add(AgendaBlock(button = it, events = mutableListOf()))
                 }
             }
-            /* --- initialization end */
 
             /* filling `agendaData` i.e. mapping agenda block buttons with corresponding event(s) */
             var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
-            DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
+            DataMaster.getEventsByWeekDay().forEach { (day: DayOfWeek, events: List<RamoEvent>) ->
                 for (ev :RamoEvent in events) {
-                    rowInterval = timeInterval_toBlockRow(start=ev.startTime, end=ev.endTime)!!
+                    rowInterval = timeInterval_toBlockRow(start = ev.startTime, end = ev.endTime)!!
                     for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
-                        this.agendaData[ UI.blocksMap[day]?.get(rowNum)!! ]?.add(ev) // <==> agendaData[ UI.blocksMap[day][rowNum]!! ].add(ev)
+                        this.agendaData.findEventsOf(
+                            button = UI.blocksMap.getValue(key = day)[rowNum]
+                        )!!.add(ev)
                     }
                 }
             }
 
-            /* finally, displaying events assigned to each block button */
-            this.agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
-                events.forEachIndexed { index :Int, event :RamoEvent ->
+            /* displaying events assigned to each block button */
+            this.agendaData.forEach { (block: Button, events: MutableList<RamoEvent>) ->
+                events.forEachIndexed { index: Int, event: RamoEvent ->
                     if (index == 0) {
-                        block.text = DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre
-                        // setting background color according to eventType
-                        val backColor :Int? = when(event.type) {
-                            RamoEventType.CLAS -> { context.getColor(android.R.color.transparent) }
-                            RamoEventType.AYUD -> { context.getColor(R.color.ayud) }
-                            RamoEventType.LABT, RamoEventType.TUTR -> { context.getColor(R.color.labt) }
+                        block.text = DataMaster.findRamo(
+                            NRC = event.ramoNRC,
+                            searchInUserList = true
+                        )!!.nombre
+                        val backColor :Int? = when(event.type) { // setting background color according to eventType
+                            RamoEventType.CLAS -> {
+                                context.getColor(R.color.clas)
+                            }
+                            RamoEventType.AYUD -> {
+                                context.getColor(R.color.ayud)
+                            }
+                            RamoEventType.LABT, RamoEventType.TUTR -> {
+                                context.getColor(R.color.labt)
+                            }
                             else -> { null } // <- will never happen, unless dumb code mistake
                         }
                         block.setBackgroundColor(backColor!!)
                     }
                     else {
-                        block.setBackgroundColor( context.getColor(R.color.conflict_background) ) // visibly marking block as conflicted
+                        block.setBackgroundColor(context.getColor(R.color.conflict_background)) // visibly marking block as conflicted
                         // concatenating multiple events in same block
-                        block.text = "%s + %s".format(block.text, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
-                        if (block.text.toString().filter{ it == '+' }.count() >= 1) { // if three or more events are in the same block, avoid showing all of them. They all can be viewed when on click.
+                        block.text = "%s + %s".format(
+                            block.text, DataMaster.findRamo(
+                                NRC = event.ramoNRC,
+                                searchInUserList = true
+                            )!!.nombre
+                        )
+                        if (block.text.toString().filter{ it == '+' }.count() >= 2) { // if three or more events are in the same block, avoid showing all of them. They all can be viewed when on click.
                             block.text = "%s + ...".format(block.text)
                             return@forEach
                         }
                     }
                 }
             }
-
-            Logf("[AgendaLandscapeFragment] Agenda successfully built")
+            Logf("[AgendaLandscapeFragment] Agenda successfully built.")
         }
 
-        private fun timeInterval_toBlockRow(start :LocalTime, end :LocalTime) : Pair<Int, Int>? {
-            val supportedHours_start :List<Int> = (8 until 21+1).toList() // [8, 21]
-            val supportedHours_end :List<Int> = (9 until 22).toList() // [9, 22]
-
-            var rowStart :Int = supportedHours_start.indexOf(start.hour)
-            var rowEnd   :Int = supportedHours_end.indexOf(end.hour)
+        private val supportedHours_start :List<Int> = (8 until 21+1).toList() // [8, 21]
+        private val supportedHours_end :List<Int> = (9 until 22).toList() // [9, 22]
+        private fun timeInterval_toBlockRow(start: LocalTime, end: LocalTime) : Pair<Int, Int>? {
+            var rowStart :Int = this.supportedHours_start.indexOf(start.hour)
+            var rowEnd   :Int = this.supportedHours_end.indexOf(end.hour)+1
             if (rowStart == -1 || rowEnd == -1) { return null } // invalid hour(s): block wouldn't fit in agenda
             if (start.minute > 30) { rowStart+=1 }
             if (end.minute > 20) { rowEnd+=1 }
-
             return Pair(rowStart, rowEnd)
         }
     }
-
-
 }

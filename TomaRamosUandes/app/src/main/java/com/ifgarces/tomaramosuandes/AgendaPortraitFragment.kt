@@ -37,7 +37,6 @@ class AgendaPortraitFragment : Fragment() {
         lateinit var fullScreenAction :FloatingActionButton
         lateinit var agendaScroll     :View // ScrollView
         lateinit var agendaLayout     :View // LinearLayout
-        lateinit var dayHeaders       :List<View>
         lateinit var recyclerTeamMon  :Pair<View, RecyclerView> // these holds the header (TextView) and their recycler attatched. They're a team.
         lateinit var recyclerTeamTue  :Pair<View, RecyclerView>
         lateinit var recyclerTeamWed  :Pair<View, RecyclerView>
@@ -70,13 +69,6 @@ class AgendaPortraitFragment : Fragment() {
             this.recyclerTeamFri = Pair(
                 owner.findViewById(R.id.portrAgenda_fridayHead),
                 owner.findViewById(R.id.portrAgenda_fridayRecycler)
-            )
-            this.dayHeaders = listOf(
-                owner.findViewById(R.id.portrAgenda_mondayHead),
-                owner.findViewById(R.id.portrAgenda_tuesdayHead),
-                owner.findViewById(R.id.portrAgenda_wednesdayHead),
-                owner.findViewById(R.id.portrAgenda_thursdayHead),
-                owner.findViewById(R.id.portrAgenda_fridayHead)
             )
         }
     }

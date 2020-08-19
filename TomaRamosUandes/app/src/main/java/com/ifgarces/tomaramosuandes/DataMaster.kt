@@ -1,5 +1,6 @@
 package com.ifgarces.tomaramosuandes
 
+import android.app.Activity
 import android.content.Context
 import android.os.AsyncTask
 import com.ifgarces.tomaramosuandes.models.Ramo
@@ -84,35 +85,41 @@ object DataMaster {
      * another already taken `Ramo`, prompts confirmation dialog and, if the user wants to continue
      * neverdeless, finishes the action and returns true. If not, returns false.
      */
-    public fun takeRamo(ramo :Ramo, context :Context) : Boolean {
-        // TODO: manage to sync this properly...
-        var conflictChecker :RamoEvent?
-        var userCancelled :Boolean = false
+    public fun takeRamo(ramo :Ramo, context :Context, onClose :() -> Unit) {
+        var conflictTriggered :Boolean = false
+        var conflictReport :String = ""
+
         ramo.events.forEach {
-            if (userCancelled) { return false /* UNSYNCKED */ }
-            conflictChecker = this.checkEventConflicted(it)
-            if (conflictChecker != null) {
-                context.yesNoDialog(
-                    title = "Conflicto de eventos",
-                    message = "Advertencia: conflicto entre:\n• %s\n• %s\n\n¿Desea tomar %s de todas formas?"
-                        .format(it.toShortString(), conflictChecker!!.toShortString(), ramo.nombre),
-                    onYesClicked = {
-                        this.takeRamoInternal(ramo=ramo)
-                        return true /* UNSYNCKED */
-                    },
-                    onNoClicked = { userCancelled = true /* UNSYNCKED */ },
-                    icon = R.drawable.alert_icon
-                )
+            this.getConflictsOf(it).forEach { conflictedEvent :RamoEvent ->
+                conflictReport += "• %s\n".format(conflictedEvent.toShortString())
+                conflictTriggered = true
             }
         }
 
-        return true /* UNSYNCKED */
+        if (conflictReport == "") { // getConflictsOf() will be empty if no conflict was found
+            takeRamoAction(ramo)
+            onClose.invoke()
+        } else {
+            context.yesNoDialog(
+                title = "Conflicto de eventos",
+                message = "Advertencia: Los siguientes eventos entran en conflicto:\n%s\n¿Tomar %s de todas formas?"
+                    .format(conflictReport, ramo.nombre),
+                onYesClicked = {
+                    takeRamoAction(ramo)
+                    onClose.invoke()
+                },
+                onNoClicked = {
+                    onClose.invoke()
+                },
+                icon = R.drawable.alert_icon
+            )
+        }
     }
-    private fun takeRamoInternal(ramo :Ramo) {
+    private fun takeRamoAction(ramo :Ramo) {
         try {
             this.writeLock.lock()
             this.userRamos.add(ramo)
-            // TODO: update Room DB here
+            // TODO: update Room DB
         } finally {
             this.writeLock.unlock()
         }
@@ -165,17 +172,20 @@ object DataMaster {
 
     /**
      * Iterates all user taken `Ramo` list and checks if `event` collide with another.
-     * @return The first other event that collide with `event`, null if there is no conflict
+     * @return The other events that collide with `event`, including itself (first).
+     * The list will be empty if there is no conflict.
      */
-    public fun checkEventConflicted(event :RamoEvent) : RamoEvent? {
+    public fun getConflictsOf(event :RamoEvent) : List<RamoEvent> {
+        val conflicts :MutableList<RamoEvent> = mutableListOf()
         this.userRamos.forEach {
             it.events.forEach { ev :RamoEvent ->
                 if (ev.ID != event.ID) {
-                    if (this.areEventsConflicted(ev, event) == true) { return ev }
+                    if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
                 }
             }
         }
-        return null
+        if (conflicts.count() > 0) { conflicts.add(index=0, element=event) } // addint itself, in order to inform to user in conflict dialog
+        return conflicts
     }
 
     /* Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek` */

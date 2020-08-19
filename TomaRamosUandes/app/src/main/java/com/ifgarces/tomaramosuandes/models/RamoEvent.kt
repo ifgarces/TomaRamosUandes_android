@@ -24,7 +24,7 @@ data class RamoEvent(
 ) {
     companion object { const val TABLE_NAME :String = "ramo_event" }
 
-    override fun toString() : String {
+    public fun toLargeString() : String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() } // TODO: make sure to use "dd/MM/yyyy" format
             else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
@@ -42,7 +42,8 @@ data class RamoEvent(
         )
     }
 
-    public fun toShortString() : String { // used in event conflict reports
+    /* Single line and short `toString()` method. Used in event conflict reports. */
+    public fun toShortString() : String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() }
             else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
