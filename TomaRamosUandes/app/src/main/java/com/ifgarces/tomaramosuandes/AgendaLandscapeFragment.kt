@@ -28,8 +28,8 @@ class AgendaLandscapeFragment : Fragment() {
     private val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 1500 // time passed between the FloatingActionButton dissapears due scrolling and it appears again (milliseconds)
     private val ROWS_COUNT :Int = 14 // number of rows of agenda i.e. number of blocks per day of week
 
-    public companion object {
-        /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
+    companion object {
+        /* Starts the fragment at the `caller` activity, at the view which ID matches `targetView` */
         public fun summon(caller :FragmentActivity, targetView :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(targetView, this.newInstance())
@@ -39,17 +39,17 @@ class AgendaLandscapeFragment : Fragment() {
     }
 
     private object UI {
-        lateinit var rootView         :View
-        lateinit var saveAsImgAction  :FloatingActionButton
-        lateinit var toggleFullScreenAction :FloatingActionButton
-        lateinit var agendaBodyScroll :View // ScrollView
-        lateinit var agendaBodyLayout :View // LinearLayout
-        lateinit var blocksMap        :Map<DayOfWeek, List<Button>>
+        lateinit var rootView               :View
+        lateinit var saveAsImgButton        :FloatingActionButton
+        lateinit var toggleFullScreenButton :FloatingActionButton
+        lateinit var agendaBodyScroll       :View // ScrollView
+        lateinit var agendaBodyLayout       :View // LinearLayout
+        lateinit var blocksMap              :Map<DayOfWeek, List<Button>>
 
         fun init(owner :View) {
             this.rootView = owner
-            this.saveAsImgAction        = owner.findViewById(R.id.landAgenda_saveAsImage)
-            this.toggleFullScreenAction = owner.findViewById(R.id.landAgenda_toggleFullScreen)
+            this.saveAsImgButton        = owner.findViewById(R.id.landAgenda_saveAsImage)
+            this.toggleFullScreenButton = owner.findViewById(R.id.landAgenda_toggleFullScreen)
             this.agendaBodyScroll       = owner.findViewById(R.id.landAgenda_bodyScrollView)
             this.agendaBodyLayout       = owner.findViewById(R.id.landAgenda_bodyLayout)
             this.blocksMap = mapOf(
@@ -145,8 +145,8 @@ class AgendaLandscapeFragment : Fragment() {
 
         UI.init( owner=inflater.inflate(R.layout.fragment_agenda_landscape, container, false) )
 
-        UI.saveAsImgAction.setColorFilter(Color.WHITE)
-        UI.saveAsImgAction.setOnClickListener {
+        UI.saveAsImgButton.setColorFilter(Color.WHITE)
+        UI.saveAsImgButton.setOnClickListener {
             Logf("[AgendaLandscapeFragment] Exporting agenda as image...")
             ImageWorker.exportAgendaImage(
                 context = this.context!!,
@@ -154,7 +154,7 @@ class AgendaLandscapeFragment : Fragment() {
                 largerView = UI.agendaBodyLayout
             )
         }
-        UI.toggleFullScreenAction.setOnClickListener {
+        UI.toggleFullScreenButton.setOnClickListener {
             this.toggleFullScreen()
         }
         for (row :Int in (0 until this.ROWS_COUNT)) {
@@ -177,16 +177,16 @@ class AgendaLandscapeFragment : Fragment() {
 
         /* Hiding the floating button when user scrolls the agenda and showing it after some time */
         UI.agendaBodyScroll.setOnScrollChangeListener { _ :View, _ :Int, _ :Int, _ :Int, _ :Int ->
-            if (UI.toggleFullScreenAction.visibility == View.VISIBLE) {
-                UI.toggleFullScreenAction.visibility = View.GONE
-                UI.toggleFullScreenAction.postDelayed({
-                    UI.toggleFullScreenAction.visibility = View.VISIBLE
+            if (UI.toggleFullScreenButton.visibility == View.VISIBLE) {
+                UI.toggleFullScreenButton.visibility = View.GONE
+                UI.toggleFullScreenButton.postDelayed({
+                    UI.toggleFullScreenButton.visibility = View.VISIBLE
                 }, this.ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this extra delay causes a nice translation animation, besides the fade in, for this button
             }
-            if (UI.saveAsImgAction.visibility == View.VISIBLE) {
-                UI.saveAsImgAction.visibility = View.GONE
-                UI.saveAsImgAction.postDelayed({
-                    UI.saveAsImgAction.visibility = View.VISIBLE
+            if (UI.saveAsImgButton.visibility == View.VISIBLE) {
+                UI.saveAsImgButton.visibility = View.GONE
+                UI.saveAsImgButton.postDelayed({
+                    UI.saveAsImgButton.visibility = View.VISIBLE
                 }, this.ONSCROLL_BUTTON_RESPAWN_TIME)
             }
         }
@@ -200,15 +200,15 @@ class AgendaLandscapeFragment : Fragment() {
     private fun enterFullScreen() {
         this.activity!!.enterFullScreen()
         this.isFullScreenOn = true
-        UI.toggleFullScreenAction.setImageResource(R.drawable.exit_fullscreen_icon)
-        UI.toggleFullScreenAction.setColorFilter(Color.WHITE)
+        UI.toggleFullScreenButton.setImageResource(R.drawable.exit_fullscreen_icon)
+        UI.toggleFullScreenButton.setColorFilter(Color.WHITE)
     }
 
     private fun exitFullScreen() {
         this.activity!!.exitFullScreen()
         this.isFullScreenOn = false
-        UI.toggleFullScreenAction.setImageResource(R.drawable.fullscreen_icon)
-        UI.toggleFullScreenAction.setColorFilter(Color.WHITE)
+        UI.toggleFullScreenButton.setImageResource(R.drawable.fullscreen_icon)
+        UI.toggleFullScreenButton.setColorFilter(Color.WHITE)
     }
 
     /* Switches between full screen and normal screen modes */
@@ -284,7 +284,9 @@ class AgendaLandscapeFragment : Fragment() {
             }
 
             /* displaying events assigned to each block button */
+            var break_loop :Boolean = false
             this.agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
+                if (break_loop) { return@forEach }
                 events.forEachIndexed { index :Int, event :RamoEvent ->
                     if (index == 0) {
                         block.text = DataMaster.findRamo(
@@ -292,15 +294,9 @@ class AgendaLandscapeFragment : Fragment() {
                             searchInUserList = true
                         )!!.nombre
                         val backColor :Int? = when(event.type) { // setting background color according to eventType
-                            RamoEventType.CLAS -> {
-                                context.getColor(R.color.clas)
-                            }
-                            RamoEventType.AYUD -> {
-                                context.getColor(R.color.ayud)
-                            }
-                            RamoEventType.LABT, RamoEventType.TUTR -> {
-                                context.getColor(R.color.labt)
-                            }
+                            RamoEventType.CLAS -> { context.getColor(R.color.clas) }
+                            RamoEventType.AYUD -> { context.getColor(R.color.ayud) }
+                            RamoEventType.LABT, RamoEventType.TUTR -> { context.getColor(R.color.labt) }
                             else -> { null } // <- will never happen, unless dumb code mistake
                         }
                         block.setBackgroundColor(backColor!!)
@@ -316,6 +312,7 @@ class AgendaLandscapeFragment : Fragment() {
                         )
                         if (block.text.toString().filter{ it == '+' }.count() >= 2) { // if three or more events are in the same block, avoid showing all of them. They all can be viewed when on click.
                             block.text = "%s + ...".format(block.text)
+                            break_loop = true // finishing this loop and parent loop
                             return@forEach
                         }
                     }

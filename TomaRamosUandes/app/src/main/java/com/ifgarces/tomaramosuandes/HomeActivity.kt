@@ -50,14 +50,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private object UI {
-        lateinit var topBar             :MaterialToolbar
-        lateinit var catalogButton      :Button
-        lateinit var ramosRecycler      :RecyclerView
-        lateinit var emptyRecyclerText  :TextView
-        lateinit var creditosCounter    :TextView
-        lateinit var agendaButton       :Button
-        lateinit var evaluationsButton  :Button
-        lateinit var loadDisplay        :View
+        lateinit var topBar            :MaterialToolbar
+        lateinit var catalogButton     :Button
+        lateinit var ramosRecycler     :RecyclerView
+        lateinit var emptyRecyclerText :TextView
+        lateinit var creditosCounter   :TextView
+        lateinit var agendaButton      :Button
+        lateinit var evaluationsButton :Button
+        lateinit var loadDisplay       :View
 
         fun init(owner :AppCompatActivity) {
             this.topBar             = owner.findViewById(R.id.home_topbar)
@@ -93,7 +93,7 @@ class HomeActivity : AppCompatActivity() {
         }
         UI.catalogButton.setOnClickListener { this.launchCatalogView() }
         UI.agendaButton.setOnClickListener { this.launchAgendaView() }
-        UI.evaluationsButton.setOnClickListener { this.launchPruebasView() }
+        UI.evaluationsButton.setOnClickListener { this.launchEvaluationsView() }
     }
 
     override fun onResume() {
@@ -121,8 +121,10 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
-    private fun launchPruebasView() {
-        // TODO: pruebas activity
+    private fun launchEvaluationsView() {
+        this.startActivity(
+            Intent(this, EvaluationsActivity::class.java)
+        )
     }
 
     private fun showHelpDialog() {

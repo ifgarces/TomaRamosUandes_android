@@ -20,8 +20,8 @@ import java.time.DayOfWeek
 
 class AgendaPortraitFragment : Fragment() {
 
-    public companion object {
-        /* Starts the fragment at the `caller` activity, at the widget which ID matches `targetView` */
+    companion object {
+        /* Starts the fragment at the `caller` activity, at the view which ID matches `targetView` */
         public fun summon(caller :FragmentActivity, targetView :Int) {
             val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
                 .replace(targetView, this.newInstance())
@@ -33,11 +33,11 @@ class AgendaPortraitFragment : Fragment() {
     private object UI {
         lateinit var rootView         :View
         lateinit var loadScreen       :View
-        lateinit var saveAsImgAction  :FloatingActionButton
-        lateinit var fullScreenAction :FloatingActionButton
+        lateinit var saveAsImgButton  :FloatingActionButton
+        lateinit var fullScreenButton :FloatingActionButton
         lateinit var agendaScroll     :View // ScrollView
         lateinit var agendaLayout     :View // LinearLayout
-        lateinit var recyclerTeamMon  :Pair<View, RecyclerView> // these holds the header (TextView) and their recycler attatched. They're a team.
+        lateinit var recyclerTeamMon  :Pair<View, RecyclerView> // these hold the header (TextView) and their recycler attatched. They're a team.
         lateinit var recyclerTeamTue  :Pair<View, RecyclerView>
         lateinit var recyclerTeamWed  :Pair<View, RecyclerView>
         lateinit var recyclerTeamThu  :Pair<View, RecyclerView>
@@ -46,8 +46,8 @@ class AgendaPortraitFragment : Fragment() {
         fun init(owner :View) {
             this.rootView         = owner
             this.loadScreen       = owner.findViewById(R.id.portrAgenda_loadScreen)
-            this.saveAsImgAction  = owner.findViewById(R.id.portrAgenda_saveAsImage)
-            this.fullScreenAction = owner.findViewById(R.id.portrAgenda_fullScreen)
+            this.saveAsImgButton  = owner.findViewById(R.id.portrAgenda_saveAsImage)
+            this.fullScreenButton = owner.findViewById(R.id.portrAgenda_fullScreen)
             this.agendaScroll     = owner.findViewById(R.id.portrAgenda_scrollView)
             this.agendaLayout     = owner.findViewById(R.id.portrAgenda_layout)
             this.recyclerTeamMon  = Pair(
@@ -88,15 +88,15 @@ class AgendaPortraitFragment : Fragment() {
         )
         dayRecyclers.forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) -> // building agenda here
             team.second.layoutManager = LinearLayoutManager(this.context)
-            team.second.adapter = agendaEvents[day]?.let { AgendaPortraitAdapter(data=it) } // <==> AgendaPortraitAdapter(agendaEvents[day]?)
-            if (agendaEvents[day]?.count() == 0) { // hiding the day if there is no event on it
+            team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
+            if (agendaEvents.getValue(day).count() == 0) { // hiding the day if there is no event on it
                 team.first.visibility = View.GONE
                 team.second.visibility = View.GONE
             }
         }
 
-        UI.saveAsImgAction.setColorFilter(Color.WHITE)
-        UI.saveAsImgAction.setOnClickListener {
+        UI.saveAsImgButton.setColorFilter(Color.WHITE)
+        UI.saveAsImgButton.setOnClickListener {
             Logf("[AgendaPortraitFragment] Exporting agenda as image...")
             ImageWorker.exportAgendaImage(
                 context = this.context!!,
@@ -104,9 +104,10 @@ class AgendaPortraitFragment : Fragment() {
                 largerView = UI.agendaLayout
             )
         }
-        UI.fullScreenAction.setColorFilter(Color.WHITE)
-        UI.fullScreenAction.setOnClickListener {
+        UI.fullScreenButton.setColorFilter(Color.WHITE)
+        UI.fullScreenButton.setOnClickListener {
             UI.loadScreen.visibility = View.VISIBLE
+            AgendaActivity.Companion.switchToLandscape = true
             AgendaLandscapeFragment.summon(
                 caller = this.activity as FragmentActivity,
                 targetView = R.id.agenda_fragmentContainer

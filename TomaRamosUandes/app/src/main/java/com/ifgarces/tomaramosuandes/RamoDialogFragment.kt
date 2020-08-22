@@ -1,7 +1,6 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.DialogInterface
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +19,6 @@ import com.ifgarces.tomaramosuandes.adapters.RamoEventsAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
-import com.ifgarces.tomaramosuandes.utils.toastf
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 
 
@@ -97,8 +96,10 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         UI.curso.text = ramo.curso.toString()
         UI.sección.text = ramo.sección
         UI.PE.text = ramo.planEstudios
-        UI.conectLiga.text = if (ramo.conectLiga == "") "No" else ramo.conectLiga
-        UI.listaCruz.text = if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
+        UI.conectLiga.text =
+            if (ramo.conectLiga == "") "No" else ramo.conectLiga
+        UI.listaCruz.text =
+            if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
 
         UI.clases.adapter = RamoEventsAdapter(
             data = ramo.events.filter{ it.type == RamoEventType.CLAS }
@@ -114,12 +115,12 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         )
 
         if (ramo_isTaken) { // `ramo` already in user list
-            UI.actionButton.icon = context!!.getDrawable(R.drawable.trash_icon)
+            UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.trash_icon) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
             UI.actionButton.text = "Borrar ramo"
             UI.actionButton.setOnClickListener { this.actionUntake(ramo) }
         }
         else { // `ramo` not yet taken by user
-            UI.actionButton.icon = context!!.getDrawable(R.drawable.add_icon)
+            UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.add_icon)
             UI.actionButton.text = "Tomar ramo"
             UI.actionButton.setOnClickListener { this.actionTake(ramo) }
         }
@@ -132,7 +133,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         dialog?.also {
             val bottomSheet :View = dialog?.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
-            val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from<View>(bottomSheet)
+            val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from(bottomSheet)
             val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout
             layout.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
@@ -173,7 +174,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             title = "Borrar ramo",
             message = "¿Está seguro que desea eliminar ${ramo.nombre} de su lista de ramos tomados?",
             onYesClicked = {
-                DataMaster.untakeRamo(ramo.NRC)
+                DataMaster.eraseRamo(ramo.NRC)
                 HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView` i.e. its OnResume() won't execute when the dialog is dismissed.
                 this.dismiss()
             }

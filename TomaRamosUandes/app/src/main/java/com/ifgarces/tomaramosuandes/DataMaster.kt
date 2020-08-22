@@ -85,23 +85,21 @@ object DataMaster {
      * neverdeless, finishes the action and returns true. If not, returns false.
      */
     public fun takeRamo(ramo :Ramo, context :Context, onClose :() -> Unit) {
-        var conflictTriggered :Boolean = false
         var conflictReport :String = ""
 
         ramo.events.forEach {
             this.getConflictsOf(it).forEach { conflictedEvent :RamoEvent ->
                 conflictReport += "• %s\n".format(conflictedEvent.toShortString())
-                conflictTriggered = true
             }
         }
 
-        if (conflictReport == "") { // getConflictsOf() will be empty if no conflict was found
+        if (conflictReport == "") { // no conflict was found
             takeRamoAction(ramo)
             onClose.invoke()
-        } else {
+        } else { // conflict(s) found
             context.yesNoDialog(
                 title = "Conflicto de eventos",
-                message = "Advertencia: Los siguientes eventos entran en conflicto:\n%s\n¿Tomar %s de todas formas?"
+                message = "Advertencia: Los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
                     .format(conflictReport, ramo.nombre),
                 onYesClicked = {
                     takeRamoAction(ramo)
@@ -124,8 +122,9 @@ object DataMaster {
         }
     }
 
-    public fun untakeRamo(NRC :Int) {
-        for ( index :Int in (0 until this.userRamos.count()) ) {
+    public fun eraseRamo(NRC :Int) {
+        var index :Int = 0
+        while (index < this.userRamos.count()) {
             if (this.userRamos[index].NRC == NRC) {
                 try {
                     this.writeLock.lock()
@@ -135,13 +134,14 @@ object DataMaster {
                     this.writeLock.unlock()
                 }
             }
+            index++
         }
     }
 
     public fun getUserTotalCredits() : Int {
         var creditosTotal :Int = 0
-        for (cc :Ramo in this.userRamos) {
-            creditosTotal += cc.créditos
+        this.userRamos.forEach {
+            creditosTotal += it.créditos
         }
         return creditosTotal
     }

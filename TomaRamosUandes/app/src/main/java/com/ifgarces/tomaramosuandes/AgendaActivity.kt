@@ -3,23 +3,30 @@ package com.ifgarces.tomaramosuandes
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.enterFullScreen
 
 
 class AgendaActivity : AppCompatActivity() {
+
+    // TODO: fix landscape fragment being initialized two consecutive times
+
+    companion object {
+        public var switchToLandscape :Boolean = false // ...
+    }
 
     private var inLandscapeMode :Boolean = false // indicates if `AgendaLandscapeFragment` is executing now
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_agenda)
+        Logf("[AgendaActivity] Initializing...")
     }
 
     override fun onResume() {
         super.onResume()
 
-        // TODO: fix AgendaLandscapeFragment being initialized several times due the following orientation rule (use companion object?):
-
+        if (switchToLandscape) { return } // trying to avoid strange load of landscape fragment several times.
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             this.launchPortraitMode()
         } else {

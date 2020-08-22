@@ -20,22 +20,27 @@
 
         <TextView
             style="@style/agendaLandscape_header"
+            android:padding="1dp"
             android:text="Lunes" />
 
         <TextView
             style="@style/agendaLandscape_header"
+            android:padding="1dp"
             android:text="Martes" />
 
         <TextView
             style="@style/agendaLandscape_header"
+            android:padding="1dp"
             android:text="Miércoles" />
 
         <TextView
             style="@style/agendaLandscape_header"
+            android:padding="1dp"
             android:text="Jueves" />
 
         <TextView
             style="@style/agendaLandscape_header"
+            android:padding="1dp"
             android:text="Viernes" />
     </TableRow>
 
