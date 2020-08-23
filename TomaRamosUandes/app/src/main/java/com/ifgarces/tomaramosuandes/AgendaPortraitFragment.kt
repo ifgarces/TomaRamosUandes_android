@@ -101,13 +101,12 @@ class AgendaPortraitFragment : Fragment() {
             ImageWorker.exportAgendaImage(
                 context = this.context!!,
                 targetView = UI.agendaScroll,
-                largerView = UI.agendaLayout
+                tallView = UI.agendaLayout
             )
         }
         UI.fullScreenButton.setColorFilter(Color.WHITE)
         UI.fullScreenButton.setOnClickListener {
             UI.loadScreen.visibility = View.VISIBLE
-            AgendaActivity.Companion.switchToLandscape = true
             AgendaLandscapeFragment.summon(
                 caller = this.activity as FragmentActivity,
                 targetView = R.id.agenda_fragmentContainer

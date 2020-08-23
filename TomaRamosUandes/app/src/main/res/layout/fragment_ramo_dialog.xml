@@ -273,14 +273,14 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/ramoDialog_clasesRecycler"
-                        tools:listitem="@layout/ramo_event_item"
+                        tools:listitem="@layout/ramoevent_item"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/ramoEventItem_height" />
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
                 <TableRow
@@ -301,14 +301,14 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/ramoDialog_ayudsRecycler"
-                        tools:listitem="@layout/ramo_event_item"
+                        tools:listitem="@layout/ramoevent_item"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/ramoEventItem_height" />
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
                 <TableRow
@@ -329,14 +329,14 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/ramoDialog_labsRecycler"
-                        tools:listitem="@layout/ramo_event_item"
+                        tools:listitem="@layout/ramoevent_item"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/ramoEventItem_height" />
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
                 <TableRow
@@ -357,14 +357,14 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/ramoDialog_pruebasRecycler"
-                        tools:listitem="@layout/ramo_event_item"
+                        tools:listitem="@layout/ramoevent_item"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/ramoEventItem_height" />
+                        android:layout_height="wrap_content" />
                 </TableRow>
             </TableLayout>
 

@@ -38,7 +38,7 @@
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:background">@android:color/transparent</item>
+        <item name="cornerRadius">0dp</item> <!-- app:cornerRadius -->
         <item name="android:textColor">@color/almostBlack</item>
         <item name="android:textAlignment">gravity</item>
         <item name="android:layout_gravity">center_vertical</item>

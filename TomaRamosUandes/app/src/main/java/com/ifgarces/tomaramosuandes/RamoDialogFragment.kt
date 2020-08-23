@@ -53,7 +53,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         lateinit var clases       :RecyclerView
         lateinit var ayuds        :RecyclerView
         lateinit var labs         :RecyclerView
-        lateinit var pruebas      :RecyclerView
+        lateinit var evals      :RecyclerView
         lateinit var actionButton :MaterialButton
 
         fun init(owner :View) {
@@ -71,7 +71,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             this.clases       = owner.findViewById(R.id.ramoDialog_clasesRecycler)
             this.ayuds        = owner.findViewById(R.id.ramoDialog_ayudsRecycler)
             this.labs         = owner.findViewById(R.id.ramoDialog_labsRecycler)
-            this.pruebas      = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
+            this.evals      = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
             this.actionButton = owner.findViewById(R.id.ramoDialog_button)
         }
     }
@@ -80,7 +80,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         UI.init(owner=view)
 
-        for ( recycler :RecyclerView in listOf(UI.clases, UI.ayuds, UI.labs, UI.pruebas) ) {
+        for ( recycler :RecyclerView in listOf(UI.clases, UI.ayuds, UI.labs, UI.evals) ) {
             recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
@@ -102,16 +102,20 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
 
         UI.clases.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.CLAS }
+            data = ramo.events.filter{ it.type == RamoEventType.CLAS },
+            showEventType = false
         )
         UI.ayuds.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.AYUD }
+            data = ramo.events.filter{ it.type == RamoEventType.AYUD },
+            showEventType = false
         )
         UI.labs.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR }
+            data = ramo.events.filter{ it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR },
+            showEventType = false
         )
-        UI.pruebas.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.isEvaluation() }
+        UI.evals.adapter = RamoEventsAdapter(
+            data = ramo.events.filter{ it.isEvaluation() },
+            showEventType = true
         )
 
         if (ramo_isTaken) { // `ramo` already in user list

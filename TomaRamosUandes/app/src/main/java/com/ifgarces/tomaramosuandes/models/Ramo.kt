@@ -22,12 +22,12 @@ data class Ramo(
 ) {
     companion object { const val TABLE_NAME :String = "ramo" }
 
-    public fun getShortInfo() : String {
-        var profe :String = this.profesor
-        if (profe == "") { profe = "<No asignado>" }
-        return """NRC: %d
-Nombre: %s
-Sección: %d
-Profesor: %s""".format(this.NRC, this.nombre, this.sección, profe)
-    }
+//    public fun getShortInfo() : String {
+//        var profe :String = this.profesor
+//        if (profe == "") { profe = "<No asignado>" }
+//        return """NRC: %d
+//Nombre: %s
+//Sección: %d
+//Profesor: %s""".format(this.NRC, this.nombre, this.sección, profe)
+//    }
 }

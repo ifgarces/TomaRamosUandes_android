@@ -151,7 +151,7 @@ class AgendaLandscapeFragment : Fragment() {
             ImageWorker.exportAgendaImage(
                 context = this.context!!,
                 targetView = UI.agendaBodyScroll,
-                largerView = UI.agendaBodyLayout
+                tallView = UI.agendaBodyLayout
             )
         }
         UI.toggleFullScreenButton.setOnClickListener {
@@ -236,7 +236,6 @@ class AgendaLandscapeFragment : Fragment() {
 
         /* Click listener for a block button */
         public fun onBlockClicked(sender :Button, context :Context) {
-            Logf("[AgendaLandscapeFragment] You clicked button with ID=%d", sender.id)
             val blockEvents :MutableList<RamoEvent> = this.agendaData.findEventsOf(button = sender)!!
             if (blockEvents.count() == 0) { return }
 

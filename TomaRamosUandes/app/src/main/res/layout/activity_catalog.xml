@@ -68,9 +68,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/catalog_recycler"
-        tools:listitem="@layout/ramo_catalog_item"
+        tools:listitem="@layout/ramo_item"
         android:orientation="vertical"
         android:scrollbars="vertical"
+        android:scrollbarSize="6dp"
         android:background="@android:color/white"
 
         android:layout_marginTop="6dp"

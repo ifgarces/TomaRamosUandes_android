@@ -11,10 +11,6 @@ class AgendaActivity : AppCompatActivity() {
 
     // TODO: fix landscape fragment being initialized two consecutive times
 
-    companion object {
-        public var switchToLandscape :Boolean = false // ...
-    }
-
     private var inLandscapeMode :Boolean = false // indicates if `AgendaLandscapeFragment` is executing now
 
     override fun onCreate(savedInstanceState :Bundle?) {
@@ -26,7 +22,6 @@ class AgendaActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (switchToLandscape) { return } // trying to avoid strange load of landscape fragment several times.
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             this.launchPortraitMode()
         } else {

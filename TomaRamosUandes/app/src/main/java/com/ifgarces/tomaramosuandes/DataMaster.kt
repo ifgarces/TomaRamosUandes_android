@@ -1,13 +1,18 @@
 package com.ifgarces.tomaramosuandes
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.AsyncTask
+import android.os.Environment
+import android.provider.MediaStore
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
-import com.ifgarces.tomaramosuandes.utils.CSVWorker
-import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.WebManager
-import com.ifgarces.tomaramosuandes.utils.yesNoDialog
+import com.ifgarces.tomaramosuandes.utils.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.time.DayOfWeek
 import java.util.concurrent.locks.ReentrantLock
 
@@ -99,7 +104,7 @@ object DataMaster {
         } else { // conflict(s) found
             context.yesNoDialog(
                 title = "Conflicto de eventos",
-                message = "Advertencia: Los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
+                message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
                     .format(conflictReport, ramo.nombre),
                 onYesClicked = {
                     takeRamoAction(ramo)
@@ -213,8 +218,88 @@ object DataMaster {
         return results
     }
 
-    /* Creates the ICS file for the tests and exams for all courses in `ramos`, storing it at `savePath` */
-    public fun exportICS(ramos :List<Ramo>, savePath :String) {
-        // TODO: create and save ICS file with all `Ramo`s tests.
+    /* Creates the iCalendar (ICS) file for the tests and exams for all courses in `ramos`, storing it at `savePath` */
+    public fun exportICS(ramos :List<Ramo> = this.userRamos, context :Context) {
+        val saveFolder :String = "Temp"
+        val fileContent :String = this.buildIcsContent()
+
+        fun writeFileToStream(content :String, stream :OutputStream) {
+            try {
+                stream.write(content.toByteArray())
+                stream.close()
+                Logf("[DataMaster] ICS file successfully exported inside folder '%s'.", saveFolder)
+            }
+            catch (e :IOException) {
+                Logf("[DataMaster] Failed to export ICS file. %s", e)
+            }
+        }
+
+        val fileMetadata :ContentValues = ContentValues()
+        fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "text/calendar")
+        fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+
+        if (android.os.Build.VERSION.SDK_INT >= 29) {
+            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
+            fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
+
+            val uri :Uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)!!
+            writeFileToStream(content=fileContent, stream=context.contentResolver.openOutputStream(uri)!!)
+            fileMetadata.put(MediaStore.Images.Media.IS_PENDING, false)
+            context.contentResolver.update(uri, fileMetadata, null, null)
+        }
+        else {
+            val directory = File( "%s/%s".format(Environment.getExternalStorageDirectory().toString(), saveFolder) )
+            if (! directory.exists()) { directory.mkdirs() }
+
+            val fileName :String = "%s.ics".format(System.currentTimeMillis().toString())
+            val file = File(directory, fileName)
+            writeFileToStream(content=fileContent, stream=FileOutputStream(file))
+            fileMetadata.put(MediaStore.Images.Media.DATA, file.absolutePath)
+            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
+        }
+    }
+
+    /* Generates the ICS file contents and returns it */
+    private fun buildIcsContent(data :List<Ramo> = this.userRamos) : String {
+        val fileHeader :String = """BEGIN:VCALENDAR
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:CalendarioEvaluaciones
+X-WR-TIMEZONE:America/Santiago"""
+        var fileBody :String = ""
+        val fileFooter :String = "END:VCALENDAR"
+
+        var year      :String
+        var month     :String
+        var day       :String
+        var startTime :String
+        var endTime   :String
+
+        /* processing evaluations... */
+        data.forEach { ramo :Ramo ->
+            ramo.events.forEach {
+                if (it.isEvaluation()) {
+                    year = it.date!!.year.toString()
+                    month = it.date!!.month.toString()
+                    day = it.date!!.dayOfMonth.toString()
+                    startTime = it.startTime.toString().replace(":", "")
+                    endTime = it.endTime.toString().replace(":", "")
+
+                    fileBody += """
+BEGIN:VEVENT
+DTSTART;TZID=America/Santiago:${year}${month}${day}T${startTime}00
+DTEND;TZID=America/Santiago:${year}${month}${day}T${endTime}00
+DESCRIPTION:[${ramo.materia} ${ramo.NRC}] ${ramo.nombre}
+STATUS:CONFIRMED
+SUMMARY:${SpanishStringer.ramoEventType(eventType=it.type, shorten=false)} ${ramo.nombre} (${it.startTime})
+END:VEVENT
+"""
+                }
+            }
+        }
+
+        return "%s%s%s".format(fileHeader, fileBody, fileFooter)
     }
 }

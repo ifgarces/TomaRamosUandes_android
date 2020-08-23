@@ -1,6 +1,7 @@
-package com.ifgarces.tomaramosuandes
+package com.ifgarces.tomaramosuandes.utils
 
 import android.app.Activity
+import com.ifgarces.tomaramosuandes.R
 
 
 object AppMetadata {

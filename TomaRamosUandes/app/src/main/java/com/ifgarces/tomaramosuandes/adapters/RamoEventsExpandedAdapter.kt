@@ -10,14 +10,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
 class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<RamoEventsExpandedAdapter.ExpandedEventVH>() {
 
+    private object SingletonHelper {
+        // used to prevent the dialog from being invoked more than one time if the user clicks again while the first one is still loading
+        var isDialogActive :Boolean = false
+    }
+
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : ExpandedEventVH {
         return ExpandedEventVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.ramo_event_expanded_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.ramo_with_evals_item, parent, false)
         )
     }
 
@@ -31,17 +37,31 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
     }
 
     inner class ExpandedEventVH(v :View) : RecyclerView.ViewHolder(v) {
-        private val parentView     :View         = v
+        private val parentView     :View         = v // MaterialCardView
         private val ramoName       :TextView     = v.findViewById(R.id.ramoEventExp_ramo)
+        private val emptyMarker    :View         = v.findViewById(R.id.ramoEventExp_emptyMarker) // TextView
         private val eventsRecycler :RecyclerView = v.findViewById(R.id.ramoEventExp_recycler)
     
         fun bind(ramo :Ramo, position :Int) {
             this.ramoName.text = ramo.nombre
-            this.eventsRecycler.layoutManager = LinearLayoutManager(parentView.context!!, LinearLayoutManager.HORIZONTAL, false)
-            this.eventsRecycler.adapter = RamoEventsAdapter(data=/*...*/)
 
-            this.ramoName.setOnClickListener {
-                this.parentView.isEnabled = false // preventing the dialog to be invoked more than one time if the user clicks two times (due load time, maybe)
+            /* deciding if to show empty recycler TextView or show the recycler */
+            val recyclerData :List<RamoEvent> = ramo.events.filter { it.isEvaluation() }
+            if (recyclerData.count() == 0) {
+                this.emptyMarker.visibility = View.VISIBLE
+                this.eventsRecycler.visibility = View.GONE
+            } else {
+                this.emptyMarker.visibility = View.GONE
+                this.eventsRecycler.visibility = View.VISIBLE
+                this.eventsRecycler.layoutManager = LinearLayoutManager(parentView.context!!, LinearLayoutManager.HORIZONTAL, false)
+                this.eventsRecycler.adapter = RamoEventsAdapter(data=recyclerData, showEventType=true)
+            }
+
+            /* calling `Ramo` dialog card clicked */
+            this.parentView.setOnClickListener {
+                if (SingletonHelper.isDialogActive) { return@setOnClickListener }
+                SingletonHelper.isDialogActive = true
+
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
                 helper.intent.putExtra(IntentKeys.RAMO_IS_TAKEN, true)
@@ -49,8 +69,8 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
                 RamoDialogFragment.summon(
                     manager = helper.supportFragmentManager,
                     onDismiss = {
-                        this.parentView.isEnabled = true
-                        this@RamoEventsExpandedAdapter.notifyItemChanged(position)
+                        SingletonHelper.isDialogActive = false
+                        this@RamoEventsExpandedAdapter.notifyDataSetChanged()
                     }
                 )
             }

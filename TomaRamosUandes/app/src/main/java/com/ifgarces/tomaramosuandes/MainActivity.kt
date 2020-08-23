@@ -1,14 +1,10 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.WebManager
-import com.ifgarces.tomaramosuandes.utils.infoDialog
-import com.ifgarces.tomaramosuandes.utils.multilineTrim
+import com.ifgarces.tomaramosuandes.utils.*
 
 
 /**

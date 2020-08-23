@@ -16,18 +16,22 @@ import java.io.OutputStream
 
 
 object ImageWorker {
-    const val saveFolder :String = "Horario" // folder name inside "Pictures" standard folder
+    private const val saveFolder  :String = "Pictures/Horario" // folder name inside "Pictures" standard folder
+    //private const val agendaWidth :Float = 2000f // agenda with (in dp) when it is exported as picture (so resulting image should be equivalent in any device)
 
     /**
      * Exports the agenda as a PNG image, at path "Pictures/`this.saveFolder`"
      * @param context Needs a context
      * @param targetView The view that has all the elements that are wanted to be captured,
      * including itself. It should be a ScrollView, if there exists.
-     * @param largerView The view inside the `targetView`, which height could be larger
+     * @param tallView The view inside the `targetView`, which height could be larger
      * than the device's display height.
      */
-    public fun exportAgendaImage(context :Context, targetView :View, largerView :View) {
-        val capture :Bitmap = this.getBitmapOf(targetView, largerView)
+    public fun exportAgendaImage(context :Context, targetView :View, tallView :View) {
+
+        // TODO: enlarge targetView width (height will be according to context, do not touch it)
+
+        val capture :Bitmap = this.getBitmapOf(targetView, tallView)
         this.saveImage(capture, context)
     }
 
@@ -50,12 +54,12 @@ object ImageWorker {
     }
 
     private fun saveImage(bitmap :Bitmap, context :Context) { // references: https://stackoverflow.com/a/57265702
-        val fileMetadata : ContentValues = ContentValues()
+        val fileMetadata :ContentValues = ContentValues()
         fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
         fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
 
         if (android.os.Build.VERSION.SDK_INT >= 29) {
-            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/${this.saveFolder}")
+            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, this.saveFolder)
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
             fileMetadata.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
 
@@ -70,7 +74,7 @@ object ImageWorker {
 
             val fileName :String = "%s.png".format(System.currentTimeMillis().toString())
             val file = File(directory, fileName)
-            this.saveImageToStream(img=bitmap, stream= FileOutputStream(file), context=context)
+            this.saveImageToStream(img=bitmap, stream=FileOutputStream(file), context=context)
             fileMetadata.put(MediaStore.Images.Media.DATA, file.absolutePath)
             context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
         }
@@ -80,10 +84,10 @@ object ImageWorker {
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Logf("[ImageWorker] Image successfully saved at Pictures/%s.", this.saveFolder)
-            context.toastf("Imagen guardada en carpeta Pictures/%s.\nRevise su galería.", this.saveFolder)
+            Logf("[ImageWorker] Image successfully saved at %s.", this.saveFolder)
+            context.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.saveFolder)
         }
-        catch (e :Exception) {
+        catch (e :Exception) { // [?] <==> IOException?
             Logf("[ImageWorker] Error: could not save agenda as image. %s", e)
             context.infoDialog(
                 title = "Error",

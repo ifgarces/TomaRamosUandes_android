@@ -13,7 +13,7 @@
         android:minWidth="140dp"
         android:maxWidth="170dp"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/ramoEventItem_height">
+        android:layout_height="wrap_content">
 
         <!-- Date if it is a test/exam, DayOfWeek otherwise -->
         <TextView
@@ -28,10 +28,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:orientation="horizontal"
+
+            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ramoEvent_when">
@@ -67,6 +69,25 @@
                 app:layout_constraintStart_toEndOf="@+id/ramoEvent_tStatic"
                 app:layout_constraintTop_toTopOf="@+id/ramoEvent_ti" />
         </LinearLayout>
+
+        <!-- This TextView will only be VISIBLE in `EvaluationsActivity` (will be GONE in ramo dialog) -->
+        <TextView
+            android:id="@+id/ramoEvent_type"
+            android:text="[type]"
+            android:fontFamily="@font/lato"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:textAlignment="center"
+            android:visibility="visible"
+
+            android:layout_marginTop="6dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

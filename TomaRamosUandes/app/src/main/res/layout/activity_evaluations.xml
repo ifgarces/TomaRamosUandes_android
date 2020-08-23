@@ -29,7 +29,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/evals_eventsRecycler"
-        tools:listitem="@layout/ramo_event_expanded_item"
+        tools:listitem="@layout/ramo_with_evals_item"
         android:orientation="vertical"
         android:scrollbars="vertical"
         android:nestedScrollingEnabled="true"
@@ -45,7 +45,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/evals_exportEventsButton"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:text="Exportar al calendario de Google"
+        android:text="Exportar al calendario"
         app:icon="@drawable/assignment_returned_icon"
         android:textAllCaps="false"
         android:textSize="@dimen/buttonLower_textSize"

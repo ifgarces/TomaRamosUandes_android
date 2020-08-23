@@ -3,9 +3,10 @@ package com.ifgarces.tomaramosuandes
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.adapters.RamoEventsExpandedAdapter
 
 
 class EvaluationsActivity : AppCompatActivity() {
@@ -27,12 +28,17 @@ class EvaluationsActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_evaluations)
         UI.init(owner=this)
 
-        /*DataMaster.getUserRamos().forEach { ramo :Ramo ->
-            ramo.events.forEach {
-                if (it.isEvaluation()) {
+        UI.eventsRecycler.layoutManager = LinearLayoutManager(this)
+        UI.eventsRecycler.adapter = RamoEventsExpandedAdapter(data=DataMaster.getUserRamos())
+        UI.eventsExportButton.setOnClickListener { this.exportEvents() }
+    }
 
-                }
-            }
-        }*/
+    private fun exportEvents() {
+        //DataMaster.exportICS(context=this)
+        // TODO: export ICS and inmediatly open it by system, so the user can import the events to their prefered calendar
+    }
+
+    private fun showHelp() {
+
     }
 }

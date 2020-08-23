@@ -37,7 +37,10 @@ class CatalogActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_catalog)
         UI.init(owner=this)
 
-        UI.recycler.adapter = CatalogRamosAdapter(data = DataMaster.getCatalog().toMutableList())
+        UI.recycler.adapter = CatalogRamosAdapter(
+            data = DataMaster.getCatalog().toMutableList(),
+            allTaken = false
+        )
         UI.recycler.layoutManager = LinearLayoutManager(this)
         //UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
         UI.searchBox_layout.setStartIconOnClickListener { this.clearSearch() }

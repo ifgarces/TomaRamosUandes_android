@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import com.ifgarces.tomaramosuandes.adapters.TakenRamosAdapter
+import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 
 
@@ -50,20 +50,20 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private object UI {
-        lateinit var topBar            :MaterialToolbar
-        lateinit var catalogButton     :Button
-        lateinit var ramosRecycler     :RecyclerView
-        lateinit var emptyRecyclerText :TextView
-        lateinit var creditosCounter   :TextView
-        lateinit var agendaButton      :Button
-        lateinit var evaluationsButton :Button
-        lateinit var loadDisplay       :View
+        lateinit var topBar              :MaterialToolbar
+        lateinit var catalogButton       :Button
+        lateinit var ramosRecycler       :RecyclerView
+        lateinit var emptyRecyclerMarker :View // TextView
+        lateinit var creditosCounter     :TextView
+        lateinit var agendaButton        :Button
+        lateinit var evaluationsButton   :Button
+        lateinit var loadDisplay         :View
 
         fun init(owner :AppCompatActivity) {
             this.topBar             = owner.findViewById(R.id.home_topbar)
             this.catalogButton      = owner.findViewById(R.id.home_catalogButton)
             this.ramosRecycler      = owner.findViewById(R.id.home_ramosRecycler)
-            this.emptyRecyclerText  = owner.findViewById(R.id.home_emptyRecyclerText)
+            this.emptyRecyclerMarker  = owner.findViewById(R.id.home_emptyRecyclerText)
             this.creditosCounter    = owner.findViewById(R.id.home_creditos)
             this.agendaButton       = owner.findViewById(R.id.home_agendaButton)
             this.evaluationsButton  = owner.findViewById(R.id.home_pruebasButton)
@@ -77,7 +77,10 @@ class HomeActivity : AppCompatActivity() {
         UI.init(owner=this)
 
         UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
-        UI.ramosRecycler.adapter = TakenRamosAdapter(data=DataMaster.getUserRamos())
+        UI.ramosRecycler.adapter = CatalogRamosAdapter(
+            data = DataMaster.getUserRamos(),
+            allTaken = true
+        )
 
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
