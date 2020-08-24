@@ -1,5 +1,7 @@
 package com.ifgarces.tomaramosuandes.adapters
 
+import android.app.Activity
+import android.os.AsyncTask
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -54,9 +56,13 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
             this.type.setBackgroundColor(backColor!!) // exception if invalid event or evaluation event, which should not go here (agenda)
 
             /* colorizing hole card if the event is on conflict status */
-            val conflicted :List<RamoEvent> = DataMaster.getConflictsOf(event)
-            if (conflicted.count() > 0) { // colorizing conflicted events
-                this.parentView.setBackgroundColor( this.parentView.context.getColor(R.color.conflict_background) )
+            AsyncTask.execute {
+                val conflicted :List<RamoEvent> = DataMaster.getConflictsOf(event)
+                if (conflicted.count() > 0) { // colorizing conflicted events
+                    (this.parentView.context as Activity).runOnUiThread {
+                        this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.conflict_background))
+                    }
+                }
             }
 
             /* displaying event details in simple dialog */

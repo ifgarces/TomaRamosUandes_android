@@ -1,8 +1,10 @@
 package com.ifgarces.tomaramosuandes
 
+import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -191,7 +193,7 @@ class AgendaLandscapeFragment : Fragment() {
             }
         }
 
-        AgendaWorker.buildAgenda(context=this.context!!)
+        AgendaWorker.buildAgenda(activity=this.activity!!)
 
         this.enterFullScreen()
         return UI.rootView
@@ -258,7 +260,7 @@ class AgendaLandscapeFragment : Fragment() {
         }
 
         /* Displays the non-evaluation events for each user taken `Ramo` in the agenda */
-        public fun buildAgenda(context :Context) {
+        public fun buildAgenda(activity :Activity) {
             Logf("[AgendaLandscapeFragment] Building agenda...")
 
             /* initializing */
@@ -269,55 +271,59 @@ class AgendaLandscapeFragment : Fragment() {
                 }
             }
 
-            /* filling `agendaData` i.e. mapping agenda block buttons with corresponding event(s) */
-            var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
-            DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
-                for (ev :RamoEvent in events) {
-                    rowInterval = timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
-                    for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
-                        this.agendaData.findEventsOf(
-                            button = UI.blocksMap.getValue(key = day)[rowNum]
-                        )!!.add(ev)
+            AsyncTask.execute {
+                /* filling `agendaData` i.e. mapping agenda block buttons with corresponding event(s) */
+                var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
+                DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
+                    for (ev :RamoEvent in events) {
+                        rowInterval = timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
+                        for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
+                            this.agendaData.findEventsOf(
+                                button = UI.blocksMap.getValue(key = day)[rowNum]
+                            )!!.add(ev)
+                        }
                     }
                 }
-            }
 
-            /* displaying events assigned to each block button */
-            var break_loop :Boolean = false
-            this.agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
-                if (break_loop) { return@forEach }
-                events.forEachIndexed { index :Int, event :RamoEvent ->
-                    if (index == 0) {
-                        block.text = DataMaster.findRamo(
-                            NRC = event.ramoNRC,
-                            searchInUserList = true
-                        )!!.nombre
-                        val backColor :Int? = when(event.type) { // setting background color according to eventType
-                            RamoEventType.CLAS -> { context.getColor(R.color.clas) }
-                            RamoEventType.AYUD -> { context.getColor(R.color.ayud) }
-                            RamoEventType.LABT, RamoEventType.TUTR -> { context.getColor(R.color.labt) }
-                            else -> { null } // <- will never happen, unless dumb code mistake
+                /* displaying events assigned to each block button */
+                activity.runOnUiThread {
+                    var break_loop :Boolean = false
+                    this.agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
+                        if (break_loop) { return@forEach }
+                        events.forEachIndexed { index :Int, event :RamoEvent ->
+                            if (index == 0) {
+                                block.text = DataMaster.findRamo(
+                                    NRC = event.ramoNRC,
+                                    searchInUserList = true
+                                )!!.nombre
+                                val backColor :Int? = when(event.type) { // setting background color according to eventType
+                                    RamoEventType.CLAS -> { activity.getColor(R.color.clas) }
+                                    RamoEventType.AYUD -> { activity.getColor(R.color.ayud) }
+                                    RamoEventType.LABT, RamoEventType.TUTR -> { activity.getColor(R.color.labt) }
+                                    else -> { null } // <- will never happen, unless dumb code mistake
+                                }
+                                block.setBackgroundColor(backColor!!)
+                            }
+                            else {
+                                block.setBackgroundColor( activity.getColor(R.color.conflict_background) ) // visibly marking block as conflicted
+                                // concatenating multiple events in same block
+                                block.text = "%s + %s".format(
+                                    block.text, DataMaster.findRamo(
+                                        NRC = event.ramoNRC,
+                                        searchInUserList = true
+                                    )!!.nombre
+                                )
+                                if (block.text.toString().filter{ it == '+' }.count() >= 2) { // if three or more events are in the same block, avoid showing all of them. They all can be viewed when on click.
+                                    block.text = "%s + ...".format(block.text)
+                                    break_loop = true // finishing this loop and parent loop
+                                    return@forEach
+                                }
+                            }
                         }
-                        block.setBackgroundColor(backColor!!)
                     }
-                    else {
-                        block.setBackgroundColor( context.getColor(R.color.conflict_background) ) // visibly marking block as conflicted
-                        // concatenating multiple events in same block
-                        block.text = "%s + %s".format(
-                            block.text, DataMaster.findRamo(
-                                NRC = event.ramoNRC,
-                                searchInUserList = true
-                            )!!.nombre
-                        )
-                        if (block.text.toString().filter{ it == '+' }.count() >= 2) { // if three or more events are in the same block, avoid showing all of them. They all can be viewed when on click.
-                            block.text = "%s + ...".format(block.text)
-                            break_loop = true // finishing this loop and parent loop
-                            return@forEach
-                        }
-                    }
+                    Logf("[AgendaLandscapeFragment] Agenda successfully built.")
                 }
             }
-            Logf("[AgendaLandscapeFragment] Agenda successfully built.")
         }
 
         private val supportedHours_start :List<Int> = (8 until 21+1).toList() // [8, 21]

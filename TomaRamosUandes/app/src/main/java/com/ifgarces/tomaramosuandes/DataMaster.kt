@@ -1,11 +1,14 @@
 package com.ifgarces.tomaramosuandes
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.room.Room
+import com.ifgarces.tomaramosuandes.local_db.LocalDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.*
@@ -19,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Handles the database.
- * @property catalog Contains the collection of `Ramo` available for the current period.
+ * @property catalog_ramos Contains the collection of `Ramo` available for the current period.
  */
 object DataMaster {
 
@@ -27,8 +30,14 @@ object DataMaster {
     // TODO: make sure to manage write concurrency for `userRamos`
     // ----
 
-    @Volatile private lateinit var catalog   :List<Ramo>;        fun getCatalog() = this.catalog
-    @Volatile private lateinit var userRamos :MutableList<Ramo>; fun getUserRamos() = this.userRamos
+    private lateinit var localDB :LocalDB; fun getRoomDB() = this.localDB
+
+    @Volatile private lateinit var catalog_ramos  :List<Ramo>;      fun getCatalogRamos() = this.catalog_ramos
+    @Volatile private lateinit var catalog_events :List<RamoEvent>; fun getCatalogEvents() = this.catalog_events
+
+    @Volatile private lateinit var user_ramos :MutableList<Ramo>;       fun getUserRamos() = this.user_ramos
+    @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
+
     private lateinit var writeLock :ReentrantLock // concurrency write lock for `userRamos`
 
     /**
@@ -39,24 +48,54 @@ object DataMaster {
      * @param onRoomError Executed when it is not possible to load user's local Room database.
      */
     fun init(
+        activity        :Activity,
         clearDatabase   :Boolean,
         onSuccess       :() -> Unit,
         onInternetError :() -> Unit,
         onRoomError     :() -> Unit
     ) {
-        this.catalog = listOf()
-        this.userRamos = mutableListOf()
+        this.catalog_ramos = listOf()
+        this.user_ramos = mutableListOf()
+        this.user_events = mutableListOf()
         this.writeLock = ReentrantLock()
+
         AsyncTask.execute {
+            try {
+                this.localDB = Room.databaseBuilder(activity, LocalDB::class.java, Ramo.TABLE_NAME).build()
+            }
+            catch (e :Exception) {
+                Logf("[DataMaster] Error: could not load local room database. %s", e)
+                onRoomError.invoke()
+            }
+
             try {
                 Logf("[DataMaster] Fetching CSV catalog data...")
                 val csv_body :String = WebManager.fetchCatalogCSV()
 
                 Logf("[DataMaster] Parsing CSV...")
-                this.catalog = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
-                Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog.count())
+                val aux :Pair<List<Ramo>, List<RamoEvent>> = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
+                this.catalog_ramos = aux.first
+                this.catalog_events = aux.second
+                // TODO: manage excption inside last function from invalid data (no longer working on this verison). This indicates that the app is very outdated and can't get the catalog.
 
-                // TODO: load user Room DB
+                Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog_ramos.count())
+
+                if (clearDatabase) { // removing all data in memory and in local room database
+                    this.user_ramos.clear()
+                    this.user_events.clear()
+                    this.localDB.ramoDAO().clear()
+                    this.localDB.ramoEventDAO().clear()
+                    Logf("[DataMaster] Local database cleaned.")
+                }
+
+                this.user_ramos = this.localDB.ramoDAO().getAllRamos().toMutableList()
+                this.user_events = this.localDB.ramoEventDAO().getAllEvents().toMutableList()
+                Logf("[DataMaster] Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
+                activity.runOnUiThread {
+                    if (this.user_ramos.count() > 0) {
+                        activity.toastf("Se recuperó su conjunto de ramos tomados.")
+                    }
+                }
 
                 onSuccess.invoke()
             }
@@ -65,7 +104,7 @@ object DataMaster {
                 onInternetError.invoke()
             }
             catch (e :NullPointerException) {
-                Logf("[DataMaster] Invalid online CSV data.")
+                Logf("[DataMaster] Invalid online CSV data (for this app version).")
                 onInternetError.invoke()
             }
         }
@@ -78,7 +117,7 @@ object DataMaster {
      * @return Returns null if not found.
      */
     public fun findRamo(NRC :Int, searchInUserList :Boolean = false) : Ramo? {
-        this.catalog.forEach {
+        this.catalog_ramos.forEach {
             if (it.NRC == NRC) { return it }
         }
         return null
@@ -92,49 +131,57 @@ object DataMaster {
     public fun takeRamo(ramo :Ramo, context :Context, onClose :() -> Unit) {
         var conflictReport :String = ""
 
-        ramo.events.forEach {
-            this.getConflictsOf(it).forEach { conflictedEvent :RamoEvent ->
-                conflictReport += "• %s\n".format(conflictedEvent.toShortString())
+        AsyncTask.execute {
+            this.localDB.ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC).forEach {
+                this.getConflictsOf(it).forEach { conflictedEvent :RamoEvent ->
+                    conflictReport += "• %s\n".format(conflictedEvent.toShortString())
+                }
+            }
+
+            if (conflictReport == "") { // no conflict was found
+                this.addRamoToUserList(ramo)
+                onClose.invoke()
+            } else { // conflict(s) found
+                context.yesNoDialog(
+                    title = "Conflicto de eventos",
+                    message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
+                        .format(conflictReport, ramo.nombre),
+                    onYesClicked = {
+                        this.addRamoToUserList(ramo)
+                        onClose.invoke()
+                    },
+                    onNoClicked = {
+                        onClose.invoke()
+                    },
+                    icon = R.drawable.alert_icon
+                )
             }
         }
-
-        if (conflictReport == "") { // no conflict was found
-            takeRamoAction(ramo)
-            onClose.invoke()
-        } else { // conflict(s) found
-            context.yesNoDialog(
-                title = "Conflicto de eventos",
-                message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
-                    .format(conflictReport, ramo.nombre),
-                onYesClicked = {
-                    takeRamoAction(ramo)
-                    onClose.invoke()
-                },
-                onNoClicked = {
-                    onClose.invoke()
-                },
-                icon = R.drawable.alert_icon
-            )
-        }
     }
-    private fun takeRamoAction(ramo :Ramo) {
+    private fun addRamoToUserList(ramo :Ramo) {
         try {
             this.writeLock.lock()
-            this.userRamos.add(ramo)
-            // TODO: update Room DB
+            this.user_ramos.add(ramo)
+            this.localDB.ramoDAO().insert(ramo) // assuming we're already in a separate thread
+            this.catalog_events.filter { it.ramoNRC == ramo.NRC }
+                .forEach { event :RamoEvent ->
+                    this.localDB.ramoEventDAO().insert(event)
+                }
+            Logf("[DataMaster] Ramo{NRC=%s} taken.", ramo.NRC)
         } finally {
             this.writeLock.unlock()
         }
     }
 
-    public fun eraseRamo(NRC :Int) {
+    /* Removes the matching `Ramo` from the user taken list. */
+    public fun untakeRamo(NRC :Int) {
         var index :Int = 0
-        while (index < this.userRamos.count()) {
-            if (this.userRamos[index].NRC == NRC) {
+        while (index < this.user_ramos.count()) {
+            if (this.user_ramos[index].NRC == NRC) {
                 try {
                     this.writeLock.lock()
-                    this.userRamos.removeAt(index)
-                    // TODO: update Room DB
+                    this.user_ramos.removeAt(index)
+                    AsyncTask.execute { this.localDB.ramoDAO().deleteRamo(nrc=NRC) }
                 } finally {
                     this.writeLock.unlock()
                 }
@@ -143,9 +190,10 @@ object DataMaster {
         }
     }
 
-    public fun getUserTotalCredits() : Int {
+    /* Gets the total amount of `crédito` for the user taken list. */
+    public fun getUserCreditSum() : Int {
         var creditosTotal :Int = 0
-        this.userRamos.forEach {
+        this.user_ramos.forEach {
             creditosTotal += it.créditos
         }
         return creditosTotal
@@ -175,14 +223,15 @@ object DataMaster {
 
 
     /**
+     * [This function needs to be called on a separated thread]
      * Iterates all user taken `Ramo` list and checks if `event` collide with another.
      * @return The other events that collide with `event`, including itself (first).
      * The list will be empty if there is no conflict.
      */
     public fun getConflictsOf(event :RamoEvent) : List<RamoEvent> {
         val conflicts :MutableList<RamoEvent> = mutableListOf()
-        this.userRamos.forEach {
-            it.events.forEach { ev :RamoEvent ->
+        this.user_ramos.forEach {
+            this.localDB.ramoEventDAO().getEventsOfRamo(nrc=it.NRC).forEach { ev :RamoEvent ->
                 if (ev.ID != event.ID) {
                     if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
                 }
@@ -192,8 +241,11 @@ object DataMaster {
         return conflicts
     }
 
-    /* Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek` */
-    public fun getEventsByWeekDay(ramos :List<Ramo> = this.userRamos) : Map<DayOfWeek, List<RamoEvent>> {
+    /**
+     * [This function needs to be called on a separated thread]
+     * Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek`
+     */
+    public fun getEventsByWeekDay(ramos :List<Ramo> = this.user_ramos) : Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(
             DayOfWeek.MONDAY to mutableListOf(),
             DayOfWeek.TUESDAY to mutableListOf(),
@@ -201,8 +253,10 @@ object DataMaster {
             DayOfWeek.THURSDAY to mutableListOf(),
             DayOfWeek.FRIDAY to mutableListOf()
         )
-        for (ramo :Ramo in ramos) {
-            for (event :RamoEvent in ramo.events) {
+        var events :List<RamoEvent>
+        ramos.forEach { ramo :Ramo ->
+            events = this.localDB.ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC)
+            events.forEach { event :RamoEvent ->
                 if (! event.isEvaluation()) {
                     when(event.dayOfWeek) {
                         DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
@@ -218,8 +272,11 @@ object DataMaster {
         return results
     }
 
-    /* Creates the iCalendar (ICS) file for the tests and exams for all courses in `ramos`, storing it at `savePath` */
-    public fun exportICS(ramos :List<Ramo> = this.userRamos, context :Context) {
+    /**
+     * [This function needs to be called on a separated thread]
+     * Creates the iCalendar (ICS) file for the tests and exams for all courses in `ramos`, storing it at `savePath`
+     */
+    public fun exportICS(ramos :List<Ramo> = this.user_ramos, context :Context) {
         val saveFolder :String = "Temp"
         val fileContent :String = this.buildIcsContent()
 
@@ -259,8 +316,11 @@ object DataMaster {
         }
     }
 
-    /* Generates the ICS file contents and returns it */
-    private fun buildIcsContent(data :List<Ramo> = this.userRamos) : String {
+    /**
+     * [This function needs to be called on a separated thread]
+     * Generates the ICS file contents and returns it.
+     */
+    private fun buildIcsContent(ramos :List<Ramo> = this.user_ramos) : String {
         val fileHeader :String = """BEGIN:VCALENDAR
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
 VERSION:2.0
@@ -278,14 +338,14 @@ X-WR-TIMEZONE:America/Santiago"""
         var endTime   :String
 
         /* processing evaluations... */
-        data.forEach { ramo :Ramo ->
-            ramo.events.forEach {
-                if (it.isEvaluation()) {
-                    year = it.date!!.year.toString()
-                    month = it.date!!.month.toString()
-                    day = it.date!!.dayOfMonth.toString()
-                    startTime = it.startTime.toString().replace(":", "")
-                    endTime = it.endTime.toString().replace(":", "")
+        ramos.forEach { ramo :Ramo ->
+            this.localDB.ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC).forEach { event :RamoEvent ->
+                if (event.isEvaluation()) {
+                    year = event.date!!.year.toString()
+                    month = event.date!!.month.toString()
+                    day = event.date!!.dayOfMonth.toString()
+                    startTime = event.startTime.toString().replace(":", "")
+                    endTime = event.endTime.toString().replace(":", "")
 
                     fileBody += """
 BEGIN:VEVENT
@@ -293,7 +353,7 @@ DTSTART;TZID=America/Santiago:${year}${month}${day}T${startTime}00
 DTEND;TZID=America/Santiago:${year}${month}${day}T${endTime}00
 DESCRIPTION:[${ramo.materia} ${ramo.NRC}] ${ramo.nombre}
 STATUS:CONFIRMED
-SUMMARY:${SpanishStringer.ramoEventType(eventType=it.type, shorten=false)} ${ramo.nombre} (${it.startTime})
+SUMMARY:${SpanishStringer.ramoEventType(eventType=event.type, shorten=false)} ${ramo.nombre} (${event.startTime})
 END:VEVENT
 """
                 }

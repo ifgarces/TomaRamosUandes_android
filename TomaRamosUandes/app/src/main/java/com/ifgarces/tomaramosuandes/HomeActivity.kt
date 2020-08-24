@@ -36,7 +36,7 @@ class HomeActivity : AppCompatActivity() {
             this.processRecyclerChange()
         }
         private fun processRecyclerChange() {
-            UI.creditosCounter.text = DataMaster.getUserTotalCredits().toString()
+            UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()
             if (UI.creditosCounter.text == "0") {
                 UI.ramosRecycler.visibility = View.INVISIBLE
                 UI.agendaButton.isEnabled = false
@@ -85,7 +85,7 @@ class HomeActivity : AppCompatActivity() {
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {
-                    this.showHelpDialog()
+                    this.showHelp()
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
@@ -102,7 +102,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         UI.loadDisplay.visibility = View.GONE
-
         RecyclerSync.updateLocal()
     }
 
@@ -130,7 +129,7 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
-    private fun showHelpDialog() {
+    private fun showHelp() {
         // TODO: use Activity.infoDialog and show app version, author and usage (video?)
     }
 }

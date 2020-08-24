@@ -61,16 +61,17 @@ object CSVWorker {
 
 
     /**
-     * Converts the contents of the CSV (holding the period catalog) into a collection of `Ramo`.
+     * Converts the contents of the CSV (holding the period catalog) into a collection of `Ramo` and `RamoEvent`.
      * On fatal parsing error (invalid `csv_lines`), returns null.
      */
-    public fun parseCSV(csv_lines :List<String>) : List<Ramo>? {
+    public fun parseCSV(csv_lines :List<String>) : Pair<List<Ramo>, List<RamoEvent>>? {
 
         // [!] ---
         // [!] TODO: fix last row not being successfully parsed
         // [!] ---
 
-        val catalogResult :MutableList<Ramo> = mutableListOf()
+        val catalogResult :Pair< MutableList<Ramo>, MutableList<RamoEvent> >
+                = Pair(mutableListOf(), mutableListOf()) // ~ (ramos, events)
 
         val NRCs :MutableList<Int> = mutableListOf()
         var line :List<String> = listOf()
@@ -113,15 +114,15 @@ object CSVWorker {
 
             if (! NRCs.contains(current.NRC)) { // NUEVO `RAMO`
                 // finishing parsing of previus `Ramo`
-                if (catalogResult.count() > 0) {
-                    catalogResult.last().events = current.events!!
+                if (catalogResult.first.count() > 0) {
+                    catalogResult.second.addAll(current.events!!)
                 }
 
                 // preparing parsing of new `Ramo`
                 NRCs.add(current.NRC)
                 current.events = mutableListOf()
                 try {
-                    catalogResult.add(
+                    catalogResult.first.add(
                         Ramo(
                             NRC = current.NRC,
                             nombre = line[csv_columns.NOMBRE].trim(),
@@ -217,9 +218,9 @@ object CSVWorker {
             )
         }
 
-        if (catalogResult.count() == 0) {
-            return null
-        } // happens when receiving one empty line
+//        if (catalogResult.first.count() == 0) {
+//            return null
+//        } // happens when receiving one empty line
         return catalogResult
     }
 }

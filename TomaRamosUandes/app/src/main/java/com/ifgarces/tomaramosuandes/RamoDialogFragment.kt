@@ -1,6 +1,7 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.DialogInterface
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.adapters.RamoEventsAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
@@ -96,27 +98,30 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         UI.curso.text = ramo.curso.toString()
         UI.sección.text = ramo.sección
         UI.PE.text = ramo.planEstudios
-        UI.conectLiga.text =
-            if (ramo.conectLiga == "") "No" else ramo.conectLiga
-        UI.listaCruz.text =
-            if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
+        UI.conectLiga.text = if (ramo.conectLiga == "") "No" else ramo.conectLiga
+        UI.listaCruz.text = if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
 
-        UI.clases.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.CLAS },
-            showEventType = false
-        )
-        UI.ayuds.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.AYUD },
-            showEventType = false
-        )
-        UI.labs.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR },
-            showEventType = false
-        )
-        UI.evals.adapter = RamoEventsAdapter(
-            data = ramo.events.filter{ it.isEvaluation() },
-            showEventType = true
-        )
+        AsyncTask.execute {
+            val events :List<RamoEvent> = DataMaster.getCatalogEvents()
+                .filter { it.ramoNRC == ramo.NRC }
+
+            UI.clases.adapter = RamoEventsAdapter(
+                data = events.filter{ it.type == RamoEventType.CLAS },
+                showEventType = false
+            )
+            UI.ayuds.adapter = RamoEventsAdapter(
+                data = events.filter{ it.type == RamoEventType.AYUD },
+                showEventType = false
+            )
+            UI.labs.adapter = RamoEventsAdapter(
+                data = events.filter{ it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR },
+                showEventType = false
+            )
+            UI.evals.adapter = RamoEventsAdapter(
+                data = events.filter{ it.isEvaluation() },
+                showEventType = true
+            )
+        }
 
         if (ramo_isTaken) { // `ramo` already in user list
             UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.trash_icon) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
@@ -166,7 +171,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             ramo = ramo,
             context = this.context!!,
             onClose = {
-                HomeActivity.RecyclerSync.requestUpdate()
+                //HomeActivity.RecyclerSync.requestUpdate()
                 this.dismiss()
             }
         )
@@ -178,7 +183,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             title = "Borrar ramo",
             message = "¿Está seguro que desea eliminar ${ramo.nombre} de su lista de ramos tomados?",
             onYesClicked = {
-                DataMaster.eraseRamo(ramo.NRC)
+                DataMaster.untakeRamo(ramo.NRC)
                 HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView` i.e. its OnResume() won't execute when the dialog is dismissed.
                 this.dismiss()
             }

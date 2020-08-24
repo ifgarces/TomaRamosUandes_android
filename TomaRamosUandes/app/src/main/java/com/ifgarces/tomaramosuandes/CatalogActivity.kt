@@ -38,7 +38,7 @@ class CatalogActivity : AppCompatActivity() {
         UI.init(owner=this)
 
         UI.recycler.adapter = CatalogRamosAdapter(
-            data = DataMaster.getCatalog().toMutableList(),
+            data = DataMaster.getCatalogRamos().toMutableList(),
             allTaken = false
         )
         UI.recycler.layoutManager = LinearLayoutManager(this)
@@ -70,7 +70,7 @@ class CatalogActivity : AppCompatActivity() {
         // TODO: [BUG] nonAccent not working: "algebra" has no results, unlike "álgebra"
         val results :MutableList<Ramo> = mutableListOf()
         val keywords :List<String> = searchText.spanishNonAccent().spanishUpperCase().trim().split(" ")
-        for (cc :Ramo in DataMaster.getCatalog()) {
+        for (cc :Ramo in DataMaster.getCatalogRamos()) {
             for (word :String in keywords) {
                 if (word.length <= 1) { continue }
                 if (cc.nombre.spanishNonAccent().contains(word) && cc !in results) {
@@ -89,7 +89,7 @@ class CatalogActivity : AppCompatActivity() {
     /* Shows again the full catalog */
     private fun clearSearch() {
         UI.searchBox.setText("")
-        (UI.recycler.adapter as CatalogRamosAdapter).updateData(data=DataMaster.getCatalog().toMutableList())
+        (UI.recycler.adapter as CatalogRamosAdapter).updateData(data=DataMaster.getCatalogRamos().toMutableList())
         UI.recycler.visibility = View.VISIBLE
     }
 }

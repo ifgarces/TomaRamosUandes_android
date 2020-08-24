@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
             WebManager.init(context=this)
         }
         DataMaster.init(
+            activity = this,
             clearDatabase = false,
             onSuccess = {
                 Logf("[MainActivity] DataMaster successfully initialized.")

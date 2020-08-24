@@ -20,9 +20,10 @@ data class RamoEvent(
     val startTime :LocalTime,
     val endTime   :LocalTime,
     var date      :LocalDate?
-
 ) {
-    companion object { const val TABLE_NAME :String = "ramo_event" }
+    companion object {
+        const val TABLE_NAME :String = "ramo_event"
+    }
 
     public fun toLargeString() : String {
         val dateOrDay :String =

@@ -1,6 +1,7 @@
 package com.ifgarces.tomaramosuandes
 
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -77,21 +78,25 @@ class AgendaPortraitFragment : Fragment() {
         Logf("[AgendaPortraitFragment] Initializing...")
         UI.init( owner=inflater.inflate(R.layout.fragment_agenda_portrait, container, false) )
 
-        val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
+        AsyncTask.execute {
+            val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
 
-        val dayRecyclers :Map<DayOfWeek, Pair<View, RecyclerView>> = mapOf(
-            DayOfWeek.MONDAY    to UI.recyclerTeamMon,
-            DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
-            DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
-            DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
-            DayOfWeek.FRIDAY    to UI.recyclerTeamFri
-        )
-        dayRecyclers.forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) -> // building agenda here
-            team.second.layoutManager = LinearLayoutManager(this.context)
-            team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
-            if (agendaEvents.getValue(day).count() == 0) { // hiding the day if there is no event on it
-                team.first.visibility = View.GONE
-                team.second.visibility = View.GONE
+            this.activity!!.runOnUiThread {
+                val dayRecyclers :Map<DayOfWeek, Pair<View, RecyclerView>> = mapOf(
+                    DayOfWeek.MONDAY    to UI.recyclerTeamMon,
+                    DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
+                    DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
+                    DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
+                    DayOfWeek.FRIDAY    to UI.recyclerTeamFri
+                )
+                dayRecyclers.forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) -> // building agenda here
+                    team.second.layoutManager = LinearLayoutManager(this.context)
+                    team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
+                    if (agendaEvents.getValue(day).count() == 0) { // hiding the day if there is no event on it
+                        team.first.visibility = View.GONE
+                        team.second.visibility = View.GONE
+                    }
+                }
             }
         }
 
