@@ -36,8 +36,11 @@ class HomeActivity : AppCompatActivity() {
             this.processRecyclerChange()
         }
         private fun processRecyclerChange() {
-            UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()
-            if (UI.creditosCounter.text == "0") {
+            val creditSum :Int = DataMaster.getUserCreditSum()
+            UI.creditosCounter.text = creditSum.toString()
+
+            /* adjusting UI if user has not taken any `Ramo` */
+            if (creditSum == 0) {
                 UI.ramosRecycler.visibility = View.INVISIBLE
                 UI.agendaButton.isEnabled = false
                 UI.evaluationsButton.isEnabled = false
@@ -46,6 +49,15 @@ class HomeActivity : AppCompatActivity() {
                 UI.agendaButton.isEnabled = true
                 UI.evaluationsButton.isEnabled = true
             }
+
+            /* warning if sum(créditos) is higher than Uandes' normal limits */
+            val creditSumColor :Int =
+                if (creditSum > 33) {
+                    UI.creditosCounter.context.getColor(R.color.creditSum_bad)
+                } else {
+                    UI.creditosCounter.context.getColor(R.color.creditSum_ok)
+                }
+            UI.creditosCounter.setTextColor(creditSumColor)
         }
     }
 
@@ -131,5 +143,20 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showHelp() {
         // TODO: use Activity.infoDialog and show app version, author and usage (video?)
+
+        // use this: https://html-online.com/editor/
+        val dialog_HTML :String = """
+            <p>%s</p>
+            <p>Versi&oacute;n: %s</p>
+            <p>Autor: Ignacio F. Garc&eacute;s</p>
+            <p>
+                Este es un simulador no oficial de la toma de ramos de la Universidad de los Andes.
+                Inscribir ramos a trav&eacute;s de esta app <strong>no tiene ninguna validez</strong>,
+                ud. debe tomar sus ramos a trav&eacute;s de Banner miUandes.
+            </p>
+            <p>Contactar al desarrollador: <a href="mailto:ifgarces@miuandes.cl">ifgarces@miuandes.cl</a></p>
+            <p>Sitio web con material para ingenier&iacute;a: <a href="https://www.g-ayuda.net">g-ayuda.net</a></p> 
+        """
+        // TODO: display that as rich text in dialog.
     }
 }

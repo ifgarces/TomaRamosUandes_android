@@ -50,7 +50,7 @@ class CatalogActivity : AppCompatActivity() {
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {
-                    this.showCatalogHelp()
+                    this.showHelp()
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
@@ -61,21 +61,20 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCatalogHelp() {
+    private fun showHelp() {
         // TODO: show catalog help. Maybe show BottomDialogFragment instead of regular dialog.
     }
 
     /* Searches `Ramo`s in the catalog by `nombre` */
     private fun searchFilterCatalog(searchText :String) { // TODO: tests.
-        // TODO: [BUG] nonAccent not working: "algebra" has no results, unlike "álgebra"
         val results :MutableList<Ramo> = mutableListOf()
-        val keywords :List<String> = searchText.spanishNonAccent().spanishUpperCase().trim().split(" ")
-        for (cc :Ramo in DataMaster.getCatalogRamos()) {
-            for (word :String in keywords) {
-                if (word.length <= 1) { continue }
-                if (cc.nombre.spanishNonAccent().contains(word) && cc !in results) {
-                    results.add(cc)
-                }
+        DataMaster.getCatalogRamos().forEach {
+            // considering `nombre` is upper cased for each `Ramo`
+            if (it.nombre.spanishNonAccent().contains(
+                    searchText.spanishNonAccent().spanishUpperCase().trim()
+                )
+            ) {
+                if (it !in results) { results.add(it) }
             }
         }
         (UI.recycler.adapter as CatalogRamosAdapter).updateData(data=results)

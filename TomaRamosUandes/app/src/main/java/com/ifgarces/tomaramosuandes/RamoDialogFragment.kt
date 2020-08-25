@@ -169,7 +169,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
     private fun actionTake(ramo :Ramo) {
         DataMaster.takeRamo(
             ramo = ramo,
-            context = this.context!!,
+            activity = this.activity!!,
             onClose = {
                 //HomeActivity.RecyclerSync.requestUpdate()
                 this.dismiss()

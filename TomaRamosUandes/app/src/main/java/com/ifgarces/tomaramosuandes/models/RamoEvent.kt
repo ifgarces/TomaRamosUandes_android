@@ -48,7 +48,7 @@ data class RamoEvent(
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() }
             else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
-        return "%s: %s (%s %s-%s)".format(
+        return "%s: %s\n\t\t(%s %s-%s)".format(
             SpanishStringer.ramoEventType(eventType=this.type, shorten=false)!!,
             DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
             dateOrDay,

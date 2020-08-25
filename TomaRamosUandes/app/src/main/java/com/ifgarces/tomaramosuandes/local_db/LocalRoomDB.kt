@@ -9,7 +9,7 @@ import com.ifgarces.tomaramosuandes.models.RamoEvent
 
 @Database(entities=[Ramo::class, RamoEvent::class], version=1, exportSchema=false)
 @TypeConverters(RoomConverter_DayOfWeek::class, RoomConverter_LocalDate::class, RoomConverter_LocalTime::class)
-abstract class LocalDB : RoomDatabase() {
-    abstract fun ramoDAO() : RamoDAO
-    abstract fun ramoEventDAO() : RamoEventDAO
+abstract class LocalRoomDB : RoomDatabase() {
+    abstract fun ramosDAO() : RamoDAO
+    abstract fun eventsDAO() : RamoEventDAO
 }

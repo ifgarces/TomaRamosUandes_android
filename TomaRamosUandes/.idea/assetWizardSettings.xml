@@ -319,8 +319,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="assignment_returned_icon" />
-                            <entry key="sourceFile" value="C:\Users\ifgarces\Desktop\alert_icon.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="enlarge_icon" />
+                            <entry key="sourceFile" value="C:\Users\ifgarces\Desktop\enlarge-icon-14.svg" />
                           </map>
                         </option>
                       </PersistentState>

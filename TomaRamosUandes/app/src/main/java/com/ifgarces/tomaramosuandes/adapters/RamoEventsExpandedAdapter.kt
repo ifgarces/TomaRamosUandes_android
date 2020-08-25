@@ -1,7 +1,5 @@
 package com.ifgarces.tomaramosuandes.adapters
 
-import android.app.Activity
-import android.os.AsyncTask
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +17,8 @@ import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<RamoEventsExpandedAdapter.ExpandedEventVH>() {
 
+    /* Used to prevent the dialog from being invoked more than one time if the user clicks again while the first one is still loading */
     private object SingletonHelper {
-        // used to prevent the dialog from being invoked more than one time if the user clicks again while the first one is still loading
         var isDialogActive :Boolean = false
     }
 
@@ -49,26 +47,21 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
             this.ramoName.text = ramo.nombre
 
             /* deciding if to show empty recycler TextView or show the recycler */
-            AsyncTask.execute {
-                val recyclerData :List<RamoEvent> = DataMaster.getRoomDB().ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC)
-                    .filter { it.isEvaluation() }
+            val recyclerData :List<RamoEvent> = DataMaster.getCatalogEvents().filter{ it.ramoNRC==ramo.NRC }
+                .filter { it.isEvaluation() } // using this instead of roomDB should improve performance
 
-                (this.parentView.context as Activity).runOnUiThread {
-                    if (recyclerData.count() == 0) {
-                        this.emptyMarker.visibility = View.VISIBLE
-                        this.eventsRecycler.visibility = View.GONE
-                    } else {
-                        this.emptyMarker.visibility = View.GONE
-                        this.eventsRecycler.visibility = View.VISIBLE
-                        this.eventsRecycler.layoutManager = LinearLayoutManager(
-                            parentView.context!!,
-                            LinearLayoutManager.HORIZONTAL,
-                            false
-                        )
-                        this.eventsRecycler.adapter =
-                            RamoEventsAdapter(data = recyclerData, showEventType = true)
-                    }
-                }
+            if (recyclerData.count() == 0) {
+                this.emptyMarker.visibility = View.VISIBLE
+                this.eventsRecycler.visibility = View.GONE
+            } else {
+                this.emptyMarker.visibility = View.GONE
+                this.eventsRecycler.visibility = View.VISIBLE
+                this.eventsRecycler.layoutManager = LinearLayoutManager(
+                    parentView.context!!,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
+                this.eventsRecycler.adapter = RamoEventsAdapter(data=recyclerData, showEventType=true)
             }
 
             /* calling `Ramo` dialog card clicked */

@@ -21,4 +21,7 @@
     <color name="catalog_taken">#73E3FF</color>
 
     <color name="conflict_background">#FFC2B3</color> <!-- indicates RamoEvent collide with another -->
+
+    <color name="creditSum_ok">#1F5100</color>
+    <color name="creditSum_bad">#CD1414</color>
 </resources>

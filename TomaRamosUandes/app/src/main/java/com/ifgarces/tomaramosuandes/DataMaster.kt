@@ -8,7 +8,7 @@ import android.os.AsyncTask
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.room.Room
-import com.ifgarces.tomaramosuandes.local_db.LocalDB
+import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.*
@@ -30,12 +30,12 @@ object DataMaster {
     // TODO: make sure to manage write concurrency for `userRamos`
     // ----
 
-    private lateinit var localDB :LocalDB; fun getRoomDB() = this.localDB
+    private lateinit var localDB :LocalRoomDB
 
     @Volatile private lateinit var catalog_ramos  :List<Ramo>;      fun getCatalogRamos() = this.catalog_ramos
     @Volatile private lateinit var catalog_events :List<RamoEvent>; fun getCatalogEvents() = this.catalog_events
 
-    @Volatile private lateinit var user_ramos :MutableList<Ramo>;       fun getUserRamos() = this.user_ramos
+    @Volatile private lateinit var user_ramos  :MutableList<Ramo>;       fun getUserRamos() = this.user_ramos
     @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
 
     private lateinit var writeLock :ReentrantLock // concurrency write lock for `userRamos`
@@ -61,7 +61,7 @@ object DataMaster {
 
         AsyncTask.execute {
             try {
-                this.localDB = Room.databaseBuilder(activity, LocalDB::class.java, Ramo.TABLE_NAME).build()
+                this.localDB = Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
             }
             catch (e :Exception) {
                 Logf("[DataMaster] Error: could not load local room database. %s", e)
@@ -83,13 +83,13 @@ object DataMaster {
                 if (clearDatabase) { // removing all data in memory and in local room database
                     this.user_ramos.clear()
                     this.user_events.clear()
-                    this.localDB.ramoDAO().clear()
-                    this.localDB.ramoEventDAO().clear()
+                    this.localDB.ramosDAO().clear()
+                    this.localDB.eventsDAO().clear()
                     Logf("[DataMaster] Local database cleaned.")
                 }
 
-                this.user_ramos = this.localDB.ramoDAO().getAllRamos().toMutableList()
-                this.user_events = this.localDB.ramoEventDAO().getAllEvents().toMutableList()
+                this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
+                this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
                 Logf("[DataMaster] Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
                 activity.runOnUiThread {
                     if (this.user_ramos.count() > 0) {
@@ -128,44 +128,47 @@ object DataMaster {
      * another already taken `Ramo`, prompts confirmation dialog and, if the user wants to continue
      * neverdeless, finishes the action and returns true. If not, returns false.
      */
-    public fun takeRamo(ramo :Ramo, context :Context, onClose :() -> Unit) {
+    public fun takeRamo(ramo :Ramo, activity :Activity, onClose :() -> Unit) {
         var conflictReport :String = ""
 
         AsyncTask.execute {
-            this.localDB.ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC).forEach {
-                this.getConflictsOf(it).forEach { conflictedEvent :RamoEvent ->
-                    conflictReport += "• %s\n".format(conflictedEvent.toShortString())
-                }
+            this.catalog_events.filter { it.ramoNRC==ramo.NRC }
+                .forEach { event :RamoEvent ->
+                    this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
+                        conflictReport += "• %s\n".format(conflictedEvent.toShortString())
+                    }
             }
 
             if (conflictReport == "") { // no conflict was found
-                this.addRamoToUserList(ramo)
+                this.takeRamoAction(ramo)
                 onClose.invoke()
             } else { // conflict(s) found
-                context.yesNoDialog(
-                    title = "Conflicto de eventos",
-                    message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
-                        .format(conflictReport, ramo.nombre),
-                    onYesClicked = {
-                        this.addRamoToUserList(ramo)
-                        onClose.invoke()
-                    },
-                    onNoClicked = {
-                        onClose.invoke()
-                    },
-                    icon = R.drawable.alert_icon
-                )
+                activity.runOnUiThread {
+                    activity.yesNoDialog(
+                        title = "Conflicto de eventos",
+                        message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
+                            .format(conflictReport, ramo.nombre),
+                        onYesClicked = {
+                            this.takeRamoAction(ramo)
+                            onClose.invoke()
+                        },
+                        onNoClicked = {
+                            onClose.invoke()
+                        },
+                        icon = R.drawable.alert_icon
+                    )
+                }
             }
         }
     }
-    private fun addRamoToUserList(ramo :Ramo) {
+    private fun takeRamoAction(ramo :Ramo) {
         try {
             this.writeLock.lock()
             this.user_ramos.add(ramo)
-            this.localDB.ramoDAO().insert(ramo) // assuming we're already in a separate thread
+            this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
             this.catalog_events.filter { it.ramoNRC == ramo.NRC }
                 .forEach { event :RamoEvent ->
-                    this.localDB.ramoEventDAO().insert(event)
+                    this.localDB.eventsDAO().insert(event)
                 }
             Logf("[DataMaster] Ramo{NRC=%s} taken.", ramo.NRC)
         } finally {
@@ -181,7 +184,7 @@ object DataMaster {
                 try {
                     this.writeLock.lock()
                     this.user_ramos.removeAt(index)
-                    AsyncTask.execute { this.localDB.ramoDAO().deleteRamo(nrc=NRC) }
+                    AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
                 } finally {
                     this.writeLock.unlock()
                 }
@@ -221,7 +224,6 @@ object DataMaster {
         return (ev1.startTime <= ev2.endTime) && (ev1.endTime >= ev2.startTime)
     }
 
-
     /**
      * [This function needs to be called on a separated thread]
      * Iterates all user taken `Ramo` list and checks if `event` collide with another.
@@ -231,7 +233,7 @@ object DataMaster {
     public fun getConflictsOf(event :RamoEvent) : List<RamoEvent> {
         val conflicts :MutableList<RamoEvent> = mutableListOf()
         this.user_ramos.forEach {
-            this.localDB.ramoEventDAO().getEventsOfRamo(nrc=it.NRC).forEach { ev :RamoEvent ->
+            this.localDB.eventsDAO().getEventsOfRamo(nrc=it.NRC).forEach { ev :RamoEvent ->
                 if (ev.ID != event.ID) {
                     if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
                 }
@@ -255,7 +257,7 @@ object DataMaster {
         )
         var events :List<RamoEvent>
         ramos.forEach { ramo :Ramo ->
-            events = this.localDB.ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC)
+            events = this.localDB.eventsDAO().getEventsOfRamo(nrc=ramo.NRC)
             events.forEach { event :RamoEvent ->
                 if (! event.isEvaluation()) {
                     when(event.dayOfWeek) {
@@ -339,7 +341,7 @@ X-WR-TIMEZONE:America/Santiago"""
 
         /* processing evaluations... */
         ramos.forEach { ramo :Ramo ->
-            this.localDB.ramoEventDAO().getEventsOfRamo(nrc=ramo.NRC).forEach { event :RamoEvent ->
+            this.localDB.eventsDAO().getEventsOfRamo(nrc=ramo.NRC).forEach { event :RamoEvent ->
                 if (event.isEvaluation()) {
                     year = event.date!!.year.toString()
                     month = event.date!!.month.toString()
