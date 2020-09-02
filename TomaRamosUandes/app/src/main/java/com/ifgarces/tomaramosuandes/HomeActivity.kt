@@ -1,8 +1,13 @@
 package com.ifgarces.tomaramosuandes
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -10,12 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
+import com.ifgarces.tomaramosuandes.utils.AppMetadata
 import com.ifgarces.tomaramosuandes.utils.Logf
 
 
 class HomeActivity : AppCompatActivity() {
 
-    public object RecyclerSync { // allows to update the recycler from another activity/fragment
+    object RecyclerSync { // allows to update the recycler from another activity/fragment
         private var updatePending :Boolean = false
         private fun notifyAdapter() = UI.ramosRecycler.adapter!!.notifyDataSetChanged()
         public fun requestUpdate() {
@@ -96,15 +102,12 @@ class HomeActivity : AppCompatActivity() {
 
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.menu_help -> {
-                    this.showHelp()
-                    return@setOnMenuItemClickListener true
-                }
+                R.id.menu_help -> { this.showHelp() }
                 else -> {
                     Logf("[HomeActivity] Warning: unknown toolbar element pressed (id=%d).", it.itemId)
-                    return@setOnMenuItemClickListener true
                 }
             }
+            return@setOnMenuItemClickListener true
         }
         UI.catalogButton.setOnClickListener { this.launchCatalogView() }
         UI.agendaButton.setOnClickListener { this.launchAgendaView() }
@@ -123,7 +126,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun launchCatalogView() {
-        UI.loadDisplay.visibility = View.VISIBLE
+        UI.loadDisplay.visibility = View.VISIBLE // this operation takes some time, so we display a loading screen
         this.startActivity(
             Intent(this, CatalogActivity::class.java)
         )
@@ -131,7 +134,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun launchAgendaView() {
         this.startActivity(
-            Intent(this, AgendaActivity::class.java)
+            Intent(this, AgendaPortraitActivity::class.java)
         )
     }
 
@@ -142,21 +145,47 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showHelp() {
-        // TODO: use Activity.infoDialog and show app version, author and usage (video?)
 
-        // use this: https://html-online.com/editor/
-        val dialog_HTML :String = """
-            <p>%s</p>
+        // TODO: insert link to demo video
+
+        val messageHTML :String = """
+            <h2>%s</h2>
             <p>Versi&oacute;n: %s</p>
             <p>Autor: Ignacio F. Garc&eacute;s</p>
             <p>
-                Este es un simulador no oficial de la toma de ramos de la Universidad de los Andes.
-                Inscribir ramos a trav&eacute;s de esta app <strong>no tiene ninguna validez</strong>,
-                ud. debe tomar sus ramos a trav&eacute;s de Banner miUandes.
+                Este es un simulador o planificador no oficial de la toma de ramos de la Universidad de los Andes. 
+                Inscribir ramos a trav&eacute;s de esta app <strong>no tiene ninguna validez</strong>, 
+                ud. debe tomar sus ramos a trav&eacute;s de <a href="https://mi.uandes.cl">Banner miUandes</a>.
             </p>
-            <p>Contactar al desarrollador: <a href="mailto:ifgarces@miuandes.cl">ifgarces@miuandes.cl</a></p>
-            <p>Sitio web con material para ingenier&iacute;a: <a href="https://www.g-ayuda.net">g-ayuda.net</a></p> 
-        """
-        // TODO: display that as rich text in dialog.
+            <p>Contactar al desarrollador: <br><a href="mailto:ifgarces@miuandes.cl">ifgarces@miuandes.cl</a></p>
+            <p>Sitio web con material para ingenier&iacute;a: <br><a href="http://www.g-ayuda.net">www.g-ayuda.net</a></p>
+        """.format(AppMetadata.getName(), AppMetadata.getVersion())
+
+        val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(this)
+            .setCancelable(true)
+            .setPositiveButton(android.R.string.ok) { dialog :DialogInterface, _ :Int ->
+                dialog.dismiss()
+            }
+        val diagView :View = this.layoutInflater.inflate(R.layout.about_dialog, null)
+        diagBuilder.setView(diagView)
+
+        val diagUI = object {
+            val webView :WebView = diagView.findViewById(R.id.about_webView)
+        }
+        diagUI.webView.loadData(messageHTML, "text/html", "UTF-8") // loading HTML
+        diagUI.webView.webViewClient = object : WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852
+            override fun shouldOverrideUrlLoading(view :WebView?, url :String?) : Boolean {
+                if (url != null) {
+                    view!!.context.startActivity(
+                        Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    )
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        diagBuilder.create().show()
     }
 }

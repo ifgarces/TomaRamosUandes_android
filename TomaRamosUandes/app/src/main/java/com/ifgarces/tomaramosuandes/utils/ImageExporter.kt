@@ -15,30 +15,35 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 
 
-object ImageWorker {
-    private const val saveFolder  :String = "Pictures/Horario" // folder name inside "Pictures" standard folder
-    //private const val agendaWidth :Float = 2000f // agenda with (in dp) when it is exported as picture (so resulting image should be equivalent in any device)
+object ImageExporter {
+    private const val IMG_SAVE_FOLDER :String = "Pictures/Horario" // folder name inside "Pictures" standard folder
+    //private const val LANDSCAPE_AGENDA_IMG_WIDTH :Int = 40//2000f // agenda with (in dp) when it is exported as picture (so resulting image should be equivalent in any device)
 
     /**
      * Exports the agenda as a PNG image, at path "Pictures/`this.saveFolder`"
      * @param context Needs a context
      * @param targetView The view that has all the elements that are wanted to be captured,
-     * including itself. It should be a ScrollView, if there exists.
-     * @param tallView The view inside the `targetView`, which height could be larger
-     * than the device's display height.
+     * including itself (ScrollView).
+     * @param tallView The view inside the `targetView`, which height could be larger (taller)
+     * than the device's display height (LinearLayout).
      */
     public fun exportAgendaImage(context :Context, targetView :View, tallView :View) {
 
-        // TODO: enlarge targetView width (height will be according to context, do not touch it)
+        // TODO: enlarge targetView width (height will be according to context, do not touch it). After export, restore dimensions.
+        /* The following does not work, for some reason */
+//        var auxParams = targetView.layoutParams
+//        auxParams.width = this.LANDSCAPE_AGENDA_IMG_WIDTH
+//        targetView.layoutParams = auxParams
+//        auxParams = tallView.layoutParams
+//        auxParams.width = this.LANDSCAPE_AGENDA_IMG_WIDTH
+//        tallView.layoutParams = auxParams
 
         val capture :Bitmap = this.getBitmapOf(targetView, tallView)
         this.saveImage(capture, context)
     }
 
-    private fun getBitmapOf(targetView :View, largerView :View) : Bitmap { // references: http://hackerseve.com/android-save-view-as-image-and-share-externally/
-        val bitmap :Bitmap = Bitmap.createBitmap(
-            targetView.width, largerView.height, Bitmap.Config.ARGB_8888
-        )
+    private fun getBitmapOf(targetView :View, tallView :View) : Bitmap { // references: http://hackerseve.com/android-save-view-as-image-and-share-externally/
+        val bitmap :Bitmap = Bitmap.createBitmap(targetView.width, tallView.height, Bitmap.Config.ARGB_8888)
 
         // handling background and layers (...)
         val canvas :Canvas = Canvas(bitmap)
@@ -59,7 +64,7 @@ object ImageWorker {
         fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
 
         if (android.os.Build.VERSION.SDK_INT >= 29) {
-            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, this.saveFolder)
+            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, this.IMG_SAVE_FOLDER)
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
             fileMetadata.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
 
@@ -69,7 +74,7 @@ object ImageWorker {
             context.contentResolver.update(uri, fileMetadata, null, null)
         }
         else {
-            val directory = File( "%s/%s".format(Environment.getExternalStorageDirectory().toString(), this.saveFolder) )
+            val directory = File( "%s/%s".format(Environment.getExternalStorageDirectory().toString(), this.IMG_SAVE_FOLDER) )
             if (! directory.exists()) { directory.mkdirs() }
 
             val fileName :String = "%s.png".format(System.currentTimeMillis().toString())
@@ -84,11 +89,11 @@ object ImageWorker {
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Logf("[ImageWorker] Image successfully saved at %s.", this.saveFolder)
-            context.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.saveFolder)
+            Logf("[ImageExporter] Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
+            context.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.IMG_SAVE_FOLDER)
         }
         catch (e :Exception) { // [?] <==> IOException?
-            Logf("[ImageWorker] Error: could not save agenda as image. %s", e)
+            Logf("[ImageExporter] Error: could not save agenda as image. %s", e)
             context.infoDialog(
                 title = "Error",
                 message = "Ocurrió un error al guardar el horario como imagen. Intente nuevamente."

@@ -1,38 +1,24 @@
 package com.ifgarces.tomaramosuandes
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.adapters.AgendaPortraitAdapter
 import com.ifgarces.tomaramosuandes.models.RamoEvent
-import com.ifgarces.tomaramosuandes.utils.ImageWorker
+import com.ifgarces.tomaramosuandes.utils.ImageExporter
 import com.ifgarces.tomaramosuandes.utils.Logf
 import java.time.DayOfWeek
 
 
-class AgendaPortraitFragment : Fragment() {
-
-    companion object {
-        /* Starts the fragment at the `caller` activity, at the view which ID matches `targetView` */
-        public fun summon(caller :FragmentActivity, targetView :Int) {
-            val transactioner :FragmentTransaction = caller.supportFragmentManager.beginTransaction()
-                .replace(targetView, this.newInstance())
-            transactioner.commit()
-        }
-        private fun newInstance() = AgendaPortraitFragment()
-    }
+class AgendaPortraitActivity : AppCompatActivity() {
 
     private object UI {
-        lateinit var rootView         :View
         lateinit var loadScreen       :View
         lateinit var saveAsImgButton  :FloatingActionButton
         lateinit var fullScreenButton :FloatingActionButton
@@ -44,8 +30,7 @@ class AgendaPortraitFragment : Fragment() {
         lateinit var recyclerTeamThu  :Pair<View, RecyclerView>
         lateinit var recyclerTeamFri  :Pair<View, RecyclerView>
 
-        fun init(owner :View) {
-            this.rootView         = owner
+        fun init(owner :AppCompatActivity) {
             this.loadScreen       = owner.findViewById(R.id.portrAgenda_loadScreen)
             this.saveAsImgButton  = owner.findViewById(R.id.portrAgenda_saveAsImage)
             this.fullScreenButton = owner.findViewById(R.id.portrAgenda_fullScreen)
@@ -74,25 +59,28 @@ class AgendaPortraitFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
-        Logf("[AgendaPortraitFragment] Initializing...")
-        UI.init( owner=inflater.inflate(R.layout.fragment_agenda_portrait, container, false) )
+    override fun onCreate(savedInstanceState :Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.setContentView(R.layout.activity_agenda_portrait)
+        UI.init(owner=this)
+
+        UI.loadScreen.visibility = View.GONE
 
         AsyncTask.execute {
             val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
 
-            this.activity!!.runOnUiThread {
-                val dayRecyclers :Map<DayOfWeek, Pair<View, RecyclerView>> = mapOf(
+            this.runOnUiThread {
+                /* initializing recyclers and hiding weekdays without events */
+                mapOf(
                     DayOfWeek.MONDAY    to UI.recyclerTeamMon,
                     DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
                     DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
                     DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
                     DayOfWeek.FRIDAY    to UI.recyclerTeamFri
-                )
-                dayRecyclers.forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) -> // building agenda here
-                    team.second.layoutManager = LinearLayoutManager(this.context)
+                ).forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) ->
+                    team.second.layoutManager = LinearLayoutManager(this)
                     team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
-                    if (agendaEvents.getValue(day).count() == 0) { // hiding the day if there is no event on it
+                    if (agendaEvents.getValue(day).count() == 0) {
                         team.first.visibility = View.GONE
                         team.second.visibility = View.GONE
                     }
@@ -102,9 +90,9 @@ class AgendaPortraitFragment : Fragment() {
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
-            Logf("[AgendaPortraitFragment] Exporting agenda as image...")
-            ImageWorker.exportAgendaImage(
-                context = this.context!!,
+            Logf("[AgendaPortraitActivity] Exporting agenda as image...")
+            ImageExporter.exportAgendaImage(
+                context = this,
                 targetView = UI.agendaScroll,
                 tallView = UI.agendaLayout
             )
@@ -112,13 +100,10 @@ class AgendaPortraitFragment : Fragment() {
         UI.fullScreenButton.setColorFilter(Color.WHITE)
         UI.fullScreenButton.setOnClickListener {
             UI.loadScreen.visibility = View.VISIBLE
-            AgendaLandscapeFragment.summon(
-                caller = this.activity as FragmentActivity,
-                targetView = R.id.agenda_fragmentContainer
+            this.startActivity(
+                Intent(this, AgendaLandscapeActivity::class.java)
             )
         }
-
-        return UI.rootView
     }
 
     override fun onResume() {

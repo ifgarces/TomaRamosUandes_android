@@ -4,8 +4,7 @@
     <!-- Internet access (fetch catalog) -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Storage access (export agenda as PNG file and evaluations as ICS file) -->
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -15,9 +14,10 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AgendaLandscapeActivity" android:screenOrientation="landscape" />
         <activity android:name=".EvaluationsActivity" />
         <activity android:name=".CatalogActivity" />
-        <activity android:name=".AgendaActivity" />
+        <activity android:name=".AgendaPortraitActivity" />
         <activity
             android:name=".HomeActivity"
             android:screenOrientation="portrait" />

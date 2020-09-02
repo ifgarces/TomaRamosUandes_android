@@ -3,6 +3,7 @@ package com.ifgarces.tomaramosuandes
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Environment
@@ -131,17 +132,19 @@ object DataMaster {
     public fun takeRamo(ramo :Ramo, activity :Activity, onClose :() -> Unit) {
         var conflictReport :String = ""
 
-        AsyncTask.execute {
+        AsyncTask.execute {  // the hole function must be async because of this.getConflictsOf()
             this.catalog_events.filter { it.ramoNRC==ramo.NRC }
                 .forEach { event :RamoEvent ->
                     this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
                         conflictReport += "• %s\n".format(conflictedEvent.toShortString())
                     }
-            }
+                }
 
             if (conflictReport == "") { // no conflict was found
-                this.takeRamoAction(ramo)
-                onClose.invoke()
+                AsyncTask.execute {
+                    this.takeRamoAction(ramo)
+                    onClose.invoke()
+                }
             } else { // conflict(s) found
                 activity.runOnUiThread {
                     activity.yesNoDialog(
@@ -149,8 +152,10 @@ object DataMaster {
                         message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
                             .format(conflictReport, ramo.nombre),
                         onYesClicked = {
-                            this.takeRamoAction(ramo)
-                            onClose.invoke()
+                            AsyncTask.execute {
+                                this.takeRamoAction(ramo)
+                                onClose.invoke()
+                            }
                         },
                         onNoClicked = {
                             onClose.invoke()
@@ -161,6 +166,11 @@ object DataMaster {
             }
         }
     }
+
+    /**
+     * [This function needs to be called on a separated thread]
+     * Internal function that registers `ramo` in user taken list. Should be called after conflict check.
+     */
     private fun takeRamoAction(ramo :Ramo) {
         try {
             this.writeLock.lock()
@@ -275,14 +285,16 @@ object DataMaster {
     }
 
     /**
-     * [This function needs to be called on a separated thread]
-     * Creates the iCalendar (ICS) file for the tests and exams for all courses in `ramos`, storing it at `savePath`
+     * Exports the tests and exams for all courses in `ramos` as events to the user's default calendar app.
      */
-    public fun exportICS(ramos :List<Ramo> = this.user_ramos, context :Context) {
-        val saveFolder :String = "Temp"
-        val fileContent :String = this.buildIcsContent()
+    public fun exportCalendarEvents(context :Context, ramos :List<Ramo> = this.user_ramos) {
+        val icsFile :File
 
-        fun writeFileToStream(content :String, stream :OutputStream) {
+        /* creating and saving temporal ICS (iCalendar) file */
+        val saveFolder :String = "Download"
+        val fileContent :String = this.buildIcsContent(ramos)
+
+        fun streamWriteFile(content :String, stream :OutputStream) {
             try {
                 stream.write(content.toByteArray())
                 stream.close()
@@ -301,8 +313,9 @@ object DataMaster {
             fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
 
-            val uri :Uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)!!
-            writeFileToStream(content=fileContent, stream=context.contentResolver.openOutputStream(uri)!!)
+            val uri :Uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, fileMetadata)!!
+            icsFile = File(uri.path!!)
+            streamWriteFile(content=fileContent, stream=context.contentResolver.openOutputStream(uri)!!)
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, false)
             context.contentResolver.update(uri, fileMetadata, null, null)
         }
@@ -311,10 +324,37 @@ object DataMaster {
             if (! directory.exists()) { directory.mkdirs() }
 
             val fileName :String = "%s.ics".format(System.currentTimeMillis().toString())
-            val file = File(directory, fileName)
-            writeFileToStream(content=fileContent, stream=FileOutputStream(file))
-            fileMetadata.put(MediaStore.Images.Media.DATA, file.absolutePath)
+            icsFile = File(directory, fileName)
+            streamWriteFile(content=fileContent, stream=FileOutputStream(icsFile))
+            fileMetadata.put(MediaStore.Images.Media.DATA, icsFile.absolutePath)
             context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
+        }
+        Logf("[DataMaster] iCalendar/ICS file created at %s", icsFile.path)
+
+        /* opening created ICS file with default calendar app */
+        this.extractEventsFromICS(context, icsFile)
+    }
+
+    /**
+     * Opens the iCalendar file with the default calendar app on the device.
+     * @param context Needs a context in order to launch the "open with"-like activity.
+     * @param icsFile The existing and right-formatted iCalendar file, containing the events.
+     */
+    private fun extractEventsFromICS(context :Context, icsFile :File) {
+        Logf("[DataMaster] Opening iCalendar/ICS file...")
+
+        // TODO: fix crash when passing the URI to an external app. Implement this: https://stackoverflow.com/a/38858040
+
+        val intent :Intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.fromFile(icsFile)
+        intent.type = "text/calendar"
+        //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val chooser :Intent = Intent.createChooser(intent, "Elíjase la app para abrir: ")
+
+        if (chooser.resolveActivity(context.packageManager) != null) { // opening events if the user has at least one calendar app
+            context.startActivity(chooser)
+        } else {
+            Logf("[DataMaster] Could not open ICS file for events. There is no app installed on the device which can handle calendar events.")
         }
     }
 
@@ -322,7 +362,10 @@ object DataMaster {
      * [This function needs to be called on a separated thread]
      * Generates the ICS file contents and returns it.
      */
-    private fun buildIcsContent(ramos :List<Ramo> = this.user_ramos) : String {
+    private fun buildIcsContent(ramos :List<Ramo>) : String {
+
+        // TODO: make sure this function generates a valid iCalendar file
+
         val fileHeader :String = """BEGIN:VCALENDAR
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
 VERSION:2.0
@@ -333,26 +376,26 @@ X-WR-TIMEZONE:America/Santiago"""
         var fileBody :String = ""
         val fileFooter :String = "END:VCALENDAR"
 
-        var year      :String
-        var month     :String
-        var day       :String
-        var startTime :String
-        var endTime   :String
+        var _year      :String
+        var _month     :String
+        var _day       :String
+        var _startTime :String
+        var _endTime   :String
 
         /* processing evaluations... */
         ramos.forEach { ramo :Ramo ->
-            this.localDB.eventsDAO().getEventsOfRamo(nrc=ramo.NRC).forEach { event :RamoEvent ->
+            this.user_events.filter { it.ramoNRC==ramo.NRC }.forEach { event :RamoEvent ->
                 if (event.isEvaluation()) {
-                    year = event.date!!.year.toString()
-                    month = event.date!!.month.toString()
-                    day = event.date!!.dayOfMonth.toString()
-                    startTime = event.startTime.toString().replace(":", "")
-                    endTime = event.endTime.toString().replace(":", "")
+                    _year = event.date!!.year.toString()
+                    _month = event.date!!.month.toString()
+                    _day = event.date!!.dayOfMonth.toString()
+                    _startTime = event.startTime.toString().replace(":", "")
+                    _endTime = event.endTime.toString().replace(":", "")
 
                     fileBody += """
 BEGIN:VEVENT
-DTSTART;TZID=America/Santiago:${year}${month}${day}T${startTime}00
-DTEND;TZID=America/Santiago:${year}${month}${day}T${endTime}00
+DTSTART;TZID=America/Santiago:${_year}${_month}${_day}T${_startTime}00
+DTEND;TZID=America/Santiago:${_year}${_month}${_day}T${_endTime}00
 DESCRIPTION:[${ramo.materia} ${ramo.NRC}] ${ramo.nombre}
 STATUS:CONFIRMED
 SUMMARY:${SpanishStringer.ramoEventType(eventType=event.type, shorten=false)} ${ramo.nombre} (${event.startTime})

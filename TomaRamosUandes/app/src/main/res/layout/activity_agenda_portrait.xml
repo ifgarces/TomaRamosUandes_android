@@ -5,7 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".AgendaPortraitActivity">
+
+    <!-- TODO: hide floating buttons on scroll -->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/portrAgenda_saveAsImage"
@@ -18,7 +21,7 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/portrAgenda_fullScreen"
         style="@style/standardFloatingButton"
-        app:srcCompat="@drawable/fullscreen_icon"
+        app:srcCompat="@drawable/rotate_screen_icon"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
-import android.os.Build
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
@@ -69,10 +68,10 @@ fun String.spanishNonAccent() : String {
 fun EditText.onTextChangedListener(action : (text :String) -> Unit) {
     this.addTextChangedListener(
         object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s :Editable) {}
+            override fun beforeTextChanged(s :CharSequence, start :Int, count :Int, after :Int) {}
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(s :CharSequence, start :Int, before :Int, count :Int) {
                 action.invoke(s.toString())
             }
         }
@@ -90,7 +89,7 @@ fun Context.infoDialog(
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
-        .setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _: Int ->
+        .setPositiveButton(android.R.string.ok) { dialog :DialogInterface, _ :Int ->
             onDismiss.invoke()
             dialog.dismiss()
         }
@@ -112,11 +111,11 @@ fun Context.yesNoDialog(
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
-        .setPositiveButton(android.R.string.yes) { dialog: DialogInterface, _: Int ->
+        .setPositiveButton(android.R.string.yes) { dialog :DialogInterface, _ :Int ->
             onYesClicked.invoke()
             dialog.dismiss()
         }
-        .setNegativeButton(android.R.string.no) { dialog: DialogInterface, _: Int ->
+        .setNegativeButton(android.R.string.no) { dialog :DialogInterface, _ :Int ->
             onNoClicked.invoke()
             dialog.dismiss()
         }
@@ -142,11 +141,5 @@ fun Activity.enterFullScreen() { // references: https://developer.android.com/tr
 fun Activity.exitFullScreen() { // references: https://developer.android.com/training/system-ui/immersive
     this.window.decorView.systemUiVisibility = (
         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        //or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        //or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     )
-}
-
-fun TextView.setRichTextFromHTML(html :String) { // avoiding importing Html when used
-    this.text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT)
 }

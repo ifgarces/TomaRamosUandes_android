@@ -1,5 +1,6 @@
 package com.ifgarces.tomaramosuandes
 
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -46,8 +47,7 @@ class EvaluationsActivity : AppCompatActivity() {
     }
 
     private fun exportEvents() {
-        // this.runOnUiThread{ DataMaster.exportICS(context=this) }
-        // TODO: export ICS and inmediatly open it by system, so the user can import the events to their prefered calendar
+        DataMaster.exportCalendarEvents(context=this)
     }
 
     private fun showHelp() {

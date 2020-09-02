@@ -1,27 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Default light theme colors -->
     <color name="colorPrimary">#FFAB00</color>
     <color name="colorPrimaryDark">#979797</color>
     <color name="colorAccent">#00AAD4</color>
 
+    <!-- OS' night/dark theme colors -->
+    <color name="nightColorPrimary">#E49900</color>
+    <color name="nightColorPrimaryDark">#808080</color>
+    <color name="nightColorAccent">#0C8EAE</color>
+    <color name="nightBackgroundColor">#333333</color>
+    <color name="nightTextColor">#D6D6D6</color>
+
+    <!-- General colors -->
     <color name="lighterGray">#CDCDCD</color>
     <color name="lightGray">#8E8E8E</color>
     <color name="gray">#555555</color>
     <color name="almostBlack">#252525</color>
     <color name="almostWhite">#F8F8F8</color>
 
+    <!-- Text color of `Ramo.planEstudios` -->
     <color name="PE2016">#004924</color>
     <color name="PE2011">#001150</color>
 
+    <!-- Background tint for event type boxes in `AgendaPortraitActivity` -->
     <color name="clas">@android:color/transparent</color>
     <color name="ayud">#DBFFC5</color>
     <color name="labt">#DEF0FE</color>
 
+    <!-- Card background color for catalog `Ramo` items -->
     <color name="catalog_untaken">@color/almostWhite</color>
     <color name="catalog_taken">#73E3FF</color>
 
-    <color name="conflict_background">#FFC2B3</color> <!-- indicates RamoEvent collide with another -->
+    <!-- Indicates RamoEvent collide with another -->
+    <color name="conflict_background">#FFC2B3</color>
 
+    <!-- Text color of user credit sum in `HomeActivity` -->
     <color name="creditSum_ok">#1F5100</color>
     <color name="creditSum_bad">#CD1414</color>
 </resources>
