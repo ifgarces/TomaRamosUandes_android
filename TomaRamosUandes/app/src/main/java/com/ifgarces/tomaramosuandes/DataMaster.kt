@@ -12,6 +12,7 @@ import androidx.room.Room
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.models.UserStats
 import com.ifgarces.tomaramosuandes.utils.*
 import java.io.File
 import java.io.FileOutputStream
@@ -35,6 +36,7 @@ object DataMaster {
 
     @Volatile private lateinit var catalog_ramos  :List<Ramo>;      fun getCatalogRamos() = this.catalog_ramos
     @Volatile private lateinit var catalog_events :List<RamoEvent>; fun getCatalogEvents() = this.catalog_events
+    private lateinit var user_stats               :UserStats;       fun getUserStats() = this.user_stats
 
     @Volatile private lateinit var user_ramos  :MutableList<Ramo>;       fun getUserRamos() = this.user_ramos
     @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
@@ -86,16 +88,28 @@ object DataMaster {
                     this.user_events.clear()
                     this.localDB.ramosDAO().clear()
                     this.localDB.eventsDAO().clear()
+                    this.localDB.userStatsDAO().clear()
                     Logf("[DataMaster] Local database cleaned.")
                 }
 
                 this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
                 this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
-                Logf("[DataMaster] Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
-                activity.runOnUiThread {
-                    if (this.user_ramos.count() > 0) {
-                        activity.toastf("Se recuperó su conjunto de ramos tomados.")
+                with (this.localDB.userStatsDAO().getStats()) {
+                    if (this.count() == 0) { // happens at first run of the app since installation
+                        // TODO: check what happens on upgrade, i.e. when installing a newer version with the app already installed
+                        this@DataMaster.user_stats = UserStats()
+                        this@DataMaster.user_stats.firstRunOfApp = false
+                        this@DataMaster.localDB.userStatsDAO().insert(this@DataMaster.user_stats)
+                        this@DataMaster.user_stats.firstRunOfApp = true
+                    } else {
+                        this@DataMaster.user_stats = this.first()
+                        //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
                     }
+                }
+                Logf("[DataMaster] Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
+
+                if (this.user_ramos.count() > 0) {
+                    activity.runOnUiThread { activity.toastf("Se recuperó su conjunto de ramos tomados.") }
                 }
 
                 onSuccess.invoke()
@@ -112,9 +126,21 @@ object DataMaster {
     }
 
     /**
+     * Will be called when the joke dialog of `EasterEggs` is executed. It is a way to inform it to
+     * `DataMaster` and its Room local database.
+     */
+    public fun jokeDialogWasExecuted() {
+        AsyncTask.execute {
+            this.user_stats.jokeExecuted = true
+            this.localDB.userStatsDAO().update(this.user_stats)
+        }
+    }
+
+    /**
      * Searchs and returns the `Ramo` whose NRC (ID) matches.
      * @param NRC The fiven ID.
-     * @param searchInUserList If true, will search just along the user taken `Ramo`s. If not, searches along the catalog.
+     * @param searchInUserList If true, will search just along the user taken `Ramo`s. If not,
+     * searches along the catalog.
      * @return Returns null if not found.
      */
     public fun findRamo(NRC :Int, searchInUserList :Boolean = false) : Ramo? {

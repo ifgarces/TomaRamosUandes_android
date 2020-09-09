@@ -1,6 +1,5 @@
 package com.ifgarces.tomaramosuandes
 
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button

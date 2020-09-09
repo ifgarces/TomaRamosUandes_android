@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
         DataMaster.init(
             activity = this,
-            clearDatabase = false,
+            clearDatabase = false, // <- should be false on any release, don't forget!!
             onSuccess = {
                 Logf("[MainActivity] DataMaster successfully initialized.")
                 this.startActivity(

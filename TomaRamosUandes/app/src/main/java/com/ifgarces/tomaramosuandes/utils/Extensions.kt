@@ -5,18 +5,16 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.text.Editable
-import android.text.Html
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import java.util.Locale
 
 
-const val DEBUG_MODE :Boolean = true // turning to false during tests and release
-const val LOG_TAG    :String = "_DEBUGLOG_" // logging is not heavy, all of it will be labeled with this string
+const val DEBUG_MODE :Boolean = true // <- turning to false during tests and release. Need it because the damn tests don't like functions that write to the Log.
+const val LOG_TAG    :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
 
 /* Toast + sprintf */
 fun Context.toastf(format :String, vararg args :Any?) {
@@ -56,7 +54,7 @@ fun String.spanishNonAccent() : String {
     val upperNonAccents :String = "AEIOUU"
 
     var result :String = this
-    for (k :Int in (0 until lowerAccents.length)) {
+    for (k :Int in (lowerAccents.indices)) {
         result = result
             .replace(lowerAccents[k], lowerNonAccents[k])
             .replace(upperAccents[k], upperNonAccents[k])
@@ -80,7 +78,7 @@ fun EditText.onTextChangedListener(action : (text :String) -> Unit) {
 
 /* Dialog simple que muestra un texto */
 fun Context.infoDialog(
-    title      :String,
+    title      :String, // note: if `title` is "", somehow the icon is not shown. Should use " " or similar insted.
     message    :String,
     onDismiss  :() -> Unit = {},
     icon       :Int? = null // resource reference
@@ -101,7 +99,7 @@ fun Context.infoDialog(
 
 /* Dialog con botónes SÍ/NO */
 fun Context.yesNoDialog(
-    title         :String,
+    title         :String, // note: if `title` is "", somehow the icon is not shown. Should use " " or similar insted.
     message       :String,
     onYesClicked  :() -> Unit,
     onNoClicked   :() -> Unit = {},

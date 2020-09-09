@@ -1,5 +1,9 @@
 # {ANDROID} TO-DO unnamed first version
 
+
+!! FIX USERSTATS NOT HAVING PRIMARY KEY FOR ROOM DATABASE !!
+!! and may replace that method with SharedPreferences: https://stackoverflow.com/questions/7217578/check-if-application-is-on-its-first-run !!
+
 - [X] ⚠ Fix bug: conflict not being checked when taking ramos.
 - [X] Recolorize credits sum `TextView` when maximum is exceeded.
 - [ ] Manage to export events to the user's calendar.

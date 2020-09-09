@@ -13,10 +13,10 @@ import java.util.Locale
 
 /* Handles CSV parsing */
 object CSVWorker {
-    private val EXPLICIT_COMMA_MARKER :String = ";;" // used to have elements like "element with;; comma" instead of "\"element with, comma\"" (harder to parse)
-    private val TIME_SEPARATOR :String = "-" // e.g. "10:30 - 12:20"
-    private val date_format = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("ES", "ES"))
-    private val time_format = DateTimeFormatter.ISO_TIME
+    private const val EXPLICIT_COMMA_MARKER :String = ";;" // used to have elements like "element with;; comma" instead of "\"element with, comma\"" (harder to parse)
+    private const val TIME_SEPARATOR :String = "-" // e.g. "10:30 - 12:20"
+    private val       date_format = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("ES", "ES"))
+    private val       time_format = DateTimeFormatter.ISO_TIME
 
     /* Each line of the CSV file describes an event. These are the columns and their index: */
     private val csv_columns = object {
@@ -178,7 +178,7 @@ object CSVWorker {
 
             current.eventType = line[csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
 
-            when(current.eventType.replace(regex=Regex("[0-9 ]"), replacement="")) { // "PRON1" -> "PRON", etc.
+            when (current.eventType.replace(regex=Regex("[0-9 ]"), replacement="")) { // "PRON1" -> "PRON", etc.
                 event_types.CLASE       -> { eventTypeAux = RamoEventType.CLAS }
                 event_types.AYUDANTÍA   -> { eventTypeAux = RamoEventType.AYUD }
                 event_types.LABORATORIO -> { eventTypeAux = RamoEventType.LABT }

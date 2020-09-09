@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.AppMetadata
+import com.ifgarces.tomaramosuandes.utils.EasterEggs
 import com.ifgarces.tomaramosuandes.utils.Logf
 
 
@@ -112,6 +113,9 @@ class HomeActivity : AppCompatActivity() {
         UI.catalogButton.setOnClickListener { this.launchCatalogView() }
         UI.agendaButton.setOnClickListener { this.launchAgendaView() }
         UI.evaluationsButton.setOnClickListener { this.launchEvaluationsView() }
+
+        // handling joke dialog
+        EasterEggs.handleJokeDialog(context=this)
     }
 
     override fun onResume() {
@@ -146,7 +150,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showHelp() {
 
-        // TODO: insert link to demo video
+        // TODO: insert link to clear demo video in HTML
 
         val messageHTML :String = """
             <h2>%s</h2>

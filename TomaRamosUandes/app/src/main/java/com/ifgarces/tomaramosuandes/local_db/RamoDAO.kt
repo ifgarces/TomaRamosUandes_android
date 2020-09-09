@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Update
 import com.ifgarces.tomaramosuandes.models.Ramo
-import com.ifgarces.tomaramosuandes.models.RamoEvent
 
 
 @Dao

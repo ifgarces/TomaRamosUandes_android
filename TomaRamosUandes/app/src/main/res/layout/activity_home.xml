@@ -30,6 +30,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/home_catalogButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:icon="@drawable/catalog_book_icon"
         android:text="Catálogo de ramos"
         android:textAllCaps="false"
         android:textSize="19sp"

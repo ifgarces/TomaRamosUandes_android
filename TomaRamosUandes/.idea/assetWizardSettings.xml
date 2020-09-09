@@ -309,7 +309,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/screen_rotation/baseline_screen_rotation_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/menu_book/baseline_menu_book_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -319,7 +319,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="rotate_screen_icon" />
+                            <entry key="outputName" value="catalog_book_icon" />
                             <entry key="sourceFile" value="C:\Users\ifgarces\Desktop\enlarge-icon-14.svg" />
                           </map>
                         </option>

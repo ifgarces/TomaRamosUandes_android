@@ -27,12 +27,13 @@ import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 class RamoDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
+        lateinit var dismissAction :() -> Unit
+
         /**
          * Shows the dialog fragment.
          * @param manager Needs the caller's `FragmentManager`.
          * @param onDismiss Peace of code that will be executed when the dialog is dismissed by the user.
          */
-        lateinit var dismissAction :() -> Unit
         public fun summon(manager :FragmentManager, onDismiss :() -> Unit = {}) {
             this.dismissAction = onDismiss
             this.newInstance().show(manager, this::class.simpleName)
