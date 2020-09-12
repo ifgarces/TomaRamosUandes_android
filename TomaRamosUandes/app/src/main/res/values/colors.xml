@@ -29,8 +29,8 @@
     <color name="labt">#DEF0FE</color>
 
     <!-- Card background color for catalog `Ramo` items -->
-    <color name="catalog_untaken">@color/almostWhite</color>
-    <color name="catalog_taken">#73E3FF</color>
+    <color name="catalog_unInscribed">@color/almostWhite</color>
+    <color name="catalog_inscribed">#73E3FF</color>
 
     <!-- Indicates RamoEvent collide with another -->
     <color name="conflict_background">#FFC2B3</color>

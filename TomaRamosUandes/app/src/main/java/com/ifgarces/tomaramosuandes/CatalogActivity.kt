@@ -39,7 +39,7 @@ class CatalogActivity : AppCompatActivity() {
 
         UI.recycler.adapter = CatalogRamosAdapter(
             data = DataMaster.getCatalogRamos().toMutableList(),
-            allTaken = false
+            isAllInscribed = false
         )
         UI.recycler.layoutManager = LinearLayoutManager(this)
         //UI.searchButton.setOnClickListener { this.searchFilterCatalog() }

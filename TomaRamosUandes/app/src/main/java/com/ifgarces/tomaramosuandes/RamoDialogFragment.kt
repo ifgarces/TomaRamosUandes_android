@@ -56,7 +56,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         lateinit var clases       :RecyclerView
         lateinit var ayuds        :RecyclerView
         lateinit var labs         :RecyclerView
-        lateinit var evals      :RecyclerView
+        lateinit var evals        :RecyclerView
         lateinit var actionButton :MaterialButton
 
         fun init(owner :View) {
@@ -74,7 +74,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             this.clases       = owner.findViewById(R.id.ramoDialog_clasesRecycler)
             this.ayuds        = owner.findViewById(R.id.ramoDialog_ayudsRecycler)
             this.labs         = owner.findViewById(R.id.ramoDialog_labsRecycler)
-            this.evals      = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
+            this.evals        = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
             this.actionButton = owner.findViewById(R.id.ramoDialog_button)
         }
     }
@@ -83,11 +83,11 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         UI.init(owner=view)
 
-        for ( recycler :RecyclerView in listOf(UI.clases, UI.ayuds, UI.labs, UI.evals) ) {
+        listOf(UI.clases, UI.ayuds, UI.labs, UI.evals).forEach { recycler :RecyclerView ->
             recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
-        val ramo_isTaken :Boolean = this.activity!!.intent.getBooleanExtra(IntentKeys.RAMO_IS_TAKEN, false)
+        val ramo_isInscribed :Boolean = this.activity!!.intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
         val nrc  :Int = this.activity!!.intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
         val ramo :Ramo = DataMaster.findRamo(nrc)!!
 
@@ -124,15 +124,15 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             )
         }
 
-        if (ramo_isTaken) { // `ramo` already in user list
+        if (ramo_isInscribed) { // `ramo` already in user list
             UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.trash_icon) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
             UI.actionButton.text = "Borrar ramo"
-            UI.actionButton.setOnClickListener { this.actionUntake(ramo) }
+            UI.actionButton.setOnClickListener { this.actionUnInscribe(ramo) }
         }
-        else { // `ramo` not yet taken by user
+        else { // `ramo` not yet inscribed by user
             UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.add_icon)
             UI.actionButton.text = "Tomar ramo"
-            UI.actionButton.setOnClickListener { this.actionTake(ramo) }
+            UI.actionButton.setOnClickListener { this.actionInscribe(ramo) }
         }
     }
 
@@ -166,25 +166,24 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         Companion.dismissAction.invoke()
     }
 
-    /* Attemps to take the chosen `Ramo`. If conflict, prompts confirmation dialog. */
-    private fun actionTake(ramo :Ramo) {
-        DataMaster.takeRamo(
+    /* Attemps to inscribe the chosen `Ramo`. If conflict, prompts confirmation dialog. */
+    private fun actionInscribe(ramo :Ramo) {
+        DataMaster.inscribeRamo(
             ramo = ramo,
             activity = this.activity!!,
             onClose = {
-                //HomeActivity.RecyclerSync.requestUpdate()
                 this.dismiss()
             }
         )
     }
 
-    /* Removes `ramo` from user's taken list. */
-    private fun actionUntake(ramo :Ramo) {
+    /* Removes `ramo` from user's inscribed list. */
+    private fun actionUnInscribe(ramo :Ramo) {
         this.context!!.yesNoDialog(
             title = "Borrar ramo",
             message = "¿Está seguro que desea eliminar ${ramo.nombre} de su lista de ramos tomados?",
             onYesClicked = {
-                DataMaster.untakeRamo(ramo.NRC)
+                DataMaster.unInscribeRamo(ramo.NRC)
                 HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView` i.e. its OnResume() won't execute when the dialog is dismissed.
                 this.dismiss()
             }

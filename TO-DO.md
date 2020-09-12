@@ -1,11 +1,11 @@
 # {ANDROID} TO-DO unnamed first version
 
+## ⚠ Possible bugs ⚠
+- [ ] Be 100% sure that the **Companion Object** technique for **updating the adapter** of the RecyclerView on an activity, outside it, will always work perfectly.
 
-!! FIX USERSTATS NOT HAVING PRIMARY KEY FOR ROOM DATABASE !!
-!! and may replace that method with SharedPreferences: https://stackoverflow.com/questions/7217578/check-if-application-is-on-its-first-run !!
-
-- [X] ⚠ Fix bug: conflict not being checked when taking ramos.
-- [X] Recolorize credits sum `TextView` when maximum is exceeded.
+## Primary
+- [ ] `CatalogActivity`: improve search algorithm (logical && instead of ||, I guess).
+- [ ] Add fast scroll for the catalog `RecyclerView`.
 - [ ] Manage to export events to the user's calendar.
 - [ ] Make missing help dialogs.
 - [ ] Make demo video for the app.
@@ -17,4 +17,6 @@
   - [ ] Paralelly, allow the user to rate/review the app (star number and optional comment).
 
 ## Optional changes
+
 - [ ] Refactor: replace "agenda" by "schedule".
+- [X] Refactor: replace "take" by "inscribe".

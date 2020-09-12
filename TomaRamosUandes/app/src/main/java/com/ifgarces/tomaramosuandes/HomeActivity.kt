@@ -46,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
             val creditSum :Int = DataMaster.getUserCreditSum()
             UI.creditosCounter.text = creditSum.toString()
 
-            /* adjusting UI if user has not taken any `Ramo` */
+            /* adjusting UI if user has not inscribed any `Ramo` */
             if (creditSum == 0) {
                 UI.ramosRecycler.visibility = View.INVISIBLE
                 UI.agendaButton.isEnabled = false
@@ -98,7 +98,7 @@ class HomeActivity : AppCompatActivity() {
         UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
         UI.ramosRecycler.adapter = CatalogRamosAdapter(
             data = DataMaster.getUserRamos(),
-            allTaken = true
+            isAllInscribed = true
         )
 
         UI.topBar.setOnMenuItemClickListener {
@@ -152,32 +152,21 @@ class HomeActivity : AppCompatActivity() {
 
         // TODO: insert link to clear demo video in HTML
 
-        val messageHTML :String = """
-            <h2>%s</h2>
-            <p>Versi&oacute;n: %s</p>
-            <p>Autor: Ignacio F. Garc&eacute;s</p>
-            <p>
-                Este es un simulador o planificador no oficial de la toma de ramos de la Universidad de los Andes. 
-                Inscribir ramos a trav&eacute;s de esta app <strong>no tiene ninguna validez</strong>, 
-                ud. debe tomar sus ramos a trav&eacute;s de <a href="https://mi.uandes.cl">Banner miUandes</a>.
-            </p>
-            <p>Contactar al desarrollador: <br><a href="mailto:ifgarces@miuandes.cl">ifgarces@miuandes.cl</a></p>
-            <p>Sitio web con material para ingenier&iacute;a: <br><a href="http://www.g-ayuda.net">www.g-ayuda.net</a></p>
-        """.format(AppMetadata.getName(), AppMetadata.getVersion())
-
         val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(this)
             .setCancelable(true)
             .setPositiveButton(android.R.string.ok) { dialog :DialogInterface, _ :Int ->
                 dialog.dismiss()
             }
-        val diagView :View = this.layoutInflater.inflate(R.layout.about_dialog, null)
+        val diagView :View = this.layoutInflater.inflate(R.layout.about_and_help_dialog, null)
         diagBuilder.setView(diagView)
 
-        val diagUI = object {
-            val webView :WebView = diagView.findViewById(R.id.about_webView)
-        }
-        diagUI.webView.loadData(messageHTML, "text/html", "UTF-8") // loading HTML
-        diagUI.webView.webViewClient = object : WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852
+        val diagWebView :WebView = diagView.findViewById(R.id.about_webView)
+        diagWebView.loadData( // loading HTML from asset file
+            this.assets.open("AboutAndHelp.html").bufferedReader().readText()
+                .format(AppMetadata.getName(), AppMetadata.getVersion()),
+            "text/html",
+            "UTF-8") // loading HTML
+        diagWebView.webViewClient = object : WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852
             override fun shouldOverrideUrlLoading(view :WebView?, url :String?) : Boolean {
                 if (url != null) {
                     view!!.context.startActivity(

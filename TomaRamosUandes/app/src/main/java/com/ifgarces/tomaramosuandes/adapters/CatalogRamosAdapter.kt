@@ -14,12 +14,12 @@ import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
 class CatalogRamosAdapter(
-    private var data     :MutableList<Ramo>,
-    private val allTaken :Boolean // indicates if all ramos in `data` are taken. Also, won't recolorize them.
+    private var data           :MutableList<Ramo>,
+    private val isAllInscribed :Boolean // indicates whether all ramos in `data` are inscribed. If not, will highlight inscribed ones
 ) : RecyclerView.Adapter<CatalogRamosAdapter.CatalogVH>() {
 
     private object SingletonHelper {
-        // used to prevent the dialog from being invoked more than one time if the user clicks again while the first one is still loading
+        // used to prevent the dialog from being invoked more than once if user clicks again while still loading from first click
         var isDialogActive :Boolean = false
     }
 
@@ -53,12 +53,12 @@ class CatalogRamosAdapter(
             this.NRC.text = ramo.NRC.toString()
             this.sección.text = ramo.sección
 
-            /* setting card background color based on take status */
-            if (! this@CatalogRamosAdapter.allTaken) { // distinguishing between taken and untaken (in catalog)
+            /* setting card background color based on inscribe status */
+            if (! this@CatalogRamosAdapter.isAllInscribed) { // distinguishing between inscribed and uninscribed (in catalog)
                 if (ramo in DataMaster.getUserRamos()) {
-                    this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_taken))
+                    this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_inscribed))
                 } else {
-                    this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_untaken))
+                    this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_unInscribed))
                 }
             }
 
@@ -76,7 +76,7 @@ class CatalogRamosAdapter(
 
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
-                helper.intent.putExtra(IntentKeys.RAMO_IS_TAKEN, (ramo in DataMaster.getUserRamos()))
+                helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, (ramo in DataMaster.getUserRamos()))
 
                 RamoDialogFragment.summon(
                     manager = helper.supportFragmentManager,

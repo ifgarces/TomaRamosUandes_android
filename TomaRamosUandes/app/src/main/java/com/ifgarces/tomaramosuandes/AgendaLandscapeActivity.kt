@@ -236,7 +236,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
             )
         }
 
-        /* Displays the non-evaluation events for each user taken `Ramo` in the agenda */
+        /* Displays the non-evaluation events for each user inscribed `Ramo` in the agenda */
         public fun buildAgenda(activity : Activity) {
             Logf("[AgendaLandscapeActivity] Building agenda...")
 

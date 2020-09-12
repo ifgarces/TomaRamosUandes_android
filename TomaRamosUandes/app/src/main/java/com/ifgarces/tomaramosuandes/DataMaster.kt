@@ -38,7 +38,7 @@ object DataMaster {
     @Volatile private lateinit var catalog_events :List<RamoEvent>; fun getCatalogEvents() = this.catalog_events
     private lateinit var user_stats               :UserStats;       fun getUserStats() = this.user_stats
 
-    @Volatile private lateinit var user_ramos  :MutableList<Ramo>;       fun getUserRamos() = this.user_ramos
+    @Volatile private lateinit var user_ramos  :MutableList<Ramo>;      fun getUserRamos() = this.user_ramos
     @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
 
     private lateinit var writeLock :ReentrantLock // concurrency write lock for `userRamos`
@@ -84,12 +84,7 @@ object DataMaster {
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog_ramos.count())
 
                 if (clearDatabase) { // removing all data in memory and in local room database
-                    this.user_ramos.clear()
-                    this.user_events.clear()
-                    this.localDB.ramosDAO().clear()
-                    this.localDB.eventsDAO().clear()
-                    this.localDB.userStatsDAO().clear()
-                    Logf("[DataMaster] Local database cleaned.")
+                    this.clean()
                 }
 
                 this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
@@ -125,6 +120,15 @@ object DataMaster {
         }
     }
 
+    private fun clean() {
+        this.user_ramos.clear()
+        this.user_events.clear()
+        this.localDB.ramosDAO().clear()
+        this.localDB.eventsDAO().clear()
+        this.localDB.userStatsDAO().clear()
+        Logf("[DataMaster] Local database cleaned.")
+    }
+
     /**
      * Will be called when the joke dialog of `EasterEggs` is executed. It is a way to inform it to
      * `DataMaster` and its Room local database.
@@ -139,7 +143,7 @@ object DataMaster {
     /**
      * Searchs and returns the `Ramo` whose NRC (ID) matches.
      * @param NRC The fiven ID.
-     * @param searchInUserList If true, will search just along the user taken `Ramo`s. If not,
+     * @param searchInUserList If true, will search just along the user inscribed `Ramo`s. If not,
      * searches along the catalog.
      * @return Returns null if not found.
      */
@@ -151,15 +155,15 @@ object DataMaster {
     }
 
     /**
-     * Attemps to take `ramo` and add it to the user list. If any event of `ramo` collides with
-     * another already taken `Ramo`, prompts confirmation dialog and, if the user wants to continue
-     * neverdeless, finishes the action and returns true. If not, returns false.
+     * Attemps to inscribe `ramo` and add it to the user list. If any event of `ramo` collides with
+     * another already inscribed `Ramo`, prompts conflict confirmation dialog and, if the user
+     * decides to continue neverdeless, finishes the action.
      */
-    public fun takeRamo(ramo :Ramo, activity :Activity, onClose :() -> Unit) {
+    public fun inscribeRamo(ramo :Ramo, activity :Activity, onClose :() -> Unit) {
         var conflictReport :String = ""
 
         AsyncTask.execute {  // the hole function must be async because of this.getConflictsOf()
-            this.catalog_events.filter { it.ramoNRC==ramo.NRC }
+            this.catalog_events.filter{ it.ramoNRC==ramo.NRC }
                 .forEach { event :RamoEvent ->
                     this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
                         conflictReport += "• %s\n".format(conflictedEvent.toShortString())
@@ -168,7 +172,7 @@ object DataMaster {
 
             if (conflictReport == "") { // no conflict was found
                 AsyncTask.execute {
-                    this.takeRamoAction(ramo)
+                    this.inscribeRamoAction(ramo)
                     onClose.invoke()
                 }
             } else { // conflict(s) found
@@ -179,7 +183,7 @@ object DataMaster {
                             .format(conflictReport, ramo.nombre),
                         onYesClicked = {
                             AsyncTask.execute {
-                                this.takeRamoAction(ramo)
+                                this.inscribeRamoAction(ramo)
                                 onClose.invoke()
                             }
                         },
@@ -195,9 +199,9 @@ object DataMaster {
 
     /**
      * [This function needs to be called on a separated thread]
-     * Internal function that registers `ramo` in user taken list. Should be called after conflict check.
+     * Executes the inscription of `ramo` to the user inscribed list. Should be called after conflict check.
      */
-    private fun takeRamoAction(ramo :Ramo) {
+    private fun inscribeRamoAction(ramo :Ramo) {
         try {
             this.writeLock.lock()
             this.user_ramos.add(ramo)
@@ -206,14 +210,14 @@ object DataMaster {
                 .forEach { event :RamoEvent ->
                     this.localDB.eventsDAO().insert(event)
                 }
-            Logf("[DataMaster] Ramo{NRC=%s} taken.", ramo.NRC)
+            Logf("[DataMaster] Ramo{NRC=%s} inscribed.", ramo.NRC)
         } finally {
             this.writeLock.unlock()
         }
     }
 
-    /* Removes the matching `Ramo` from the user taken list. */
-    public fun untakeRamo(NRC :Int) {
+    /* Removes the matching `Ramo` from the user inscribed list. */
+    public fun unInscribeRamo(NRC :Int) {
         var index :Int = 0
         while (index < this.user_ramos.count()) {
             if (this.user_ramos[index].NRC == NRC) {
@@ -229,7 +233,7 @@ object DataMaster {
         }
     }
 
-    /* Gets the total amount of `crédito` for the user taken list. */
+    /* Gets the total amount of `crédito` for the user inscribed list. */
     public fun getUserCreditSum() : Int {
         var creditosTotal :Int = 0
         this.user_ramos.forEach {
@@ -262,7 +266,7 @@ object DataMaster {
 
     /**
      * [This function needs to be called on a separated thread]
-     * Iterates all user taken `Ramo` list and checks if `event` collide with another.
+     * Iterates all user inscribed `Ramo` list and checks if `event` collide with another.
      * @return The other events that collide with `event`, including itself (first).
      * The list will be empty if there is no conflict.
      */

@@ -71,7 +71,7 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
 
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
-                helper.intent.putExtra(IntentKeys.RAMO_IS_TAKEN, true)
+                helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, true)
 
                 RamoDialogFragment.summon(
                     manager = helper.supportFragmentManager,

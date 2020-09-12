@@ -9,7 +9,7 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <!-- It was a trouble to make this BottomSheetDialogFragment full scrollable.
+    <!-- It was a trouble to make this BottomSheetDialogFragment fully scrollable.
     XML references for that: https://stackoverflow.com/a/54777104 -->
 
     <androidx.core.widget.NestedScrollView
@@ -280,7 +280,8 @@
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:minHeight="75dp" />
                 </TableRow>
 
                 <TableRow
@@ -308,7 +309,8 @@
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:minHeight="75dp" />
                 </TableRow>
 
                 <TableRow
@@ -336,7 +338,8 @@
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:minHeight="75dp" />
                 </TableRow>
 
                 <TableRow
@@ -364,16 +367,17 @@
                         android:scrollbarThumbHorizontal="@color/colorAccent"
 
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:minHeight="75dp" />
                 </TableRow>
             </TableLayout>
 
-            <!-- Will allow to take the `Ramo` if it is not in the user taken list,
-                otherwise will allow to delete (un-take) it. -->
+            <!-- Will allow to inscribe the `Ramo` if it is not in the user inscribed list,
+                otherwise will allow to delete (un-inscribe) it. -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ramoDialog_button"
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:text="[delete | take]"
+                android:text="[delete | inscribe]"
                 app:icon="@android:drawable/ic_menu_gallery"
                 android:backgroundTint="@color/colorAccent"
                 android:outlineProvider="none"

@@ -33,7 +33,7 @@ class EvaluationsActivity : AppCompatActivity() {
 
         UI.eventsRecycler.layoutManager = LinearLayoutManager(this)
         UI.eventsRecycler.adapter = RamoEventsExpandedAdapter(data=DataMaster.getUserRamos())
-        UI.eventsExportButton.setOnClickListener { this.exportEvents() }
+        UI.eventsExportButton.setOnClickListener { this.exportEvaluations() }
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> { this.showHelp() }
@@ -45,10 +45,16 @@ class EvaluationsActivity : AppCompatActivity() {
         }
     }
 
-    private fun exportEvents() {
+    /**
+     * Converts the evaluations of inscribed ramos into a collection of calendar events and open
+     * them with the default calendar app.
+     */
+    private fun exportEvaluations() {
+        //this.toastf("Funcionalidad pendiente.")
         DataMaster.exportCalendarEvents(context=this)
     }
 
+    /* Shows help dialog about this view */
     private fun showHelp() {
         this.infoDialog(
             title = "Ayuda - Evaluaciones",
