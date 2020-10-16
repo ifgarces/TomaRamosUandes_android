@@ -4,7 +4,7 @@
 - [ ] Be 100% sure that the **Companion Object** technique for **updating the adapter** of the RecyclerView on an activity, outside it, will always work perfectly.
 
 ## Primary
-- [ ] `CatalogActivity`: improve search algorithm (logical && instead of ||, I guess).
+- [X] `CatalogActivity`: improve search algorithm (logical && instead of ||, I guess).
 - [ ] Add fast scroll for the catalog `RecyclerView`.
 - [ ] Manage to export events to the user's calendar.
 - [ ] Make missing help dialogs.

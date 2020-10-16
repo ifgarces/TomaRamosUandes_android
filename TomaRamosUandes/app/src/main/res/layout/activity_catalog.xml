@@ -71,7 +71,7 @@
         tools:listitem="@layout/ramo_item"
         android:orientation="vertical"
         android:scrollbars="vertical"
-        android:scrollbarSize="6dp"
+        android:scrollbarSize="10dp"
         android:background="@android:color/white"
 
         android:layout_marginTop="6dp"

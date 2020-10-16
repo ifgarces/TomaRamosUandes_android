@@ -4,6 +4,7 @@ import android.app.Activity
 import com.ifgarces.tomaramosuandes.R
 
 
+/* Contains metadata of the app itself. */
 object AppMetadata {
     private lateinit var name    :String; fun getName() = name
     private lateinit var version :String; fun getVersion() = version

@@ -9,7 +9,7 @@ import com.ifgarces.tomaramosuandes.utils.*
 
 /**
  * Waits for the initialization of all catalog and user data and then, if successfull,
- * launches `HomeActivity`. If error is triggered, prompts dialog and terminates the program.
+ * launches `HomeActivity`. If an error is triggered, prompts an info dialog and terminates the program.
  * @property PROGRESSBAR_SPAWN_TIMEOUT The amount of milliseconds before the ProgressBar appears in front of the app icon.
  */
 class MainActivity : AppCompatActivity() {
@@ -65,8 +65,10 @@ class MainActivity : AppCompatActivity() {
                 this.runOnUiThread {
                     this.infoDialog(
                         title = "Error",
-                        message = """Se encontraron datos de ramos guardados por el usuario, pero no se pudieron cargar. \
-                            Los datos están dañados o no compatibles con esta versión del programa.""".multilineTrim(),
+                        message = """
+                            Se encontraron datos de ramos guardados por el usuario, pero no se pudieron cargar. \
+                            Los datos están dañados o no compatibles con esta versión del programa.
+                            """.multilineTrim(),
                         onDismiss = {
                             // TODO: clear user data?
                         },

@@ -24,12 +24,16 @@ import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Handles the database.
- * @property catalog_ramos Contains the collection of `Ramo` available for the current period.
+ * @property catalog_ramos Contains the collection of available `Ramo` for the current period.
+ * @property catalog_events Collection of available `RamoEvents`.
+ * @property user_ramos Set of inscribed `Ramo` by the user.
+ * @property user_events Set of inscribed `RamoEvent` by the user.
+ * @property writeLock Concurrency write lock for `user_ramos`.
  */
 object DataMaster {
 
     // ----
-    // TODO: make sure to manage write concurrency for `userRamos`
+    // TODO: make 100% sure to manage write concurrency for `userRamos` variable
     // ----
 
     private lateinit var localDB :LocalRoomDB
@@ -41,7 +45,7 @@ object DataMaster {
     @Volatile private lateinit var user_ramos  :MutableList<Ramo>;      fun getUserRamos() = this.user_ramos
     @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
 
-    private lateinit var writeLock :ReentrantLock // concurrency write lock for `userRamos`
+    private lateinit var writeLock :ReentrantLock
 
     /**
      * Fetches the `catalog` from a the internet, calling `WebManager`.
@@ -148,8 +152,15 @@ object DataMaster {
      * @return Returns null if not found.
      */
     public fun findRamo(NRC :Int, searchInUserList :Boolean = false) : Ramo? {
-        this.catalog_ramos.forEach {
-            if (it.NRC == NRC) { return it }
+        if (searchInUserList) {
+            this.user_ramos.forEach {
+                if (it.NRC == NRC) { return it }
+            }
+        }
+        else {
+            this.catalog_ramos.forEach {
+                if (it.NRC == NRC) { return it }
+            }
         }
         return null
     }
@@ -158,8 +169,9 @@ object DataMaster {
      * Attemps to inscribe `ramo` and add it to the user list. If any event of `ramo` collides with
      * another already inscribed `Ramo`, prompts conflict confirmation dialog and, if the user
      * decides to continue neverdeless, finishes the action.
+     * @param onFinish Will be executed when the inscription operation finished (because this is asyncronous).
      */
-    public fun inscribeRamo(ramo :Ramo, activity :Activity, onClose :() -> Unit) {
+    public fun inscribeRamo(ramo :Ramo, activity :Activity, onFinish :() -> Unit) {
         var conflictReport :String = ""
 
         AsyncTask.execute {  // the hole function must be async because of this.getConflictsOf()
@@ -173,7 +185,7 @@ object DataMaster {
             if (conflictReport == "") { // no conflict was found
                 AsyncTask.execute {
                     this.inscribeRamoAction(ramo)
-                    onClose.invoke()
+                    onFinish.invoke()
                 }
             } else { // conflict(s) found
                 activity.runOnUiThread {
@@ -184,11 +196,11 @@ object DataMaster {
                         onYesClicked = {
                             AsyncTask.execute {
                                 this.inscribeRamoAction(ramo)
-                                onClose.invoke()
+                                onFinish.invoke()
                             }
                         },
                         onNoClicked = {
-                            onClose.invoke()
+                            onFinish.invoke()
                         },
                         icon = R.drawable.alert_icon
                     )

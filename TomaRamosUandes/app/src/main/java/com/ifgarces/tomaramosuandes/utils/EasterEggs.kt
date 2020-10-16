@@ -5,7 +5,7 @@ import com.ifgarces.tomaramosuandes.DataMaster
 
 
 object EasterEggs {
-    private const val JOKE_SHOW_PROBABILITY :Short = 6 // percent of chance to see the joke dialog on a "try". Must be in [0, 100]
+    private const val JOKE_SHOW_PROBABILITY :Short = 0 // percent of chance to see the joke dialog on a "try". Must be in [0, 100]. Default: 6
 
     /**
      * This is a mockery to miUandes app and its legendary-never-patched strange behaviors-bugs-things. Yes.
@@ -14,7 +14,7 @@ object EasterEggs {
      */
     public fun handleJokeDialog(context :Context) {
         if (! DataMaster.getUserStats().firstRunOfApp) {
-            if ((0..100).random() <= this.JOKE_SHOW_PROBABILITY) {
+            if ((0..100).random() < this.JOKE_SHOW_PROBABILITY) {
                 context.infoDialog(
                     title = " ",
                     message = "Las credenciales han expirado. Por favor, vuelva a ingresar.",

@@ -45,7 +45,7 @@ class CatalogActivity : AppCompatActivity() {
         //UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
         UI.searchBox_layout.setStartIconOnClickListener { this.clearSearch() }
         UI.searchBox.onTextChangedListener {
-            if (it.length > 2) this.searchFilterCatalog(searchText=it)
+            if (it.length > 2) this.applySearch(searchText=it)
         }
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -66,10 +66,10 @@ class CatalogActivity : AppCompatActivity() {
     }
 
     /* Searches `Ramo`s in the catalog by `nombre` */
-    private fun searchFilterCatalog(searchText :String) { // TODO: tests.
+    private fun applySearch(searchText :String) { // TODO: tests.
         val results :MutableList<Ramo> = mutableListOf()
         DataMaster.getCatalogRamos().forEach {
-            // considering `nombre` is upper cased for each `Ramo`
+            // considering `nombre` is upper-cased for each `Ramo`
             if (it.nombre.spanishNonAccent().contains(
                     searchText.spanishNonAccent().spanishUpperCase().trim()
                 )

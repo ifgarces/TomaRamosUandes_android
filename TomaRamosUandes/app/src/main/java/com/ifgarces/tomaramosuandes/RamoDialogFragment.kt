@@ -88,7 +88,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         }
 
         val ramo_isInscribed :Boolean = this.activity!!.intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
-        val nrc  :Int = this.activity!!.intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
+        val nrc :Int = this.activity!!.intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
         val ramo :Ramo = DataMaster.findRamo(nrc)!!
 
         UI.nombre.text = ramo.nombre
@@ -171,7 +171,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         DataMaster.inscribeRamo(
             ramo = ramo,
             activity = this.activity!!,
-            onClose = {
+            onFinish = {
                 this.dismiss()
             }
         )

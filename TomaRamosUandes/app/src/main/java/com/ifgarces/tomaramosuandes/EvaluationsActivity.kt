@@ -10,6 +10,7 @@ import com.ifgarces.tomaramosuandes.adapters.RamoEventsExpandedAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
+import com.ifgarces.tomaramosuandes.utils.toastf
 
 
 class EvaluationsActivity : AppCompatActivity() {
@@ -50,8 +51,8 @@ class EvaluationsActivity : AppCompatActivity() {
      * them with the default calendar app.
      */
     private fun exportEvaluations() {
-        //this.toastf("Funcionalidad pendiente.")
-        DataMaster.exportCalendarEvents(context=this)
+        this.toastf("Funcionalidad pendiente.")
+        //DataMaster.exportCalendarEvents(context=this)
     }
 
     /* Shows help dialog about this view */

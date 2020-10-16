@@ -6,6 +6,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 
+/* Type converters for Room local database serialization */
+
 object RoomConverter_DayOfWeek {
     @TypeConverter
     @JvmStatic

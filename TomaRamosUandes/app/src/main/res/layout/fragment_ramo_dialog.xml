@@ -281,7 +281,7 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="75dp" />
+                        android:minHeight="60dp" />
                 </TableRow>
 
                 <TableRow
@@ -310,7 +310,7 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="75dp" />
+                        android:minHeight="60dp" />
                 </TableRow>
 
                 <TableRow
@@ -339,7 +339,7 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="75dp" />
+                        android:minHeight="60dp" />
                 </TableRow>
 
                 <TableRow
@@ -368,7 +368,7 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="75dp" />
+                        android:minHeight="60dp" />
                 </TableRow>
             </TableLayout>
 
