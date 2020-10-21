@@ -10,10 +10,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputLayout
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
-import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.onTextChangedListener
-import com.ifgarces.tomaramosuandes.utils.spanishNonAccent
-import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
+import com.ifgarces.tomaramosuandes.utils.*
 
 
 class CatalogActivity : AppCompatActivity() {
@@ -42,10 +39,9 @@ class CatalogActivity : AppCompatActivity() {
             isAllInscribed = false
         )
         UI.recycler.layoutManager = LinearLayoutManager(this)
-        //UI.searchButton.setOnClickListener { this.searchFilterCatalog() }
         UI.searchBox_layout.setStartIconOnClickListener { this.clearSearch() }
         UI.searchBox.onTextChangedListener {
-            if (it.length > 2) this.applySearch(searchText=it)
+            if (it.length > 2) { this.applySearch(searchText=it) }
         }
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -62,7 +58,14 @@ class CatalogActivity : AppCompatActivity() {
     }
 
     private fun showHelp() {
-        // TODO: show catalog help. Maybe show BottomDialogFragment instead of regular dialog.
+        this.infoDialog(
+            title = "Ayuda - Catálogo de ramos",
+            message = """
+                Presione un ramo para ver detalles y eventualmente tomarlo. Los ramos con fondo azul
+                son los que ud. ya ha tomado. Puede usar la caja de búsqueda para buscar ramos por nombre.
+            """.multilineTrim()
+        )
+        // TODO: video or animation showing fast-scroll using scrollbar.
     }
 
     /* Searches `Ramo`s in the catalog by `nombre` */

@@ -1,6 +1,7 @@
 package com.ifgarces.tomaramosuandes.models
 
 
+/* Holds the representation for every `RamoEvent` type. */
 object RamoEventType {
     const val CLAS :Int = 0 // clase
     const val AYUD :Int = 1 // ayudantía

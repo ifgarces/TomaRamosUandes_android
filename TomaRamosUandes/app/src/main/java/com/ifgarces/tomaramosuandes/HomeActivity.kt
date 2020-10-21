@@ -23,7 +23,7 @@ import com.ifgarces.tomaramosuandes.utils.Logf
 class HomeActivity : AppCompatActivity() {
 
     object RecyclerSync { // allows to update the recycler from another activity/fragment
-        // TODO: make sure this is right
+        // TODO: make sure this `RecyclerSync` is the right approach
         private var updatePending :Boolean = false
         private fun notifyAdapter() = UI.ramosRecycler.adapter!!.notifyDataSetChanged()
         public fun requestUpdate() {

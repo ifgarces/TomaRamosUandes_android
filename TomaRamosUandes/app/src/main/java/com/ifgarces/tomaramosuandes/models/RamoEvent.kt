@@ -3,7 +3,7 @@ package com.ifgarces.tomaramosuandes.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ifgarces.tomaramosuandes.DataMaster
-import com.ifgarces.tomaramosuandes.utils.SpanishStringer
+import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -28,13 +28,13 @@ data class RamoEvent(
     public fun toLargeString() : String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() } // TODO: make sure to use "dd/MM/yyyy" format
-            else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
+            else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
         return """
                 Tipo: %s
                 Ramo: %s (NRC %d)
                 Fecha: %s (%s - %s)
             """.multilineTrim().format(
-            SpanishStringer.ramoEventType(eventType=this.type, shorten=false)!!,
+            SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,
             DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
             this.ramoNRC,
             dateOrDay,
@@ -47,9 +47,9 @@ data class RamoEvent(
     public fun toShortString() : String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() }
-            else { SpanishStringer.dayOfWeek(this.dayOfWeek) }
+            else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
         return "%s: %s\n\t\t(%s %s-%s)".format(
-            SpanishStringer.ramoEventType(eventType=this.type, shorten=false)!!,
+            SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,
             DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
             dateOrDay,
             this.startTime,

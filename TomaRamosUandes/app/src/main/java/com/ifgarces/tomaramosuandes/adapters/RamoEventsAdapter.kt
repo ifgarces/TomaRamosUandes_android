@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
-import com.ifgarces.tomaramosuandes.utils.SpanishStringer
+import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 
 
@@ -43,15 +43,15 @@ class RamoEventsAdapter(
 
             /* deciding if to show date or week day */
             if (event.isEvaluation()) { // evaluación
-                this.dayData.text = SpanishStringer.localDate(event.date!!) // e.g. "18/11/2020"
+                this.dayData.text = SpanishToStringOf.localDate(event.date!!) // e.g. "18/11/2020"
             } else { // clase, ayudantía o laboratorio
-                this.dayData.text = SpanishStringer.dayOfWeek(event.dayOfWeek).spanishUpperCase() // e.g. "viernes"
+                this.dayData.text = SpanishToStringOf.dayOfWeek(event.dayOfWeek).spanishUpperCase() // e.g. "viernes"
             }
 
             /* deciding if to show event type */
             if (this@RamoEventsAdapter.showEventType) {
                 this.evType.visibility = View.VISIBLE
-                this.evType.text = SpanishStringer.ramoEventType(eventType=event.type, shorten=false)
+                this.evType.text = SpanishToStringOf.ramoEventType(eventType=event.type, shorten=false)
             } else {
                 this.evType.visibility = View.GONE
             }

@@ -13,7 +13,7 @@ import android.widget.Toast
 import java.util.Locale
 
 
-const val DEBUG_MODE :Boolean = true // <- turning to false during tests and release. Need it because the damn tests don't like functions that write to the Log.
+const val DEBUG_MODE :Boolean = true // <- turning to false during tests and release. Needed because somehow the damn tests don't support functions that write to the Log.
 const val LOG_TAG    :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
 
 /* Toast + sprintf */
@@ -38,11 +38,11 @@ fun String.spanishLowerCase() : String {
 fun String.multilineTrim() : String { // Note: does not ignore tabs "\t".
     val NEWLINE_MARKER :String = "+++|♣♦♠♥|+++"
     return this
-        .replace("\\\n", "") // continuing line
-        .replace("\n", NEWLINE_MARKER) // avoiding intentioned newlines to be erased next
+//        .replace("\\\n", "") // continuing line
+        .replace("\\\n", NEWLINE_MARKER) // avoiding intentioned newlines to be erased next
         .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
         .replace(NEWLINE_MARKER, "\n") // recovering intentioned newlines
-        .replace("\n ", "\n")
+//        .replace("\n ", "\n")
         .trim()
 }
 

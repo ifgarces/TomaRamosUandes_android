@@ -11,7 +11,7 @@ import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import com.ifgarces.tomaramosuandes.utils.SpanishStringer
+import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 
 
@@ -44,7 +44,7 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
             this.ramoName.text = DataMaster.findRamo(NRC=event.ramoNRC)!!.nombre
             this.startTime.text = event.startTime.toString()
             this.endTime.text = event.endTime.toString()
-            this.type.text = SpanishStringer.ramoEventType(eventType=event.type, shorten=true)
+            this.type.text = SpanishToStringOf.ramoEventType(eventType=event.type, shorten=true)
 
             /* colorizing background of event box */
             val backColor :Int? = when(event.type) {

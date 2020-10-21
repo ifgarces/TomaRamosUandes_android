@@ -51,11 +51,14 @@ class EvaluationsActivity : AppCompatActivity() {
      * them with the default calendar app.
      */
     private fun exportEvaluations() {
-        this.toastf("Funcionalidad pendiente.")
-        //DataMaster.exportCalendarEvents(context=this)
+        this.toastf("Funcionalidad pendiente. ¡Ya casi!")
+//        DataMaster.exportCalendarEvents(context=this)
+//        DataMaster.exportEventsV2(context=this)
     }
 
-    /* Shows help dialog about this view */
+    /**
+     * Shows an information/help dialog about this view.
+     */
     private fun showHelp() {
         this.infoDialog(
             title = "Ayuda - Evaluaciones",

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
 import androidx.room.Room
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
@@ -131,6 +132,10 @@ object DataMaster {
         this.localDB.eventsDAO().clear()
         this.localDB.userStatsDAO().clear()
         Logf("[DataMaster] Local database cleaned.")
+    }
+
+    public fun getRamoEventsOf(ramo :Ramo) : List<RamoEvent> {
+        return this.user_events.filter{ it.ramoNRC == ramo.NRC }
     }
 
     /**
@@ -309,7 +314,8 @@ object DataMaster {
         )
         var events :List<RamoEvent>
         ramos.forEach { ramo :Ramo ->
-            events = this.localDB.eventsDAO().getEventsOfRamo(nrc=ramo.NRC)
+            events = this.localDB.eventsDAO().getEventsOfRamo(nrc=ramo.NRC) // TODO: may change to memory query (to `this.user_events`) instead of Room DB query. If so, do not call as an AsyncTask
+            //events = this.user_events.filter { it.ramoNRC == ramo.NRC }
             events.forEach { event :RamoEvent ->
                 if (! event.isEvaluation()) {
                     when(event.dayOfWeek) {
@@ -318,12 +324,43 @@ object DataMaster {
                         DayOfWeek.WEDNESDAY -> { results[DayOfWeek.WEDNESDAY]?.add(event) }
                         DayOfWeek.THURSDAY  -> { results[DayOfWeek.THURSDAY]?.add(event) }
                         DayOfWeek.FRIDAY    -> { results[DayOfWeek.FRIDAY]?.add(event) }
-                        else -> {} // ignored
+                        else -> { Logf("[DataMaster] WARNING: unknown day for this event: %s", event) } // ignored
                     }
                 }
             }
         }
         return results
+    }
+
+    public fun exportEventsV2(context :Context, ramos :List<Ramo> = this.user_ramos) {
+        fun streamWriteFile(content :String, stream :OutputStream) {
+            try {
+                stream.write(content.toByteArray())
+                stream.close()
+            }
+            catch (e :IOException) {
+                Logf("[DataMaster] Failed to export ICS file. %s", e)
+            }
+        }
+
+        val root :String = Environment.getExternalStorageDirectory().toString()
+        val dir :File = File(root + "/abcdefg")
+        if (! dir.exists()) dir.mkdirs()
+        val filename :String = "temp.ics"
+        val icsFile :File = File(dir, filename)
+        if (icsFile.exists()) icsFile.delete()
+        else icsFile.createNewFile()
+        try {
+            Logf("Creating/overriding file at %s...", icsFile.absolutePath)
+            streamWriteFile(content=this.buildIcsContent(ramos), stream=FileOutputStream(icsFile))
+        } catch (e :Exception) {
+            Logf("[DataMaster] Error: couldn't write to file. %s", e)
+        }
+
+        Logf("Trying to open the file... (exists=%s)", icsFile.exists())
+        context.sendBroadcast(
+            Intent( Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory()) )
+        )
     }
 
     /**
@@ -334,13 +371,11 @@ object DataMaster {
 
         /* creating and saving temporal ICS (iCalendar) file */
         val saveFolder :String = "Download"
-        val fileContent :String = this.buildIcsContent(ramos)
 
         fun streamWriteFile(content :String, stream :OutputStream) {
             try {
                 stream.write(content.toByteArray())
                 stream.close()
-                Logf("[DataMaster] ICS file successfully exported inside folder '%s'.", saveFolder)
             }
             catch (e :IOException) {
                 Logf("[DataMaster] Failed to export ICS file. %s", e)
@@ -348,17 +383,20 @@ object DataMaster {
         }
 
         val fileMetadata :ContentValues = ContentValues()
-        fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "text/calendar")
-        fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+        fileMetadata.put(MediaStore.Downloads.MIME_TYPE, "text/calendar")
+//        fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "text/calendar")
+//        fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
 
         if (android.os.Build.VERSION.SDK_INT >= 29) {
-            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
-            fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
+            fileMetadata.put(MediaStore.Downloads.RELATIVE_PATH, saveFolder)
+            fileMetadata.put(MediaStore.Downloads.IS_PENDING, true)
+//            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
+//            fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
 
             val uri :Uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, fileMetadata)!!
             icsFile = File(uri.path!!)
-            streamWriteFile(content=fileContent, stream=context.contentResolver.openOutputStream(uri)!!)
-            fileMetadata.put(MediaStore.Images.Media.IS_PENDING, false)
+//            icsFile = File(context.applicationContext.getExternalFilesDir(null), "temp.ics")
+            streamWriteFile(content=this.buildIcsContent(ramos), stream=context.contentResolver.openOutputStream(uri)!!)
             context.contentResolver.update(uri, fileMetadata, null, null)
         }
         else {
@@ -367,8 +405,8 @@ object DataMaster {
 
             val fileName :String = "%s.ics".format(System.currentTimeMillis().toString())
             icsFile = File(directory, fileName)
-            streamWriteFile(content=fileContent, stream=FileOutputStream(icsFile))
-            fileMetadata.put(MediaStore.Images.Media.DATA, icsFile.absolutePath)
+            streamWriteFile(content=this.buildIcsContent(ramos), stream=FileOutputStream(icsFile))
+            fileMetadata.put(MediaStore.Downloads.DATA, icsFile.absolutePath)
             context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
         }
         Logf("[DataMaster] iCalendar/ICS file created at %s", icsFile.path)
@@ -387,16 +425,23 @@ object DataMaster {
 
         // TODO: fix crash when passing the URI to an external app. Implement this: https://stackoverflow.com/a/38858040
 
+        Logf("Trying to open file at %s (name=%s, exists=%s)", icsFile.absolutePath,  icsFile.toURI().toString(), icsFile.exists())
+
         val intent :Intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.fromFile(icsFile)
+//        intent.data = Uri.fromFile(icsFile)
+        intent.data = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", icsFile)
         intent.type = "text/calendar"
-        //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         val chooser :Intent = Intent.createChooser(intent, "Elíjase la app para abrir: ")
 
         if (chooser.resolveActivity(context.packageManager) != null) { // opening events if the user has at least one calendar app
             context.startActivity(chooser)
         } else {
             Logf("[DataMaster] Could not open ICS file for events. There is no app installed on the device which can handle calendar events.")
+            context.infoDialog(
+                title="Error al exportar eventos de calendario",
+                message="Parece que ud. no tiene una aplicación para abrir eventos de calendario"
+            )
         }
     }
 
@@ -440,7 +485,7 @@ DTSTART;TZID=America/Santiago:${_year}${_month}${_day}T${_startTime}00
 DTEND;TZID=America/Santiago:${_year}${_month}${_day}T${_endTime}00
 DESCRIPTION:[${ramo.materia} ${ramo.NRC}] ${ramo.nombre}
 STATUS:CONFIRMED
-SUMMARY:${SpanishStringer.ramoEventType(eventType=event.type, shorten=false)} ${ramo.nombre} (${event.startTime})
+SUMMARY:${SpanishToStringOf.ramoEventType(eventType=event.type, shorten=false)} ${ramo.nombre} (${event.startTime})
 END:VEVENT
 """
                 }
