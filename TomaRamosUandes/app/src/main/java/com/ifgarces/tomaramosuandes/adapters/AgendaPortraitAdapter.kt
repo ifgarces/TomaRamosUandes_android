@@ -15,7 +15,9 @@ import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 
 
-/* Adapter used to display events in the portrait agenda view */
+/**
+ * Adapter used to display events in the portrait agenda view.
+ */
 class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<AgendaPortraitAdapter.EventCardVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : EventCardVH {
@@ -41,7 +43,7 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
         private val type       :TextView = v.findViewById(R.id.agendaPblock_type)
     
         fun bind(event :RamoEvent, position :Int) {
-            this.ramoName.text = DataMaster.findRamo(NRC=event.ramoNRC)!!.nombre
+            this.ramoName.text = DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre
             this.startTime.text = event.startTime.toString()
             this.endTime.text = event.endTime.toString()
             this.type.text = SpanishToStringOf.ramoEventType(eventType=event.type, shorten=true)

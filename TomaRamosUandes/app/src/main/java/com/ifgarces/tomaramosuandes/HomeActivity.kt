@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
-import com.ifgarces.tomaramosuandes.utils.AppMetadata
 import com.ifgarces.tomaramosuandes.utils.EasterEggs
 import com.ifgarces.tomaramosuandes.utils.Logf
 
@@ -73,21 +72,21 @@ class HomeActivity : AppCompatActivity() {
         lateinit var topBar              :MaterialToolbar
         lateinit var catalogButton       :Button
         lateinit var ramosRecycler       :RecyclerView
-        lateinit var emptyRecyclerMarker :View // TextView
+        lateinit var emptyRecyclerMarker :TextView // TextView
         lateinit var creditosCounter     :TextView
         lateinit var agendaButton        :Button
         lateinit var evaluationsButton   :Button
         lateinit var loadDisplay         :View
 
         fun init(owner :AppCompatActivity) {
-            this.topBar             = owner.findViewById(R.id.home_topbar)
-            this.catalogButton      = owner.findViewById(R.id.home_catalogButton)
-            this.ramosRecycler      = owner.findViewById(R.id.home_ramosRecycler)
+            this.topBar               = owner.findViewById(R.id.home_topbar)
+            this.catalogButton        = owner.findViewById(R.id.home_catalogButton)
+            this.ramosRecycler        = owner.findViewById(R.id.home_ramosRecycler)
             this.emptyRecyclerMarker  = owner.findViewById(R.id.home_emptyRecyclerText)
-            this.creditosCounter    = owner.findViewById(R.id.home_creditos)
-            this.agendaButton       = owner.findViewById(R.id.home_agendaButton)
-            this.evaluationsButton  = owner.findViewById(R.id.home_pruebasButton)
-            this.loadDisplay        = owner.findViewById(R.id.home_loadScreen)
+            this.creditosCounter      = owner.findViewById(R.id.home_creditos)
+            this.agendaButton         = owner.findViewById(R.id.home_agendaButton)
+            this.evaluationsButton    = owner.findViewById(R.id.home_pruebasButton)
+            this.loadDisplay          = owner.findViewById(R.id.home_loadScreen)
         }
     }
 
@@ -149,6 +148,9 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Prompts a dialog with information/help about this view.
+     */
     private fun showHelp() {
 
         // TODO: insert link to clear demo video in HTML
@@ -164,7 +166,7 @@ class HomeActivity : AppCompatActivity() {
         val diagWebView :WebView = diagView.findViewById(R.id.about_webView)
         diagWebView.loadData( // loading HTML from asset file
             this.assets.open("AboutAndHelp.html").bufferedReader().readText()
-                .format(AppMetadata.getName(), AppMetadata.getVersion()),
+                .format(this.getString(R.string.APP_NAME), this.getString(R.string.APP_VERSION)),
             "text/html",
             "UTF-8") // loading HTML
         diagWebView.webViewClient = object : WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852

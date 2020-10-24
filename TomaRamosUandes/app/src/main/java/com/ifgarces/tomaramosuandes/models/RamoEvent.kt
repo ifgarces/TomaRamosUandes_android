@@ -10,11 +10,20 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 
-/* Modela un evento de ramo (ayudantía, clase, laboratorio, tutorial, prueba o examen) */
+/**
+ * Models the event type for a `Ramo`.
+ * @property ID Primary key.
+ * @property ramoNRC Foreignt key referencing the `Ramo` this event belongs to.
+ * @property type Represents the type (assistenship, class, laboratory, tutorial, test or exam).
+ * @property dayOfWeek Day it takes place, when it is weekly repetitive, like a class.
+ * @property startTime Starting time (block start).
+ * @property endTime Finish time (block end).
+ * @property date This will be not null only when the date makes sense depending on the type (test or exam).
+ */
 @Entity(tableName=RamoEvent.TABLE_NAME)
 data class RamoEvent(
     @PrimaryKey(autoGenerate=false) val ID :Int,
-    val ramoNRC   :Int, // (foreign key) referencia al ramo al que pertenece el evento
+    val ramoNRC   :Int,
     val type      :Int,
     val dayOfWeek :DayOfWeek,
     val startTime :LocalTime,
@@ -35,7 +44,7 @@ data class RamoEvent(
                 Fecha: %s (%s - %s)
             """.multilineTrim().format(
             SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,
-            DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
+            DataMaster.findRamo(NRC=this.ramoNRC, searchInUserList=false)!!.nombre,
             this.ramoNRC,
             dateOrDay,
             this.startTime, // TODO: make sure to use "HH:mm" format
@@ -43,21 +52,25 @@ data class RamoEvent(
         )
     }
 
-    /* Single line and short `toString()` method. Used in event conflict reports. */
+    /**
+     * Single line and short `toString()` method. Used in event conflict reports.
+     */
     public fun toShortString() : String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() }
             else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
         return "%s: %s\n\t\t(%s %s-%s)".format(
             SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,
-            DataMaster.findRamo(NRC=this.ramoNRC)!!.nombre,
+            DataMaster.findRamo(NRC=this.ramoNRC, searchInUserList=false)!!.nombre,
             dateOrDay,
             this.startTime,
             this.endTime
         )
     }
 
-    /* Checks if the event is a test or exam */
+    /**
+     * Checks if the event is a test or exam
+     */
     public fun isEvaluation() : Boolean {
         return (this.type == RamoEventType.PRBA) || (this.type == RamoEventType.EXAM)
     }

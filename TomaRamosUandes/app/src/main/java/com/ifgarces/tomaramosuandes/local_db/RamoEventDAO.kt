@@ -28,6 +28,6 @@ interface RamoEventDAO {
     @Query(value="DELETE FROM ${RamoEvent.TABLE_NAME} WHERE ID=:id")
     fun deleteRamoEvent(id :Int)
 
-    @Query(value="SELECT * FROM ${RamoEvent.TABLE_NAME} WHERE ramoNRC=:nrc")
-    fun getEventsOfRamo(nrc :Int) : List<RamoEvent>
+//    @Query(value="SELECT * FROM ${RamoEvent.TABLE_NAME} WHERE ramoNRC=:nrc")
+//    fun getEventsOfRamo(nrc :Int) : List<RamoEvent>
 }

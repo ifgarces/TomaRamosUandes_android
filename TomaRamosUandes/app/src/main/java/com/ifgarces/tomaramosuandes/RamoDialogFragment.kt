@@ -24,6 +24,9 @@ import com.ifgarces.tomaramosuandes.utils.IntentKeys
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 
 
+/**
+ * Dialog prompted when clicking a `Ramo`, showing all of its data.
+ */
 class RamoDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
@@ -89,7 +92,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
 
         val ramo_isInscribed :Boolean = this.activity!!.intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
         val nrc :Int = this.activity!!.intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
-        val ramo :Ramo = DataMaster.findRamo(nrc)!!
+        val ramo :Ramo = DataMaster.findRamo(nrc, searchInUserList=false)!!
 
         UI.nombre.text = ramo.nombre
         UI.NRC.text = ramo.NRC.toString()

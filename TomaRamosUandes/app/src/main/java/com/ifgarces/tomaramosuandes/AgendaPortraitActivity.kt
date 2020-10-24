@@ -92,7 +92,7 @@ class AgendaPortraitActivity : AppCompatActivity() {
         UI.saveAsImgButton.setOnClickListener {
             Logf("[AgendaPortraitActivity] Exporting agenda as image...")
             ImageExporter.exportAgendaImage(
-                context = this,
+                activity = this,
                 targetView = UI.agendaScroll,
                 tallView = UI.agendaLayout
             )

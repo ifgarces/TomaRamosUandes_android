@@ -128,7 +128,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         UI.saveAsImgButton.setOnClickListener {
             Logf("[AgendaLandscapeActivity] Exporting agenda as image...")
             ImageExporter.exportAgendaImage(
-                context = this,
+                activity = this,
                 targetView = UI.agendaBodyScroll,
                 tallView = UI.agendaBodyLayout
             )

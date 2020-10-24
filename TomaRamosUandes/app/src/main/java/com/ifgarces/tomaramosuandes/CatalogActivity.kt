@@ -57,6 +57,9 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Prompts a dialog with information/help about this view.
+     */
     private fun showHelp() {
         this.infoDialog(
             title = "Ayuda - Catálogo de ramos",
@@ -68,7 +71,9 @@ class CatalogActivity : AppCompatActivity() {
         // TODO: video or animation showing fast-scroll using scrollbar.
     }
 
-    /* Searches `Ramo`s in the catalog by `nombre` */
+    /**
+     * Modifies the catalog's `RecyclerView` to show `Ramo`s whose `nombre` attribute contains `searchText`.
+     */
     private fun applySearch(searchText :String) { // TODO: tests.
         val results :MutableList<Ramo> = mutableListOf()
         DataMaster.getCatalogRamos().forEach {
@@ -88,7 +93,9 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
-    /* Shows again the full catalog */
+    /**
+     * Undoes the search, i.e. shows again the full catalog.
+     */
     private fun clearSearch() {
         UI.searchBox.setText("")
         (UI.recycler.adapter as CatalogRamosAdapter).updateData(data=DataMaster.getCatalogRamos().toMutableList())

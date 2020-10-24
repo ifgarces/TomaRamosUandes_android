@@ -7,10 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.RamoEventsExpandedAdapter
-import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.infoDialog
-import com.ifgarces.tomaramosuandes.utils.multilineTrim
-import com.ifgarces.tomaramosuandes.utils.toastf
+import com.ifgarces.tomaramosuandes.utils.*
 
 
 class EvaluationsActivity : AppCompatActivity() {
@@ -21,8 +18,8 @@ class EvaluationsActivity : AppCompatActivity() {
         lateinit var eventsExportButton :Button
 
         fun init(owner :AppCompatActivity) {
-            this.topBar = owner.findViewById(R.id.evals_topbar)
-            this.eventsRecycler = owner.findViewById(R.id.evals_eventsRecycler)
+            this.topBar             = owner.findViewById(R.id.evals_topbar)
+            this.eventsRecycler     = owner.findViewById(R.id.evals_eventsRecycler)
             this.eventsExportButton = owner.findViewById(R.id.evals_exportEventsButton)
         }
     }
@@ -51,9 +48,15 @@ class EvaluationsActivity : AppCompatActivity() {
      * them with the default calendar app.
      */
     private fun exportEvaluations() {
-        this.toastf("Funcionalidad pendiente. ¡Ya casi!")
-//        DataMaster.exportCalendarEvents(context=this)
-//        DataMaster.exportEventsV2(context=this)
+        this.yesNoDialog(
+            title = "Exportar evaluaciones",
+            message = "Las pruebas y exámenes de sus ramos tomados serán exportadas a su calendario de Google. ¿Continuar?",
+            onYesClicked = {
+                CalendarHandler.exportEventsToCalendar(activity=this)
+            },
+            onNoClicked = {},
+            icon = null
+        )
     }
 
     /**
@@ -63,8 +66,8 @@ class EvaluationsActivity : AppCompatActivity() {
         this.infoDialog(
             title = "Ayuda - Evaluaciones",
             message = """
-                Aquí se ven las pruebas y exámenes de cada ramo que ud. haya tomado. \
-                Use el botón "Exportar al calendario" para indexar las evaluaciones en su calendario \
+                Aquí se ven las pruebas y exámenes de cada ramo que ud. haya tomado.\
+                Use el botón "Exportar al calendario" para indexar las evaluaciones en su calendario\
                 (de Google, por ejemplo).
             """.multilineTrim()
         )

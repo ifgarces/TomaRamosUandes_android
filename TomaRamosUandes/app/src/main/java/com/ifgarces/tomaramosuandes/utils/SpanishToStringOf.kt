@@ -5,10 +5,14 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 
-/* Language conversion tool for `toString()`-like methods of varius types, and similar. */
+/**
+ * Language conversion tool for `toString()`-like methods of varius types.
+ */
 object SpanishToStringOf {
 
-    /* Returns the spanish string equivalent for `day`. */
+    /**
+     * Returns the spanish string equivalent for `day`.
+     */
     public fun dayOfWeek(day :DayOfWeek) : String {
         return when(day) {
             DayOfWeek.MONDAY    -> "Lunes"
@@ -21,7 +25,9 @@ object SpanishToStringOf {
         }
     }
 
-    /* Returns string date with format "dd/MM/yyyy". */
+    /**
+     * Returns string date with chilean format: "dd/MM/yyyy".
+     */
     public fun localDate(date :LocalDate) : String {
         val aux :List<String> = date.toString().split("-") // ~ "yyyy-MM-dd"
         return "${aux[2]}/${aux[1]}/${aux[0]}" // "dd/MM/yyyy"

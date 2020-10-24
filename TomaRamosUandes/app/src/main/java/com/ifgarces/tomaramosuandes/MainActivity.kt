@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
             UI.loadScreen.visibility = View.VISIBLE
         }, this.PROGRESSBAR_SPAWN_TIMEOUT)
 
-        AppMetadata.init(activity=this)
         this.runOnUiThread {
             WebManager.init(context=this)
         }
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 this.runOnUiThread {
                     this.infoDialog(
                         title = "Error al obtener catálogo",
-                        message = """No se pudo obtener correctamente el catálogo de ramos ${AppMetadata.getCatalogPeriod()}. \
+                        message = """No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
                             Revise su conexión a internet e intente más tarde.""".multilineTrim(),
                         onDismiss = {
                             this.finish()

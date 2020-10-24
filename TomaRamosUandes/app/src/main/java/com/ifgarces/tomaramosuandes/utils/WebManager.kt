@@ -28,8 +28,8 @@ object WebManager {
     fun init(context :Context) {
         // TODO: implement a "Do not show again" or "Ignore this update" feature
 
-        val lastestVer :String = this.fetchLastestAppVersionName()
-        if (lastestVer != AppMetadata.getVersion()) { // prompts update dialog
+        val lastestVer :String = this.fetchLastestAppVersionName(context)
+        if (lastestVer != context.getString(R.string.APP_VERSION)) { // prompts update dialog
             context.yesNoDialog(
                 title = "Actualización disponible",
                 message = "Hay una nueva versión de esta app: %s.\n\n¿Ir al link de descarga ahora?".format(lastestVer),
@@ -56,8 +56,8 @@ object WebManager {
     * Gets the lastest available version of the app itself.
     * @exception java.net.UnknownHostException On internet connection failure.
     */
-    private fun fetchLastestAppVersionName() : String {
+    private fun fetchLastestAppVersionName(context :Context) : String {
         // TODO: get it from `APP_VERSION_URL`
-        return AppMetadata.getVersion()
+        return context.getString(R.string.APP_VERSION)
     }
 }

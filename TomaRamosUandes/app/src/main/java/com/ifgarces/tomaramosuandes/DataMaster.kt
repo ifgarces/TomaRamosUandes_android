@@ -1,24 +1,13 @@
 package com.ifgarces.tomaramosuandes
 
 import android.app.Activity
-import android.content.ContentValues
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.AsyncTask
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.core.content.FileProvider
 import androidx.room.Room
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
 import com.ifgarces.tomaramosuandes.utils.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
 import java.time.DayOfWeek
 import java.util.concurrent.locks.ReentrantLock
 
@@ -29,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock
  * @property catalog_events Collection of available `RamoEvents`.
  * @property user_ramos Set of inscribed `Ramo` by the user.
  * @property user_events Set of inscribed `RamoEvent` by the user.
- * @property writeLock Concurrency write lock for `user_ramos`.
+ * @property ramosLock Concurrency write lock for `user_ramos`.
  */
 object DataMaster {
 
@@ -46,7 +35,8 @@ object DataMaster {
     @Volatile private lateinit var user_ramos  :MutableList<Ramo>;      fun getUserRamos() = this.user_ramos
     @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
 
-    private lateinit var writeLock :ReentrantLock
+    private lateinit var ramosLock :ReentrantLock
+    private lateinit var eventsLock :ReentrantLock
 
     /**
      * Fetches the `catalog` from a the internet, calling `WebManager`.
@@ -65,7 +55,8 @@ object DataMaster {
         this.catalog_ramos = listOf()
         this.user_ramos = mutableListOf()
         this.user_events = mutableListOf()
-        this.writeLock = ReentrantLock()
+        this.ramosLock = ReentrantLock()
+        this.eventsLock = ReentrantLock()
 
         AsyncTask.execute {
             try {
@@ -134,8 +125,24 @@ object DataMaster {
         Logf("[DataMaster] Local database cleaned.")
     }
 
-    public fun getRamoEventsOf(ramo :Ramo) : List<RamoEvent> {
-        return this.user_events.filter{ it.ramoNRC == ramo.NRC }
+    /**
+     * Returns all the `RamoEvent`s of all inscribed `Ramo`s that are a test or exam (not classes, etc.).
+     */
+    public fun getUserEvaluations() : List<RamoEvent> {
+        return this.user_events.filter { it.isEvaluation() }
+    }
+
+    /**
+     * Returns all the events of `ramo`.
+     * @param searchInUserList If true, will look into events incribed by user, otherwise it will
+     * search along all the events of the catalog.
+     */
+    public fun getEventsOfRamo(ramo :Ramo, searchInUserList :Boolean) : List<RamoEvent> {
+        return if (searchInUserList) {
+            this.user_events.filter { it.ramoNRC == ramo.NRC }
+        } else {
+            this.catalog_events.filter { it.ramoNRC == ramo.NRC }
+        }
     }
 
     /**
@@ -152,11 +159,11 @@ object DataMaster {
     /**
      * Searchs and returns the `Ramo` whose NRC (ID) matches.
      * @param NRC The fiven ID.
-     * @param searchInUserList If true, will search just along the user inscribed `Ramo`s. If not,
-     * searches along the catalog.
+     * @param searchInUserList If true, will search just along the user inscribed `Ramo`s.
+     * If not, searches along the hole catalog.
      * @return Returns null if not found.
      */
-    public fun findRamo(NRC :Int, searchInUserList :Boolean = false) : Ramo? {
+    public fun findRamo(NRC :Int, searchInUserList :Boolean) : Ramo? {
         if (searchInUserList) {
             this.user_ramos.forEach {
                 if (it.NRC == NRC) { return it }
@@ -179,37 +186,34 @@ object DataMaster {
     public fun inscribeRamo(ramo :Ramo, activity :Activity, onFinish :() -> Unit) {
         var conflictReport :String = ""
 
-        AsyncTask.execute {  // the hole function must be async because of this.getConflictsOf()
-            this.catalog_events.filter{ it.ramoNRC==ramo.NRC }
-                .forEach { event :RamoEvent ->
-                    this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
-                        conflictReport += "• %s\n".format(conflictedEvent.toShortString())
-                    }
-                }
+        this.getEventsOfRamo(ramo=ramo, searchInUserList=false).forEach { event :RamoEvent ->
+            this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
+                conflictReport += "• %s\n".format(conflictedEvent.toShortString())
+            }
+        }
 
-            if (conflictReport == "") { // no conflict was found
-                AsyncTask.execute {
-                    this.inscribeRamoAction(ramo)
-                    onFinish.invoke()
-                }
-            } else { // conflict(s) found
-                activity.runOnUiThread {
-                    activity.yesNoDialog(
-                        title = "Conflicto de eventos",
-                        message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
-                            .format(conflictReport, ramo.nombre),
-                        onYesClicked = {
-                            AsyncTask.execute {
-                                this.inscribeRamoAction(ramo)
-                                onFinish.invoke()
-                            }
-                        },
-                        onNoClicked = {
+        if (conflictReport == "") { // no conflict was found
+            AsyncTask.execute {
+                this.inscribeRamoAction(ramo)
+                onFinish.invoke()
+            }
+        } else { // conflict(s) found
+            activity.runOnUiThread {
+                activity.yesNoDialog(
+                    title = "Conflicto de eventos",
+                    message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
+                        .format(conflictReport, ramo.nombre),
+                    onYesClicked = {
+                        AsyncTask.execute {
+                            this.inscribeRamoAction(ramo) // need this AsyncTask form in order to be certain to call `onFinish` AFTER `ramo` is inscribed into the database.
                             onFinish.invoke()
-                        },
-                        icon = R.drawable.alert_icon
-                    )
-                }
+                        }
+                    },
+                    onNoClicked = {
+                        onFinish.invoke()
+                    },
+                    icon = R.drawable.alert_icon
+                )
             }
         }
     }
@@ -220,37 +224,52 @@ object DataMaster {
      */
     private fun inscribeRamoAction(ramo :Ramo) {
         try {
-            this.writeLock.lock()
+            this.ramosLock.lock()
             this.user_ramos.add(ramo)
             this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
-            this.catalog_events.filter { it.ramoNRC == ramo.NRC }
+            this.getEventsOfRamo(ramo=ramo, searchInUserList=false)
                 .forEach { event :RamoEvent ->
                     this.localDB.eventsDAO().insert(event)
                 }
             Logf("[DataMaster] Ramo{NRC=%s} inscribed.", ramo.NRC)
         } finally {
-            this.writeLock.unlock()
+            this.ramosLock.unlock()
         }
     }
 
-    /* Removes the matching `Ramo` from the user inscribed list. */
+    /**
+     * Removes the matching `Ramo` from the user inscribed list.
+     * @param NRC Primary key of the item to un-inscribe.
+     */
     public fun unInscribeRamo(NRC :Int) {
-        var index :Int = 0
-        while (index < this.user_ramos.count()) {
-            if (this.user_ramos[index].NRC == NRC) {
+        val ramo :Ramo = this.findRamo(NRC=NRC, searchInUserList=true)!!
+        this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
+            try {
+                this.eventsLock.lock()
+                this.user_events.remove(event)
+                AsyncTask.execute { this.localDB.eventsDAO().deleteRamoEvent(id=event.ID) }
+            } finally {
+                this.eventsLock.unlock()
+            }
+        }
+        Logf("[DataMaster] Ramo{NRC=%s} un-inscribed.", NRC)
+
+        this.user_ramos.forEachIndexed { index :Int, ramo :Ramo ->
+            if (ramo.NRC == NRC) {
                 try {
-                    this.writeLock.lock()
+                    this.ramosLock.lock()
                     this.user_ramos.removeAt(index)
                     AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
                 } finally {
-                    this.writeLock.unlock()
+                    this.ramosLock.unlock()
                 }
             }
-            index++
         }
     }
 
-    /* Gets the total amount of `crédito` for the user inscribed list. */
+    /**
+     * Returns the total amount of `crédito` for the user inscribed list.
+     */
     public fun getUserCreditSum() : Int {
         var creditosTotal :Int = 0
         this.user_ramos.forEach {
@@ -282,15 +301,14 @@ object DataMaster {
     }
 
     /**
-     * [This function needs to be called on a separated thread]
      * Iterates all user inscribed `Ramo` list and checks if `event` collide with another.
-     * @return The other events that collide with `event`, including itself (first).
+     * @return The other events that collide with `event`, including itself (at first position).
      * The list will be empty if there is no conflict.
      */
     public fun getConflictsOf(event :RamoEvent) : List<RamoEvent> {
         val conflicts :MutableList<RamoEvent> = mutableListOf()
         this.user_ramos.forEach {
-            this.localDB.eventsDAO().getEventsOfRamo(nrc=it.NRC).forEach { ev :RamoEvent ->
+            this.getEventsOfRamo(ramo=it, searchInUserList=true).forEach { ev :RamoEvent ->
                 if (ev.ID != event.ID) {
                     if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
                 }
@@ -312,11 +330,8 @@ object DataMaster {
             DayOfWeek.THURSDAY to mutableListOf(),
             DayOfWeek.FRIDAY to mutableListOf()
         )
-        var events :List<RamoEvent>
         ramos.forEach { ramo :Ramo ->
-            events = this.localDB.eventsDAO().getEventsOfRamo(nrc=ramo.NRC) // TODO: may change to memory query (to `this.user_events`) instead of Room DB query. If so, do not call as an AsyncTask
-            //events = this.user_events.filter { it.ramoNRC == ramo.NRC }
-            events.forEach { event :RamoEvent ->
+            this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
                 if (! event.isEvaluation()) {
                     when(event.dayOfWeek) {
                         DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
@@ -330,168 +345,5 @@ object DataMaster {
             }
         }
         return results
-    }
-
-    public fun exportEventsV2(context :Context, ramos :List<Ramo> = this.user_ramos) {
-        fun streamWriteFile(content :String, stream :OutputStream) {
-            try {
-                stream.write(content.toByteArray())
-                stream.close()
-            }
-            catch (e :IOException) {
-                Logf("[DataMaster] Failed to export ICS file. %s", e)
-            }
-        }
-
-        val root :String = Environment.getExternalStorageDirectory().toString()
-        val dir :File = File(root + "/abcdefg")
-        if (! dir.exists()) dir.mkdirs()
-        val filename :String = "temp.ics"
-        val icsFile :File = File(dir, filename)
-        if (icsFile.exists()) icsFile.delete()
-        else icsFile.createNewFile()
-        try {
-            Logf("Creating/overriding file at %s...", icsFile.absolutePath)
-            streamWriteFile(content=this.buildIcsContent(ramos), stream=FileOutputStream(icsFile))
-        } catch (e :Exception) {
-            Logf("[DataMaster] Error: couldn't write to file. %s", e)
-        }
-
-        Logf("Trying to open the file... (exists=%s)", icsFile.exists())
-        context.sendBroadcast(
-            Intent( Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory()) )
-        )
-    }
-
-    /**
-     * Exports the tests and exams for all courses in `ramos` as events to the user's default calendar app.
-     */
-    public fun exportCalendarEvents(context :Context, ramos :List<Ramo> = this.user_ramos) {
-        val icsFile :File
-
-        /* creating and saving temporal ICS (iCalendar) file */
-        val saveFolder :String = "Download"
-
-        fun streamWriteFile(content :String, stream :OutputStream) {
-            try {
-                stream.write(content.toByteArray())
-                stream.close()
-            }
-            catch (e :IOException) {
-                Logf("[DataMaster] Failed to export ICS file. %s", e)
-            }
-        }
-
-        val fileMetadata :ContentValues = ContentValues()
-        fileMetadata.put(MediaStore.Downloads.MIME_TYPE, "text/calendar")
-//        fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "text/calendar")
-//        fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
-
-        if (android.os.Build.VERSION.SDK_INT >= 29) {
-            fileMetadata.put(MediaStore.Downloads.RELATIVE_PATH, saveFolder)
-            fileMetadata.put(MediaStore.Downloads.IS_PENDING, true)
-//            fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
-//            fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
-
-            val uri :Uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, fileMetadata)!!
-            icsFile = File(uri.path!!)
-//            icsFile = File(context.applicationContext.getExternalFilesDir(null), "temp.ics")
-            streamWriteFile(content=this.buildIcsContent(ramos), stream=context.contentResolver.openOutputStream(uri)!!)
-            context.contentResolver.update(uri, fileMetadata, null, null)
-        }
-        else {
-            val directory = File( "%s/%s".format(Environment.getExternalStorageDirectory().toString(), saveFolder) )
-            if (! directory.exists()) { directory.mkdirs() }
-
-            val fileName :String = "%s.ics".format(System.currentTimeMillis().toString())
-            icsFile = File(directory, fileName)
-            streamWriteFile(content=this.buildIcsContent(ramos), stream=FileOutputStream(icsFile))
-            fileMetadata.put(MediaStore.Downloads.DATA, icsFile.absolutePath)
-            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
-        }
-        Logf("[DataMaster] iCalendar/ICS file created at %s", icsFile.path)
-
-        /* opening created ICS file with default calendar app */
-        this.extractEventsFromICS(context, icsFile)
-    }
-
-    /**
-     * Opens the iCalendar file with the default calendar app on the device.
-     * @param context Needs a context in order to launch the "open with"-like activity.
-     * @param icsFile The existing and right-formatted iCalendar file, containing the events.
-     */
-    private fun extractEventsFromICS(context :Context, icsFile :File) {
-        Logf("[DataMaster] Opening iCalendar/ICS file...")
-
-        // TODO: fix crash when passing the URI to an external app. Implement this: https://stackoverflow.com/a/38858040
-
-        Logf("Trying to open file at %s (name=%s, exists=%s)", icsFile.absolutePath,  icsFile.toURI().toString(), icsFile.exists())
-
-        val intent :Intent = Intent(Intent.ACTION_VIEW)
-//        intent.data = Uri.fromFile(icsFile)
-        intent.data = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", icsFile)
-        intent.type = "text/calendar"
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        val chooser :Intent = Intent.createChooser(intent, "Elíjase la app para abrir: ")
-
-        if (chooser.resolveActivity(context.packageManager) != null) { // opening events if the user has at least one calendar app
-            context.startActivity(chooser)
-        } else {
-            Logf("[DataMaster] Could not open ICS file for events. There is no app installed on the device which can handle calendar events.")
-            context.infoDialog(
-                title="Error al exportar eventos de calendario",
-                message="Parece que ud. no tiene una aplicación para abrir eventos de calendario"
-            )
-        }
-    }
-
-    /**
-     * [This function needs to be called on a separated thread]
-     * Generates the ICS file contents and returns it.
-     */
-    private fun buildIcsContent(ramos :List<Ramo>) : String {
-
-        // TODO: make sure this function generates a valid iCalendar file
-
-        val fileHeader :String = """BEGIN:VCALENDAR
-PRODID:-//Google Inc//Google Calendar 70.9054//EN
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:CalendarioEvaluaciones
-X-WR-TIMEZONE:America/Santiago"""
-        var fileBody :String = ""
-        val fileFooter :String = "END:VCALENDAR"
-
-        var _year      :String
-        var _month     :String
-        var _day       :String
-        var _startTime :String
-        var _endTime   :String
-
-        /* processing evaluations... */
-        ramos.forEach { ramo :Ramo ->
-            this.user_events.filter { it.ramoNRC==ramo.NRC }.forEach { event :RamoEvent ->
-                if (event.isEvaluation()) {
-                    _year = event.date!!.year.toString()
-                    _month = event.date!!.month.toString()
-                    _day = event.date!!.dayOfMonth.toString()
-                    _startTime = event.startTime.toString().replace(":", "")
-                    _endTime = event.endTime.toString().replace(":", "")
-
-                    fileBody += """
-BEGIN:VEVENT
-DTSTART;TZID=America/Santiago:${_year}${_month}${_day}T${_startTime}00
-DTEND;TZID=America/Santiago:${_year}${_month}${_day}T${_endTime}00
-DESCRIPTION:[${ramo.materia} ${ramo.NRC}] ${ramo.nombre}
-STATUS:CONFIRMED
-SUMMARY:${SpanishToStringOf.ramoEventType(eventType=event.type, shorten=false)} ${ramo.nombre} (${event.startTime})
-END:VEVENT
-"""
-                }
-            }
-        }
-
-        return "%s%s%s".format(fileHeader, fileBody, fileFooter)
     }
 }

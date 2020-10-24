@@ -17,7 +17,10 @@ import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Adapter<RamoEventsExpandedAdapter.ExpandedEventVH>() {
 
-    /* Used to prevent the dialog from being invoked more than one time if the user clicks again while the first one is still loading */
+    /**
+     * Used to prevent the dialog from being invoked more than one time if the user clicks again
+     * while the first one is still loading.
+     */
     private object SingletonHelper {
         var isDialogActive :Boolean = false
     }

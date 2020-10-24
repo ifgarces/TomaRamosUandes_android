@@ -4,7 +4,19 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-/* Representa la sección de un ramo que se puede tomar (cada NRC) */
+/**
+ * Represents a section or a subject that can be registered by a student (i.e. each NRC).
+ * @property NRC Primary key.
+ * @property nombre Subject title.
+ * @property profesor Subject teacher(s).
+ * @property créditos Amount of credits.
+ * @property materia Represents the carreer related to the subject (e.g. "ING", "ICC", ...).
+ * @property curso The course number.
+ * @property sección Section number for the subject.
+ * @property planEstudios The curriculum it belongs to (2011 or 2016).
+ * @property conectLiga ??
+ * @property listaCruzada ??
+ */
 @Entity(tableName=Ramo.TABLE_NAME)
 data class Ramo(
     @PrimaryKey(autoGenerate=false) val NRC :Int, // ~ ID
