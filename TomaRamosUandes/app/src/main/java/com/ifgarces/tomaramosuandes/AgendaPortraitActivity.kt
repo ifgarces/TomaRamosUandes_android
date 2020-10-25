@@ -66,27 +66,25 @@ class AgendaPortraitActivity : AppCompatActivity() {
 
         UI.loadScreen.visibility = View.GONE
 
-//        AsyncTask.execute {
-            val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
+        val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
 
-            this.runOnUiThread {
-                /* initializing recyclers and hiding weekdays without events */
-                mapOf(
-                    DayOfWeek.MONDAY    to UI.recyclerTeamMon,
-                    DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
-                    DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
-                    DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
-                    DayOfWeek.FRIDAY    to UI.recyclerTeamFri
-                ).forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) ->
-                    team.second.layoutManager = LinearLayoutManager(this)
-                    team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
-                    if (agendaEvents.getValue(day).count() == 0) {
-                        team.first.visibility = View.GONE
-                        team.second.visibility = View.GONE
-                    }
+        this.runOnUiThread {
+            /* initializing recyclers and hiding weekdays without events */
+            mapOf(
+                DayOfWeek.MONDAY    to UI.recyclerTeamMon,
+                DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
+                DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
+                DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
+                DayOfWeek.FRIDAY    to UI.recyclerTeamFri
+            ).forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) ->
+                team.second.layoutManager = LinearLayoutManager(this)
+                team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
+                if (agendaEvents.getValue(day).count() == 0) {
+                    team.first.visibility = View.GONE
+                    team.second.visibility = View.GONE
                 }
             }
-//        }
+        }
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {

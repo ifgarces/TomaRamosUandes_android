@@ -50,7 +50,7 @@ class EvaluationsActivity : AppCompatActivity() {
     private fun exportEvaluations() {
         this.yesNoDialog(
             title = "Exportar evaluaciones",
-            message = "Las pruebas y exámenes de sus ramos tomados serán exportadas a su calendario de Google. ¿Continuar?",
+            message = "Las pruebas y exámenes de sus ramos tomados serán exportadas al calendario que escoja. ¿Continuar?",
             onYesClicked = {
                 CalendarHandler.exportEventsToCalendar(activity=this)
             },

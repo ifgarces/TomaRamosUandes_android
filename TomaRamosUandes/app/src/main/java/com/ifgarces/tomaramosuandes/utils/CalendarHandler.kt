@@ -75,10 +75,13 @@ object CalendarHandler {
      * @param activity The caller activity for context actions.
      * @param onItemSelected The action that will be executed once we have the calendar ID and name
      * the user clicked on.
+     * @param onError Will be invoked when the clicked calendar could not be resolved, probably due
+     * privacy reasons of the linked account, I think.
      */
     private fun promptSelectCalendarDialog(
-        activity :Activity,
-        onItemSelected :(calendarID :Int, calendarName :String) -> Unit
+        activity       :Activity,
+        onItemSelected :(calendarID :Int, calendarName :String) -> Unit,
+        onError        :() -> Unit
     ) { // references: https://stackoverflow.com/a/43532478/12684271
         val userCalendars :List<UserCalendar> = this.getUserCalendars(activity)
         Logf("[CalendarHandler] Calendars in device: %s", userCalendars)
@@ -92,8 +95,12 @@ object CalendarHandler {
             .setCancelable(true)
             .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
                 // adding one to `which` since calendar IDs start from one, and list indexes start from 0
-                val cal :UserCalendar = userCalendars.find { it.ID == which+1 }!!
+                val cal :UserCalendar? = userCalendars[which]
                 Logf("[CalendarHandler] User has selected %s (index: %d)", cal, which)
+                if (cal == null) {
+                    onError.invoke()
+                    return@setItems
+                }
                 onItemSelected.invoke(cal.ID, cal.name)
                 dialog.dismiss()
             }
@@ -113,6 +120,16 @@ object CalendarHandler {
 
         this.promptSelectCalendarDialog(
             activity = activity,
+            onError = {
+                activity.infoDialog(
+                    title = "Error",
+                    icon = R.drawable.alert_icon,
+                    message = """
+                        No se pudo acceder al calendario escogido, probablemente por configuraciones
+                        de seguridad estrictas de la cuenta asociada. Por favor intente con otro.
+                    """.multilineTrim()
+                )
+            },
             onItemSelected = { calendarID :Int, calendarName :String ->
                 val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
                 Logf("[CalendarHandler] Starting to export %d events...", evaluations.count())

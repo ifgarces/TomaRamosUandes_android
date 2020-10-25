@@ -1,7 +1,6 @@
 # {ANDROID} TO-DO unnamed first version
 
 ## 💀 Bugs 💀
-- [X] Fix agenda not showing inscribed ramos added on the same run (i.e. not loaded from Room database on startup).
 - [ ] Be 100% sure that the **Companion Object** technique for **updating the adapter** of the RecyclerView on an activity, outside it, will always work perfectly.
 
 ## Primary

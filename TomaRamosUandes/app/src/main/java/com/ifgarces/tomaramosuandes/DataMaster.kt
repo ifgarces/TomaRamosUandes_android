@@ -228,6 +228,7 @@ object DataMaster {
      * Executes the inscription of `ramo` to the user inscribed list. Should be called after conflict check.
      */
     private fun inscribeRamoAction(ramo :Ramo) {
+        var eventCount :Int = 0
         try {
             this.ramosLock.lock()
             this.eventsLock.lock()
@@ -235,14 +236,15 @@ object DataMaster {
             this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
             this.getEventsOfRamo(ramo=ramo, searchInUserList=false)
                 .forEach { event :RamoEvent ->
+                    eventCount++
                     this.user_events.add(event)
                     this.localDB.eventsDAO().insert(event)
                 }
-            Logf("[DataMaster] Ramo{NRC=%s} inscribed.", ramo.NRC)
         } finally {
             this.ramosLock.unlock()
             this.eventsLock.unlock()
         }
+        Logf("[DataMaster] Ramo{NRC=%s}, along %d of its events, were inscribed.", ramo.NRC, eventCount)
     }
 
     /**
@@ -250,10 +252,12 @@ object DataMaster {
      * @param NRC Primary key of the item to un-inscribe.
      */
     public fun unInscribeRamo(NRC :Int) {
+        var eventCount :Int = 0
         this.getEventsOfRamo(
             ramo = this.findRamo(NRC=NRC, searchInUserList=true)!!,
             searchInUserList = true
         ).forEach { event :RamoEvent ->
+            eventCount++
             try {
                 this.eventsLock.lock()
                 this.user_events.remove(event)
@@ -262,7 +266,6 @@ object DataMaster {
                 this.eventsLock.unlock()
             }
         }
-        Logf("[DataMaster] Ramo{NRC=%s} un-inscribed.", NRC)
 
         try {
             this.ramosLock.lock()
@@ -275,6 +278,7 @@ object DataMaster {
         } finally {
             this.ramosLock.unlock()
         }
+        Logf("[DataMaster] Ramo{NRC=%d}, along %d of its events, were un-inscribed.", NRC, eventCount)
     }
 
     /**
