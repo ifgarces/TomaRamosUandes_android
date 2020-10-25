@@ -47,8 +47,8 @@
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:text="Exportar al calendario"
         app:icon="@drawable/assignment_returned_icon"
-        android:textAllCaps="false"
-        android:textSize="@dimen/buttonLower_textSize"
+        android:textAllCaps="true"
+        android:textSize="@dimen/buttonMediumTextSize"
 
         android:layout_margin="6dp"
         android:layout_width="wrap_content"

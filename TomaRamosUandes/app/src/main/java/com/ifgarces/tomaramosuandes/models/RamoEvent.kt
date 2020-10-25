@@ -39,8 +39,8 @@ data class RamoEvent(
             if (this.isEvaluation()) { this.date.toString() } // TODO: make sure to use "dd/MM/yyyy" format
             else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
         return """
-                Tipo: %s
-                Ramo: %s (NRC %d)
+                Tipo: %s\
+                Ramo: %s (NRC %d)\
                 Fecha: %s (%s - %s)
             """.multilineTrim().format(
             SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,

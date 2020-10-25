@@ -30,7 +30,7 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
 
     override fun onBindViewHolder(holder :EventCardVH, position :Int) = holder.bind(this.data[position], position)
 
-    fun updateData(data :List<RamoEvent>) {
+    public fun updateData(data :List<RamoEvent>) {
         this.data = data
         this.notifyDataSetChanged()
     }

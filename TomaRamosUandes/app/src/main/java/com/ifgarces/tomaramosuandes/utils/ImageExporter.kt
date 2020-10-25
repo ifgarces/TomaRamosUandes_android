@@ -3,7 +3,6 @@ package com.ifgarces.tomaramosuandes.utils
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -66,7 +65,7 @@ object ImageExporter {
     }
 
     private fun saveImage(bitmap :Bitmap, activity :Activity) { // references: https://stackoverflow.com/a/57265702
-        this.checkPermissions(activity)
+//        this.checkPermissions(activity)
 
         val fileMetadata :ContentValues = ContentValues()
         fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
@@ -113,7 +112,8 @@ object ImageExporter {
     /**
      * Makes sure the app has permission to create a new file (image) in the device's storage.
      */
-    private fun checkPermissions(activity :Activity) {
+    private fun ensurePermissions(activity :Activity) {
+        // TODO: fix this not working properly. Permission dialog-thing is never shown. Is this unnecessary???
         Logf("[ImageExporter] Checking permissions...")
         while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {

@@ -3,9 +3,10 @@ package com.ifgarces.tomaramosuandes.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentResolver
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -32,11 +33,9 @@ import java.util.TimeZone
  */
 object CalendarHandler {
 
-    private const val TARGET_CALENDAR_ID :Int = 1 // TODO: get user default calendar ID, or ask it, somehow
-
     /**
      * Represents a calendar of the user's device.
-     * @property ID Calendar ID or index.
+     * @property ID Calendar ID or index, i.e. the value for `CalendarContract.Events.CALENDAR_ID`
      * @property name Calendar name.
      */
     private data class UserCalendar(
@@ -45,20 +44,19 @@ object CalendarHandler {
     )
 
     /**
-     * Gets the list of all calendars of the user.
+     * Returns the list of all calendars of the user's device.
      */
     @SuppressLint("MissingPermission")
-    private fun getUserCalendars(context :Context) : List<UserCalendar> { // references: https://stackoverflow.com/a/49878686/12684271
+    private fun getUserCalendars(activity :Activity) : List<UserCalendar> { // references: https://stackoverflow.com/a/49878686/12684271
         val results :MutableList<UserCalendar> = mutableListOf()
 
-        val EVENT_PROJECTION = arrayOf(
-            CalendarContract.Calendars._ID,
-            CalendarContract.Calendars.NAME
-        )
-
-        val cr: ContentResolver = context.contentResolver
-        val uri :Uri = CalendarContract.Calendars.CONTENT_URI
-        val cur :Cursor = cr.query(uri, EVENT_PROJECTION, null, null, null)!!
+        val cur :Cursor = activity.contentResolver.query(
+            CalendarContract.Calendars.CONTENT_URI,
+            arrayOf(CalendarContract.Calendars._ID, CalendarContract.Calendars.NAME),
+            null,
+            null,
+            null
+        )!!
 
         while (cur.moveToNext()) {
             results.add(
@@ -74,13 +72,36 @@ object CalendarHandler {
 
     /**
      * Asks the user for which calendar they want to add the `RamoEvent`s.
+     * @param activity The caller activity for context actions.
+     * @param onItemSelected The action that will be executed once we have the calendar ID and name
+     * the user clicked on.
      */
-    private fun userSelectCalendar() {
+    private fun promptSelectCalendarDialog(
+        activity :Activity,
+        onItemSelected :(calendarID :Int, calendarName :String) -> Unit
+    ) { // references: https://stackoverflow.com/a/43532478/12684271
+        val userCalendars :List<UserCalendar> = this.getUserCalendars(activity)
+        Logf("[CalendarHandler] Calendars in device: %s", userCalendars)
+        val selectables :MutableList<String> = mutableListOf()
+        userCalendars.forEach {
+            selectables.add(it.name)
+        }
 
+        val diag :AlertDialog.Builder = AlertDialog.Builder(activity)
+            .setTitle("Seleccione calendario")
+            .setCancelable(true)
+            .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
+                // adding one to `which` since calendar IDs start from one, and list indexes start from 0
+                val cal :UserCalendar = userCalendars.find { it.ID == which+1 }!!
+                Logf("[CalendarHandler] User has selected %s (index: %d)", cal, which)
+                onItemSelected.invoke(cal.ID, cal.name)
+                dialog.dismiss()
+            }
+        diag.create().show()
     }
 
     /**
-     * Exports all of the `RamoEvents` for the inscribed `Ramo` collection to the user's default calendar.
+     * Exports all of the `RamoEvents` for the inscribed `Ramo` collection to the user's chosen calendar.
      * Each calendar event will have the following attributes:
      *  - Title: the name of the linked `Ramo`.
      *  - Description: the event details given by `RamoEvent.toLargeString()`.
@@ -88,66 +109,70 @@ object CalendarHandler {
      *  - End time-date: same but with the end.
      */
     public fun exportEventsToCalendar(activity :Activity) {
-        this.checkPermissions(activity)
+        this.ensurePermissions(activity)
 
-        Logf("[CalendarHandler] Got this calendars: %s", this.getUserCalendars(context=activity))
-        return
+        this.promptSelectCalendarDialog(
+            activity = activity,
+            onItemSelected = { calendarID :Int, calendarName :String ->
+                val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
+                Logf("[CalendarHandler] Starting to export %d events...", evaluations.count())
+                var e :ContentValues
+                var result :Uri? // will hold the got internal feedback for each event insertion in calendar
+                var zoneAux :ZonedDateTime
+                val baseUri :Uri = Uri.parse("content://com.android.calendar/events")
+                val errors :MutableList<RamoEvent> = mutableListOf() // will contain events that somehow couldn't be exported
 
-        val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
+                evaluations.forEach { event :RamoEvent ->
+                    Logf("[CalendarHandler] Exporting %s", event)
+                    e = ContentValues()
+                    e.put(CalendarContract.Events.CALENDAR_ID, calendarID)
+                    e.put(CalendarContract.Events.TITLE, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
+                    e.put(CalendarContract.Events.DESCRIPTION, event.toLargeString().replace("\n", ";"))
 
-        Logf("[CalendarHandler] This is temporal. User ramos:\n%s", DataMaster.getUserRamos())
+                    zoneAux = LocalDateTime.of(event.date!!, event.startTime) // we are exporting evaluations, whose date are always assigned, do not worry about NullPointerException
+                        .atZone(ZoneId.of("America/Santiago"))
+                    e.put(CalendarContract.Events.DTSTART, zoneAux.toInstant().toEpochMilli())
+                    zoneAux = LocalDateTime.of(event.date!!, event.endTime)
+                        .atZone(ZoneId.of("America/Santiago"))
+                    e.put(CalendarContract.Events.DTEND, zoneAux.toInstant().toEpochMilli())
 
-        Logf("[CalendarHandler] Starting to export %d events...", evaluations.count())
-        var e :ContentValues
-        var result :Uri? // will hold the got internal feedback for each event insertion in calendar
-        var zoneAux :ZonedDateTime
-        val baseUri :Uri = Uri.parse("content://com.android.calendar/events")
-        val errors :MutableList<RamoEvent> = mutableListOf() // will contain events that somehow couldn't be exported
+                    e.put(CalendarContract.Events.ALL_DAY, 0) // 0: false, 1: true
+                    e.put(CalendarContract.Events.HAS_ALARM, 0)
+                    e.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
 
-        evaluations.forEach { event :RamoEvent ->
-            Logf("[CalendarHandler] Exporting %s", event)
-            e = ContentValues()
-            e.put(CalendarContract.Events.CALENDAR_ID, this.TARGET_CALENDAR_ID)
-            e.put(CalendarContract.Events.TITLE, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
-            e.put(CalendarContract.Events.DESCRIPTION, event.toLargeString().replace("\n", ";"))
+                    result = activity.contentResolver.insert(baseUri, e)
+                    if (result == null) {
+                        Logf("[CalendarHandler] Error: got null URI response when inserting the event at the calendar with ID=%d", calendarID)
+                        errors.add(event)
+                    }
+                }
 
-            zoneAux = LocalDateTime.of(event.date!!, event.startTime) // we are exporting evaluations, whose date are always assigned, do not worry about NullPointerException
-                .atZone(ZoneId.of("America/Santiago"))
-            e.put(CalendarContract.Events.DTSTART, zoneAux.toInstant().toEpochMilli())
-            zoneAux = LocalDateTime.of(event.date!!, event.endTime)
-                .atZone(ZoneId.of("America/Santiago"))
-            e.put(CalendarContract.Events.DTEND, zoneAux.toInstant().toEpochMilli())
-
-            e.put(CalendarContract.Events.ALL_DAY, 0) // 0: false, 1: true
-            e.put(CalendarContract.Events.HAS_ALARM, 0)
-            e.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
-
-            result = activity.contentResolver.insert(baseUri, e)
-            if (result == null) {
-                Logf("[CalendarHandler] Error: got null URI response when inserting the event at the calendar with ID=%d", this.TARGET_CALENDAR_ID)
-                errors.add(event)
+                if (errors.count() > 0) {
+                    Logf("[CalendarHandler] Finished event export with %d errors", errors.count())
+                    // showing error report-like
+                    var aux :String = ""
+                    errors.forEach {
+                        aux += "\n• %s".format(it.toShortString())
+                    }
+                    activity.infoDialog(
+                        title = "Error",
+                        message = """
+                            No se pudo exportar al calendario de nombre ""%s"" los siguientes eventos:\
+                            %s\
+                            Intente de nuevo con otro calendario.
+                        """.multilineTrim().format(calendarName, aux),
+                        icon = R.drawable.alert_icon
+                    )
+                }
+                else {
+                    Logf("[CalendarHandler] Events successfully exported to calendar named \"%s\"", calendarName)
+                    activity.toastf("%d eventos exportados a \"%s\"", evaluations.count(), calendarName)
+                }
             }
-        }
-
-        if (errors.count() > 0) {
-            Logf("[CalendarHandler] Finished event export with %d errors", errors.count())
-            // showing error report-like
-            var aux :String = ""
-            errors.forEach {
-                aux += "\n• %s".format(it.toShortString())
-            }
-            activity.infoDialog(
-                title = "Error",
-                message = "No se pudo exportar al calendario los siguientes eventos:\n%s".format(aux),
-                icon = R.drawable.alert_icon
-            )
-        }
-        else {
-            Logf("[CalendarHandler] Events successfully exported!")
-        }
+        )
     }
 
-    private fun checkPermissions(activity :Activity) {
+    private fun ensurePermissions(activity :Activity) {
         Logf("[CalendarHandler] Checking permissions...")
         while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED

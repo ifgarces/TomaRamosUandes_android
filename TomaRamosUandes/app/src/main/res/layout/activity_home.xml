@@ -32,8 +32,8 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:icon="@drawable/catalog_book_icon"
         android:text="Catálogo de ramos"
-        android:textAllCaps="false"
-        android:textSize="19sp"
+        android:textAllCaps="true"
+        android:textSize="17sp"
         app:cornerRadius="@dimen/roundButton_radius"
 
         android:layout_margin="@dimen/homeCatalogBtn_margins"
@@ -137,8 +137,8 @@
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/calendar_icon"
                 android:text="Horario"
-                android:textAllCaps="false"
-                android:textSize="@dimen/buttonLower_textSize"
+                android:textAllCaps="true"
+                android:textSize="@dimen/buttonMediumTextSize"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,8 +151,8 @@
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/exam_icon"
                 android:text="Evaluaciones"
-                android:textAllCaps="false"
-                android:textSize="@dimen/buttonLower_textSize"
+                android:textAllCaps="true"
+                android:textSize="@dimen/buttonMediumTextSize"
 
                 android:layout_marginStart="20dp"
                 android:layout_width="wrap_content"

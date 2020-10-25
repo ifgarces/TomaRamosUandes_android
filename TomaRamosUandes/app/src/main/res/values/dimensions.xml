@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="buttonLower_textSize">16sp</dimen> <!-- text size for buttons with non-uppercase text -->
+    <dimen name="buttonMediumTextSize">16sp</dimen> <!-- text size for buttons with non-uppercase text -->
     <dimen name="toolbar_elevation">5dp</dimen>
     <dimen name="ramoAttrs_spacing">8dp</dimen> <!-- spacing between most of the `Ramo` attributes when displaying all its info -->
     <dimen name="recyclerItems_margin">4dp</dimen> <!-- individual margin for all elements of a RecyclerView -->

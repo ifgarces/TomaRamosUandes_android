@@ -17,14 +17,15 @@ const val DEBUG_MODE :Boolean = true // <- turning to false during tests and rel
 const val LOG_TAG    :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
 
 /**
- * Toast + sprintf
+ * Toast + sprintf.
  */
 fun Context.toastf(format :String, vararg args :Any?) {
     Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
 }
 
 /**
- * Debug log + sprintf. All log under the same tag stored at `LOG_TAG` constant.
+ * Debug log + sprintf. All log under the same tag stored at `LOG_TAG` constant. This function
+ * is not an actual extension, but I still place it here. We will tell nobody.
  */
 fun Logf(format :String, vararg args :Any?) {
     if (DEBUG_MODE) { Log.d(LOG_TAG, format.format(*args)) }
