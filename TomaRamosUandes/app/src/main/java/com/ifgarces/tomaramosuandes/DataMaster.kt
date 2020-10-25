@@ -106,7 +106,7 @@ object DataMaster {
                 onSuccess.invoke()
             }
             catch (e :java.net.UnknownHostException) {
-                Logf("[DataMaster] Could not load online CSV (internet connection error)")
+                Logf("[DataMaster] Could not load online CSV (internet connection error).")
                 onInternetError.invoke()
             }
             catch (e :NullPointerException) {
@@ -165,8 +165,13 @@ object DataMaster {
      */
     public fun findRamo(NRC :Int, searchInUserList :Boolean) : Ramo? {
         if (searchInUserList) {
-            this.user_ramos.forEach {
-                if (it.NRC == NRC) { return it }
+            try {
+                this.ramosLock.lock()
+                this.user_ramos.forEach {
+                    if (it.NRC == NRC) { return it }
+                }
+            } finally {
+                this.ramosLock.unlock()
             }
         }
         else {
@@ -225,15 +230,18 @@ object DataMaster {
     private fun inscribeRamoAction(ramo :Ramo) {
         try {
             this.ramosLock.lock()
+            this.eventsLock.lock()
             this.user_ramos.add(ramo)
             this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
             this.getEventsOfRamo(ramo=ramo, searchInUserList=false)
                 .forEach { event :RamoEvent ->
+                    this.user_events.add(event)
                     this.localDB.eventsDAO().insert(event)
                 }
             Logf("[DataMaster] Ramo{NRC=%s} inscribed.", ramo.NRC)
         } finally {
             this.ramosLock.unlock()
+            this.eventsLock.unlock()
         }
     }
 
@@ -242,8 +250,10 @@ object DataMaster {
      * @param NRC Primary key of the item to un-inscribe.
      */
     public fun unInscribeRamo(NRC :Int) {
-        val ramo :Ramo = this.findRamo(NRC=NRC, searchInUserList=true)!!
-        this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
+        this.getEventsOfRamo(
+            ramo = this.findRamo(NRC=NRC, searchInUserList=true)!!,
+            searchInUserList = true
+        ).forEach { event :RamoEvent ->
             try {
                 this.eventsLock.lock()
                 this.user_events.remove(event)
@@ -254,16 +264,16 @@ object DataMaster {
         }
         Logf("[DataMaster] Ramo{NRC=%s} un-inscribed.", NRC)
 
-        this.user_ramos.forEachIndexed { index :Int, ramo :Ramo ->
-            if (ramo.NRC == NRC) {
-                try {
-                    this.ramosLock.lock()
+        try {
+            this.ramosLock.lock()
+            this.user_ramos.forEachIndexed { index :Int, ramo :Ramo ->
+                if (ramo.NRC == NRC) {
                     this.user_ramos.removeAt(index)
                     AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
-                } finally {
-                    this.ramosLock.unlock()
                 }
             }
+        } finally {
+            this.ramosLock.unlock()
         }
     }
 
@@ -272,8 +282,13 @@ object DataMaster {
      */
     public fun getUserCreditSum() : Int {
         var creditosTotal :Int = 0
-        this.user_ramos.forEach {
-            creditosTotal += it.créditos
+        try {
+            this.ramosLock.lock()
+            this.user_ramos.forEach {
+                creditosTotal += it.créditos
+            }
+        } finally {
+            this.ramosLock.unlock()
         }
         return creditosTotal
     }
@@ -307,12 +322,18 @@ object DataMaster {
      */
     public fun getConflictsOf(event :RamoEvent) : List<RamoEvent> {
         val conflicts :MutableList<RamoEvent> = mutableListOf()
-        this.user_ramos.forEach {
-            this.getEventsOfRamo(ramo=it, searchInUserList=true).forEach { ev :RamoEvent ->
-                if (ev.ID != event.ID) {
-                    if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
+        try {
+            this.ramosLock.lock()
+            this.user_ramos.forEach {
+                this.getEventsOfRamo(ramo=it, searchInUserList=true).forEach { ev :RamoEvent ->
+                    if (ev.ID != event.ID) {
+                        if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
+                    }
                 }
             }
+        }
+        finally {
+            this.ramosLock.unlock()
         }
         if (conflicts.count() > 0) { conflicts.add(index=0, element=event) } // addint itself, in order to inform to user in conflict dialog
         return conflicts
@@ -322,7 +343,7 @@ object DataMaster {
      * [This function needs to be called on a separated thread]
      * Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek`
      */
-    public fun getEventsByWeekDay(ramos :List<Ramo> = this.user_ramos) : Map<DayOfWeek, List<RamoEvent>> {
+    public fun getEventsByWeekDay() : Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(
             DayOfWeek.MONDAY to mutableListOf(),
             DayOfWeek.TUESDAY to mutableListOf(),
@@ -330,20 +351,26 @@ object DataMaster {
             DayOfWeek.THURSDAY to mutableListOf(),
             DayOfWeek.FRIDAY to mutableListOf()
         )
-        ramos.forEach { ramo :Ramo ->
-            this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
-                if (! event.isEvaluation()) {
-                    when(event.dayOfWeek) {
-                        DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
-                        DayOfWeek.TUESDAY   -> { results[DayOfWeek.TUESDAY]?.add(event) }
-                        DayOfWeek.WEDNESDAY -> { results[DayOfWeek.WEDNESDAY]?.add(event) }
-                        DayOfWeek.THURSDAY  -> { results[DayOfWeek.THURSDAY]?.add(event) }
-                        DayOfWeek.FRIDAY    -> { results[DayOfWeek.FRIDAY]?.add(event) }
-                        else -> { Logf("[DataMaster] WARNING: unknown day for this event: %s", event) } // ignored
+        try {
+            this.ramosLock.lock()
+            this.user_ramos.forEach { ramo :Ramo ->
+                this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
+                    if (! event.isEvaluation()) {
+                        when(event.dayOfWeek) {
+                            DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
+                            DayOfWeek.TUESDAY   -> { results[DayOfWeek.TUESDAY]?.add(event) }
+                            DayOfWeek.WEDNESDAY -> { results[DayOfWeek.WEDNESDAY]?.add(event) }
+                            DayOfWeek.THURSDAY  -> { results[DayOfWeek.THURSDAY]?.add(event) }
+                            DayOfWeek.FRIDAY    -> { results[DayOfWeek.FRIDAY]?.add(event) }
+                            else -> { Logf("[DataMaster] WARNING: unknown day for this event: %s", event) } // ignored
+                        }
                     }
                 }
             }
+        } finally {
+            this.ramosLock.unlock()
         }
+
         return results
     }
 }

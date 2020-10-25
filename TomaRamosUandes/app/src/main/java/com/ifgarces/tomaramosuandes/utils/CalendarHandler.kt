@@ -1,13 +1,16 @@
 package com.ifgarces.tomaramosuandes.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
-import android.provider.CalendarContract.Events
+import android.provider.CalendarContract
 import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import com.ifgarces.tomaramosuandes.DataMaster
@@ -29,7 +32,52 @@ import java.util.TimeZone
  */
 object CalendarHandler {
 
-    private const val TARGET_CALENDAR_ID :Int = 0 // TODO: make sure this calendar ID will always work
+    private const val TARGET_CALENDAR_ID :Int = 1 // TODO: get user default calendar ID, or ask it, somehow
+
+    /**
+     * Represents a calendar of the user's device.
+     * @property ID Calendar ID or index.
+     * @property name Calendar name.
+     */
+    private data class UserCalendar(
+        val ID   :Int,
+        val name :String
+    )
+
+    /**
+     * Gets the list of all calendars of the user.
+     */
+    @SuppressLint("MissingPermission")
+    private fun getUserCalendars(context :Context) : List<UserCalendar> { // references: https://stackoverflow.com/a/49878686/12684271
+        val results :MutableList<UserCalendar> = mutableListOf()
+
+        val EVENT_PROJECTION = arrayOf(
+            CalendarContract.Calendars._ID,
+            CalendarContract.Calendars.NAME
+        )
+
+        val cr: ContentResolver = context.contentResolver
+        val uri :Uri = CalendarContract.Calendars.CONTENT_URI
+        val cur :Cursor = cr.query(uri, EVENT_PROJECTION, null, null, null)!!
+
+        while (cur.moveToNext()) {
+            results.add(
+                UserCalendar(
+                    ID = cur.getInt(cur.getColumnIndex(CalendarContract.Calendars._ID)),
+                    name = cur.getString(cur.getColumnIndex(CalendarContract.Calendars.NAME))
+                )
+            )
+        }
+        cur.close()
+        return results
+    }
+
+    /**
+     * Asks the user for which calendar they want to add the `RamoEvent`s.
+     */
+    private fun userSelectCalendar() {
+
+    }
 
     /**
      * Exports all of the `RamoEvents` for the inscribed `Ramo` collection to the user's default calendar.
@@ -39,10 +87,13 @@ object CalendarHandler {
      *  - Start time-date: given by `RamoEvent.startDate` and `RamoEvent.startTime`.
      *  - End time-date: same but with the end.
      */
-    fun exportEventsToCalendar(activity :Activity) {
-        val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
-
+    public fun exportEventsToCalendar(activity :Activity) {
         this.checkPermissions(activity)
+
+        Logf("[CalendarHandler] Got this calendars: %s", this.getUserCalendars(context=activity))
+        return
+
+        val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
 
         Logf("[CalendarHandler] This is temporal. User ramos:\n%s", DataMaster.getUserRamos())
 
@@ -56,20 +107,20 @@ object CalendarHandler {
         evaluations.forEach { event :RamoEvent ->
             Logf("[CalendarHandler] Exporting %s", event)
             e = ContentValues()
-            e.put(Events.CALENDAR_ID, this.TARGET_CALENDAR_ID)
-            e.put(Events.TITLE, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
-            e.put(Events.DESCRIPTION, event.toLargeString().replace("\n", ";"))
+            e.put(CalendarContract.Events.CALENDAR_ID, this.TARGET_CALENDAR_ID)
+            e.put(CalendarContract.Events.TITLE, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
+            e.put(CalendarContract.Events.DESCRIPTION, event.toLargeString().replace("\n", ";"))
 
             zoneAux = LocalDateTime.of(event.date!!, event.startTime) // we are exporting evaluations, whose date are always assigned, do not worry about NullPointerException
                 .atZone(ZoneId.of("America/Santiago"))
-            e.put(Events.DTSTART, zoneAux.toInstant().toEpochMilli())
+            e.put(CalendarContract.Events.DTSTART, zoneAux.toInstant().toEpochMilli())
             zoneAux = LocalDateTime.of(event.date!!, event.endTime)
                 .atZone(ZoneId.of("America/Santiago"))
-            e.put(Events.DTEND, zoneAux.toInstant().toEpochMilli())
+            e.put(CalendarContract.Events.DTEND, zoneAux.toInstant().toEpochMilli())
 
-            e.put(Events.ALL_DAY, 0) // 0: false, 1: true
-            e.put(Events.HAS_ALARM, 0)
-            e.put(Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
+            e.put(CalendarContract.Events.ALL_DAY, 0) // 0: false, 1: true
+            e.put(CalendarContract.Events.HAS_ALARM, 0)
+            e.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
 
             result = activity.contentResolver.insert(baseUri, e)
             if (result == null) {
@@ -98,8 +149,9 @@ object CalendarHandler {
 
     private fun checkPermissions(activity :Activity) {
         Logf("[CalendarHandler] Checking permissions...")
-        while ( ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR)
-            != PackageManager.PERMISSION_GRANTED ) {
+        while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
+        ) {
             this.askPermissions(activity)
         }
         Logf("[CalendarHandler] Calendar permissios granted.")

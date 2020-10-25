@@ -66,7 +66,7 @@ class AgendaPortraitActivity : AppCompatActivity() {
 
         UI.loadScreen.visibility = View.GONE
 
-        AsyncTask.execute {
+//        AsyncTask.execute {
             val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
 
             this.runOnUiThread {
@@ -86,7 +86,7 @@ class AgendaPortraitActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
+//        }
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {

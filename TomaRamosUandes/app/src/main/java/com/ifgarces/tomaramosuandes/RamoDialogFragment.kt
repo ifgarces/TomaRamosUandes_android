@@ -169,7 +169,9 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         Companion.dismissAction.invoke()
     }
 
-    /* Attemps to inscribe the chosen `Ramo`. If conflict, prompts confirmation dialog. */
+    /**
+     * Attemps to inscribe `ramo`. If conflict, prompts confirmation dialog.
+     */
     private fun actionInscribe(ramo :Ramo) {
         DataMaster.inscribeRamo(
             ramo = ramo,
@@ -180,7 +182,9 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         )
     }
 
-    /* Removes `ramo` from user's inscribed list. */
+    /**
+     * Removes `ramo` from user's inscribed list.
+     */
     private fun actionUnInscribe(ramo :Ramo) {
         this.context!!.yesNoDialog(
             title = "Borrar ramo",

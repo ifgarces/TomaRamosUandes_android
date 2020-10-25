@@ -130,11 +130,11 @@ fun Context.yesNoDialog(
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
-        .setPositiveButton(android.R.string.yes) { dialog :DialogInterface, _ :Int ->
+        .setPositiveButton("Sí") { dialog :DialogInterface, _ :Int ->
             onYesClicked.invoke()
             dialog.dismiss()
         }
-        .setNegativeButton(android.R.string.no) { dialog :DialogInterface, _ :Int ->
+        .setNegativeButton("No") { dialog :DialogInterface, _ :Int ->
             onNoClicked.invoke()
             dialog.dismiss()
         }
