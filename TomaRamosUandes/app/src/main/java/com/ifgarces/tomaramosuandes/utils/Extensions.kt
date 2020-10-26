@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.ifgarces.tomaramosuandes.R
 import java.util.Locale
 
 
@@ -98,7 +99,7 @@ fun Context.infoDialog(
     onDismiss  :() -> Unit = {},
     icon       :Int? = null // resource reference
 ) {
-    val diag :AlertDialog.Builder = AlertDialog.Builder(this)
+    val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
@@ -127,7 +128,7 @@ fun Context.yesNoDialog(
     onNoClicked   :() -> Unit = {},
     icon          :Int? = null // resource reference
 ) {
-    val diag :AlertDialog.Builder = AlertDialog.Builder(this)
+    val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)

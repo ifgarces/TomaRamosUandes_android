@@ -155,7 +155,7 @@ class HomeActivity : AppCompatActivity() {
 
         // TODO: insert link to clear demo video in HTML
 
-        val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(this)
+        val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
             .setCancelable(true)
             .setPositiveButton(android.R.string.ok) { dialog :DialogInterface, _ :Int ->
                 dialog.dismiss()

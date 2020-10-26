@@ -82,7 +82,7 @@ object CalendarHandler {
         activity       :Activity,
         onItemSelected :(calendarID :Int, calendarName :String) -> Unit,
         onError        :() -> Unit
-    ) { // references: https://stackoverflow.com/a/43532478/12684271
+    ) {
         val userCalendars :List<UserCalendar> = this.getUserCalendars(activity)
         Logf("[CalendarHandler] Calendars in device: %s", userCalendars)
         val selectables :MutableList<String> = mutableListOf()
@@ -90,11 +90,10 @@ object CalendarHandler {
             selectables.add(it.name)
         }
 
-        val diag :AlertDialog.Builder = AlertDialog.Builder(activity)
+        val diag :AlertDialog.Builder = AlertDialog.Builder(activity) // references: https://stackoverflow.com/a/43532478/12684271
             .setTitle("Seleccione calendario")
             .setCancelable(true)
             .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
-                // adding one to `which` since calendar IDs start from one, and list indexes start from 0
                 val cal :UserCalendar? = userCalendars[which]
                 Logf("[CalendarHandler] User has selected %s (index: %d)", cal, which)
                 if (cal == null) {

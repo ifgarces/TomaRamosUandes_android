@@ -161,7 +161,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                 UI.toggleFullScreenButton.visibility = View.GONE
                 UI.toggleFullScreenButton.postDelayed({
                     UI.toggleFullScreenButton.visibility = View.VISIBLE
-                }, this.ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this extra delay causes a nice translation animation, besides the fade in, for this button
+                }, this.ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this tiny extra delay causes a nice translation animation, besides the fade in, for this button
             }
             if (UI.saveAsImgButton.visibility == View.VISIBLE) {
                 UI.saveAsImgButton.visibility = View.GONE
@@ -237,7 +237,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         }
 
         /* Displays the non-evaluation events for each user inscribed `Ramo` in the agenda */
-        public fun buildAgenda(activity : Activity) {
+        public fun buildAgenda(activity :Activity) {
             Logf("[AgendaLandscapeActivity] Building agenda...")
 
             /* initializing */
@@ -303,8 +303,8 @@ class AgendaLandscapeActivity : AppCompatActivity() {
             }
         }
 
-        private val supportedHours_start :List<Int> = (8 until 21+1).toList() // [8, 21]
-        private val supportedHours_end :List<Int> = (9 until 22).toList() // [9, 22]
+        private val supportedHours_start :List<Int> = (8..21).toList() // [8, 21]
+        private val supportedHours_end :List<Int> = (9..22).toList() // [9, 22]
         private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) : Pair<Int, Int>? {
             var rowStart :Int = this.supportedHours_start.indexOf(start.hour)
             var rowEnd   :Int = this.supportedHours_end.indexOf(end.hour)+1

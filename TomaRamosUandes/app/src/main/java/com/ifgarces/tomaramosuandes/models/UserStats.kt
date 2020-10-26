@@ -4,12 +4,20 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-// Note: this class constructor is only called when there's no Room local database and therefore the first run of the app.
+/**
+ * Contains information related to usage of this app by the user.
+ * Note: the constructor for this single-instance class is only called when there's no Room local
+ * database and therefore the first run of the app.
+ * @property ID Primary key.
+ * @property firstRunOfApp Indicates if the app is at its first run.
+ * @property jokeExecuted Will turn true when the joke dialog of `EasterEggs` is shown. Will prevent
+ * it from being shown ever again.
+ */
 @Entity(tableName=UserStats.TABLE_NAME)
 data class UserStats(
     @PrimaryKey(autoGenerate=false) val ID :Int = 0,
-    var firstRunOfApp :Boolean = true, // indicates if the app is at its first run. TODO: make this useful, for example, in 'Do not show again' options for dialogs.
-    var jokeExecuted  :Boolean = false // will turn true when the joke dialog is shown. Will prevent it from being shown ever again.
+    var firstRunOfApp :Boolean = true,
+    var jokeExecuted  :Boolean = false
 ) {
     companion object {
         const val TABLE_NAME :String = "user_stats"
