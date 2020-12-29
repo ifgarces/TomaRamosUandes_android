@@ -14,18 +14,18 @@ import com.ifgarces.tomaramosuandes.R
 import java.util.Locale
 
 
-const val DEBUG_MODE :Boolean = true // <- turning to false during tests and release. Needed because somehow the damn tests don't support functions that write to the Log.
+const val DEBUG_MODE :Boolean = true // <- turn it to false during tests (and release). Needed because somehow the damn tests don't support functions that write to the Log.
 const val LOG_TAG    :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
 
 /**
- * Toast + sprintf.
+ * Toast + format.
  */
 fun Context.toastf(format :String, vararg args :Any?) {
     Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
 }
 
 /**
- * Debug log + sprintf. All log under the same tag stored at `LOG_TAG` constant. This function
+ * Debug log + format. All log under the same tag stored at `LOG_TAG` constant. This function
  * is not an actual extension, but I still place it here. We will tell nobody.
  */
 fun Logf(format :String, vararg args :Any?) {

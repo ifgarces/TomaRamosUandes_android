@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
@@ -17,6 +18,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.EasterEggs
 import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.WebManager
 
 
 class HomeActivity : AppCompatActivity() {
@@ -94,6 +96,10 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_home)
         UI.init(owner=this)
+
+        AsyncTask.execute { // checking for updates here instead of MainAcivity, for simplicity
+            WebManager.init(activity=this)
+        }
 
         UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
         UI.ramosRecycler.adapter = CatalogRamosAdapter(

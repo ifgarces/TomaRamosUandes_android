@@ -35,12 +35,9 @@ class MainActivity : AppCompatActivity() {
             UI.loadScreen.visibility = View.VISIBLE
         }, this.PROGRESSBAR_SPAWN_TIMEOUT)
 
-        this.runOnUiThread {
-            WebManager.init(context=this)
-        }
         DataMaster.init(
             activity = this,
-            clearDatabase = false, // <- should be `false` on any release, don't forget!!
+            clearDatabase = false, // [!] should be `false` on any release, don't forget!!
             onSuccess = {
                 Logf("[MainActivity] DataMaster successfully initialized.")
                 this.startActivity(

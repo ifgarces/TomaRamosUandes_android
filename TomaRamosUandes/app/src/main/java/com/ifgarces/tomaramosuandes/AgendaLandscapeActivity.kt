@@ -185,7 +185,9 @@ class AgendaLandscapeActivity : AppCompatActivity() {
 
     private var isFullScreenOn :Boolean = false // says if the system UI is hidden (i.e. full screen mode is activated).
 
-    /* Switches between full screen and normal screen modes */
+    /**
+     * Switches between full screen and normal screen modes
+     */
     private fun toggleFullScreen() {
         if (this.isFullScreenOn) {
             this.exitFullScreen()
@@ -199,6 +201,9 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         isFullScreenOn = !isFullScreenOn
     }
 
+    /**
+     * Encapsulates the methods for agenda building.
+     */
     private object AgendaWorker {
         private val agendaData :MutableList<AgendaBlock> = mutableListOf()
 
@@ -213,7 +218,9 @@ class AgendaLandscapeActivity : AppCompatActivity() {
             return null
         }
 
-        /* Click listener for a block button */
+        /**
+         * Click listener for an agenda block button.
+         */
         public fun onBlockClicked(sender :Button, context : Context) {
             val blockEvents :MutableList<RamoEvent> = this.agendaData.findEventsOf(button = sender)!!
             if (blockEvents.count() == 0) { return }
@@ -236,7 +243,9 @@ class AgendaLandscapeActivity : AppCompatActivity() {
             )
         }
 
-        /* Displays the non-evaluation events for each user inscribed `Ramo` in the agenda */
+        /**
+         * Displays the non-evaluation events for each user inscribed `Ramo`s in the agenda
+         */
         public fun buildAgenda(activity :Activity) {
             Logf("[AgendaLandscapeActivity] Building agenda...")
 

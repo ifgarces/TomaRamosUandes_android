@@ -253,6 +253,7 @@ object DataMaster {
      */
     public fun unInscribeRamo(NRC :Int) {
         var eventCount :Int = 0
+
         this.getEventsOfRamo(
             ramo = this.findRamo(NRC=NRC, searchInUserList=true)!!,
             searchInUserList = true
@@ -269,12 +270,22 @@ object DataMaster {
 
         try {
             this.ramosLock.lock()
-            this.user_ramos.forEachIndexed { index :Int, ramo :Ramo ->
+            val ramoIterator :MutableIterator<Ramo> = this.user_ramos.iterator()
+            var ramo :Ramo
+            while (ramoIterator.hasNext()) {
+                ramo = ramoIterator.next()
                 if (ramo.NRC == NRC) {
-                    this.user_ramos.removeAt(index)
+                    ramoIterator.remove()
                     AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
+                    break
                 }
             }
+//            this.user_ramos.forEachIndexed { index :Int, ramo :Ramo ->
+//                if (ramo.NRC == NRC) {
+//                    this.user_ramos.removeAt(index)
+//                    AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
+//                }
+//            }
         } finally {
             this.ramosLock.unlock()
         }

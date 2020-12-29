@@ -22,7 +22,8 @@
             android:screenOrientation="landscape" />
         <activity android:name=".EvaluationsActivity" />
         <activity android:name=".CatalogActivity" />
-        <activity android:name=".AgendaPortraitActivity" />
+        <activity android:name=".AgendaPortraitActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HomeActivity"
             android:screenOrientation="portrait" />
