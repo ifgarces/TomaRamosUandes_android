@@ -160,9 +160,11 @@ object CSVWorker {
             }
 
             // getting day of week and time interval of the event
+            var dayAssigned :Boolean = false
             for ( column :Int in (csv_columns.LUNES .. csv_columns.VIERNES) ) {
                 stringAux = line[column].replace(" ", "")
                 if (stringAux != "") {
+                    dayAssigned = true
                     current.dayOfWeek = csv_columns.toDayOfWeek(column)!!
                     splitterAux = stringAux.split(TIME_SEPARATOR)
                     if (splitterAux.count() != 2) {
@@ -171,12 +173,8 @@ object CSVWorker {
                     }
 
                     try {
-                        current.startTime = LocalTime.parse(splitterAux[0],
-                            time_format
-                        )
-                        current.endTime = LocalTime.parse(splitterAux[1],
-                            time_format
-                        )
+                        current.startTime = LocalTime.parse(splitterAux[0], time_format)
+                        current.endTime = LocalTime.parse(splitterAux[1], time_format)
                     }
                     catch (e :DateTimeParseException) {
                         Logf("[CSVWorker] Error: time parsing exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
@@ -184,6 +182,11 @@ object CSVWorker {
                     }
                     break
                 }
+            }
+            if (! dayAssigned) { // this means there's a missing DayOfWeek and start-end times assignment in the CSV
+                Logf("[CSVWorker] Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'", lineNum+1, csv_lines[lineNum])
+                // in this case, just ignoring that row.
+                continue
             }
 
             current.eventType = line[csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
