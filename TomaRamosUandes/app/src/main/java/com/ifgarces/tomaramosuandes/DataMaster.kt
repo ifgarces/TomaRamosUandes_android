@@ -14,18 +14,14 @@ import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Handles the database.
- * @property catalog_ramos Contains the collection of available `Ramo` for the current period.
- * @property catalog_events Collection of available `RamoEvents`.
+ * @property catalog_ramos Collection of available `Ramo` for the current period.
+ * @property catalog_events Collection of available `RamoEvents` for the current period.
  * @property user_ramos Set of inscribed `Ramo` by the user.
  * @property user_events Set of inscribed `RamoEvent` by the user.
  * @property ramosLock Concurrency write lock for `user_ramos`.
+ * @property eventsLock Concurrency write lock for `user_events`.
  */
 object DataMaster {
-
-    // ----
-    // TODO: make 100% sure to manage write concurrency for `userRamos` variable
-    // ----
-
     private lateinit var localDB :LocalRoomDB
 
     @Volatile private lateinit var catalog_ramos  :List<Ramo>;      fun getCatalogRamos() = this.catalog_ramos
@@ -33,9 +29,9 @@ object DataMaster {
     private lateinit var user_stats               :UserStats;       fun getUserStats() = this.user_stats
 
     @Volatile private lateinit var user_ramos  :MutableList<Ramo>;      fun getUserRamos() = this.user_ramos
-    @Volatile private lateinit var user_events :MutableList<RamoEvent>; fun getUserEvents() = this.user_events
+    @Volatile private lateinit var user_events :MutableList<RamoEvent>//; fun getUserEvents() = this.user_events
 
-    private lateinit var ramosLock :ReentrantLock
+    private lateinit var ramosLock  :ReentrantLock
     private lateinit var eventsLock :ReentrantLock
 
     /**
@@ -43,7 +39,8 @@ object DataMaster {
      * @param clearDatabase If true, deletes the local Room database.
      * @param onSuccess Executed when successfully finished database initialization.
      * @param onInternetError Executed when the data file can't be fetched or its elements are invalid somehow.
-     * @param onRoomError Executed when it is not possible to load user's local Room database.
+     * @param onRoomError Executed when it is not possible to load user's local Room database (Room build error).
+     * This could happen when trying to load outdated `Ramo`s data from a previous app version (on database model change).
      */
     fun init(
         activity        :Activity,
@@ -75,16 +72,31 @@ object DataMaster {
                 val aux :Pair<List<Ramo>, List<RamoEvent>> = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
                 this.catalog_ramos = aux.first
                 this.catalog_events = aux.second
-                // TODO: manage excption inside last function from invalid data (no longer working on this verison). This indicates that the app is very outdated and can't get the catalog.
 
                 Logf("[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog_ramos.count())
 
                 if (clearDatabase) { // removing all data in memory and in local room database
-                    this.clean()
+                    this.clear()
                 }
 
                 this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
                 this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
+
+                if (this.isUserDataSyncedWithCatalog()) {
+                    Logf("[DataMaster] User inscribed ramos are not consistent with the current catalog.")
+                    activity.infoDialog(
+                        title = "Error de sincronización de ramos",
+                        message = """
+                            Se encontraron ramos tomados por ud. que son inconsistentes con el \
+                            catálogo vigente \
+                            Esto se debe a que el catálogo fue actualizado y algún ramo suyo fue \
+                            removido y modificado de alguna forma.
+                            Su conjunto de ramos tomados fue limpiado.
+                        """.multilineTrim()
+                    )
+                    this.clear()
+                }
+
                 with (this.localDB.userStatsDAO().getStats()) {
                     if (this.count() == 0) { // happens at first run of the app since installation
                         // TODO: check what happens on upgrade, i.e. when installing a newer version with the app already installed
@@ -99,9 +111,9 @@ object DataMaster {
                 }
                 Logf("[DataMaster] Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
 
-                if (this.user_ramos.count() > 0) {
-                    activity.runOnUiThread { activity.toastf("Se recuperó su conjunto de ramos tomados.") }
-                }
+                //if (this.user_ramos.count() > 0) {
+                //    activity.runOnUiThread { activity.toastf("Se recuperó su conjunto de ramos tomados.") }
+                //}
 
                 onSuccess.invoke()
             }
@@ -116,13 +128,51 @@ object DataMaster {
         }
     }
 
-    private fun clean() {
+    /**
+     * Wipes out all `Ramo` and `RamoEvent`s from the user inscribed data. This does not affect
+     * the catalog.
+     * Warning: the `UserStats` are also cleared!
+     */
+    public fun clear() {
         this.user_ramos.clear()
         this.user_events.clear()
         this.localDB.ramosDAO().clear()
         this.localDB.eventsDAO().clear()
         this.localDB.userStatsDAO().clear()
         Logf("[DataMaster] Local database cleaned.")
+    }
+
+    /**
+     * Returns `true` if the user inscribed `Ramo`s (and their `RamoEvent`s) are consistent with the
+     * catalog, i.e. all of them exist in the current catalog and there are no differences (due
+     * Uandes' SAF catalog updates). Returns `false` otherwise. This functions checks whitin
+     * `user_ramos` and `user_events`.
+     * Warning: time execution will grow explosively with lenght of `catalog_ramos` and `catalog_events`.
+     */
+    private fun isUserDataSyncedWithCatalog() : Boolean {
+        // TODO: check if this extra heavy time consuming function worths it.
+
+        Logf("[DataMaster] Checking wether user ramos is consistent with catalog...")
+        var failure :Boolean
+        this.catalog_ramos.forEach { catalogRamo :Ramo ->
+            failure = true
+            this.user_ramos.forEach { userRamo :Ramo ->
+                if (userRamo == catalogRamo) {
+                    failure = false
+                }
+            }
+            if (failure) return false
+        }
+        this.catalog_events.forEach { catalogEvent :RamoEvent ->
+            failure = true
+            this.user_events.forEach { userEvent :RamoEvent ->
+                if (userEvent == catalogEvent) {
+                    failure = false
+                }
+            }
+            if (failure) return false
+        }
+        return true
     }
 
     /**

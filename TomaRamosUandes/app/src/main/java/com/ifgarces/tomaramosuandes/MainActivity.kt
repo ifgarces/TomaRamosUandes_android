@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity() {
                     this.infoDialog(
                         title = "Error al obtener catálogo",
                         message = """No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
-                            Revise su conexión a internet e intente más tarde.""".multilineTrim(),
+                            Revise su conexión a internet. Si el error persiste, prueba descargando la app \
+                            nuevamente en ${WebManager.MAIN_APP_URL}""".multilineTrim(),
                         onDismiss = {
                             this.finish()
                         },
@@ -62,11 +63,12 @@ class MainActivity : AppCompatActivity() {
                     this.infoDialog(
                         title = "Error",
                         message = """
-                            Se encontraron datos de ramos guardados por el usuario, pero no se pudieron cargar. \
+                            Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
                             Los datos están dañados o no compatibles con esta versión del programa.
                             """.multilineTrim(),
                         onDismiss = {
-                            // TODO: clear user data?
+                            Logf("[MainActivity] Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app.")
+                            DataMaster.clear()
                         },
                         icon = R.drawable.alert_icon
                     )

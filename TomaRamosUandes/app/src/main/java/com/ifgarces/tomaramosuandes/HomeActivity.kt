@@ -159,11 +159,15 @@ class HomeActivity : AppCompatActivity() {
      */
     private fun showHelp() {
 
-        // TODO: insert link to clear demo video in HTML
+        // TODO: insert link of a clear demo video
 
         val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
             .setCancelable(true)
-            .setPositiveButton(android.R.string.ok) { dialog :DialogInterface, _ :Int ->
+            .setPositiveButton("Cerrar") { dialog :DialogInterface, _ :Int ->
+                dialog.dismiss()
+            }
+            .setNegativeButton("Saber más") { dialog :DialogInterface, _ :Int ->
+                WebManager.openAppUrl(activity=this)
                 dialog.dismiss()
             }
         val diagView :View = this.layoutInflater.inflate(R.layout.about_and_help_dialog, null)

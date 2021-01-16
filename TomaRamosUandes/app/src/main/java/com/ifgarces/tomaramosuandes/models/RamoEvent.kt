@@ -18,7 +18,8 @@ import java.time.LocalTime
  * @property dayOfWeek Day it takes place, when it is weekly repetitive, like a class.
  * @property startTime Starting time (block start).
  * @property endTime Finish time (block end).
- * @property date This will be not null only when the date makes sense depending on the type (test or exam).
+ * @property date This will be not null only when the date makes sense depending on the type: will be
+ * non-null only for evaluations (tests and exams).
  */
 @Entity(tableName=RamoEvent.TABLE_NAME)
 data class RamoEvent(

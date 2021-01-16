@@ -65,7 +65,7 @@ class CatalogActivity : AppCompatActivity() {
             title = "Ayuda - Catálogo de ramos",
             message = """
                 Presione un ramo para ver detalles y eventualmente tomarlo. Los ramos con fondo azul
-                son los que ud. ya ha tomado. Puede usar la caja de búsqueda para buscar ramos por nombre.
+                son los que ud. ya ha tomado. Puede usar la caja de búsqueda para filtrar ramos por nombre.
             """.multilineTrim()
         )
         // TODO: video or animation showing fast-scroll using scrollbar.

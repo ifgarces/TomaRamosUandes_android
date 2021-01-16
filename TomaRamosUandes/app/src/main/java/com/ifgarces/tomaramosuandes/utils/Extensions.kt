@@ -41,15 +41,17 @@ fun String.spanishLowerCase() : String {
 }
 
 /**
- * For large block literal strings. Makes possible to continue a line with "\\" character, ignoring extra whitespaces.
+ * For large block literal strings. Makes possible to continue a line with "\\" character, ignoring
+ * extra whitespaces.
  */
 fun String.multilineTrim() : String { // Note: does not ignore tabs "\t".
-    val NEWLINE_MARKER :String = "+++|♣♦♠♥|+++"
+    val newline_internal_marker :String = "+++|♣♦♠♥|+++"
     return this
-        .replace("\\\n", NEWLINE_MARKER) // avoiding intentioned newlines to be erased on next replace
+        .replace("\\\n", newline_internal_marker) // avoiding intentioned newlines to be erased on next replace
         .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
-        .replace(NEWLINE_MARKER, "\n") // recovering intentioned newlines
+        .replace(newline_internal_marker, "\n") // recovering intentioned newlines
         .trim()
+        .replace("\n ", "\n") // <- TODO: improve this dumb solution. Do testing.
 }
 
 /**
@@ -87,7 +89,7 @@ fun EditText.onTextChangedListener(action : (text :String) -> Unit) {
 }
 
 /**
- * Simple dialog that shows some information.
+ * Simple `AlertDialog` that shows text information.
  * @param title Dialog title.
  * @param message Dialog body.
  * @param onDismiss Executes this when it is dismissed by the user.
@@ -114,7 +116,7 @@ fun Context.infoDialog(
 }
 
 /**
- * Dialog with yes/no buttons.
+ * `AlertDialog` with yes/no buttons.
  * @param title Dialog title.
  * @param message Dialog body.
  * @param onYesClicked Action to be performed when the user presses the possitive button.
@@ -147,7 +149,7 @@ fun Context.yesNoDialog(
 }
 
 /**
- * Enters 'inmersive mode', hiding system UI elements (navigation and notification bars) and expanding
+ * Enters "inmersive mode", hiding system UI elements (navigation and notification bars) and expanding
  * the app to fill all of the screen.
  */
 fun Activity.enterFullScreen() { // references: https://developer.android.com/training/system-ui/immersive

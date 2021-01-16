@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default light theme colors -->
-    <color name="colorPrimary">#FFAB00</color>
+    <color name="colorPrimary">#FFA200</color>
     <color name="colorPrimaryDark">#979797</color>
     <color name="colorAccent">#00AAD4</color>
 
-    <!-- OS' night/dark theme colors -->
+    <!-- Night/dark theme colors -->
     <color name="nightColorPrimary">#E49900</color>
     <color name="nightColorPrimaryDark">#808080</color>
     <color name="nightColorAccent">#0C8EAE</color>
