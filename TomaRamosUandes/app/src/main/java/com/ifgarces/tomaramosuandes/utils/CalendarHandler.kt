@@ -58,13 +58,19 @@ object CalendarHandler {
             null
         )!!
 
+        var cal :UserCalendar
+
         while (cur.moveToNext()) {
-            results.add(
-                UserCalendar(
+            try {
+                cal = UserCalendar(
                     ID = cur.getInt(cur.getColumnIndex(CalendarContract.Calendars._ID)),
                     name = cur.getString(cur.getColumnIndex(CalendarContract.Calendars.NAME))
                 )
-            )
+                results.add(cal)
+            }
+            catch (e :NullPointerException) {
+                Logf("[CalendarHandles] Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s", cur.position ,e)
+            }
         }
         cur.close()
         return results
