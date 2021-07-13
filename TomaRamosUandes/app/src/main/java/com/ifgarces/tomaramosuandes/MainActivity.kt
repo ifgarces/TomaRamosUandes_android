@@ -16,24 +16,23 @@ class MainActivity : AppCompatActivity() {
 
     private val PROGRESSBAR_SPAWN_TIMEOUT :Long = 2*1000
 
-    private object UI {
-        lateinit var loadScreen :View
-
-        fun init(owner :AppCompatActivity) {
-            this.loadScreen = owner.findViewById(R.id.main_loadScreen)
-        }
-    }
+    private class ActivityUI(owner :AppCompatActivity) {
+        val loadScreen :View = owner.findViewById(R.id.main_loadScreen)
+    }; private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
-        UI.init(owner=this)
+        this.UI = ActivityUI(owner=this)
 
         UI.loadScreen.visibility = View.GONE
 
-        UI.loadScreen.postDelayed({ // couldn't do this with runOnUiThread + sleep, for some reason
-            UI.loadScreen.visibility = View.VISIBLE
-        }, this.PROGRESSBAR_SPAWN_TIMEOUT)
+        Thread { // ActivityUI.loadScreen.postDelayed({ ...
+            Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT)
+            this.runOnUiThread {
+                UI.loadScreen.visibility = View.VISIBLE
+            }
+        }.start()
 
         DataMaster.init(
             activity = this,

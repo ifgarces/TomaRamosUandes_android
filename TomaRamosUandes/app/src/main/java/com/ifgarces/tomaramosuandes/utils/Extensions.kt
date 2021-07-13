@@ -18,7 +18,7 @@ const val DEBUG_MODE :Boolean = true // <- turn it to false during tests (and re
 const val LOG_TAG    :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
 
 /**
- * Toast + format.
+ * Quick toast + format.
  */
 fun Context.toastf(format :String, vararg args :Any?) {
     Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
@@ -92,7 +92,7 @@ fun EditText.onTextChangedListener(action : (text :String) -> Unit) {
  * Simple `AlertDialog` that shows text information.
  * @param title Dialog title.
  * @param message Dialog body.
- * @param onDismiss Executes this when it is dismissed by the user.
+ * @param onDismiss Callback executed when the dialog is dismissed by the user.
  * @param icon Dialog icon, placed to the left of the title. Must be a drawable resource ID.
  */
 fun Context.infoDialog(
@@ -119,8 +119,8 @@ fun Context.infoDialog(
  * `AlertDialog` with yes/no buttons.
  * @param title Dialog title.
  * @param message Dialog body.
- * @param onYesClicked Action to be performed when the user presses the possitive button.
- * @param onNoClicked Action to be performed when the user presses the negative button.
+ * @param onYesClicked Callback executed when the user presses the possitive button.
+ * @param onNoClicked Callback executed when the user presses the negative button.
  * @param icon Dialog icon, placed to the left of the title. Must be a drawable resource ID.
  */
 fun Context.yesNoDialog(

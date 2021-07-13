@@ -20,10 +20,10 @@ interface RamoDAO {
     fun update(ramo :Ramo)
 
     @Query(value="SELECT * FROM ${Ramo.TABLE_NAME}")
-    fun getAllRamos() : List<Ramo>
+    fun getAllRamos() :List<Ramo>
 
     @Query(value="SELECT * FROM ${Ramo.TABLE_NAME} WHERE NRC=:nrc")
-    fun getRamo(nrc :Int) : Ramo
+    fun getRamo(nrc :Int) :Ramo
 
     @Query(value="DELETE FROM ${Ramo.TABLE_NAME} WHERE NRC=:nrc")
     fun deleteRamo(nrc :Int)

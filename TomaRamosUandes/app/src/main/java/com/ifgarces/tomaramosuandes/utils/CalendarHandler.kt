@@ -58,15 +58,14 @@ object CalendarHandler {
             null
         )!!
 
-        var cal :UserCalendar
-
         while (cur.moveToNext()) {
             try {
-                cal = UserCalendar(
-                    ID = cur.getInt(cur.getColumnIndex(CalendarContract.Calendars._ID)),
-                    name = cur.getString(cur.getColumnIndex(CalendarContract.Calendars.NAME))
+                results.add(
+                    UserCalendar(
+                        ID = cur.getInt(cur.getColumnIndex(CalendarContract.Calendars._ID)),
+                        name = cur.getString(cur.getColumnIndex(CalendarContract.Calendars.NAME))
+                    )
                 )
-                results.add(cal)
             }
             catch (e :NullPointerException) {
                 Logf("[CalendarHandles] Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s", cur.position ,e)
@@ -200,6 +199,7 @@ object CalendarHandler {
             || ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
         ) {
             this.askPermissions(activity)
+            // TODO: add a small wait here, because if user hasn't set permisions yet, it seems to be a busy cycle until they decide to grant the permission
         }
         Logf("[CalendarHandler] Calendar permissios granted.")
     }

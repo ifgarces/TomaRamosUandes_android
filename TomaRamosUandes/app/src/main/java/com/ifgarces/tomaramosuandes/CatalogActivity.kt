@@ -43,6 +43,7 @@ class CatalogActivity : AppCompatActivity() {
         UI.searchBox.onTextChangedListener {
             if (it.length > 2) { this.applySearch(searchText=it) }
         }
+        UI.topBar.subtitle = WebManager.catalogPeriodName
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {

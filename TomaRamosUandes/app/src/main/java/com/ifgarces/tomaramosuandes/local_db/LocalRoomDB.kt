@@ -11,7 +11,7 @@ import com.ifgarces.tomaramosuandes.models.UserStats
 @Database(entities=[Ramo::class, RamoEvent::class, UserStats::class], version=1, exportSchema=false)
 @TypeConverters(RoomConverter_DayOfWeek::class, RoomConverter_LocalDate::class, RoomConverter_LocalTime::class)
 abstract class LocalRoomDB : RoomDatabase() {
-    abstract fun ramosDAO()     : RamoDAO
-    abstract fun eventsDAO()    : RamoEventDAO
-    abstract fun userStatsDAO() : UserStatsDAO
+    abstract fun ramosDAO()     :RamoDAO
+    abstract fun eventsDAO()    :RamoEventDAO
+    abstract fun userStatsDAO() :UserStatsDAO
 }
