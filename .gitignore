@@ -1,7 +1,3 @@
-# Temporal files used to commit quickly to Git, etc.
-commit*.bat
-commit_message.txt
-
 # Built application files
 *.apk
 *.aar

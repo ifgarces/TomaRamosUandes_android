@@ -16,22 +16,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
-import com.ifgarces.tomaramosuandes.utils.EasterEggs
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 
 
 class HomeActivity : AppCompatActivity() {
 
-    object RecyclerSync { // allows to update the recycler from another activity/fragment
-        // TODO: make sure this `RecyclerSync` is the right approach
+    /**
+     * Dummy solution for updating the recycler from another view.
+     */
+    object RecyclerSync {
         private var updatePending :Boolean = false
         private fun notifyAdapter() = UI.ramosRecycler.adapter!!.notifyDataSetChanged()
         public fun requestUpdate() {
             try {
                 this.notifyAdapter()
             }
-            catch (e :NullPointerException) { //
+            catch (e :NullPointerException) {
                 Logf("[HomeActivity] RecyclerSync: recycler update queued")
                 this.updatePending = true // update is queued and will be executed when this activity starts again
                 return
@@ -119,9 +120,6 @@ class HomeActivity : AppCompatActivity() {
         UI.catalogButton.setOnClickListener { this.launchCatalogView() }
         UI.agendaButton.setOnClickListener { this.launchAgendaView() }
         UI.evaluationsButton.setOnClickListener { this.launchEvaluationsView() }
-
-        // handling joke dialog
-        EasterEggs.handleJokeDialog(context=this)
     }
 
     override fun onResume() {

@@ -3,6 +3,12 @@ package com.ifgarces.tomaramosuandes
 import android.app.Activity
 import android.os.AsyncTask
 import androidx.room.Room
+import com.ifgarces.tomaramosuandes.DataMaster.catalog_events
+import com.ifgarces.tomaramosuandes.DataMaster.catalog_ramos
+import com.ifgarces.tomaramosuandes.DataMaster.eventsLock
+import com.ifgarces.tomaramosuandes.DataMaster.ramosLock
+import com.ifgarces.tomaramosuandes.DataMaster.user_events
+import com.ifgarces.tomaramosuandes.DataMaster.user_ramos
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
@@ -13,7 +19,8 @@ import java.util.concurrent.locks.ReentrantLock
 
 
 /**
- * Handles the database.
+ * Handles the database. This is like the controller in the MVC model. I'm too lazy to use
+ * ViewModels instead.
  * @property catalog_ramos Collection of available `Ramo` for the current period.
  * @property catalog_events Collection of available `RamoEvents` for the current period.
  * @property user_ramos Set of inscribed `Ramo` by the user.
@@ -35,18 +42,24 @@ object DataMaster {
     private lateinit var eventsLock :ReentrantLock
 
     /**
-     * Fetches the `catalog` from a the internet, calling `WebManager`.
-     * @param clearDatabase If true, deletes the local Room database.
+     * Fetches the catalog from a the internet, calling `WebManager` and processes it.
+     * @param clearDatabase If true, deletes the local Room database. Must be always false on any
+     * serious build.
      * @param onSuccess Executed when successfully finished database initialization.
-     * @param onInternetError Executed when the data file can't be fetched or its elements are invalid somehow.
-     * @param onRoomError Executed when it is not possible to load user's local Room database (Room build error).
-     * This could happen when trying to load outdated `Ramo`s data from a previous app version (on database model change).
+     * @param onInternetError Executed when the data file can't be fetched or its elements are
+     * invalid somehow.
+     * @param onCsvParseError Callback executed when there's an incompatibility of the CSV online
+     * data for this app version. May happen when the CSV scheme changes on a new version.
+     * @param onRoomError Callback executed when it is not possible to load user's local Room
+     * database (Room build error). This could happen when trying to load outdated `Ramo`s data from
+     * a previous app version (on database model change).
      */
     fun init(
         activity        :Activity,
         clearDatabase   :Boolean,
         onSuccess       :() -> Unit,
         onInternetError :() -> Unit,
+        onCsvParseError :() -> Unit,
         onRoomError     :() -> Unit
     ) {
         this.catalog_ramos = listOf()
@@ -69,7 +82,7 @@ object DataMaster {
                 val csv_body :String = WebManager.fetchCatalogCSV()
 
                 Logf("[DataMaster] Parsing CSV...")
-                val aux :Pair<List<Ramo>, List<RamoEvent>> = CSVWorker.parseCSV(csv_lines=csv_body.split("\n"))!!
+                val aux :Pair<List<Ramo>, List<RamoEvent>> = CsvHandler.parseCSV(csv_lines=csv_body.split("\n"))!!
                 this.catalog_ramos = aux.first
                 this.catalog_events = aux.second
 
@@ -123,7 +136,7 @@ object DataMaster {
             }
             catch (e :NullPointerException) {
                 Logf("[DataMaster] Invalid online CSV data (for this app version).")
-                onInternetError.invoke()
+                onCsvParseError.invoke()
             }
         }
     }
@@ -192,17 +205,6 @@ object DataMaster {
             this.user_events.filter { it.ramoNRC == ramo.NRC }
         } else {
             this.catalog_events.filter { it.ramoNRC == ramo.NRC }
-        }
-    }
-
-    /**
-     * Will be called when the joke dialog of `EasterEggs` is executed. It is a way to inform it to
-     * `DataMaster` and its Room local database.
-     */
-    public fun jokeDialogWasExecuted() {
-        AsyncTask.execute {
-            this.user_stats.jokeExecuted = true
-            this.localDB.userStatsDAO().update(this.user_stats)
         }
     }
 

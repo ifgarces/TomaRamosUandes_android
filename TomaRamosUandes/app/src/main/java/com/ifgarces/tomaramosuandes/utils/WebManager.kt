@@ -4,6 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.utils.WebManager.APK_DOWNLOAD_URL
+import com.ifgarces.tomaramosuandes.utils.WebManager.APP_LATEST_VERSION_URL
+import com.ifgarces.tomaramosuandes.utils.WebManager.USER_APP_URL
+import com.ifgarces.tomaramosuandes.utils.WebManager.ONLINE_CSV_URL
+import com.ifgarces.tomaramosuandes.utils.WebManager.catalogPeriodName
 import java.net.URL
 import java.net.UnknownHostException
 
@@ -15,7 +20,7 @@ import java.net.UnknownHostException
  * (direct link to TXT file).
  * @property APK_DOWNLOAD_URL Used to download the latest app itself (direct link to APK file).
  * @property ONLINE_CSV_URL Used to fetch the catalog data for this period (direct link to CSV file).
- * @property MAIN_APP_URL The main user link of this project, where general information and latest
+ * @property USER_APP_URL The main user link of this project, where general information and latest
  * build are available.
  * @property catalogPeriodName Just an auxiliar variable for not to fetch the latest catalog
  * version every time the user inicializes `CatalogActivity`, for instance. Will be e.g. "2021-20".
@@ -27,7 +32,7 @@ object WebManager {
     private const val CATALOG_LATEST_VERSION_URL :String = "https://drive.google.com/uc?export=download&id=1-XkBsoSb4emf0pBq5i6w9zVXTWy0DsCa"
     private const val APK_DOWNLOAD_URL           :String = "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
     private const val ONLINE_CSV_URL             :String = "https://drive.google.com/uc?id=1Bo0MLop1YRdkOSwGsM1c7WOAtoiK7JP_&export=download"
-    public  const val MAIN_APP_URL               :String = "https://bit.ly/TomadorRamosUandes"
+    public  const val USER_APP_URL               :String = "https://bit.ly/TomadorRamosUandes"
 
     public lateinit var catalogPeriodName :String
 
@@ -52,7 +57,7 @@ object WebManager {
             activity.runOnUiThread {
                 activity.infoDialog(
                     title = "💀 Error de conexión a internet",
-                    message = "No se pudo conectar obtener información de los ramos actuales. Asegure su conexión a internet y reinicie la app.",
+                    message = "No se pudo obtener información de los ramos actuales. Asegure su conexión a internet y reinicie la app.",
                     onDismiss = {
                         activity.finishAffinity()
                     }
@@ -100,7 +105,7 @@ object WebManager {
      */
     public fun openAppUrl(activity :Activity) {
         activity.startActivity(
-            Intent(Intent.ACTION_VIEW, Uri.parse(this.MAIN_APP_URL))
+            Intent(Intent.ACTION_VIEW, Uri.parse(this.USER_APP_URL))
         )
     }
 

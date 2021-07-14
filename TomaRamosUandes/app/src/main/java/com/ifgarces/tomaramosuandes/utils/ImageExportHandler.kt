@@ -21,7 +21,7 @@ import java.io.OutputStream
 /**
  * Contains methods to export the agenda view (i.e. an UI element) as an image to external storage.
  */
-object ImageExporter {
+object ImageExportHandler {
     private const val IMG_SAVE_FOLDER :String = "Pictures/Horario" // folder name inside "Pictures" standard folder
     //private const val LANDSCAPE_AGENDA_IMG_WIDTH :Int = 40//2000f // agenda with (in dp) when it is exported as picture (so resulting image should be equivalent in any device)
 
@@ -97,11 +97,11 @@ object ImageExporter {
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Logf("[ImageExporter] Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
+            Logf("[ImageExportHandler] Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
             activity.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.IMG_SAVE_FOLDER)
         }
         catch (e :Exception) { // <==> IOException ??
-            Logf("[ImageExporter] Error: could not save agenda as image. %s", e)
+            Logf("[ImageExportHandler] Error: could not save agenda as image. %s", e)
             activity.infoDialog(
                 title = "Error",
                 message = "Ocurrió un error al guardar el horario como imagen. Intente nuevamente."
@@ -114,12 +114,12 @@ object ImageExporter {
      */
     private fun ensurePermissions(activity :Activity) {
         // TODO: fix this not working properly. Permission dialog-thing is never shown. Is this unnecessary???
-        Logf("[ImageExporter] Checking permissions...")
+        Logf("[ImageExportHandler] Checking permissions...")
         while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
             this.askPermissions(activity)
         }
-        Logf("[ImageExporter] Storage permissions granted.")
+        Logf("[ImageExportHandler] Storage permissions granted.")
     }
 
     private fun askPermissions(activity :Activity) {

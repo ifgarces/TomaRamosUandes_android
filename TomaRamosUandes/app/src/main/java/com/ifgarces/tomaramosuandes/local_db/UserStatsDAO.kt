@@ -1,10 +1,6 @@
 package com.ifgarces.tomaramosuandes.local_db
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Update
+import androidx.room.*
 import com.ifgarces.tomaramosuandes.models.UserStats
 
 

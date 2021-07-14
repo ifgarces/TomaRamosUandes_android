@@ -3,12 +3,16 @@ package com.ifgarces.tomaramosuandes.utils
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
+import com.ifgarces.tomaramosuandes.utils.CsvHandler.EXPLICIT_COMMA_MARKER
+import com.ifgarces.tomaramosuandes.utils.CsvHandler.TIME_SEPARATOR
+import com.ifgarces.tomaramosuandes.utils.CsvHandler.date_format
+import com.ifgarces.tomaramosuandes.utils.CsvHandler.time_format
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.Locale
+import java.util.*
 
 
 /**
@@ -18,14 +22,14 @@ import java.util.Locale
  * @property date_format The date format for the events given in the CSV.
  * @property time_format The time format for the events given in the CSV.
  */
-object CSVWorker {
+object CsvHandler {
     private const val EXPLICIT_COMMA_MARKER :String = ";;"
     private const val TIME_SEPARATOR :String = "-"
 
     private val date_format = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("ES", "ES"))
     private val time_format = DateTimeFormatter.ISO_TIME
 
-    /* Each line of the CSV file describes an event. These are the columns and their index: */
+    // Each line of the CSV file describes an event. These are the columns and their index:
     private val csv_columns = object {
         val PLAN_ESTUDIOS :Int = 0
         val NRC           :Int = 1
@@ -57,15 +61,15 @@ object CSVWorker {
             }
         }
     }
-    private val event_types = object {
-        val CLASE       :String = "OLIN"
+
+    private val event_types = object { //! This may vary on time
+        val CLASE       :String = "CLAS"
         val AYUDANTÍA   :String = "AYON"
         val LABORATORIO :String = "LBON"
         val TUTORIAL    :String = "TUTR"
         val PRUEBA      :String = "PRON"
         val EXAMEN      :String = "EXON"
     }
-
 
     /**
      * Converts the contents of the CSV (holding the period catalog) into a collection of `Ramo` and `RamoEvent`.
@@ -106,18 +110,18 @@ object CSVWorker {
                 current.NRC = line[csv_columns.NRC].toInt()
             }
             catch (e :NumberFormatException) {
-                Logf("[CSVWorker] Warning: NRC could not be parsed to integer at CSV line %d '%s'. %s. Assuming NRC assign is yet pending and assigning negative one.", lineNum+1, csv_lines[lineNum], e)
+                Logf("[CsvHandler] Warning: NRC could not be parsed to integer at CSV line %d '%s'. %s. Assuming NRC assign is yet pending and assigning negative one.", lineNum+1, csv_lines[lineNum], e)
                 current.NRC = -(badNRCsCount++)
             }
 //            catch (e :IndexOutOfBoundsException) {
-//                Logf("[CSVWorker] Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
+//                Logf("[CsvHandler] Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
 //            }
 
             try {
                 current.curso = line[csv_columns.CURSONUM].toInt()
             }
             catch (e :NumberFormatException) {
-                Logf("[CSVWorker] Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.", lineNum+1, csv_lines[lineNum], e)
+                Logf("[CsvHandler] Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.", lineNum+1, csv_lines[lineNum], e)
                 current.curso = 0
             }
 
@@ -153,7 +157,7 @@ object CSVWorker {
                     )
                 }
                 catch (e :NumberFormatException) { // `String.toInt()` error
-                    Logf("[CSVWorker] Error: integer cast exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
+                    Logf("[CsvHandler] Error: integer cast exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
                     return null
                 }
 
@@ -168,7 +172,7 @@ object CSVWorker {
                     current.dayOfWeek = csv_columns.toDayOfWeek(column)!!
                     splitterAux = stringAux.split(TIME_SEPARATOR)
                     if (splitterAux.count() != 2) {
-                        Logf("[CSVWorker] Error: unexpected split result on row %d: '%s'. Could not get time interval for event.", lineNum+1, line)
+                        Logf("[CsvHandler] Error: unexpected split result on row %d: '%s'. Could not get time interval for event.", lineNum+1, line)
                         return null
                     }
 
@@ -177,14 +181,14 @@ object CSVWorker {
                         current.endTime = LocalTime.parse(splitterAux[1], time_format)
                     }
                     catch (e :DateTimeParseException) {
-                        Logf("[CSVWorker] Error: time parsing exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
+                        Logf("[CsvHandler] Error: time parsing exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
                         return null
                     }
                     break
                 }
             }
             if (! dayAssigned) { // this means there's a missing DayOfWeek and start-end times assignment in the CSV
-                Logf("[CSVWorker] Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'", lineNum+1, csv_lines[lineNum])
+                Logf("[CsvHandler] Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'", lineNum+1, csv_lines[lineNum])
                 // in this case, just ignoring that row.
                 continue
             }
@@ -199,7 +203,7 @@ object CSVWorker {
                 event_types.PRUEBA      -> { eventTypeAux = RamoEventType.PRBA }
                 event_types.EXAMEN      -> { eventTypeAux = RamoEventType.EXAM }
                 else -> {
-                    Logf("[CSVWorker] Error at CSV line %d: %s. Unknown event type '%s'", lineNum+1, line, current.eventType)
+                    Logf("[CsvHandler] Error at CSV line %d: %s. Unknown event type '%s'", lineNum+1, line, current.eventType)
                     return null
                 }
             }
@@ -210,7 +214,7 @@ object CSVWorker {
                     current.date = LocalDate.parse( line[csv_columns.FECHA_INICIO], date_format )
                 }
                 catch (e :DateTimeParseException) {
-                    Logf("[CSVWorker] Error: date parsing exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
+                    Logf("[CsvHandler] Error: date parsing exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
                     return null
                 }
             }

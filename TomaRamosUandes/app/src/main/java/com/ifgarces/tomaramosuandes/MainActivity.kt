@@ -1,6 +1,7 @@
 package com.ifgarces.tomaramosuandes
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         UI.loadScreen.visibility = View.GONE
 
-        Thread { // ActivityUI.loadScreen.postDelayed({ ...
+        Thread { // <==> UI.loadScreen.postDelayed({ ... }, PROGRESSBAR_SPAWN_TIMEOUT)
             Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT)
             this.runOnUiThread {
                 UI.loadScreen.visibility = View.VISIBLE
@@ -49,11 +50,26 @@ class MainActivity : AppCompatActivity() {
                         title = "Error al obtener catálogo",
                         message = """No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
                             Revise su conexión a internet. Si el error persiste, prueba descargando la app \
-                            nuevamente en ${WebManager.MAIN_APP_URL}""".multilineTrim(),
+                            nuevamente en ${WebManager.USER_APP_URL}""".multilineTrim(),
                         onDismiss = {
                             this.finish()
                         },
                         icon = R.drawable.alert_icon
+                    )
+                }
+            },
+            onCsvParseError = {
+                this.runOnUiThread {
+                    this.infoDialog(
+                        title = "Catálogo incompatible",
+                        message = "Hubo un error al procesar el catálogo de la app. Por favor descargue la última versión de la app en %s".format(WebManager.USER_APP_URL),
+                        onDismiss = {
+                            this.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse(WebManager.USER_APP_URL))
+                            )
+                            this.finish()
+                        },
+                        icon = null
                     )
                 }
             },

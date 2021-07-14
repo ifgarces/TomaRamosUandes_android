@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.adapters.AgendaPortraitAdapter
 import com.ifgarces.tomaramosuandes.models.RamoEvent
-import com.ifgarces.tomaramosuandes.utils.ImageExporter
+import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
 import com.ifgarces.tomaramosuandes.utils.Logf
 import java.time.DayOfWeek
 
@@ -88,7 +88,7 @@ class AgendaPortraitActivity : AppCompatActivity() {
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
             Logf("[AgendaPortraitActivity] Exporting agenda as image...")
-            ImageExporter.exportAgendaImage(
+            ImageExportHandler.exportAgendaImage(
                 activity = this,
                 targetView = UI.agendaScroll,
                 tallView = UI.agendaLayout

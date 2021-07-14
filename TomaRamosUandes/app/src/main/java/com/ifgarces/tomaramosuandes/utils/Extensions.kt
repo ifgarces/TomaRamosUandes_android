@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.ifgarces.tomaramosuandes.R
-import java.util.Locale
+import java.util.*
 
 
 const val DEBUG_MODE :Boolean = true // <- turn it to false during tests (and release). Needed because somehow the damn tests don't support functions that write to the Log.
@@ -75,7 +75,7 @@ fun String.spanishNonAccent() : String {
 /**
  * Executes `action` when the widget `text` is changed.
  */
-fun EditText.onTextChangedListener(action : (text :String) -> Unit) {
+fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
     this.addTextChangedListener(
         object : TextWatcher {
             override fun afterTextChanged(s :Editable) {}

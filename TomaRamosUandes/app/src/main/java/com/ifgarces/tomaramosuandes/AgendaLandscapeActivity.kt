@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
@@ -127,7 +127,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
             Logf("[AgendaLandscapeActivity] Exporting agenda as image...")
-            ImageExporter.exportAgendaImage(
+            ImageExportHandler.exportAgendaImage(
                 activity = this,
                 targetView = UI.agendaBodyScroll,
                 tallView = UI.agendaBodyLayout
