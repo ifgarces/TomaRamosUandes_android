@@ -22,55 +22,6 @@ import com.ifgarces.tomaramosuandes.utils.WebManager
 
 class HomeActivity : AppCompatActivity() {
 
-    /**
-     * Dummy solution for updating the recycler from another view.
-     */
-    object RecyclerSync {
-        private var updatePending :Boolean = false
-        private fun notifyAdapter() = UI.ramosRecycler.adapter!!.notifyDataSetChanged()
-        public fun requestUpdate() {
-            try {
-                this.notifyAdapter()
-            }
-            catch (e :NullPointerException) {
-                Logf("[HomeActivity] RecyclerSync: recycler update queued")
-                this.updatePending = true // update is queued and will be executed when this activity starts again
-                return
-            }
-            this.processRecyclerChange()
-            Logf("[HomeActivity] RecyclerSync: recycler updated")
-            this.updatePending = false
-        }
-        public fun updateLocal() {
-            if (this.updatePending) { this.notifyAdapter() }
-            this.processRecyclerChange()
-        }
-        private fun processRecyclerChange() {
-            val creditSum :Int = DataMaster.getUserCreditSum()
-            UI.creditosCounter.text = creditSum.toString()
-
-            /* adjusting UI if user has not inscribed any `Ramo` */
-            if (creditSum == 0) {
-                UI.ramosRecycler.visibility = View.INVISIBLE
-                UI.agendaButton.isEnabled = false
-                UI.evaluationsButton.isEnabled = false
-            } else {
-                UI.ramosRecycler.visibility = View.VISIBLE
-                UI.agendaButton.isEnabled = true
-                UI.evaluationsButton.isEnabled = true
-            }
-
-            /* warning if sum(créditos) is higher than Uandes' normal limits */
-            val creditSumColor :Int =
-                if (creditSum > 33) {
-                    UI.creditosCounter.context.getColor(R.color.creditSum_bad)
-                } else {
-                    UI.creditosCounter.context.getColor(R.color.creditSum_ok)
-                }
-            UI.creditosCounter.setTextColor(creditSumColor)
-        }
-    }
-
     private object UI {
         lateinit var topBar              :MaterialToolbar
         lateinit var catalogButton       :Button
@@ -125,7 +76,22 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         UI.loadDisplay.visibility = View.GONE
-        RecyclerSync.updateLocal()
+        //RecyclerSync.updateLocal()
+        (UI.ramosRecycler.adapter as CatalogRamosAdapter).notifyDataSetChanged()
+        Logf("[HomeActivity] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
+
+        UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()
+
+        // Displaying empty `Ramo`s list notice when needed
+        if (UI.ramosRecycler.adapter?.itemCount == 0) {
+            UI.ramosRecycler.visibility = View.INVISIBLE
+            UI.agendaButton.isEnabled = false
+            UI.evaluationsButton.isEnabled = false
+        } else {
+            UI.ramosRecycler.visibility = View.VISIBLE
+            UI.agendaButton.isEnabled = true
+            UI.evaluationsButton.isEnabled = true
+        }
     }
 
     override fun onDestroy() {

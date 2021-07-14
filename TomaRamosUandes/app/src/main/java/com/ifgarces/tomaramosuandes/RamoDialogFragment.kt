@@ -90,8 +90,8 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
             recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
-        val ramo_isInscribed :Boolean = this.activity!!.intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
-        val nrc :Int = this.activity!!.intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
+        val ramo_isInscribed :Boolean = this.requireActivity().intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
+        val nrc :Int = this.requireActivity().intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
         val ramo :Ramo = DataMaster.findRamo(nrc, searchInUserList=false)!!
 
         UI.nombre.text = ramo.nombre
@@ -128,12 +128,12 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         }
 
         if (ramo_isInscribed) { // `ramo` already in user list
-            UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.trash_icon) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
+            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(), R.drawable.trash_icon) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
             UI.actionButton.text = "Borrar ramo"
             UI.actionButton.setOnClickListener { this.actionUnInscribe(ramo) }
         }
         else { // `ramo` not yet inscribed by user
-            UI.actionButton.icon = ContextCompat.getDrawable(this.context!!, R.drawable.add_icon)
+            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(), R.drawable.add_icon)
             UI.actionButton.text = "Tomar ramo"
             UI.actionButton.setOnClickListener { this.actionInscribe(ramo) }
         }
@@ -175,7 +175,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
     private fun actionInscribe(ramo :Ramo) {
         DataMaster.inscribeRamo(
             ramo = ramo,
-            activity = this.activity!!,
+            activity = this.requireActivity(),
             onFinish = {
                 this.dismiss()
             }
@@ -186,12 +186,11 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
      * Removes `ramo` from user's inscribed list.
      */
     private fun actionUnInscribe(ramo :Ramo) {
-        this.context!!.yesNoDialog(
+        this.requireContext().yesNoDialog(
             title = "Borrar ramo",
             message = "¿Está seguro que desea eliminar ${ramo.nombre} de su lista de ramos tomados?",
             onYesClicked = {
                 DataMaster.unInscribeRamo(ramo.NRC)
-                HomeActivity.RecyclerSync.requestUpdate() // <- necessary because this dialog can be called from `HomeActivity` and affect its `RecyclerView` i.e. its OnResume() won't execute when the dialog is dismissed.
                 this.dismiss()
             }
         )

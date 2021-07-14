@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.*
+import java.util.Locale
 
 
 /**
@@ -64,11 +64,11 @@ object CsvHandler {
 
     private val event_types = object { //! This may vary on time
         val CLASE       :String = "CLAS"
-        val AYUDANTÍA   :String = "AYON"
-        val LABORATORIO :String = "LBON"
-        val TUTORIAL    :String = "TUTR"
-        val PRUEBA      :String = "PRON"
-        val EXAMEN      :String = "EXON"
+        val AYUDANTÍA   :String = "AYUD"
+        val LABORATORIO :String = "LABT"
+        //val TUTORIAL    :String = "TUTR"
+        val PRUEBA      :String = "PRBA"
+        val EXAMEN      :String = "EXAM"
     }
 
     /**
@@ -82,10 +82,10 @@ object CsvHandler {
         // [!] ---
 
         val catalogResult :Pair< MutableList<Ramo>, MutableList<RamoEvent> >
-                = Pair(mutableListOf(), mutableListOf()) // ~ (ramos, events)
+            = Pair(mutableListOf(), mutableListOf()) // ~ (ramos, events)
 
         val NRCs :MutableList<Int> = mutableListOf()
-        var line :List<String> = listOf()
+        var line :List<String>
         val current = object { // buffer-like object, temporal data holder
             var NRC   :Int = 0
             var curso :Int = 0
@@ -103,7 +103,7 @@ object CsvHandler {
         var lineNum :Int = 0
         var badNRCsCount :Int = 0
 
-        while (lineNum++ < csv_lines.count()-1) {
+        while (lineNum++ < csv_lines.count() - 1) {
             line = csv_lines[lineNum].split(",")
 
             try {
@@ -157,7 +157,7 @@ object CsvHandler {
                     )
                 }
                 catch (e :NumberFormatException) { // `String.toInt()` error
-                    Logf("[CsvHandler] Error: integer cast exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
+                    Logf("[CsvHandler] Error: mandatory integer cast exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)
                     return null
                 }
 
@@ -199,7 +199,7 @@ object CsvHandler {
                 event_types.CLASE       -> { eventTypeAux = RamoEventType.CLAS }
                 event_types.AYUDANTÍA   -> { eventTypeAux = RamoEventType.AYUD }
                 event_types.LABORATORIO -> { eventTypeAux = RamoEventType.LABT }
-                event_types.TUTORIAL    -> { eventTypeAux = RamoEventType.TUTR }
+                //event_types.TUTORIAL    -> { eventTypeAux = RamoEventType.TUTR }
                 event_types.PRUEBA      -> { eventTypeAux = RamoEventType.PRBA }
                 event_types.EXAMEN      -> { eventTypeAux = RamoEventType.EXAM }
                 else -> {
@@ -211,7 +211,15 @@ object CsvHandler {
             // including date only if it is a test/exam, assigning null otherwise
             if (eventTypeAux == RamoEventType.PRBA || eventTypeAux == RamoEventType.EXAM) {
                 try {
-                    current.date = LocalDate.parse( line[csv_columns.FECHA_INICIO], date_format )
+                    // making date parsing able to parse incorrectly formatted dates like 4/11/2021, where 04/11/2021 is expected
+                    val auxDateFormatFields :MutableList<String> = line[csv_columns.FECHA_INICIO].split("/").toMutableList()
+                    for (k in (0 until auxDateFormatFields.count())) {
+                        if (auxDateFormatFields[k].length < 2) { // prepending the zero when needed
+                            auxDateFormatFields[k] = "0" + auxDateFormatFields[k]
+                        }
+                    }
+                    // actual parsing now
+                    current.date = LocalDate.parse( auxDateFormatFields.joinToString("/"), date_format )
                 }
                 catch (e :DateTimeParseException) {
                     Logf("[CsvHandler] Error: date parsing exception at CSV line %d: '%s'. %s", lineNum+1, csv_lines[lineNum], e)

@@ -20,6 +20,8 @@ import java.net.UnknownHostException
  * (direct link to TXT file).
  * @property APK_DOWNLOAD_URL Used to download the latest app itself (direct link to APK file).
  * @property ONLINE_CSV_URL Used to fetch the catalog data for this period (direct link to CSV file).
+ * @property DEBUG_CSV_URL Used to test changes in CSV parsing, for instance, with a new CSV before
+ * affecting the file available on `ONLINE_CSV_URL`: without affecting app users. Debugging only.
  * @property USER_APP_URL The main user link of this project, where general information and latest
  * build are available.
  * @property catalogPeriodName Just an auxiliar variable for not to fetch the latest catalog
@@ -32,6 +34,7 @@ object WebManager {
     private const val CATALOG_LATEST_VERSION_URL :String = "https://drive.google.com/uc?export=download&id=1-XkBsoSb4emf0pBq5i6w9zVXTWy0DsCa"
     private const val APK_DOWNLOAD_URL           :String = "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
     private const val ONLINE_CSV_URL             :String = "https://drive.google.com/uc?id=1Bo0MLop1YRdkOSwGsM1c7WOAtoiK7JP_&export=download"
+    private const val DEBUG_CSV_URL              :String = "https://drive.google.com/uc?export=download&id=1KHji8-rJ3FFQWMTPEpyDki-jkjGmGHPj"
     public  const val USER_APP_URL               :String = "https://bit.ly/TomadorRamosUandes"
 
     public lateinit var catalogPeriodName :String
@@ -88,15 +91,15 @@ object WebManager {
      * Gets the catalog CSV body from the web.
      * @exception java.net.UnknownHostException On internet connection failure.
      */
-    public fun fetchCatalogCSV() : String {
-        return URL(this.ONLINE_CSV_URL).readText(charset=Charsets.UTF_8)
+    public fun fetchCatalogCSV() :String {
+        return URL(this.DEBUG_CSV_URL).readText(charset=Charsets.UTF_8) //! Do not use `DEBUG_CSV_URL` in any release, don't forget!
     }
 
     /**
     * Gets the latest available version of the app itself (e.g. "2021-10.1").
     * @exception java.net.UnknownHostException On internet connection failure.
     */
-    private fun fetchLastestAppVersionName() : String {
+    private fun fetchLastestAppVersionName() :String {
         return URL(this.APP_LATEST_VERSION_URL).readText(charset=Charsets.UTF_8)
     }
 
