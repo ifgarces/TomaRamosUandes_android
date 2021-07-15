@@ -43,7 +43,7 @@ class CatalogActivity : AppCompatActivity() {
         UI.searchBox.onTextChangedListener {
             if (it.length > 2) { this.applySearch(searchText=it) }
         }
-        UI.topBar.subtitle = WebManager.catalogPeriodName
+        UI.topBar.subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate())
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {

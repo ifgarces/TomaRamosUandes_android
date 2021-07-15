@@ -15,19 +15,23 @@ import java.net.UnknownHostException
 
 /**
  * Handles update check on app startup (on its `init()` method) and various calls for getting online
- * metadata from the current available `Ramo`s catalog, etc.
+ * metadata from the current available `Ramo`s catalog, etc. This is performed by fetching files
+ * stored in Google Drive.
  * @property APP_LATEST_VERSION_URL Used to query the latest available version of the very same app
  * (direct link to TXT file).
  * @property APK_DOWNLOAD_URL Used to download the latest app itself (direct link to APK file).
  * @property ONLINE_CSV_URL Used to fetch the catalog data for this period (direct link to CSV file).
  * @property DEBUG_CSV_URL Used to test changes in CSV parsing, for instance, with a new CSV before
  * affecting the file available on `ONLINE_CSV_URL`: without affecting app users. Debugging only.
+ * @property CATALOG_UPDATE_DATE_URL For fetching the exact date the catalog was updated.
  * @property USER_APP_URL The main user link of this project, where general information and latest
  * build are available.
  * @property catalogPeriodName Just an auxiliar variable for not to fetch the latest catalog
  * version every time the user inicializes `CatalogActivity`, for instance. Will be e.g. "2021-20".
  * We don't simply use the splitted `fetchLastestAppVersionName` method, because eventually the
  * catalog will be updated before and indepenently from the app.
+ * @property catalogLastUpdatedDate Auxiliar variable for getting the content under
+ * `CATALOG_UPDATE_DATE` when needed, without making the actual HTTP GET.
  */
 object WebManager {
     private const val APP_LATEST_VERSION_URL     :String = "https://drive.google.com/uc?id=1QtTMK5gU-47tJI8kpcf-v1v5PQvmANQQ&export=download"
@@ -35,9 +39,14 @@ object WebManager {
     private const val APK_DOWNLOAD_URL           :String = "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
     private const val ONLINE_CSV_URL             :String = "https://drive.google.com/uc?id=1Bo0MLop1YRdkOSwGsM1c7WOAtoiK7JP_&export=download"
     private const val DEBUG_CSV_URL              :String = "https://drive.google.com/uc?export=download&id=1KHji8-rJ3FFQWMTPEpyDki-jkjGmGHPj"
+    private const val CATALOG_UPDATE_DATE_URL    :String = "https://drive.google.com/uc?export=download&id=1YHR3M97wvzYxEaQT2dDOKItp4YeW2kqI"
     public  const val USER_APP_URL               :String = "https://bit.ly/TomadorRamosUandes"
 
-    public lateinit var catalogPeriodName :String
+    private lateinit var catalogPeriodName :String
+    public fun getCatalogLastPeriodName() = this.catalogPeriodName
+
+    private lateinit var catalogLastUpdatedDate :String
+    public fun getCatalogLastUpdateDate() = this.catalogLastUpdatedDate
 
     /**
      * [This function needs to be called on a separated thread]
@@ -54,6 +63,7 @@ object WebManager {
             currentVer = activity.getString(R.string.APP_VERSION)
             latestVer = this.fetchLastestAppVersionName()
             this.catalogPeriodName = this.fetchOnlineCatalogVersion()
+            this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
         }
         catch (e :UnknownHostException) {
             Logf("[WebManager] Internet connection error: couldn't get app version or catalog version")
@@ -78,7 +88,7 @@ object WebManager {
                     message = "Hay una nueva versión de esta app: %s.\n\n¿Ir al link de descarga ahora?".format(latestVer),
                     onYesClicked = { // opens APK download link in default browser
                         activity.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(this.APK_DOWNLOAD_URL))
+                            Intent(Intent.ACTION_VIEW, Uri.parse(this.USER_APP_URL))
                         )
                     },
                     icon = R.drawable.exclamation_icon
@@ -118,5 +128,14 @@ object WebManager {
      */
     private fun fetchOnlineCatalogVersion() :String {
         return URL(this.CATALOG_LATEST_VERSION_URL).readText(charset=Charsets.UTF_8)
+    }
+
+    /**
+     * Fetches the date the catalog was updated for the last time. Should be a "MM/dd/YYYY"
+     * formatted string.
+     * @exception java.net.UnknownHostException On internet connection failure.
+     */
+    private fun fetchLatestCatalogUpdateDate() :String {
+        return URL(this.CATALOG_UPDATE_DATE_URL).readText(charset=Charsets.UTF_8)
     }
 }
