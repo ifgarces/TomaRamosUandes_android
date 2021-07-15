@@ -41,7 +41,7 @@ class CatalogActivity : AppCompatActivity() {
         UI.recycler.layoutManager = LinearLayoutManager(this)
         UI.searchBox_layout.setStartIconOnClickListener { this.clearSearch() }
         UI.searchBox.onTextChangedListener {
-            if (it.length > 2) { this.applySearch(searchText=it) }
+            if (it.length > 1) { this.applySearch(searchText=it) }
         }
         UI.topBar.subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate())
         UI.topBar.setOnMenuItemClickListener {
@@ -77,12 +77,10 @@ class CatalogActivity : AppCompatActivity() {
      */
     private fun applySearch(searchText :String) { // TODO: tests.
         val results :MutableList<Ramo> = mutableListOf()
+        val sanitizedSearchText :String = searchText.spanishNonAccent().spanishUpperCase().trim()
         DataMaster.getCatalogRamos().forEach {
             // considering `nombre` is upper-cased for each `Ramo`
-            if (it.nombre.spanishNonAccent().contains(
-                    searchText.spanishNonAccent().spanishUpperCase().trim()
-                )
-            ) {
+            if (it.nombre.spanishNonAccent().contains(sanitizedSearchText) || (it.NRC.toString().contains(sanitizedSearchText))) {
                 if (it !in results) { results.add(it) }
             }
         }
