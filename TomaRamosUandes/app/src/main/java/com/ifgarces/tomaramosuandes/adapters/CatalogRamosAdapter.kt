@@ -53,7 +53,7 @@ class CatalogRamosAdapter(
             this.NRC.text = ramo.NRC.toString()
             this.sección.text = ramo.sección
 
-            /* setting card background color based on inscribe status */
+            // Setting card background color based on inscribe status
             if (! this@CatalogRamosAdapter.isAllInscribed) { // distinguishing between inscribed and uninscribed (in catalog)
                 if (ramo in DataMaster.getUserRamos()) {
                     this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_inscribed))
@@ -62,14 +62,14 @@ class CatalogRamosAdapter(
                 }
             }
 
-            /* setting `planEstudios` background color */
+            // Setting `planEstudios` background color
             if (ramo.planEstudios == "PE2016") {
                 this.planEstudios.setTextColor( this.parentView.context.getColor(R.color.PE2016) )
             } else { // "PE2011", "PE2011/PE2016"
                 this.planEstudios.setTextColor( this.parentView.context.getColor(R.color.PE2011) )
             }
 
-            /* calling `Ramo` dialog card clicked */
+            // Calling `Ramo` dialog card clicked
             this.parentView.setOnClickListener {
                 if (SingletonHelper.isInstanceActive) { return@setOnClickListener }
                 SingletonHelper.isInstanceActive = true

@@ -58,10 +58,9 @@ object WebManager {
 
         Logf("[WebManager] Checking for updates...")
 
-        val currentVer :String
+        val currentVer :String = activity.getString(R.string.APP_VERSION)
         val latestVer :String
         try {
-            currentVer = activity.getString(R.string.APP_VERSION)
             latestVer = this.fetchLastestAppVersionName()
             this.catalogPeriodName = this.fetchOnlineCatalogVersion()
             this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
@@ -69,15 +68,8 @@ object WebManager {
         catch (e :Exception) {
             Logf("[WebManager] Internet connection error: couldn't get app version or catalog version. %s", e.stackTraceToString())
             if (e is UnknownHostException) Logf("[WebManager] It was a common internet connection error, don't worry too much")
-            activity.runOnUiThread {
-                activity.infoDialog(
-                    title = "💀 Error de conexión a internet",
-                    message = "No se pudo obtener información de los ramos actuales. Asegure su conexión a internet y reinicie la app.",
-                    onDismiss = {
-                        activity.finishAffinity()
-                    }
-                )
-            }
+            this.catalogPeriodName = activity.getString(R.string.APP_VERSION).split(".").first()
+            this.catalogLastUpdatedDate = "offline"
             return
         }
 

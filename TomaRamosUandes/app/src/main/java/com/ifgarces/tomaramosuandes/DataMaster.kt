@@ -14,6 +14,7 @@ import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
 import com.ifgarces.tomaramosuandes.utils.*
+import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.time.DayOfWeek
 import java.util.concurrent.locks.ReentrantLock
@@ -80,7 +81,22 @@ object DataMaster {
 
             try {
                 Logf("[DataMaster] Fetching CSV catalog data...")
-                val csv_body :String = WebManager.fetchCatalogCSV()
+                var csv_body :String
+                try {
+                    csv_body = WebManager.fetchCatalogCSV()
+                }
+                catch (e :java.net.UnknownHostException) {
+                    Logf("[DataMaster] Could not load online CSV: internet connection error")
+                    Logf("[DataMaster] Now using local CSV...")
+                    onInternetError.invoke()
+                    csv_body = activity.assets.open("catalog_offline.csv").bufferedReader(Charsets.UTF_8).readText()
+                }
+                catch (e: FileNotFoundException) {
+                    Logf("[DataMaster] Could not load online CSV: fatal error, probably the CSV file was temporarily banned. Details: %s", e.stackTraceToString())
+                    Logf("[DataMaster] Now using local CSV...")
+                    onInternetError.invoke()
+                    csv_body = activity.assets.open("catalog_offline.csv").bufferedReader(Charsets.UTF_8).readText()
+                }
 
                 Logf("[DataMaster] Parsing CSV...")
                 val aux :Pair<List<Ramo>, List<RamoEvent>> = CsvHandler.parseCSV(csv_lines=csv_body.split("\n"))!!
@@ -130,14 +146,6 @@ object DataMaster {
                 //}
 
                 onSuccess.invoke()
-            }
-            catch (e :java.net.UnknownHostException) {
-                Logf("[DataMaster] Could not load online CSV: internet connection error")
-                onInternetError.invoke()
-            }
-            catch (e: FileNotFoundException) {
-                Logf("[DataMaster] Could not load online CSV: fatal error, probably the CSV file was temporarily banned. Details: %s", e.stackTraceToString())
-                onInternetError.invoke()
             }
             catch (e :NullPointerException) {
                 Logf("[DataMaster] Invalid online CSV data (for this app version)")
