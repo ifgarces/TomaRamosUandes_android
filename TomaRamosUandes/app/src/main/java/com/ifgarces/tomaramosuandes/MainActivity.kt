@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         DataMaster.init(
             activity = this,
-            clearDatabase = false, // [!] should be `false` on any release, don't forget!!
+            clearDatabase = false, //! should be `false` on any release, don't forget!!
             onSuccess = {
                 Logf("[MainActivity] DataMaster successfully initialized.")
                 this.startActivity(
@@ -50,8 +50,9 @@ class MainActivity : AppCompatActivity() {
                     this.infoDialog(
                         title = "Error al obtener catálogo",
                         message = """No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
-                            Revise su conexión a internet. Si el error persiste, prueba descargando la app \
-                            nuevamente en ${WebManager.USER_APP_URL}""".multilineTrim(),
+                            Revise su conexión a internet. Si el error persiste, pruebe descargando \
+                            la app nuevamente en ${WebManager.USER_APP_URL}, o inténtelo más tarde (puede que se hayan saturado los servidores que usa la app)""".multilineTrim(),
+                            // the last part is not 100% true, but the user will understand♠. See issue #12
                         onDismiss = {
                             this.finish()
                         },

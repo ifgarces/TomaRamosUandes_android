@@ -278,7 +278,8 @@
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
-                        android:scrollbarSize="6dp"
+                        android:scrollbarSize="4dp"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="60dp" />
@@ -307,6 +308,7 @@
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
+                        android:scrollbarSize="4dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -336,6 +338,7 @@
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
+                        android:scrollbarSize="4dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -365,6 +368,7 @@
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
+                        android:scrollbarSize="4dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

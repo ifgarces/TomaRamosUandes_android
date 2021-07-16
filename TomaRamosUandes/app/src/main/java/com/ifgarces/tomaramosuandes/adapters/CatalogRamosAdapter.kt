@@ -20,7 +20,7 @@ class CatalogRamosAdapter(
 
     private object SingletonHelper {
         // used to prevent the dialog from being invoked more than once if user clicks again while still loading from first click
-        var isDialogActive :Boolean = false
+        var isInstanceActive :Boolean = false
     }
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : CatalogVH {
@@ -71,8 +71,8 @@ class CatalogRamosAdapter(
 
             /* calling `Ramo` dialog card clicked */
             this.parentView.setOnClickListener {
-                if (SingletonHelper.isDialogActive) { return@setOnClickListener }
-                SingletonHelper.isDialogActive = true
+                if (SingletonHelper.isInstanceActive) { return@setOnClickListener }
+                SingletonHelper.isInstanceActive = true
 
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
@@ -81,7 +81,7 @@ class CatalogRamosAdapter(
                 RamoDialogFragment.summon(
                     manager = helper.supportFragmentManager,
                     onDismiss = {
-                        SingletonHelper.isDialogActive = false
+                        SingletonHelper.isInstanceActive = false
                         this@CatalogRamosAdapter.notifyItemChanged(position)
                     }
                 )

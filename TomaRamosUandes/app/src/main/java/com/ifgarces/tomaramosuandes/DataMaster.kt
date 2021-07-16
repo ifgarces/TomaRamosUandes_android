@@ -136,7 +136,7 @@ object DataMaster {
                 onInternetError.invoke()
             }
             catch (e: FileNotFoundException) {
-                Logf("[DataMaster] Could not load online CSV: fatal error, probably banned file. Details: %s", e.stackTraceToString())
+                Logf("[DataMaster] Could not load online CSV: fatal error, probably the CSV file was temporarily banned. Details: %s", e.stackTraceToString())
                 onInternetError.invoke()
             }
             catch (e :NullPointerException) {
@@ -311,8 +311,14 @@ object DataMaster {
     public fun unInscribeRamo(NRC :Int) {
         var eventCount :Int = 0
 
+        val ramo :Ramo? = this.findRamo(NRC=NRC, searchInUserList=true)
+        if (ramo == null) { // kind of dymmy solution, but this may be needed if the user do stuff quickly, due async tasks
+            Logf("[DataMaster] This Ramo seems to be already deleted and couldn't be found. Aborting.")
+            return
+        }
+
         this.getEventsOfRamo(
-            ramo = this.findRamo(NRC=NRC, searchInUserList=true)!!,
+            ramo = ramo,
             searchInUserList = true
         ).forEach { event :RamoEvent ->
             eventCount++
@@ -327,22 +333,18 @@ object DataMaster {
 
         try {
             this.ramosLock.lock()
+            // Deleting by this way in order to avoid a very seldom crash caused by `user_ramos`
+            // being a Volatile variable.
             val ramoIterator :MutableIterator<Ramo> = this.user_ramos.iterator()
-            var ramo :Ramo
+            var r :Ramo
             while (ramoIterator.hasNext()) {
-                ramo = ramoIterator.next()
-                if (ramo.NRC == NRC) {
+                r = ramoIterator.next()
+                if (r.NRC == NRC) {
                     ramoIterator.remove()
                     AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
                     break
                 }
             }
-//            this.user_ramos.forEachIndexed { index :Int, ramo :Ramo ->
-//                if (ramo.NRC == NRC) {
-//                    this.user_ramos.removeAt(index)
-//                    AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
-//                }
-//            }
         } finally {
             this.ramosLock.unlock()
         }

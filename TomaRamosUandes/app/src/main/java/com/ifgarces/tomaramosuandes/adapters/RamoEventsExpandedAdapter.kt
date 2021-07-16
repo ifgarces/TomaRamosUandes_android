@@ -22,7 +22,7 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
      * while the first one is still loading.
      */
     private object SingletonHelper {
-        var isDialogActive :Boolean = false
+        var isInstanceActive :Boolean = false
     }
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : ExpandedEventVH {
@@ -69,8 +69,8 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
 
             /* calling `Ramo` dialog card clicked */
             this.parentView.setOnClickListener {
-                if (SingletonHelper.isDialogActive) { return@setOnClickListener }
-                SingletonHelper.isDialogActive = true
+                if (SingletonHelper.isInstanceActive) { return@setOnClickListener }
+                SingletonHelper.isInstanceActive = true
 
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
@@ -79,7 +79,7 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
                 RamoDialogFragment.summon(
                     manager = helper.supportFragmentManager,
                     onDismiss = {
-                        SingletonHelper.isDialogActive = false
+                        SingletonHelper.isInstanceActive = false
                         this@RamoEventsExpandedAdapter.notifyDataSetChanged()
                     }
                 )
