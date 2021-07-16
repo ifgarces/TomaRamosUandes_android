@@ -29,7 +29,7 @@ import com.ifgarces.tomaramosuandes.utils.yesNoDialog
  */
 class RamoDialogFragment : BottomSheetDialogFragment() {
 
-    companion object {
+    companion object { //TODO: find a better way to do this, avoid this companion object.
         lateinit var dismissAction :() -> Unit
 
         /**
@@ -44,47 +44,29 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         private fun newInstance() = RamoDialogFragment()
     }
 
-    private object UI {
-        lateinit var rootView     :View
-        lateinit var nombre       :TextView
-        lateinit var NRC          :TextView
-        lateinit var profe        :TextView
-        lateinit var créditos     :TextView
-        lateinit var materia      :TextView
-        lateinit var curso        :TextView
-        lateinit var sección      :TextView
-        lateinit var PE           :TextView
-        lateinit var conectLiga   :TextView
-        lateinit var listaCruz    :TextView
-        lateinit var clases       :RecyclerView
-        lateinit var ayuds        :RecyclerView
-        lateinit var labs         :RecyclerView
-        lateinit var evals        :RecyclerView
-        lateinit var actionButton :MaterialButton
-
-        fun init(owner :View) {
-            this.rootView     = owner
-            this.nombre       = owner.findViewById(R.id.ramoDialog_nombre)
-            this.NRC          = owner.findViewById(R.id.ramoDialog_NRC)
-            this.profe        = owner.findViewById(R.id.ramoDialog_profesor)
-            this.créditos     = owner.findViewById(R.id.ramoDialog_creditosNum)
-            this.materia      = owner.findViewById(R.id.ramoDialog_materia)
-            this.curso        = owner.findViewById(R.id.ramoDialog_curso)
-            this.sección      = owner.findViewById(R.id.ramoDialog_seccion)
-            this.PE           = owner.findViewById(R.id.ramoDialog_PE)
-            this.conectLiga   = owner.findViewById(R.id.ramoDialog_liga)
-            this.listaCruz    = owner.findViewById(R.id.ramoDialog_lCruz)
-            this.clases       = owner.findViewById(R.id.ramoDialog_clasesRecycler)
-            this.ayuds        = owner.findViewById(R.id.ramoDialog_ayudsRecycler)
-            this.labs         = owner.findViewById(R.id.ramoDialog_labsRecycler)
-            this.evals        = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
-            this.actionButton = owner.findViewById(R.id.ramoDialog_button)
-        }
+    private class FragmentUI(owner :View) {
+        val rootView     :View = owner
+        val nombre       :TextView = owner.findViewById(R.id.ramoDialog_nombre)
+        val NRC          :TextView = owner.findViewById(R.id.ramoDialog_NRC)
+        val profe        :TextView = owner.findViewById(R.id.ramoDialog_profesor)
+        val créditos     :TextView = owner.findViewById(R.id.ramoDialog_creditosNum)
+        val materia      :TextView = owner.findViewById(R.id.ramoDialog_materia)
+        val curso        :TextView = owner.findViewById(R.id.ramoDialog_curso)
+        val sección      :TextView = owner.findViewById(R.id.ramoDialog_seccion)
+        val PE           :TextView = owner.findViewById(R.id.ramoDialog_PE)
+        val conectLiga   :TextView = owner.findViewById(R.id.ramoDialog_liga)
+        val listaCruz    :TextView = owner.findViewById(R.id.ramoDialog_lCruz)
+        val clases       :RecyclerView = owner.findViewById(R.id.ramoDialog_clasesRecycler)
+        val ayuds        :RecyclerView = owner.findViewById(R.id.ramoDialog_ayudsRecycler)
+        val labs         :RecyclerView = owner.findViewById(R.id.ramoDialog_labsRecycler)
+        val evals        :RecyclerView = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
+        val actionButton :MaterialButton = owner.findViewById(R.id.ramoDialog_button)
     }
+    private lateinit var UI :FragmentUI
 
     override fun onViewCreated(view :View, savedInstanceState :Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        UI.init(owner=view)
+        this.UI = FragmentUI(owner=view)
 
         listOf(UI.clases, UI.ayuds, UI.labs, UI.evals).forEach { recycler :RecyclerView ->
             recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -142,7 +124,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
     override fun onStart() { // references: https://medium.com/@mhrpatel12/making-most-out-of-android-bottom-sheet-352c04551fb4
         super.onStart()
 
-        /* initializing the `BottomSheetDialog` fully expanded */
+        // initializing the `BottomSheetDialog` fully expanded
         dialog?.also {
             val bottomSheet :View = dialog?.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT

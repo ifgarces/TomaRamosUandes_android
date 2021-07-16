@@ -11,6 +11,7 @@ import com.ifgarces.tomaramosuandes.utils.WebManager.ONLINE_CSV_URL
 import com.ifgarces.tomaramosuandes.utils.WebManager.catalogPeriodName
 import java.net.URL
 import java.net.UnknownHostException
+import kotlin.Exception
 
 
 /**
@@ -65,8 +66,9 @@ object WebManager {
             this.catalogPeriodName = this.fetchOnlineCatalogVersion()
             this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
         }
-        catch (e :UnknownHostException) {
-            Logf("[WebManager] Internet connection error: couldn't get app version or catalog version")
+        catch (e :Exception) {
+            Logf("[WebManager] Internet connection error: couldn't get app version or catalog version. %s", e.stackTraceToString())
+            if (e is UnknownHostException) Logf("[WebManager] It was a common internet connection error, don't worry too much")
             activity.runOnUiThread {
                 activity.infoDialog(
                     title = "💀 Error de conexión a internet",
@@ -100,14 +102,18 @@ object WebManager {
     /**
      * Gets the catalog CSV body from the web.
      * @exception java.net.UnknownHostException On internet connection failure.
+     * @exception java.io.FileNotFoundException This happened when Google Drive detected many
+     * queries and blocked file(s), avoiding to use them in an app like this.
      */
     public fun fetchCatalogCSV() :String {
         return URL(this.DEBUG_CSV_URL).readText(charset=Charsets.UTF_8) //! Do not use `DEBUG_CSV_URL` in any release, don't forget!
     }
 
     /**
-    * Gets the latest available version of the app itself (e.g. "2021-10.1").
-    * @exception java.net.UnknownHostException On internet connection failure.
+     * Gets the latest available version of the app itself (e.g. "2021-10.1").
+     * @exception java.net.UnknownHostException On internet connection failure.
+     * @exception java.io.FileNotFoundException This happened when Google Drive detected many
+     * queries and blocked file(s), avoiding to use them in an app like this.
     */
     private fun fetchLastestAppVersionName() :String {
         return URL(this.APP_LATEST_VERSION_URL).readText(charset=Charsets.UTF_8)
@@ -124,7 +130,9 @@ object WebManager {
 
     /**
      * Fetches the version of the catalog available now on `ONLINE_CSV_URL` (e.g. "2021-20").
-     * @exception java.net.UnknownHostException On internet connection failure.
+     * @exception java.net.UnknownHostException On internet connection failure.3
+     * @exception java.io.FileNotFoundException This happened when Google Drive detected many
+     * queries and blocked file(s), avoiding to use them in an app like this.
      */
     private fun fetchOnlineCatalogVersion() :String {
         return URL(this.CATALOG_LATEST_VERSION_URL).readText(charset=Charsets.UTF_8)
@@ -134,6 +142,8 @@ object WebManager {
      * Fetches the date the catalog was updated for the last time. Should be a "MM/dd/YYYY"
      * formatted string.
      * @exception java.net.UnknownHostException On internet connection failure.
+     * @exception java.io.FileNotFoundException This happened when Google Drive detected many
+     * queries and blocked file(s), avoiding to use them in an app like this.
      */
     private fun fetchLatestCatalogUpdateDate() :String {
         return URL(this.CATALOG_UPDATE_DATE_URL).readText(charset=Charsets.UTF_8)

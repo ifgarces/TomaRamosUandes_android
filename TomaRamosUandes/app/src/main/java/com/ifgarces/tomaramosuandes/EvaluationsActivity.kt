@@ -12,22 +12,17 @@ import com.ifgarces.tomaramosuandes.utils.*
 
 class EvaluationsActivity : AppCompatActivity() {
 
-    private object UI {
-        lateinit var topBar             :MaterialToolbar
-        lateinit var eventsRecycler     :RecyclerView
-        lateinit var eventsExportButton :Button
-
-        fun init(owner :AppCompatActivity) {
-            this.topBar             = owner.findViewById(R.id.evals_topbar)
-            this.eventsRecycler     = owner.findViewById(R.id.evals_eventsRecycler)
-            this.eventsExportButton = owner.findViewById(R.id.evals_exportEventsButton)
-        }
+    private class ActivityUI(owner :AppCompatActivity) {
+        val topBar             :MaterialToolbar = owner.findViewById(R.id.evals_topbar)
+        val eventsRecycler     :RecyclerView = owner.findViewById(R.id.evals_eventsRecycler)
+        val eventsExportButton :Button = owner.findViewById(R.id.evals_exportEventsButton)
     }
+    private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_evaluations)
-        UI.init(owner=this)
+        this.UI = ActivityUI(owner=this)
 
         UI.eventsRecycler.layoutManager = LinearLayoutManager(this)
         UI.eventsRecycler.adapter = RamoEventsExpandedAdapter(data=DataMaster.getUserRamos())

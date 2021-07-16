@@ -14,6 +14,7 @@ import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
 import com.ifgarces.tomaramosuandes.utils.*
+import java.io.FileNotFoundException
 import java.time.DayOfWeek
 import java.util.concurrent.locks.ReentrantLock
 
@@ -131,11 +132,15 @@ object DataMaster {
                 onSuccess.invoke()
             }
             catch (e :java.net.UnknownHostException) {
-                Logf("[DataMaster] Could not load online CSV (internet connection error).")
+                Logf("[DataMaster] Could not load online CSV: internet connection error")
+                onInternetError.invoke()
+            }
+            catch (e: FileNotFoundException) {
+                Logf("[DataMaster] Could not load online CSV: fatal error, probably banned file. Details: %s", e.stackTraceToString())
                 onInternetError.invoke()
             }
             catch (e :NullPointerException) {
-                Logf("[DataMaster] Invalid online CSV data (for this app version).")
+                Logf("[DataMaster] Invalid online CSV data (for this app version)")
                 onCsvParseError.invoke()
             }
         }

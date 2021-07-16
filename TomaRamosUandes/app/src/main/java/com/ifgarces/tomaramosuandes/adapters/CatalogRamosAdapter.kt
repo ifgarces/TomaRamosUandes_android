@@ -39,12 +39,12 @@ class CatalogRamosAdapter(
     }
 
     inner class CatalogVH(v :View) : RecyclerView.ViewHolder(v) {
-        private val parentView    :View     = v // CardView
-        private val nombre        :TextView = v.findViewById(R.id.ramoCatalog_nombre)
-        private val planEstudios  :TextView = v.findViewById(R.id.ramoCatalog_pe)
-        private val materia       :TextView = v.findViewById(R.id.ramoCatalog_materia)
-        private val NRC           :TextView = v.findViewById(R.id.ramoCatalog_NRC)
-        private val sección       :TextView = v.findViewById(R.id.ramoCatalog_seccion)
+        private val parentView   :View     = v // CardView
+        private val nombre       :TextView = v.findViewById(R.id.ramoCatalog_nombre)
+        private val planEstudios :TextView = v.findViewById(R.id.ramoCatalog_pe)
+        private val materia      :TextView = v.findViewById(R.id.ramoCatalog_materia)
+        private val NRC          :TextView = v.findViewById(R.id.ramoCatalog_NRC)
+        private val sección      :TextView = v.findViewById(R.id.ramoCatalog_seccion)
 
         fun bind(ramo :Ramo, position :Int) {
             this.nombre.text = ramo.nombre

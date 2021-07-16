@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private class ActivityUI(owner :AppCompatActivity) {
         val loadScreen :View = owner.findViewById(R.id.main_loadScreen)
-    }; private lateinit var UI :ActivityUI
+    }
+    private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)

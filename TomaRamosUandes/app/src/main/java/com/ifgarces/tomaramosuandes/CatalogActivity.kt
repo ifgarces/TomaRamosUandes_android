@@ -15,24 +15,18 @@ import com.ifgarces.tomaramosuandes.utils.*
 
 class CatalogActivity : AppCompatActivity() {
 
-    private object UI {
-        lateinit var topBar           :MaterialToolbar
-        lateinit var recycler         :RecyclerView
-        lateinit var searchBox_layout :TextInputLayout
-        lateinit var searchBox        :EditText
-
-        fun init(owner :AppCompatActivity) {
-            this.topBar           = owner.findViewById(R.id.catalog_topbar)
-            this.recycler         = owner.findViewById(R.id.catalog_recycler)
-            this.searchBox_layout = owner.findViewById(R.id.catalog_searchBox_layout)
-            this.searchBox        = owner.findViewById(R.id.catalog_searchBox)
-        }
+    private class ActivityUI(owner :AppCompatActivity) {
+        val topBar           :MaterialToolbar = owner.findViewById(R.id.catalog_topbar)
+        val recycler         :RecyclerView = owner.findViewById(R.id.catalog_recycler)
+        val searchBox_layout :TextInputLayout = owner.findViewById(R.id.catalog_searchBox_layout)
+        val searchBox        :EditText = owner.findViewById(R.id.catalog_searchBox)
     }
+    private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_catalog)
-        UI.init(owner=this)
+        this.UI = ActivityUI(owner=this)
 
         UI.recycler.adapter = CatalogRamosAdapter(
             data = DataMaster.getCatalogRamos().toMutableList(),

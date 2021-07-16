@@ -17,51 +17,39 @@ import java.time.DayOfWeek
 
 class AgendaPortraitActivity : AppCompatActivity() {
 
-    private object UI {
-        lateinit var loadScreen       :View
-        lateinit var saveAsImgButton  :FloatingActionButton
-        lateinit var fullScreenButton :FloatingActionButton
-        lateinit var agendaScroll     :View // ScrollView
-        lateinit var agendaLayout     :View // LinearLayout
-        lateinit var recyclerTeamMon  :Pair<View, RecyclerView> // these hold the header (TextView) and their recycler attatched. They're a team.
-        lateinit var recyclerTeamTue  :Pair<View, RecyclerView>
-        lateinit var recyclerTeamWed  :Pair<View, RecyclerView>
-        lateinit var recyclerTeamThu  :Pair<View, RecyclerView>
-        lateinit var recyclerTeamFri  :Pair<View, RecyclerView>
-
-        fun init(owner :AppCompatActivity) {
-            this.loadScreen       = owner.findViewById(R.id.portrAgenda_loadScreen)
-            this.saveAsImgButton  = owner.findViewById(R.id.portrAgenda_saveAsImage)
-            this.fullScreenButton = owner.findViewById(R.id.portrAgenda_fullScreen)
-            this.agendaScroll     = owner.findViewById(R.id.portrAgenda_scrollView)
-            this.agendaLayout     = owner.findViewById(R.id.portrAgenda_layout)
-            this.recyclerTeamMon  = Pair(
-                owner.findViewById(R.id.portrAgenda_mondayHead),
-                owner.findViewById(R.id.portrAgenda_mondayRecycler)
-            )
-            this.recyclerTeamTue = Pair(
-                owner.findViewById(R.id.portrAgenda_tuesdayHead),
-                owner.findViewById(R.id.portrAgenda_tuesdayRecycler)
-            )
-            this.recyclerTeamWed = Pair(
-                owner.findViewById(R.id.portrAgenda_wednesdayHead),
-                owner.findViewById(R.id.portrAgenda_wednesdayRecycler)
-            )
-            this.recyclerTeamThu = Pair(
-                owner.findViewById(R.id.portrAgenda_thursdayHead),
-                owner.findViewById(R.id.portrAgenda_thursdayRecycler)
-            )
-            this.recyclerTeamFri = Pair(
-                owner.findViewById(R.id.portrAgenda_fridayHead),
-                owner.findViewById(R.id.portrAgenda_fridayRecycler)
-            )
-        }
+    private class ActivityUI(owner :AppCompatActivity) {
+        val loadScreen       :View = owner.findViewById(R.id.portrAgenda_loadScreen)
+        val saveAsImgButton  :FloatingActionButton = owner.findViewById(R.id.portrAgenda_saveAsImage)
+        val fullScreenButton :FloatingActionButton = owner.findViewById(R.id.portrAgenda_fullScreen)
+        val agendaScroll     :View = owner.findViewById(R.id.portrAgenda_scrollView) // ScrollView
+        val agendaLayout     :View = owner.findViewById(R.id.portrAgenda_layout) // LinearLayout
+        val recyclerTeamMon  :Pair<View, RecyclerView> = Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
+            owner.findViewById(R.id.portrAgenda_mondayHead),
+            owner.findViewById(R.id.portrAgenda_mondayRecycler)
+        )
+        val recyclerTeamTue  :Pair<View, RecyclerView> = Pair(
+            owner.findViewById(R.id.portrAgenda_tuesdayHead),
+            owner.findViewById(R.id.portrAgenda_tuesdayRecycler)
+        )
+        val recyclerTeamWed  :Pair<View, RecyclerView> = Pair(
+            owner.findViewById(R.id.portrAgenda_wednesdayHead),
+            owner.findViewById(R.id.portrAgenda_wednesdayRecycler)
+        )
+        val recyclerTeamThu  :Pair<View, RecyclerView> = Pair(
+            owner.findViewById(R.id.portrAgenda_thursdayHead),
+            owner.findViewById(R.id.portrAgenda_thursdayRecycler)
+        )
+        val recyclerTeamFri  :Pair<View, RecyclerView> = Pair(
+            owner.findViewById(R.id.portrAgenda_fridayHead),
+            owner.findViewById(R.id.portrAgenda_fridayRecycler)
+        )
     }
+    private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_agenda_portrait)
-        UI.init(owner=this)
+        this.UI = ActivityUI(owner=this)
 
         UI.loadScreen.visibility = View.GONE
 

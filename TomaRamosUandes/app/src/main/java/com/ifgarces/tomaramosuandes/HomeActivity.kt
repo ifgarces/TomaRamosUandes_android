@@ -22,42 +22,34 @@ import com.ifgarces.tomaramosuandes.utils.WebManager
 
 class HomeActivity : AppCompatActivity() {
 
-    private object UI {
-        lateinit var topBar              :MaterialToolbar
-        lateinit var catalogButton       :Button
-        lateinit var ramosRecycler       :RecyclerView
-        lateinit var emptyRecyclerMarker :TextView // TextView
-        lateinit var creditosCounter     :TextView
-        lateinit var agendaButton        :Button
-        lateinit var evaluationsButton   :Button
-        lateinit var loadDisplay         :View
-
-        fun init(owner :AppCompatActivity) {
-            this.topBar               = owner.findViewById(R.id.home_topbar)
-            this.catalogButton        = owner.findViewById(R.id.home_catalogButton)
-            this.ramosRecycler        = owner.findViewById(R.id.home_ramosRecycler)
-            this.emptyRecyclerMarker  = owner.findViewById(R.id.home_emptyRecyclerText)
-            this.creditosCounter      = owner.findViewById(R.id.home_creditos)
-            this.agendaButton         = owner.findViewById(R.id.home_agendaButton)
-            this.evaluationsButton    = owner.findViewById(R.id.home_pruebasButton)
-            this.loadDisplay          = owner.findViewById(R.id.home_loadScreen)
-        }
+    private class ActivityUI(owner :AppCompatActivity) {
+        val topBar              :MaterialToolbar = owner.findViewById(R.id.home_topbar)
+        val catalogButton       :Button = owner.findViewById(R.id.home_catalogButton)
+        val ramosRecycler       :RecyclerView = owner.findViewById(R.id.home_ramosRecycler)
+        val emptyRecyclerMarker :TextView = owner.findViewById(R.id.home_emptyRecyclerText)
+        val creditosCounter     :TextView = owner.findViewById(R.id.home_creditos)
+        val agendaButton        :Button = owner.findViewById(R.id.home_agendaButton)
+        val evaluationsButton   :Button = owner.findViewById(R.id.home_pruebasButton)
+        val loadDisplay         :View = owner.findViewById(R.id.home_loadScreen)
     }
+    private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_home)
-        UI.init(owner=this)
+        this.UI = ActivityUI(owner=this)
 
         AsyncTask.execute { // checking for updates here instead of MainAcivity, for simplicity
             WebManager.init(activity=this)
         }
 
-        UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
-        UI.ramosRecycler.adapter = CatalogRamosAdapter(
-            data = DataMaster.getUserRamos(),
-            isAllInscribed = true
-        )
+//        UI.ramosRecycler.layoutManager = LinearLayoutManager(this)
+//        UI.ramosRecycler.adapter = CatalogRamosAdapter(
+//            data = DataMaster.getUserRamos(),
+//            isAllInscribed = true
+//        )
+        UI.ramosRecycler.layoutManager = null
+        UI.ramosRecycler.adapter = null
 
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -76,7 +68,23 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         UI.loadDisplay.visibility = View.GONE
-        //RecyclerSync.updateLocal()
+
+        Logf("[HomeActivity] Updating recycler...")
+        UI.ramosRecycler.let { recycler :RecyclerView -> // kind-of dummy solution for issue #11
+            recycler.adapter = null
+            recycler.layoutManager = null
+            recycler.recycledViewPool.clear()
+            recycler.swapAdapter(
+                CatalogRamosAdapter(
+                    data = DataMaster.getUserRamos(),
+                    isAllInscribed = true
+                ),
+                false
+            )
+            recycler.layoutManager = LinearLayoutManager(this)
+            recycler.adapter!!.notifyDataSetChanged()
+        }
+
         (UI.ramosRecycler.adapter as CatalogRamosAdapter).notifyDataSetChanged()
         Logf("[HomeActivity] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
 
