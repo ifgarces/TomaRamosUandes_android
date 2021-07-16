@@ -85,16 +85,21 @@ object WebManager {
 
         if (latestVer != currentVer) { // prompts update dialog
             activity.runOnUiThread {
-                activity.yesNoDialog(
-                    title = "Actualización disponible",
-                    message = "Hay una nueva versión de esta app: %s.\n\n¿Ir al link de descarga ahora?".format(latestVer),
-                    onYesClicked = { // opens APK download link in default browser
-                        activity.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(this.USER_APP_URL))
-                        )
-                    },
-                    icon = R.drawable.exclamation_icon
-                )
+                try {
+                    activity.yesNoDialog(
+                        title = "Actualización disponible",
+                        message = "Hay una nueva versión de esta app: %s.\n\n¿Ir al link de descarga ahora?".format(latestVer),
+                        onYesClicked = { // opens APK download link in default browser
+                            activity.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse(this.USER_APP_URL))
+                            )
+                        },
+                        icon = R.drawable.exclamation_icon
+                    )
+                }
+                catch (e :Exception) { //! this is messy. Catching exception that happens sometime when trying to display this dialog asynchronously
+                    activity.toastf("Actualización disponible!")
+                }
             }
         }
     }

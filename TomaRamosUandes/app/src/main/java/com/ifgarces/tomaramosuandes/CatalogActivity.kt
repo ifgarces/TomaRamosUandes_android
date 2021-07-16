@@ -37,7 +37,14 @@ class CatalogActivity : AppCompatActivity() {
         UI.searchBox.onTextChangedListener {
             if (it.length > 1) { this.applySearch(searchText=it) }
         }
-        UI.topBar.subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate())
+        try {
+            UI.topBar.subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate())
+        }
+        catch (e :Exception) {
+            // Catching error when navigating to `CatalogActivity` before the async tasks of `WebManager` are finished.
+            this.toastf("Aún no se cargan los ramos, por favor espere")
+            this.finish()
+        }
         UI.topBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {

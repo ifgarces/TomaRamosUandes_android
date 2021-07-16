@@ -18,6 +18,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
+import com.ifgarces.tomaramosuandes.utils.toastf
 
 
 class HomeActivity : AppCompatActivity() {
@@ -70,7 +71,7 @@ class HomeActivity : AppCompatActivity() {
         UI.loadDisplay.visibility = View.GONE
 
         Logf("[HomeActivity] Updating recycler...")
-        UI.ramosRecycler.let { recycler :RecyclerView -> // kind-of dummy solution for issue #11
+        UI.ramosRecycler.let { recycler :RecyclerView -> // dummy solution for issue #11, but don't seem to work
             recycler.adapter = null
             recycler.layoutManager = null
             recycler.recycledViewPool.clear()
@@ -85,7 +86,7 @@ class HomeActivity : AppCompatActivity() {
             recycler.adapter!!.notifyDataSetChanged()
         }
 
-        (UI.ramosRecycler.adapter as CatalogRamosAdapter).notifyDataSetChanged()
+        //(UI.ramosRecycler.adapter as CatalogRamosAdapter).notifyDataSetChanged()
         Logf("[HomeActivity] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
 
         UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()

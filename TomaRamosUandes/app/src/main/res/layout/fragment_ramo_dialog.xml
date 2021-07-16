@@ -278,7 +278,7 @@
                         android:orientation="horizontal"
                         android:scrollbars="horizontal"
                         android:scrollbarThumbHorizontal="@color/colorAccent"
-
+                        android:scrollbarSize="6dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="60dp" />
