@@ -19,6 +19,7 @@ import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 import com.ifgarces.tomaramosuandes.utils.toastf
+import java.util.concurrent.Executors
 
 
 class HomeActivity : AppCompatActivity() {
@@ -40,7 +41,8 @@ class HomeActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_home)
         this.UI = ActivityUI(owner=this)
 
-        AsyncTask.execute { // checking for updates here instead of MainAcivity, for simplicity
+        // Checking for updates here instead of MainAcivity, for simplicity
+        Executors.newSingleThreadExecutor().execute {
             WebManager.init(activity=this)
         }
 

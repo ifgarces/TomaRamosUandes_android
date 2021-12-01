@@ -9,7 +9,7 @@
     tools:context=".HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/home_topbar_layout"
+        android:id="@+id/main_topbar_layout"
         android:elevation="@dimen/toolbar_elevation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/home_topbar"
+            android:id="@+id/main_topbar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             app:menu="@menu/menu_with_help"
             app:title="Simulador toma de ramos Uandes"
@@ -27,143 +27,60 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/home_catalogButton"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        app:icon="@drawable/catalog_book_icon"
-        android:text="Catálogo de ramos"
-        android:textAllCaps="true"
-        android:textSize="17sp"
-        app:cornerRadius="@dimen/roundButton_radius"
-
-        android:layout_margin="@dimen/homeCatalogBtn_margins"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
-
-    <TextView
-        android:id="@+id/home_static01"
-        android:text="Ramos tomados"
-        android:background="@color/gray"
-        android:fontFamily="@font/lato"
-        android:paddingVertical="4dp"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-
-        android:layout_marginTop="@dimen/homeCatalogBtn_margins"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_catalogButton" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/home_userRamosContainer"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_fragmentContainer"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="0dp"
-        android:background="@drawable/box_thick"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="4dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_topbar_layout"
+        app:navGraph="@navigation/main_navigator" />
+
+    <!-- TODO: convert this into a BottomNavigationView -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_static01"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/home_static02"
-            style="@style/home_creditosCount"
-            android:text="Créditos: "
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/main_agendaButton"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            app:icon="@drawable/calendar_icon"
+            android:text="Horario"
+            android:textAllCaps="true"
+            android:textSize="@dimen/buttonMediumTextSize"
 
-            android:layout_marginTop="6dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/home_creditos"
-            style="@style/home_creditosCount"
-            android:text="[créditos sum]"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/home_static02"
-            app:layout_constraintTop_toTopOf="@+id/home_static02" />
-
-        <TextView
-            android:id="@+id/home_emptyRecyclerText"
-            style="@style/standardTextView"
-            android:text="Ningún ramo tomado"
-
-            android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/home_ramosRecycler" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_ramosRecycler"
-            tools:listitem="@layout/ramo_item"
-            android:orientation="vertical"
-            android:scrollbars="vertical"
-            android:background="@android:color/white"
-
-            android:layout_marginVertical="6dp"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_static02"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_agendaButton"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                app:icon="@drawable/calendar_icon"
-                android:text="Horario"
-                android:textAllCaps="true"
-                android:textSize="@dimen/buttonMediumTextSize"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/home_pruebasButton"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            app:icon="@drawable/exam_icon"
+            android:text="Evaluaciones"
+            android:textAllCaps="true"
+            android:textSize="@dimen/buttonMediumTextSize"
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_pruebasButton"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                app:icon="@drawable/exam_icon"
-                android:text="Evaluaciones"
-                android:textAllCaps="true"
-                android:textSize="@dimen/buttonMediumTextSize"
-
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/home_agendaButton"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/main_agendaButton"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include
+
+    <!--<include
         android:id="@+id/home_loadScreen"
         layout="@layout/load_screen"
 
@@ -171,6 +88,6 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/main_topbar_layout" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
