@@ -78,9 +78,9 @@ dependencies {
 
     // Firebase (remote database)
     implementation "com.google.firebase:firebase-firestore:${firestore_version}"
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-config-ktx'
+//    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+//    implementation 'com.google.firebase:firebase-analytics-ktx'
+//    implementation 'com.google.firebase:firebase-config-ktx'
 
     // Gson JSON parser
     implementation "com.google.code.gson:gson:${gson_version}"

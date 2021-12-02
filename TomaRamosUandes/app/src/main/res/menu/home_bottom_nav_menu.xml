@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottom_nav_ramos"
+        android:enabled="true"
+        android:orderInCategory="0"
+        android:icon="@drawable/checklist_icon"
+        android:title="Ramos"
+        android:iconTint="@color/almostBlack" />
+
+    <item
+        android:id="@+id/bottom_nav_schedule"
+        android:enabled="true"
+        android:orderInCategory="0"
+        android:icon="@drawable/calendar_icon"
+        android:title="Horario"
+        android:iconTint="@color/almostBlack" />
+
+    <item
+        android:id="@+id/bottom_nav_evaluations"
+        android:enabled="true"
+        android:orderInCategory="0"
+        android:icon="@drawable/exam_icon"
+        android:title="Evaluaciones"
+        android:iconTint="@color/almostBlack" />
+
+</menu>

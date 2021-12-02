@@ -9,7 +9,7 @@
     tools:context=".HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/main_topbar_layout"
+        android:id="@+id/home_topbar_layout"
         android:elevation="@dimen/toolbar_elevation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/main_topbar"
+            android:id="@+id/home_topbar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             app:menu="@menu/menu_with_help"
             app:title="Simulador toma de ramos Uandes"
@@ -28,57 +28,63 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_fragmentContainer"
+        android:id="@+id/home_fragmentContainer"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="8dp"
         android:layout_marginVertical="4dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/home_bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_topbar_layout"
+        app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout"
         app:navGraph="@navigation/main_navigator" />
 
     <!-- TODO: convert this into a BottomNavigationView -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
-        android:layout_width="wrap_content"
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/constraintLayout2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/home_bottomNavigationView"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/main_agendaButton"-->
+<!--            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Horario"-->
+<!--            android:textAllCaps="true"-->
+
+<!--            android:textSize="@dimen/buttonMediumTextSize"-->
+<!--            app:icon="@drawable/calendar_icon"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/home_pruebasButton"-->
+<!--            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:text="Evaluaciones"-->
+
+<!--            android:textAllCaps="true"-->
+<!--            android:textSize="@dimen/buttonMediumTextSize"-->
+<!--            app:icon="@drawable/exam_icon"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/main_agendaButton"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/home_bottomNavigationView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/main_agendaButton"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            app:icon="@drawable/calendar_icon"
-            android:text="Horario"
-            android:textAllCaps="true"
-            android:textSize="@dimen/buttonMediumTextSize"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/home_pruebasButton"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            app:icon="@drawable/exam_icon"
-            android:text="Evaluaciones"
-            android:textAllCaps="true"
-            android:textSize="@dimen/buttonMediumTextSize"
-
-            android:layout_marginStart="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/main_agendaButton"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        app:menu="@menu/home_bottom_nav_menu"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!--<include
         android:id="@+id/home_loadScreen"
@@ -88,6 +94,6 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_topbar_layout" />-->
+        app:layout_constraintTop_toBottomOf="@+id/home_topbar_layout" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

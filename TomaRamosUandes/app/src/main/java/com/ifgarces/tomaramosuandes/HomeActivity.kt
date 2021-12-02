@@ -34,6 +34,7 @@ class HomeActivity : AppCompatActivity() {
         val evaluationsButton   :Button = owner.findViewById(R.id.home_pruebasButton)
         val loadDisplay         :View = owner.findViewById(R.id.home_loadScreen)
     }
+
     private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {

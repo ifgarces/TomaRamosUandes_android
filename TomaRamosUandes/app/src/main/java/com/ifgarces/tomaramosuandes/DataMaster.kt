@@ -1,22 +1,15 @@
 package com.ifgarces.tomaramosuandes
 
 import android.app.Activity
-import android.os.AsyncTask
 import androidx.room.Room
-import com.ifgarces.tomaramosuandes.DataMaster.catalog_events
-import com.ifgarces.tomaramosuandes.DataMaster.catalog_ramos
-import com.ifgarces.tomaramosuandes.DataMaster.eventsLock
-import com.ifgarces.tomaramosuandes.DataMaster.ramosLock
-import com.ifgarces.tomaramosuandes.DataMaster.user_events
-import com.ifgarces.tomaramosuandes.DataMaster.user_ramos
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
 import com.ifgarces.tomaramosuandes.utils.*
-import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.time.DayOfWeek
+import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
 
@@ -70,7 +63,7 @@ object DataMaster {
         this.ramosLock = ReentrantLock()
         this.eventsLock = ReentrantLock()
 
-        AsyncTask.execute {
+        Executors.newSingleThreadExecutor().execute {
             try {
                 this.localDB = Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
             }
@@ -263,7 +256,7 @@ object DataMaster {
         }
 
         if (conflictReport == "") { // no conflict was found
-            AsyncTask.execute {
+            Executors.newSingleThreadExecutor().execute {
                 this.inscribeRamoAction(ramo)
                 onFinish.invoke()
             }
@@ -274,7 +267,7 @@ object DataMaster {
                     message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
                         .format(conflictReport, ramo.nombre),
                     onYesClicked = {
-                        AsyncTask.execute {
+                        Executors.newSingleThreadExecutor().execute {
                             this.inscribeRamoAction(ramo) // need this AsyncTask form in order to be certain to call `onFinish` AFTER `ramo` is inscribed into the database.
                             onFinish.invoke()
                         }
@@ -333,7 +326,9 @@ object DataMaster {
             try {
                 this.eventsLock.lock()
                 this.user_events.remove(event)
-                AsyncTask.execute { this.localDB.eventsDAO().deleteRamoEvent(id=event.ID) }
+                Executors.newSingleThreadExecutor().execute {
+                    this.localDB.eventsDAO().deleteRamoEvent(id=event.ID)
+                }
             } finally {
                 this.eventsLock.unlock()
             }
@@ -349,7 +344,9 @@ object DataMaster {
                 r = ramoIterator.next()
                 if (r.NRC == NRC) {
                     ramoIterator.remove()
-                    AsyncTask.execute { this.localDB.ramosDAO().deleteRamo(nrc=NRC) }
+                    Executors.newSingleThreadExecutor().execute {
+                        this.localDB.ramosDAO().deleteRamo(nrc=NRC)
+                    }
                     break
                 }
             }

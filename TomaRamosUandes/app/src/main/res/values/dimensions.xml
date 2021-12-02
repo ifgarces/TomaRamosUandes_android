@@ -5,5 +5,4 @@
     <dimen name="ramoAttrs_spacing">8dp</dimen> <!-- spacing between most of the `Ramo` attributes when displaying all its info -->
     <dimen name="recyclerItems_margin">4dp</dimen> <!-- individual margin for all elements of a RecyclerView -->
     <dimen name="roundButton_radius">18dp</dimen> <!-- cornerRaduis for a rounded button -->
-    <dimen name="homeCatalogBtn_margins">30dp</dimen>
 </resources>

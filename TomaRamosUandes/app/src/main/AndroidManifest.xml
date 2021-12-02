@@ -19,15 +19,19 @@
 
         <activity
             android:name=".AgendaLandscapeActivity"
-            android:screenOrientation="landscape" />
-        <activity android:name=".EvaluationsActivity" />
-        <activity android:name=".CatalogActivity" />
+            android:screenOrientation="landscape"
+            android:exported="false"
+            />
+        <activity android:name=".EvaluationsActivity" android:exported="false" />
+        <activity android:name=".CatalogActivity" android:exported="false" />
         <activity android:name=".AgendaPortraitActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:exported="true" />
         <activity
             android:name=".HomeActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity">
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
