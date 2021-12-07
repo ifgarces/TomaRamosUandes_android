@@ -23,13 +23,16 @@ import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 
 
-class HomeFragment : Fragment() {
+/**
+ * Displays inscribed user's `Ramo`s,
+ */
+class UserRamosFragment : Fragment() {
     
     private class FragmentUI(owner :View) {
-        val catalogButton       :Button = owner.findViewById(R.id.home_catalogButton)
-        val ramosRecycler       :RecyclerView = owner.findViewById(R.id.home_ramosRecycler)
-        val emptyRecyclerMarker :TextView = owner.findViewById(R.id.home_emptyRecyclerText)
-        val creditosCounter     :TextView = owner.findViewById(R.id.home_creditos)
+        val catalogButton       :Button = owner.findViewById(R.id.userRamos_catalogButton)
+        val ramosRecycler       :RecyclerView = owner.findViewById(R.id.userRamos_ramosRecycler)
+        val emptyRecyclerMarker :TextView = owner.findViewById(R.id.userRamos_emptyRecyclerTextNotice)
+        val creditosCounter     :TextView = owner.findViewById(R.id.userRamos_creditosSum)
     }
 
     private lateinit var UI :FragmentUI
@@ -37,7 +40,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_home, container, false)
+        val fragView :View = inflater.inflate(R.layout.fragment_user_ramos, container, false)
         this.UI = FragmentUI(owner=fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
@@ -49,7 +52,7 @@ class HomeFragment : Fragment() {
                 }
             )
 
-            UI.ramosRecycler.layoutManager = LinearLayoutManager(this.requireContext())
+            UI.ramosRecycler.layoutManager = LinearLayoutManager(homeActivity)
             UI.ramosRecycler.adapter = CatalogRamosAdapter(
                 data = DataMaster.getUserRamos(),
                 isAllInscribed = true
@@ -74,7 +77,7 @@ class HomeFragment : Fragment() {
         (this.requireActivity() as HomeActivity).hideLoadingScreen()
 
         // Dummy solution for issue #11, but doesn't seem to work...
-        Logf("[HomeFragment] Updating recycler...")
+        Logf("[UserRamosFragment] Updating recycler...")
         UI.ramosRecycler.let { recycler :RecyclerView ->
             recycler.adapter = null
             recycler.layoutManager = null
@@ -90,7 +93,7 @@ class HomeFragment : Fragment() {
             recycler.adapter!!.notifyDataSetChanged() // needed?
         }
 
-        Logf("[HomeFragment] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
+        Logf("[UserRamosFragment] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
 
         UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()
 

@@ -6,20 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".fragments.UserRamosFragment">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/home_catalogButton"
+        android:id="@+id/userRamos_catalogButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30sp"
         android:layout_marginVertical="10dp"
         android:paddingHorizontal="10dp"
-        android:text="Catálogo de ramos"
+        android:text="Ver catálogo de ramos"
 
         android:textAllCaps="true"
-        android:textSize="17sp"
+        android:textSize="16sp"
         app:cornerRadius="@dimen/roundButton_radius"
         app:icon="@drawable/catalog_book_icon"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/home_static01"
+        android:id="@+id/userRamos_staticTextView1"
         android:text="Ramos tomados"
         android:paddingHorizontal="10dp"
         android:background="@color/gray"
@@ -43,10 +43,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_catalogButton" />
+        app:layout_constraintTop_toBottomOf="@+id/userRamos_catalogButton" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/home_userRamosContainer"
+        android:id="@+id/userRamos_ramosContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="0dp"
@@ -55,11 +55,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_static01"
+        app:layout_constraintTop_toBottomOf="@+id/userRamos_staticTextView1"
         app:layout_constraintVertical_bias="0.0">
 
         <TextView
-            android:id="@+id/home_static02"
+            android:id="@+id/userRamos_staticTextView02"
             style="@style/home_creditosCount"
             android:text="Créditos: "
 
@@ -70,17 +70,17 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/home_creditos"
+            android:id="@+id/userRamos_creditosSum"
             style="@style/home_creditosCount"
             android:text="[créditos sum]"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/home_static02"
-            app:layout_constraintTop_toTopOf="@+id/home_static02" />
+            app:layout_constraintStart_toEndOf="@+id/userRamos_staticTextView02"
+            app:layout_constraintTop_toTopOf="@+id/userRamos_staticTextView02" />
 
         <TextView
-            android:id="@+id/home_emptyRecyclerText"
+            android:id="@+id/userRamos_emptyRecyclerTextNotice"
             style="@style/standardTextView"
             android:text="Ningún ramo tomado"
 
@@ -89,10 +89,10 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/home_ramosRecycler" />
+            app:layout_constraintTop_toTopOf="@+id/userRamos_ramosRecycler" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_ramosRecycler"
+            android:id="@+id/userRamos_ramosRecycler"
             tools:listitem="@layout/ramo_item"
             android:orientation="vertical"
             android:scrollbars="vertical"
@@ -104,7 +104,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_static02"
+            app:layout_constraintTop_toBottomOf="@+id/userRamos_staticTextView02"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
