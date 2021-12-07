@@ -65,7 +65,7 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 else -> {
-                    Logf("[HomeActivity] Warning: unknown bottom navbar element pressed (id=%d)", item.itemId)
+                    Logf(this::class, "[HomeActivity] Warning: unknown bottom navbar element pressed (id=%d)", item.itemId)
                     return@setOnItemSelectedListener false
                 }
             }
@@ -108,7 +108,7 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
-                    Logf("[HomeActivity] Warning: unknown top toolbar element pressed (id=%d)", item.itemId)
+                    Logf(this::class, "[HomeActivity] Warning: unknown top toolbar element pressed (id=%d)", item.itemId)
                     return@setOnMenuItemClickListener false
                 }
             }

@@ -11,11 +11,11 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.ifgarces.tomaramosuandes.R
-import java.util.*
+import kotlin.reflect.KClass
+import java.util.Locale
 
 
-const val DEBUG_MODE :Boolean = true // <- turn it to false during tests (and release). Needed because somehow the damn tests don't support functions that write to the Log.
-const val LOG_TAG    :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
+const val LOG_TAG :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
 
 /**
  * Quick toast + format.
@@ -25,18 +25,24 @@ fun Context.toastf(format :String, vararg args :Any?) {
 }
 
 /**
- * Debug log + format. All log under the same tag stored at `LOG_TAG` constant. This function
- * is not an actual extension, but I still place it here. We will tell nobody.
+ * Simplified debug log with Java-style string formatting. All log under the same tag stored at
+ * `LOG_TAG` constant. This function is not an actual extension, but I still place it here. We will
+ * tell nobody.
+ * @author Ignacio F. Garcés.
+ * @param scopeClass The class of the fragment or activity (or object) of the scope that desires to
+ * log.
+ * @param format String format.
+ * @param args String format args.
  */
-fun Logf(format :String, vararg args :Any?) {
-    if (DEBUG_MODE) { Log.d(LOG_TAG, format.format(*args)) }
+fun Logf(scopeClass :KClass<*>, format :String, vararg args :Any?) {
+    Log.d(LOG_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))
 }
 
-fun String.spanishUpperCase() : String {
+fun String.spanishUpperCase() :String {
     return this.toUpperCase( Locale("es", "ES") )
 }
 
-fun String.spanishLowerCase() : String {
+fun String.spanishLowerCase() :String {
     return this.toLowerCase( Locale("es", "ES") )
 }
 
@@ -44,7 +50,7 @@ fun String.spanishLowerCase() : String {
  * For large block literal strings. Makes possible to continue a line with "\\" character, ignoring
  * extra whitespaces.
  */
-fun String.multilineTrim() : String { // Note: does not ignore tabs "\t".
+fun String.multilineTrim() :String { // Note: does not ignore tabs "\t".
     return this.replace("\\\n", "").trim()
 //    val newline_internal_marker :String = "+++|♣♦♠♥|+++"
 //    return this
@@ -58,7 +64,7 @@ fun String.multilineTrim() : String { // Note: does not ignore tabs "\t".
 /**
  * Gets the equivalent non-accented spanish character, with the exception of "ñ"/"Ñ".
  */
-fun String.spanishNonAccent() : String {
+fun String.spanishNonAccent() :String {
     val lowerAccents    :String = "áéíóúü"
     val upperAccents    :String = "ÁÉÍÓÚÜ"
     val lowerNonAccents :String = "aeiouu"
@@ -75,6 +81,8 @@ fun String.spanishNonAccent() : String {
 
 /**
  * Executes `action` when the widget `text` is changed.
+ * @param action Callback to be executed when the text is changed. The current text will be passed
+ * as a parameter.
  */
 fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
     this.addTextChangedListener(
@@ -91,6 +99,7 @@ fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
 
 /**
  * Simple `AlertDialog` that shows text information.
+ * @author Ignacio F. Garcés.
  * @param title Dialog title.
  * @param message Dialog body.
  * @param onDismiss Callback executed when the dialog is dismissed by the user.
@@ -118,6 +127,7 @@ fun Context.infoDialog(
 
 /**
  * `AlertDialog` with yes/no buttons.
+ * @author Ignacio F. Garcés.
  * @param title Dialog title.
  * @param message Dialog body.
  * @param onYesClicked Callback executed when the user presses the possitive button.

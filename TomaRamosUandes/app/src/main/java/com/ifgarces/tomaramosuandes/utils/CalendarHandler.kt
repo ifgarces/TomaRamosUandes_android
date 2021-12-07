@@ -68,7 +68,7 @@ object CalendarHandler {
                 )
             }
             catch (e :NullPointerException) {
-                Logf("[CalendarHandles] Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s", cur.position ,e)
+                Logf(this::class, "[CalendarHandles] Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s", cur.position ,e)
             }
         }
         cur.close()
@@ -89,7 +89,7 @@ object CalendarHandler {
         onError        :() -> Unit
     ) {
         val userCalendars :List<UserCalendar> = this.getUserCalendars(activity)
-        Logf("[CalendarHandler] Calendars in device: %s", userCalendars)
+        Logf(this::class, "[CalendarHandler] Calendars in device: %s", userCalendars)
         val selectables :MutableList<String> = mutableListOf()
         userCalendars.forEach {
             selectables.add(it.name)
@@ -100,7 +100,7 @@ object CalendarHandler {
             .setCancelable(true)
             .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
                 val cal :UserCalendar? = userCalendars[which]
-                Logf("[CalendarHandler] User has selected %s (index: %d)", cal, which)
+                Logf(this::class, "[CalendarHandler] User has selected %s (index: %d)", cal, which)
                 if (cal == null) {
                     onError.invoke()
                     return@setItems
@@ -128,15 +128,15 @@ object CalendarHandler {
                 activity.infoDialog(
                     title = "Error",
                     icon = R.drawable.alert_icon,
-                    message = """
-                        No se pudo acceder al calendario escogido, probablemente por configuraciones
-                        de seguridad estrictas de la cuenta asociada. Por favor intente con otro.
+                    message = """\
+No se pudo acceder al calendario escogido, probablemente por configuraciones \
+de seguridad estrictas de la cuenta asociada. Por favor intente con otro. \
                     """.multilineTrim()
                 )
             },
             onItemSelected = { calendarID :Int, calendarName :String ->
                 val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
-                Logf("[CalendarHandler] Starting to export %d events...", evaluations.count())
+                Logf(this::class, "[CalendarHandler] Starting to export %d events...", evaluations.count())
                 var e :ContentValues
                 var result :Uri? // will hold the got internal feedback for each event insertion in calendar
                 var zoneAux :ZonedDateTime
@@ -144,7 +144,7 @@ object CalendarHandler {
                 val errors :MutableList<RamoEvent> = mutableListOf() // will contain events that somehow couldn't be exported
 
                 evaluations.forEach { event :RamoEvent ->
-                    Logf("[CalendarHandler] Exporting %s", event)
+                    Logf(this::class, "[CalendarHandler] Exporting %s", event)
                     e = ContentValues()
                     e.put(CalendarContract.Events.CALENDAR_ID, calendarID)
                     e.put(CalendarContract.Events.TITLE, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
@@ -163,13 +163,13 @@ object CalendarHandler {
 
                     result = activity.contentResolver.insert(baseUri, e)
                     if (result == null) {
-                        Logf("[CalendarHandler] Error: got null URI response when inserting the event at the calendar with ID=%d", calendarID)
+                        Logf(this::class, "[CalendarHandler] Error: got null URI response when inserting the event at the calendar with ID=%d", calendarID)
                         errors.add(event)
                     }
                 }
 
                 if (errors.count() > 0) {
-                    Logf("[CalendarHandler] Finished event export with %d errors", errors.count())
+                    Logf(this::class, "[CalendarHandler] Finished event export with %d errors", errors.count())
                     // showing error report-like
                     var aux :String = ""
                     errors.forEach {
@@ -177,16 +177,16 @@ object CalendarHandler {
                     }
                     activity.infoDialog(
                         title = "Error",
-                        message = """
-                            No se pudo exportar al calendario de nombre ""%s"" los siguientes eventos:\
-                            %s\
-                            Intente de nuevo con otro calendario.
+                        message = """\
+No se pudo exportar al calendario de nombre ""%s"" los siguientes eventos: \
+%s \
+Intente de nuevo con otro calendario. \
                         """.multilineTrim().format(calendarName, aux),
                         icon = R.drawable.alert_icon
                     )
                 }
                 else {
-                    Logf("[CalendarHandler] Events successfully exported to calendar named \"%s\"", calendarName)
+                    Logf(this::class, "[CalendarHandler] Events successfully exported to calendar named \"%s\"", calendarName)
                     activity.toastf("%d eventos exportados a \"%s\"", evaluations.count(), calendarName)
                 }
             }
@@ -194,14 +194,15 @@ object CalendarHandler {
     }
 
     private fun ensurePermissions(activity :Activity) {
-        Logf("[CalendarHandler] Checking permissions...")
-        while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED
-            || ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
+        Logf(this::class, "[CalendarHandler] Checking permissions...")
+        while (
+            ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
         ) {
             this.askPermissions(activity)
             // TODO: add a small wait here, because if user hasn't set permisions yet, it seems to be a busy cycle until they decide to grant the permission
         }
-        Logf("[CalendarHandler] Calendar permissios granted.")
+        Logf(this::class, "[CalendarHandler] Calendar permissios granted.")
     }
 
     private fun askPermissions(activity :Activity) {
@@ -227,10 +228,10 @@ object CalendarHandler {
             try {
                 stream.write(content.toByteArray())
                 stream.close()
-                Logf("[CalendarHandler] ICS file successfully exported inside folder '%s'.", saveFolder)
+                Logf(this::class, "[CalendarHandler] ICS file successfully exported inside folder '%s'.", saveFolder)
             }
             catch (e :IOException) {
-                Logf("[CalendarHandler] Failed to export ICS file. %s", e)
+                Logf(this::class, "[CalendarHandler] Failed to export ICS file. %s", e)
             }
         }
 
@@ -258,7 +259,7 @@ object CalendarHandler {
             fileMetadata.put(MediaStore.Images.Media.DATA, icsFile.absolutePath)
             context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
         }
-        Logf("[CalendarHandler] iCalendar/ICS file created at %s", icsFile.path)
+        Logf(this::class, "[CalendarHandler] iCalendar/ICS file created at %s", icsFile.path)
     }
 
     /**

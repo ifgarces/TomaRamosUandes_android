@@ -97,11 +97,11 @@ object ImageExportHandler {
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Logf("[ImageExportHandler] Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
+            Logf(this::class, "[ImageExportHandler] Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
             activity.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.IMG_SAVE_FOLDER)
         }
         catch (e :Exception) { // <==> IOException ??
-            Logf("[ImageExportHandler] Error: could not save agenda as image. %s", e)
+            Logf(this::class, "[ImageExportHandler] Error: could not save agenda as image. %s", e)
             activity.infoDialog(
                 title = "Error",
                 message = "Ocurrió un error al guardar el horario como imagen. Intente nuevamente."
@@ -114,12 +114,12 @@ object ImageExportHandler {
      */
     private fun ensurePermissions(activity :Activity) {
         // TODO: fix this not working properly. Permission dialog-thing is never shown. Is this unnecessary???
-        Logf("[ImageExportHandler] Checking permissions...")
+        Logf(this::class, "[ImageExportHandler] Checking permissions...")
         while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
             this.askPermissions(activity)
         }
-        Logf("[ImageExportHandler] Storage permissions granted.")
+        Logf(this::class, "[ImageExportHandler] Storage permissions granted.")
     }
 
     private fun askPermissions(activity :Activity) {

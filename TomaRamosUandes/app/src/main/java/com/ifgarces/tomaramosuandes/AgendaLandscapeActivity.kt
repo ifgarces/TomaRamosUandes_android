@@ -16,11 +16,20 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 
 
-/* Activity forced to be landsape (in manifest) */
+/**
+ * For displaying the schedule in a landscape setting. This activity is forced to be landscape
+ * regarding the device orientation sensor.
+ * @property ONSCROLL_BUTTON_RESPAWN_TIME Time (milliseconds) passed between the
+ * FloatingActionButton dissapears due scrolling and it appears again.
+ * @property ROWS_COUNT Number of rows of agenda i.e. number of blocks per day of week.
+ * @property isFullScreenOn Whether the system UI is hidden (i.e. full screen mode is activated).
+ */
 class AgendaLandscapeActivity : AppCompatActivity() {
 
-    private val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 1500 // time passed between the FloatingActionButton dissapears due scrolling and it appears again (milliseconds)
-    private val ROWS_COUNT :Int = 14 // number of rows of agenda i.e. number of blocks per day of week
+    companion object {
+        const val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 1500
+        const val ROWS_COUNT :Int = 14
+    }
 
     private class ActivityUI(owner :AppCompatActivity) {
         val saveAsImgButton        :FloatingActionButton = owner.findViewById(R.id.landAgenda_saveAsImage)
@@ -109,16 +118,18 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                 owner.findViewById(R.id.landAgenda_vie13)
             )
         )
-    }; private lateinit var UI :ActivityUI
+    }
+
+    private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_agenda_landscape)
-        this.UI = ActivityUI(owner=this)
+        this.UI = ActivityUI(owner = this)
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
-            Logf("[AgendaLandscapeActivity] Exporting agenda as image...")
+            Logf(this::class, "[AgendaLandscapeActivity] Exporting agenda as image...")
             ImageExportHandler.exportAgendaImage(
                 activity = this,
                 targetView = UI.agendaBodyScroll,
@@ -129,7 +140,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         UI.toggleFullScreenButton.setOnClickListener {
             this.toggleFullScreen()
         }
-        for (row :Int in (0 until this.ROWS_COUNT)) {
+        for (row :Int in (0 until ROWS_COUNT)) {
             for (day :DayOfWeek in listOf(
                 DayOfWeek.MONDAY,
                 DayOfWeek.TUESDAY,
@@ -153,13 +164,13 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                 UI.toggleFullScreenButton.visibility = View.GONE
                 UI.toggleFullScreenButton.postDelayed({
                     UI.toggleFullScreenButton.visibility = View.VISIBLE
-                }, this.ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this tiny extra delay causes a nice translation animation, besides the fade in, for this button
+                }, ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this tiny extra delay causes a nice translation animation, besides the fade in, for this button
             }
             if (UI.saveAsImgButton.visibility == View.VISIBLE) {
                 UI.saveAsImgButton.visibility = View.GONE
                 UI.saveAsImgButton.postDelayed({
                     UI.saveAsImgButton.visibility = View.VISIBLE
-                }, this.ONSCROLL_BUTTON_RESPAWN_TIME)
+                }, ONSCROLL_BUTTON_RESPAWN_TIME)
             }
         }
 
@@ -175,7 +186,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         if (hasFocus && this.isFullScreenOn) { this.enterFullScreen() }
     }
 
-    private var isFullScreenOn :Boolean = false // says if the system UI is hidden (i.e. full screen mode is activated).
+    private var isFullScreenOn :Boolean = false
 
     /**
      * Switches between full screen and normal screen modes
@@ -239,7 +250,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
          * Displays the non-evaluation events for each user inscribed `Ramo`s in the agenda
          */
         public fun buildAgenda(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
-            Logf("[AgendaLandscapeActivity] Building agenda...")
+            Logf(this::class, "[AgendaLandscapeActivity] Building agenda...")
 
             /* initializing */
             this.agendaData.clear()
@@ -299,7 +310,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                             }
                         }
                     }
-                    Logf("[AgendaLandscapeActivity] Agenda successfully built.")
+                    Logf(this::class, "[AgendaLandscapeActivity] Agenda successfully built.")
                 }
             }
         }

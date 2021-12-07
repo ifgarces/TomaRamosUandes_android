@@ -72,11 +72,8 @@ class UserRamosFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        // Hiding loading screen overlay
-        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? is this needed?
-
         // Dummy solution for issue #11, but doesn't seem to work...
-        Logf("[UserRamosFragment] Updating recycler...")
+        Logf(this::class, "[UserRamosFragment] Updating recycler...")
         UI.ramosRecycler.let { recycler :RecyclerView ->
             recycler.adapter = null
             recycler.layoutManager = null
@@ -92,7 +89,7 @@ class UserRamosFragment : Fragment() {
             recycler.adapter!!.notifyDataSetChanged() // needed?
         }
 
-        Logf("[UserRamosFragment] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
+        Logf(this::class, "[UserRamosFragment] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
 
         UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()
 

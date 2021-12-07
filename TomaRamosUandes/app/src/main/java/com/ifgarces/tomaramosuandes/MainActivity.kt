@@ -11,11 +11,14 @@ import com.ifgarces.tomaramosuandes.utils.*
 /**
  * Waits for the initialization of all catalog and user data and then, if successfull,
  * launches `HomeActivity`. If an error is triggered, prompts an info dialog and terminates the program.
- * @property PROGRESSBAR_SPAWN_TIMEOUT The amount of milliseconds before the ProgressBar appears in front of the app icon.
+ * @property PROGRESSBAR_SPAWN_TIMEOUT The amount of seconds before the ProgressBar appears in front
+ * of the app icon when it just starts.
  */
 class MainActivity : AppCompatActivity() {
 
-    private val PROGRESSBAR_SPAWN_TIMEOUT :Long = 2*1000
+    companion object {
+        const val PROGRESSBAR_SPAWN_TIMEOUT :Long = 2
+    }
 
     private class ActivityUI(owner :AppCompatActivity) {
         val loadScreen :View = owner.findViewById(R.id.main_loadScreen)
@@ -30,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         UI.loadScreen.visibility = View.GONE
 
         Thread { // <==> UI.loadScreen.postDelayed({ ... }, PROGRESSBAR_SPAWN_TIMEOUT)
-            Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT)
+            Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT * 1000)
             this.runOnUiThread {
                 UI.loadScreen.visibility = View.VISIBLE
             }
@@ -40,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             activity = this,
             clearDatabase = false, //! should be `false` on any release, don't forget!!
             onSuccess = {
-                Logf("[MainActivity] DataMaster successfully initialized.")
+                Logf(this::class, "[MainActivity] DataMaster successfully initialized.")
                 this.startActivity(
                     Intent(this@MainActivity, HomeActivity::class.java)
                 )
@@ -49,9 +52,10 @@ class MainActivity : AppCompatActivity() {
                 this.runOnUiThread {
                     this.infoDialog(
                         title = "Error al obtener catálogo",
-                        message = """No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
-                            Su conexión a internet no es buena o es posible que los servidores que usa la app estén colapsados.
-                            Se usará el catálogo offline de la app.
+                        message = """\
+No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
+Su conexión a internet no es buena o es posible que los servidores que usa la app estén colapsados. \
+Se usará el catálogo offline de la app. \
                             """.multilineTrim(),
                             // the last part is not 100% true, but the user will understand♠. See issue #12
                         icon = R.drawable.alert_icon
@@ -77,12 +81,12 @@ class MainActivity : AppCompatActivity() {
                 this.runOnUiThread {
                     this.infoDialog(
                         title = "Error",
-                        message = """
-                            Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
-                            Los datos están dañados o no compatibles con esta versión del programa.
+                        message = """\
+Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
+Los datos están dañados o no compatibles con esta versión del programa. \
                             """.multilineTrim(),
                         onDismiss = {
-                            Logf("[MainActivity] Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app.")
+                            Logf(this::class, "[MainActivity] Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app.")
                             DataMaster.clear()
                         },
                         icon = R.drawable.alert_icon

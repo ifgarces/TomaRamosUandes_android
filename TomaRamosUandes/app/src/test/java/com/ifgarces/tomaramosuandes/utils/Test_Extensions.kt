@@ -101,10 +101,10 @@ class Test_Extensions {
                 expectedOut = "Whatever"
             ),
             StrTest(
-                paramIn = """
-                    1)  First element.
-                    2)  Second element. \
-                        Still second element.
+                paramIn = """\
+1)  First element.
+2)  Second element. \
+    Still second element. \
                 """,
                 expectedOut = "1) First element.\n 2) Second element. Still second element."
             ),

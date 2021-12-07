@@ -84,7 +84,7 @@ class SchedulePortraitFragment : Fragment() {
 
             UI.saveAsImgButton.setColorFilter(Color.WHITE)
             UI.saveAsImgButton.setOnClickListener {
-                Logf("[AgendaPortraitActivity] Exporting agenda as image...")
+                Logf(this::class, "[AgendaPortraitActivity] Exporting agenda as image...")
                 ImageExportHandler.exportAgendaImage(
                     activity = homeActivity,
                     targetView = UI.agendaScroll,

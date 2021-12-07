@@ -31,7 +31,7 @@ class EvaluationsActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.menu_help -> { this.showHelp() }
                 else -> {
-                    Logf("[EvaluationsActivity] Warning: unknown toolbar element pressed (id=%d).", it.itemId)
+                    Logf(this::class, "[EvaluationsActivity] Warning: unknown toolbar element pressed (id=%d).", it.itemId)
                 }
             }
             return@setOnMenuItemClickListener true
@@ -60,10 +60,10 @@ class EvaluationsActivity : AppCompatActivity() {
     private fun showHelp() {
         this.infoDialog(
             title = "Ayuda - Evaluaciones",
-            message = """
-                Aquí se ven las pruebas y exámenes de cada ramo que ud. haya tomado.\
-                Use el botón "Exportar al calendario" para indexar las evaluaciones en su calendario\
-                (de Google, por ejemplo).
+            message = """\
+Aquí se ven las pruebas y exámenes de cada ramo que ud. haya tomado. \
+Use el botón "Exportar al calendario" para indexar las evaluaciones en su calendario \
+(de Google, por ejemplo). \
             """.multilineTrim()
         )
     }
