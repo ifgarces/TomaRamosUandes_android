@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.DataMaster
-import com.ifgarces.tomaramosuandes.HomeActivity
+import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.utils.Logf
@@ -58,11 +58,9 @@ class UserRamosFragment : Fragment() {
                 data = DataMaster.getUserRamos(),
                 isAllInscribed = true
             )
-            UI.ramosRecycler.layoutManager = null
-            UI.ramosRecycler.adapter = null
 
             UI.catalogButton.setOnClickListener {
-                homeActivity.getNavigator().toRamosCatalog()
+                homeActivity.getNavigator().toCatalog()
             }
         }
 
@@ -71,25 +69,6 @@ class UserRamosFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        // Dummy solution for issue #11, but doesn't seem to work...
-        Logf(this::class, "[UserRamosFragment] Updating recycler...")
-        UI.ramosRecycler.let { recycler :RecyclerView ->
-            recycler.adapter = null
-            recycler.layoutManager = null
-            recycler.recycledViewPool.clear()
-            recycler.swapAdapter(
-                CatalogRamosAdapter(
-                    data = DataMaster.getUserRamos(),
-                    isAllInscribed = true
-                ),
-                false
-            )
-            recycler.layoutManager = LinearLayoutManager(this.requireContext())
-            recycler.adapter!!.notifyDataSetChanged() // needed?
-        }
-
-        Logf(this::class, "[UserRamosFragment] Current Ramos in recycler: %d", UI.ramosRecycler.adapter?.itemCount)
 
         UI.creditosCounter.text = DataMaster.getUserCreditSum().toString()
 

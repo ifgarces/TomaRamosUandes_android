@@ -15,10 +15,11 @@ import kotlin.reflect.KClass
 import java.util.Locale
 
 
-const val LOG_TAG :String = "_DEBUGLOG_" // logging output is not heavy, all of it will be labeled with this string
+const val LOGF_TAG :String = "_DEBUGLOG_"
 
 /**
- * Quick toast + format.
+ * Simple long toast with Java-style string formatting.
+ * @author Ignacio F. Garcés.
  */
 fun Context.toastf(format :String, vararg args :Any?) {
     Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
@@ -26,8 +27,8 @@ fun Context.toastf(format :String, vararg args :Any?) {
 
 /**
  * Simplified debug log with Java-style string formatting. All log under the same tag stored at
- * `LOG_TAG` constant. This function is not an actual extension, but I still place it here. We will
- * tell nobody.
+ * `LOG_TAG` constant, as by now logging is not heavy. This function is not an actual extended
+ * method, but I still place it here. We will tell nobody.
  * @author Ignacio F. Garcés.
  * @param scopeClass The class of the fragment or activity (or object) of the scope that desires to
  * log.
@@ -35,7 +36,7 @@ fun Context.toastf(format :String, vararg args :Any?) {
  * @param args String format args.
  */
 fun Logf(scopeClass :KClass<*>, format :String, vararg args :Any?) {
-    Log.d(LOG_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))
+    Log.d(LOGF_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))
 }
 
 fun String.spanishUpperCase() :String {
@@ -89,7 +90,6 @@ fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
         object : TextWatcher {
             override fun afterTextChanged(s :Editable) {}
             override fun beforeTextChanged(s :CharSequence, start :Int, count :Int, after :Int) {}
-
             override fun onTextChanged(s :CharSequence, start :Int, before :Int, count :Int) {
                 action.invoke(s.toString())
             }
@@ -100,16 +100,17 @@ fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
 /**
  * Simple `AlertDialog` that shows text information.
  * @author Ignacio F. Garcés.
- * @param title Dialog title.
+ * @param title Dialog title. If it is "", somehow the icon is not shown. Should use a blank string
+ * like " " insted, if desired to show a dialog without title.
  * @param message Dialog body.
  * @param onDismiss Callback executed when the dialog is dismissed by the user.
  * @param icon Dialog icon, placed to the left of the title. Must be a drawable resource ID.
  */
 fun Context.infoDialog(
-    title      :String, // note: if `title` is "", somehow the icon is not shown. Should use " " or similar insted.
+    title      :String,
     message    :String,
     onDismiss  :() -> Unit = {},
-    icon       :Int? = null // resource reference
+    icon       :Int? = null
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
         .setTitle(title)
@@ -128,18 +129,19 @@ fun Context.infoDialog(
 /**
  * `AlertDialog` with yes/no buttons.
  * @author Ignacio F. Garcés.
- * @param title Dialog title.
+ * @param title Dialog title. If it is "", somehow the icon is not shown. Should use a blank string
+ * like " " insted, if desired to show a dialog without title.
  * @param message Dialog body.
  * @param onYesClicked Callback executed when the user presses the possitive button.
  * @param onNoClicked Callback executed when the user presses the negative button.
  * @param icon Dialog icon, placed to the left of the title. Must be a drawable resource ID.
  */
 fun Context.yesNoDialog(
-    title         :String, // note: if `title` is "", somehow the icon is not shown. Should use " " or similar insted.
+    title         :String,
     message       :String,
     onYesClicked  :() -> Unit,
     onNoClicked   :() -> Unit = {},
-    icon          :Int? = null // resource reference
+    icon          :Int? = null
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
         .setTitle(title)

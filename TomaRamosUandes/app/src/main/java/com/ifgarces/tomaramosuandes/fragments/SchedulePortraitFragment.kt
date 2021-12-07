@@ -6,17 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ifgarces.tomaramosuandes.AgendaLandscapeActivity
+import com.ifgarces.tomaramosuandes.activities.AgendaLandscapeActivity
 import com.ifgarces.tomaramosuandes.DataMaster
-import com.ifgarces.tomaramosuandes.HomeActivity
+import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.adapters.AgendaPortraitAdapter
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
 import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.infoDialog
 import java.time.DayOfWeek
 
 
@@ -28,8 +31,8 @@ class SchedulePortraitFragment : Fragment() {
     private class FragmentUI(owner :View) {
         val saveAsImgButton  :FloatingActionButton = owner.findViewById(R.id.portrAgenda_saveAsImage)
         val fullScreenButton :FloatingActionButton = owner.findViewById(R.id.portrAgenda_fullScreen)
-        val agendaScroll     :View = owner.findViewById(R.id.portrAgenda_scrollView) // ScrollView
-        val agendaLayout     :View = owner.findViewById(R.id.portrAgenda_layout) // LinearLayout
+        val agendaScroll     :ScrollView = owner.findViewById(R.id.portrAgenda_scrollView)
+        val agendaLayout     :LinearLayout = owner.findViewById(R.id.portrAgenda_layout)
         val recyclerTeamMon  :Pair<View, RecyclerView> = Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
             owner.findViewById(R.id.portrAgenda_mondayHead),
             owner.findViewById(R.id.portrAgenda_mondayRecycler)
@@ -61,6 +64,15 @@ class SchedulePortraitFragment : Fragment() {
         this.UI = FragmentUI(owner=fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
+            homeActivity.setBottomNavItemSelected(this::class)
+            homeActivity.setTopToolbarValues(
+                title = "Horario",
+                subtitle = "",
+                onClick = {
+                    this.showHelp()
+                }
+            )
+
             homeActivity.hideLoadingScreen()
 
             homeActivity.runOnUiThread {
@@ -84,7 +96,7 @@ class SchedulePortraitFragment : Fragment() {
 
             UI.saveAsImgButton.setColorFilter(Color.WHITE)
             UI.saveAsImgButton.setOnClickListener {
-                Logf(this::class, "[AgendaPortraitActivity] Exporting agenda as image...")
+                Logf(this::class, "Exporting agenda as image...")
                 ImageExportHandler.exportAgendaImage(
                     activity = homeActivity,
                     targetView = UI.agendaScroll,
@@ -98,6 +110,11 @@ class SchedulePortraitFragment : Fragment() {
                     Intent(homeActivity, AgendaLandscapeActivity::class.java)
                 )
             }
+
+            if (DataMaster.getUserRamos().count() == 0) {
+                UI.saveAsImgButton.isEnabled = false
+                UI.fullScreenButton.isEnabled = false
+            }
         }
         
         return fragView 
@@ -105,6 +122,14 @@ class SchedulePortraitFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? needed?
+        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? needed for when coming back from AgendaLandscapeActivity, right?
+    }
+
+    private fun showHelp() {
+        this.requireContext().infoDialog(
+            title = "Ayuda - Horario",
+            message = "En esta vista puede ver el horario semanal (clases, ayudantías y laboratorios) de sus ramos actualmente inscritos.",
+            onDismiss = {}
+        )
     }
 }

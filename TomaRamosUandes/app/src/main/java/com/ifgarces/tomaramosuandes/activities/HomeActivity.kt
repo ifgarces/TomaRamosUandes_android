@@ -1,4 +1,4 @@
-package com.ifgarces.tomaramosuandes
+package com.ifgarces.tomaramosuandes.activities
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -6,7 +6,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.ifgarces.tomaramosuandes.fragments.RamosCatalogFragment
+import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
+import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
 import com.ifgarces.tomaramosuandes.fragments.UserRamosFragment
 import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
 import com.ifgarces.tomaramosuandes.utils.Logf
@@ -38,14 +40,16 @@ class HomeActivity : AppCompatActivity() {
         WebManager.init(
             activity = this,
             onFinish = { success :Boolean ->
-                this.hideLoadingScreen()
-                if (!success) {
-                    this.infoDialog(
-                        title = "Error de conexión",
-                        message = "No se pudo verificar la actualización de la app",
-                        onDismiss = {},
-                        icon = R.drawable.alert_icon
-                    )
+                this.runOnUiThread {
+                    this.hideLoadingScreen()
+                    if (!success) {
+                        this.infoDialog(
+                            title = "Error de conexión",
+                            message = "No se pudo verificar la actualización de la app",
+                            onDismiss = {},
+                            icon = R.drawable.alert_icon
+                        )
+                    }
                 }
             }
         )
@@ -53,29 +57,29 @@ class HomeActivity : AppCompatActivity() {
         UI.bottomNavbar.setOnItemSelectedListener { item :MenuItem ->
             when (item.itemId) {
                 R.id.bottom_nav_ramos -> {
-                    throw NotImplementedError() //TODO: navigate to ramos fragment
+                    this.navigator.toUserRamos()
                     return@setOnItemSelectedListener true
                 }
                 R.id.bottom_nav_schedule -> {
-                    throw NotImplementedError() //TODO: navigate to schedule fragment
+                    this.navigator.toSchedulePortrait()
                     return@setOnItemSelectedListener true
                 }
                 R.id.bottom_nav_evaluations -> {
-                    throw NotImplementedError() //TODO: navigate to evaluations fragment
+                    this.navigator.toEvaluations()
                     return@setOnItemSelectedListener true
                 }
                 else -> {
-                    Logf(this::class, "[HomeActivity] Warning: unknown bottom navbar element pressed (id=%d)", item.itemId)
+                    Logf(this::class, "Warning: unknown bottom navbar element pressed (id=%d)", item.itemId)
                     return@setOnItemSelectedListener false
                 }
             }
         }
     }
 
-//    override fun onDestroy() { //! this will destroy everything is the user rotates the screen
-//        super.onDestroy()
-//        this.finishAffinity()
-//    }
+    override fun onDestroy() { //! this will destroy everything is the user rotates the screen, should change for setting this behaviour for onBackPressed?
+        super.onDestroy()
+        this.finishAffinity()
+    }
 
     /**
      * Displays a traslucid large loading screen in front of all other views (except top toolbar).
@@ -96,6 +100,7 @@ class HomeActivity : AppCompatActivity() {
      * its "help" button located. Intended to be called when fragments are initialized, so as for
      * the toolbar to be loaded just once (on the activity) and its behaviour is updated on the fly
      * depending on the currently active fragment.
+     * @author Ignacio F. Garcés.
      * @param onClick Callback to run when the "help" button is clicked.
      */
     public fun setTopToolbarValues(title :String, subtitle :String, onClick :() -> Unit) {
@@ -108,7 +113,7 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
-                    Logf(this::class, "[HomeActivity] Warning: unknown top toolbar element pressed (id=%d)", item.itemId)
+                    Logf(this::class, "Warning: unknown top toolbar element pressed (id=%d)", item.itemId)
                     return@setOnMenuItemClickListener false
                 }
             }
@@ -119,13 +124,15 @@ class HomeActivity : AppCompatActivity() {
      * Sets the item in the bottom nav bar to display as selected, given a fragment class. Used to
      * reflect navigations from one fragment to another in that bar.
      * References: https://www.py4u.net/discuss/603053
+     * @author Ignacio F. Garcés.
      * @param fragment The kotlin class for the fragment desired to be displayed as selected in the
      * nav bar.
      */
     public fun setBottomNavItemSelected(fragment :KClass<*>) {
         val index :Int? = when(fragment) {
             UserRamosFragment::class -> 0
-            RamosCatalogFragment::class -> 1
+            SchedulePortraitFragment::class -> 1
+            EvaluationsFragment::class -> 2
             else -> null
         }
         UI.bottomNavbar.menu.getItem(index!!).isChecked = true

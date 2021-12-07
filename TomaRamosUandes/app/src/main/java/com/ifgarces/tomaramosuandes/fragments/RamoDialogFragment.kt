@@ -1,4 +1,4 @@
-package com.ifgarces.tomaramosuandes
+package com.ifgarces.tomaramosuandes.fragments
 
 import android.content.DialogInterface
 import android.os.AsyncTask
@@ -16,33 +16,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.adapters.RamoEventsAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
+import java.util.concurrent.Executors
 
 
 /**
  * Dialog prompted when clicking a `Ramo`, showing all of its data.
+ * @property onDismiss Callback executed when the dialog is dismissed by the user.
  */
-class RamoDialogFragment : BottomSheetDialogFragment() {
-
-    companion object { //TODO: find a better way to do this, avoid this companion object.
-        lateinit var dismissAction :() -> Unit
-
-        /**
-         * Shows the dialog fragment.
-         * @param manager Needs the caller's `FragmentManager`.
-         * @param onDismiss Peace of code that will be executed when the dialog is dismissed by the user.
-         */
-        public fun summon(manager :FragmentManager, onDismiss :() -> Unit = {}) {
-            this.dismissAction = onDismiss
-            this.newInstance().show(manager, this::class.simpleName)
-        }
-        private fun newInstance() = RamoDialogFragment()
-    }
+class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetDialogFragment() {
 
     private class FragmentUI(owner :View) {
         val rootView     :View = owner
@@ -74,7 +63,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
 
         val ramo_isInscribed :Boolean = this.requireActivity().intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
         val nrc :Int = this.requireActivity().intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
-        val ramo :Ramo = DataMaster.findRamo(nrc, searchInUserList=false)!!
+        val ramo :Ramo = DataMaster.findRamo(nrc, searchInUserList = false)!!
 
         UI.nombre.text = ramo.nombre
         UI.NRC.text = ramo.NRC.toString()
@@ -87,7 +76,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         UI.conectLiga.text = if (ramo.conectLiga == "") "No" else ramo.conectLiga
         UI.listaCruz.text = if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
 
-        AsyncTask.execute {
+        Executors.newSingleThreadExecutor().execute {
             val events :List<RamoEvent> = DataMaster.getCatalogEvents()
                 .filter { it.ramoNRC == ramo.NRC }
 
@@ -110,12 +99,16 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         }
 
         if (ramo_isInscribed) { // `ramo` already in user list
-            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(), R.drawable.trash_icon) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
+            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(),
+                R.drawable.trash_icon
+            ) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
             UI.actionButton.text = "Borrar ramo"
             UI.actionButton.setOnClickListener { this.actionUnInscribe(ramo) }
         }
         else { // `ramo` not yet inscribed by user
-            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(), R.drawable.add_icon)
+            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(),
+                R.drawable.add_icon
+            )
             UI.actionButton.text = "Tomar ramo"
             UI.actionButton.setOnClickListener { this.actionInscribe(ramo) }
         }
@@ -125,8 +118,8 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
         super.onStart()
 
         // initializing the `BottomSheetDialog` fully expanded
-        dialog?.also {
-            val bottomSheet :View = dialog?.findViewById(R.id.design_bottom_sheet)!!
+        this.dialog!!.also {
+            val bottomSheet :View = dialog!!.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
             val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from(bottomSheet)
             val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout
@@ -136,7 +129,9 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
                         layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                         behavior.peekHeight = layout.height
                         view?.requestLayout()
-                    } catch (e: Exception) {}
+                    } catch (e :Exception) {
+                        throw e
+                    }
                 }
             })
         }
@@ -148,7 +143,7 @@ class RamoDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog :DialogInterface) {
         super.onDismiss(dialog)
-        Companion.dismissAction.invoke()
+        this.onDismissAction.invoke()
     }
 
     /**

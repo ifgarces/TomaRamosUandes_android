@@ -6,41 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:nestedScrollingEnabled="true"
-    tools:context=".EvaluationsActivity">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/evals_topbar_layout"
-        android:elevation="@dimen/toolbar_elevation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/evals_topbar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
-            app:menu="@menu/menu_with_help"
-            app:title="Evaluaciones"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-        </com.google.android.material.appbar.MaterialToolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+    tools:context=".fragments.EvaluationsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/evals_eventsRecycler"
-        tools:listitem="@layout/ramo_with_evals_item"
-        android:orientation="vertical"
-        android:scrollbars="vertical"
-        android:nestedScrollingEnabled="true"
-
-        android:layout_margin="6dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:nestedScrollingEnabled="true"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/evals_exportEventsButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/evals_topbar_layout" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/ramo_with_evals_item" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/evals_exportEventsButton"

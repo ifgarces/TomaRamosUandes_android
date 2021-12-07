@@ -49,7 +49,9 @@ object ImageExportHandler {
     }
 
     private fun getBitmapOf(targetView :View, tallView :View) : Bitmap { // references: http://hackerseve.com/android-save-view-as-image-and-share-externally/
-        val bitmap :Bitmap = Bitmap.createBitmap(targetView.width, tallView.height, Bitmap.Config.ARGB_8888)
+        val bitmap :Bitmap = Bitmap.createBitmap(
+            targetView.width, tallView.height, Bitmap.Config.ARGB_8888
+        )
 
         // handling background and layers (...)
         val canvas :Canvas = Canvas(bitmap)
@@ -97,11 +99,11 @@ object ImageExportHandler {
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Logf(this::class, "[ImageExportHandler] Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
+            Logf(this::class, "Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
             activity.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.IMG_SAVE_FOLDER)
         }
         catch (e :Exception) { // <==> IOException ??
-            Logf(this::class, "[ImageExportHandler] Error: could not save agenda as image. %s", e)
+            Logf(this::class, "Error: could not save agenda as image. %s", e)
             activity.infoDialog(
                 title = "Error",
                 message = "Ocurrió un error al guardar el horario como imagen. Intente nuevamente."
@@ -114,12 +116,12 @@ object ImageExportHandler {
      */
     private fun ensurePermissions(activity :Activity) {
         // TODO: fix this not working properly. Permission dialog-thing is never shown. Is this unnecessary???
-        Logf(this::class, "[ImageExportHandler] Checking permissions...")
+        Logf(this::class, "Checking permissions...")
         while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
             this.askPermissions(activity)
         }
-        Logf(this::class, "[ImageExportHandler] Storage permissions granted.")
+        Logf(this::class, "Storage permissions granted.")
     }
 
     private fun askPermissions(activity :Activity) {

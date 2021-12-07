@@ -1,19 +1,21 @@
-package com.ifgarces.tomaramosuandes
+package com.ifgarces.tomaramosuandes.activities
 
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.*
 import java.time.DayOfWeek
 import java.time.LocalTime
+import java.util.concurrent.Executors
 
 
 /**
@@ -129,7 +131,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
-            Logf(this::class, "[AgendaLandscapeActivity] Exporting agenda as image...")
+            Logf(this::class, "Exporting agenda as image...")
             ImageExportHandler.exportAgendaImage(
                 activity = this,
                 targetView = UI.agendaBodyScroll,
@@ -151,7 +153,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                 UI.blocksMap.getValue(key=day)[row].text = ""
                 UI.blocksMap.getValue(key=day)[row].setOnClickListener {
                     AgendaWorker.onBlockClicked(
-                        sender = UI.blocksMap.getValue(key=day)[row],
+                        sender = UI.blocksMap.getValue(key = day)[row],
                         context = this
                     )
                 }
@@ -164,7 +166,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                 UI.toggleFullScreenButton.visibility = View.GONE
                 UI.toggleFullScreenButton.postDelayed({
                     UI.toggleFullScreenButton.visibility = View.VISIBLE
-                }, ONSCROLL_BUTTON_RESPAWN_TIME+120) // <- this tiny extra delay causes a nice translation animation, besides the fade in, for this button
+                }, ONSCROLL_BUTTON_RESPAWN_TIME +120) // <- this tiny extra delay causes a nice translation animation, besides the fade in, for this button
             }
             if (UI.saveAsImgButton.visibility == View.VISIBLE) {
                 UI.saveAsImgButton.visibility = View.GONE
@@ -174,7 +176,12 @@ class AgendaLandscapeActivity : AppCompatActivity() {
             }
         }
 
-        AgendaWorker.buildAgenda(activity=this, blocksMap=UI.blocksMap)
+        AgendaWorker.buildAgenda(activity = this, blocksMap = UI.blocksMap)
+
+        if (DataMaster.getUserRamos().count() == 0) {
+            UI.saveAsImgButton.isEnabled = false
+            UI.toggleFullScreenButton.isEnabled = false
+        }
     }
 
     /**
@@ -225,7 +232,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
          * Click listener for an agenda block button.
          */
         public fun onBlockClicked(sender :Button, context : Context) {
-            val blockEvents :MutableList<RamoEvent> = this.agendaData.findEventsOf(button = sender)!!
+            val blockEvents :MutableList<RamoEvent> = agendaData.findEventsOf(button = sender)!!
             if (blockEvents.count() == 0) { return }
 
             var info :String
@@ -250,24 +257,24 @@ class AgendaLandscapeActivity : AppCompatActivity() {
          * Displays the non-evaluation events for each user inscribed `Ramo`s in the agenda
          */
         public fun buildAgenda(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
-            Logf(this::class, "[AgendaLandscapeActivity] Building agenda...")
+            Logf(this::class, "Building agenda...")
 
             /* initializing */
-            this.agendaData.clear()
+            agendaData.clear()
             blocksMap.forEach { (_ :DayOfWeek, buttons :List<Button>) ->
                 buttons.forEach {
-                    this.agendaData.add(AgendaBlock(button=it, events=mutableListOf()))
+                    agendaData.add(AgendaBlock(button=it, events=mutableListOf()))
                 }
             }
 
-            AsyncTask.execute {
+            Executors.newSingleThreadExecutor().execute {
                 /* filling `agendaData` i.e. mapping agenda block buttons with corresponding event(s) */
                 var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
                 DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
                     for (ev : RamoEvent in events) {
                         rowInterval = timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
                         for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
-                            this.agendaData.findEventsOf(
+                            agendaData.findEventsOf(
                                 button = blocksMap.getValue(key = day)[rowNum]
                             )!!.add(ev)
                         }
@@ -277,7 +284,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                 /* displaying events assigned to each block button */
                 activity.runOnUiThread {
                     var break_loop :Boolean = false
-                    this.agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
+                    agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
                         if (break_loop) { return@forEach }
                         events.forEachIndexed { index :Int, event : RamoEvent ->
                             if (index == 0) {
@@ -310,16 +317,16 @@ class AgendaLandscapeActivity : AppCompatActivity() {
                             }
                         }
                     }
-                    Logf(this::class, "[AgendaLandscapeActivity] Agenda successfully built.")
+                    Logf(this::class, "Agenda successfully built.")
                 }
             }
         }
 
         private val supportedHours_start :List<Int> = (8..21).toList() // [8, 21]
         private val supportedHours_end :List<Int> = (9..22).toList() // [9, 22]
-        private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) : Pair<Int, Int>? {
-            var rowStart :Int = this.supportedHours_start.indexOf(start.hour)
-            var rowEnd   :Int = this.supportedHours_end.indexOf(end.hour)+1
+        private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) :Pair<Int, Int>? {
+            var rowStart :Int = supportedHours_start.indexOf(start.hour)
+            var rowEnd   :Int = supportedHours_end.indexOf(end.hour)+1
             if (rowStart == -1 || rowEnd == -1) { return null } // invalid hour(s): block wouldn't fit in agenda
             if (start.minute > 30) { rowStart+=1 }
             if (end.minute > 20) { rowEnd+=1 }

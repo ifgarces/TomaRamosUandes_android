@@ -111,13 +111,13 @@ object CsvHandler {
             }
             catch (e :NumberFormatException) {
                 Logf(this::class,
-                    "[CsvHandler] Warning: NRC could not be parsed to integer at CSV line %d '%s'. %s. Assuming NRC assign is yet pending and assigning negative one.",
+                    "Warning: NRC could not be parsed to integer at CSV line %d '%s'. %s. Assuming NRC assign is yet pending and assigning negative one.",
                     lineNum+1, csv_lines[lineNum], e
                 )
                 current.NRC = -(badNRCsCount++)
             }
 //            catch (e :IndexOutOfBoundsException) {
-//                Logf("[CsvHandler] Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
+//                Logf("Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
 //            }
 
             try {
@@ -125,7 +125,7 @@ object CsvHandler {
             }
             catch (e :NumberFormatException) {
                 Logf(this::class,
-                    "[CsvHandler] Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.",
+                    "Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.",
                     lineNum+1, csv_lines[lineNum], e
                 )
                 current.curso = 0
@@ -164,7 +164,7 @@ object CsvHandler {
                 }
                 catch (e :NumberFormatException) { // `String.toInt()` error
                     Logf(this::class,
-                        "[CsvHandler] Error: mandatory integer cast exception at CSV line %d: '%s'. %s",
+                        "Error: mandatory integer cast exception at CSV line %d: '%s'. %s",
                         lineNum+1, csv_lines[lineNum], e
                     )
                     return null
@@ -182,7 +182,7 @@ object CsvHandler {
                     splitterAux = stringAux.split(TIME_SEPARATOR)
                     if (splitterAux.count() != 2) {
                         Logf(this::class,
-                            "[CsvHandler] Error: unexpected split result on row %d: '%s'. Could not get time interval for event.",
+                            "Error: unexpected split result on row %d: '%s'. Could not get time interval for event.",
                             lineNum+1, line
                         )
                         return null
@@ -194,7 +194,7 @@ object CsvHandler {
                     }
                     catch (e :DateTimeParseException) {
                         Logf(this::class,
-                            "[CsvHandler] Error: time parsing exception at CSV line %d: '%s'. %s",
+                            "Error: time parsing exception at CSV line %d: '%s'. %s",
                             lineNum+1, csv_lines[lineNum], e
                         )
                         return null
@@ -204,7 +204,7 @@ object CsvHandler {
             }
             if (! dayAssigned) { // this means there's a missing DayOfWeek and start-end times assignment in the CSV
                 Logf(this::class,
-                    "[CsvHandler] Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'",
+                    "Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'",
                     lineNum+1, csv_lines[lineNum]
                 )
                 // in this case, just ignoring that row.
@@ -222,7 +222,7 @@ object CsvHandler {
                 event_types.EXAMEN      -> { eventTypeAux = RamoEventType.EXAM }
                 else -> {
                     Logf(this::class,
-                        "[CsvHandler] Error at CSV line %d: %s. Unknown event type '%s'",
+                        "Error at CSV line %d: %s. Unknown event type '%s'",
                         lineNum+1, line, current.eventType
                     )
                     return null
@@ -244,7 +244,7 @@ object CsvHandler {
                 }
                 catch (e :DateTimeParseException) {
                     Logf(this::class,
-                        "[CsvHandler] Error: date parsing exception at CSV line %d: '%s'. %s",
+                        "Error: date parsing exception at CSV line %d: '%s'. %s",
                         lineNum+1, csv_lines[lineNum], e
                     )
                     return null

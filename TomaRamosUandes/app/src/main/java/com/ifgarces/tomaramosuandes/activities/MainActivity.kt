@@ -1,10 +1,12 @@
-package com.ifgarces.tomaramosuandes
+package com.ifgarces.tomaramosuandes.activities
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.utils.*
 
 
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             activity = this,
             clearDatabase = false, //! should be `false` on any release, don't forget!!
             onSuccess = {
-                Logf(this::class, "[MainActivity] DataMaster successfully initialized.")
+                Logf(this::class, "DataMaster successfully initialized.")
                 this.startActivity(
                     Intent(this@MainActivity, HomeActivity::class.java)
                 )
@@ -57,7 +59,7 @@ No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string
 Su conexión a internet no es buena o es posible que los servidores que usa la app estén colapsados. \
 Se usará el catálogo offline de la app. \
                             """.multilineTrim(),
-                            // the last part is not 100% true, but the user will understand♠. See issue #12
+                        // the last part is not 100% true, but the user will understand♠. See issue #12
                         icon = R.drawable.alert_icon
                     )
                 }
@@ -66,7 +68,9 @@ Se usará el catálogo offline de la app. \
                 this.runOnUiThread {
                     this.infoDialog(
                         title = "Catálogo incompatible",
-                        message = "Hubo un error al procesar el catálogo de la app. Por favor descargue la última versión de la app en %s".format(WebManager.USER_APP_URL),
+                        message = "Hubo un error al procesar el catálogo de la app. Por favor descargue la última versión de la app en %s".format(
+                            WebManager.USER_APP_URL
+                        ),
                         onDismiss = {
                             this.startActivity(
                                 Intent(Intent.ACTION_VIEW, Uri.parse(WebManager.USER_APP_URL))
@@ -86,7 +90,10 @@ Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar
 Los datos están dañados o no compatibles con esta versión del programa. \
                             """.multilineTrim(),
                         onDismiss = {
-                            Logf(this::class, "[MainActivity] Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app.")
+                            Logf(
+                                this::class,
+                                "Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app."
+                            )
                             DataMaster.clear()
                         },
                         icon = R.drawable.alert_icon

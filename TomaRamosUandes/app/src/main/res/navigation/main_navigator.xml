@@ -3,20 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigator"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/userRamosFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/userRamosFragment"
         android:name="com.ifgarces.tomaramosuandes.fragments.UserRamosFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_user_ramos" >
         <action
             android:id="@+id/action_homeFragment_to_ramosCatalogFragment"
-            app:destination="@id/ramosCatalogFragment" />
+            app:destination="@id/catalogFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_schedulePortraitFragment"
+            app:destination="@id/schedulePortraitFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_evaluationsFragment"
+            app:destination="@id/evaluationsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/ramosCatalogFragment"
-        android:name="com.ifgarces.tomaramosuandes.fragments.RamosCatalogFragment"
+        android:id="@+id/catalogFragment"
+        android:name="com.ifgarces.tomaramosuandes.fragments.CatalogFragment"
         android:label="fragment_ramos_catalog"
-        tools:layout="@layout/fragment_ramos_catalog" />
+        tools:layout="@layout/fragment_catalog" />
+    <fragment
+        android:id="@+id/schedulePortraitFragment"
+        android:name="com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment"
+        android:label="fragment_schedule_portrait"
+        tools:layout="@layout/fragment_schedule_portrait" >
+        <action
+            android:id="@+id/action_schedulePortraitFragment_to_evaluationsFragment2"
+            app:destination="@id/evaluationsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/evaluationsFragment"
+        android:name="com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment"
+        android:label="fragment_evaluations"
+        tools:layout="@layout/fragment_evaluations" >
+        <action
+            android:id="@+id/action_evaluationsFragment_to_schedulePortraitFragment2"
+            app:destination="@id/schedulePortraitFragment" />
+    </fragment>
 </navigation>

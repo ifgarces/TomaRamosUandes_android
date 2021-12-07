@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
 import com.ifgarces.tomaramosuandes.DataMaster
-import com.ifgarces.tomaramosuandes.HomeActivity
+import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.models.Ramo
@@ -22,7 +22,10 @@ import com.ifgarces.tomaramosuandes.utils.spanishNonAccent
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 
 
-class RamosCatalogFragment : Fragment() {
+/**
+ * Displays the available `Ramo`s catalog for the current period.
+ */
+class CatalogFragment : Fragment() {
     
     private class FragmentUI(owner :View) {
         val recycler        :RecyclerView = owner.findViewById(R.id.catalog_recycler)
@@ -36,11 +39,10 @@ class RamosCatalogFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_ramos_catalog, container, false)
+        val fragView :View = inflater.inflate(R.layout.fragment_catalog, container, false)
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
-            homeActivity.setBottomNavItemSelected(this::class)
             homeActivity.setTopToolbarValues(
                 title = "Catálogo de Ramos",
                 subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate()),
@@ -78,7 +80,7 @@ class RamosCatalogFragment : Fragment() {
 Presione un ramo para ver detalles y eventualmente tomarlo. Los ramos con fondo azul \
 son los que ud. ya ha tomado. Puede usar la caja de búsqueda para filtrar ramos por \
 nombre o NRC. \
-""".multilineTrim()
+            """.multilineTrim()
         )
     }
 

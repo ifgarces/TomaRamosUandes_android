@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.RamoDialogFragment
+import com.ifgarces.tomaramosuandes.fragments.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
@@ -78,13 +78,10 @@ class CatalogRamosAdapter(
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
                 helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, (ramo in DataMaster.getUserRamos()))
 
-                RamoDialogFragment.summon(
-                    manager = helper.supportFragmentManager,
-                    onDismiss = {
-                        SingletonHelper.isInstanceActive = false
-                        this@CatalogRamosAdapter.notifyItemChanged(position)
-                    }
-                )
+                RamoDialogFragment(onDismissAction = {
+                    SingletonHelper.isInstanceActive = false
+                    this@CatalogRamosAdapter.notifyDataSetChanged()
+                }).show(helper.supportFragmentManager, this::class.simpleName)
             }
         }
     }

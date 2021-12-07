@@ -68,35 +68,35 @@ object DataMaster {
                 this.localDB = Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
             }
             catch (e :Exception) {
-                Logf(this::class, "[DataMaster] Error: could not load local room database. %s", e)
+                Logf(this::class, "Error: could not load local room database. %s", e)
                 onRoomError.invoke()
             }
 
             try {
-                Logf(this::class, "[DataMaster] Fetching CSV catalog data...")
+                Logf(this::class, "Fetching CSV catalog data...")
                 var csv_body :String
                 try {
                     csv_body = WebManager.fetchCatalogCSV()
                 }
                 catch (e :java.net.UnknownHostException) {
-                    Logf(this::class, "[DataMaster] Could not load online CSV: internet connection error")
-                    Logf(this::class, "[DataMaster] Now using local CSV...")
+                    Logf(this::class, "Could not load online CSV: internet connection error")
+                    Logf(this::class, "Now using local CSV...")
                     onInternetError.invoke()
                     csv_body = activity.assets.open("catalog_offline.csv").bufferedReader(Charsets.UTF_8).readText()
                 }
                 catch (e: FileNotFoundException) {
-                    Logf(this::class, "[DataMaster] Could not load online CSV: fatal error, probably the CSV file was temporarily banned. Details: %s", e.stackTraceToString())
-                    Logf(this::class, "[DataMaster] Now using local CSV...")
+                    Logf(this::class, "Could not load online CSV: fatal error, probably the CSV file was temporarily banned. Details: %s", e.stackTraceToString())
+                    Logf(this::class, "Now using local CSV...")
                     onInternetError.invoke()
                     csv_body = activity.assets.open("catalog_offline.csv").bufferedReader(Charsets.UTF_8).readText()
                 }
 
-                Logf(this::class, "[DataMaster] Parsing CSV...")
+                Logf(this::class, "Parsing CSV...")
                 val aux :Pair<List<Ramo>, List<RamoEvent>> = CsvHandler.parseCSV(csv_lines=csv_body.split("\n"))!!
                 this.catalog_ramos = aux.first
                 this.catalog_events = aux.second
 
-                Logf(this::class, "[DataMaster] CSV parsing complete. Catalog size: %d", this.catalog_ramos.count())
+                Logf(this::class, "CSV parsing complete. Catalog size: %d", this.catalog_ramos.count())
 
                 if (clearDatabase) { // removing all data in memory and in local room database
                     this.clear()
@@ -106,7 +106,7 @@ object DataMaster {
                 this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
 
                 if (this.isUserDataSyncedWithCatalog()) {
-                    Logf(this::class, "[DataMaster] User inscribed ramos are not consistent with the current catalog.")
+                    Logf(this::class, "User inscribed ramos are not consistent with the current catalog.")
                     activity.infoDialog(
                         title = "Error de sincronización de ramos",
                         message = """
@@ -132,7 +132,7 @@ object DataMaster {
                         //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
                     }
                 }
-                Logf(this::class, "[DataMaster] Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
+                Logf(this::class, "Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
 
                 //if (this.user_ramos.count() > 0) {
                 //    activity.runOnUiThread { activity.toastf("Se recuperó su conjunto de ramos tomados.") }
@@ -141,7 +141,7 @@ object DataMaster {
                 onSuccess.invoke()
             }
             catch (e :NullPointerException) {
-                Logf(this::class, "[DataMaster] Invalid online CSV data (for this app version)")
+                Logf(this::class, "Invalid online CSV data (for this app version)")
                 onCsvParseError.invoke()
             }
         }
@@ -158,7 +158,7 @@ object DataMaster {
         this.localDB.ramosDAO().clear()
         this.localDB.eventsDAO().clear()
         this.localDB.userStatsDAO().clear()
-        Logf(this::class, "[DataMaster] Local database cleaned.")
+        Logf(this::class, "Local database cleaned.")
     }
 
     /**
@@ -171,7 +171,7 @@ object DataMaster {
     private fun isUserDataSyncedWithCatalog() : Boolean {
         // TODO: check if this extra heavy time consuming function worths it.
 
-        Logf(this::class, "[DataMaster] Checking wether user ramos is consistent with catalog...")
+        Logf(this::class, "Checking wether user ramos is consistent with catalog...")
         var failure :Boolean
         this.catalog_ramos.forEach { catalogRamo :Ramo ->
             failure = true
@@ -302,7 +302,7 @@ object DataMaster {
             this.ramosLock.unlock()
             this.eventsLock.unlock()
         }
-        Logf(this::class, "[DataMaster] Ramo{NRC=%s}, along %d of its events, were inscribed.", ramo.NRC, eventCount)
+        Logf(this::class, "Ramo{NRC=%s}, along %d of its events, were inscribed.", ramo.NRC, eventCount)
     }
 
     /**
@@ -314,7 +314,7 @@ object DataMaster {
 
         val ramo :Ramo? = this.findRamo(NRC=NRC, searchInUserList=true)
         if (ramo == null) { // kind of dymmy solution, but this may be needed if the user do stuff quickly, due async tasks
-            Logf(this::class, "[DataMaster] This Ramo seems to be already deleted and couldn't be found. Aborting.")
+            Logf(this::class, "This Ramo seems to be already deleted and couldn't be found. Aborting.")
             return
         }
 
@@ -353,7 +353,7 @@ object DataMaster {
         } finally {
             this.ramosLock.unlock()
         }
-        Logf(this::class, "[DataMaster] Ramo{NRC=%d}, along %d of its events, were un-inscribed.", NRC, eventCount)
+        Logf(this::class, "Ramo{NRC=%d}, along %d of its events, were un-inscribed.", NRC, eventCount)
     }
 
     /**
@@ -442,7 +442,7 @@ object DataMaster {
                             DayOfWeek.THURSDAY  -> { results[DayOfWeek.THURSDAY]?.add(event) }
                             DayOfWeek.FRIDAY    -> { results[DayOfWeek.FRIDAY]?.add(event) }
                             else -> { // ignored
-                                Logf(this::class, "[DataMaster] WARNING: unknown day for this event: %s", event)
+                                Logf(this::class, "Warning: unknown day for this event: %s", event)
                             }
                         }
                     }

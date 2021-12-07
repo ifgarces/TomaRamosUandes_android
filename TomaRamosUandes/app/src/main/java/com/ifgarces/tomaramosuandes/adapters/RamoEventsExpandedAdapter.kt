@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.RamoDialogFragment
+import com.ifgarces.tomaramosuandes.fragments.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
@@ -22,7 +22,7 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
      * while the first one is still loading.
      */
     private object SingletonHelper {
-        var isInstanceActive :Boolean = false
+        @Volatile var isInstanceActive :Boolean = false
     }
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : ExpandedEventVH {
@@ -69,20 +69,19 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) : RecyclerView.Ada
 
             /* calling `Ramo` dialog card clicked */
             this.parentView.setOnClickListener {
-                if (SingletonHelper.isInstanceActive) { return@setOnClickListener }
+                if (SingletonHelper.isInstanceActive) {
+                    return@setOnClickListener
+                }
                 SingletonHelper.isInstanceActive = true
 
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
                 helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, true)
 
-                RamoDialogFragment.summon(
-                    manager = helper.supportFragmentManager,
-                    onDismiss = {
-                        SingletonHelper.isInstanceActive = false
-                        this@RamoEventsExpandedAdapter.notifyDataSetChanged()
-                    }
-                )
+                RamoDialogFragment(onDismissAction = {
+                    SingletonHelper.isInstanceActive = false
+                    this@RamoEventsExpandedAdapter.notifyDataSetChanged()
+                }).show(helper.supportFragmentManager, this::class.simpleName)
             }
         }
     }

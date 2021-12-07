@@ -59,7 +59,7 @@ object WebManager {
         Executors.newSingleThreadExecutor().execute {
             // TODO: implement a "Do not show again" or "Ignore this update" feature
 
-            Logf(this::class, "[WebManager] Checking for updates...")
+            Logf(this::class, "Checking for updates...")
 
             val currentVer :String = activity.getString(R.string.APP_VERSION)
             val latestVer :String
@@ -69,9 +69,9 @@ object WebManager {
                 this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
             }
             catch (e :Exception) {
-                Logf(this::class, "[WebManager] Internet connection error: couldn't get app version or catalog version. %s", e.stackTraceToString())
+                Logf(this::class, "Internet connection error: couldn't get app version or catalog version. %s", e.stackTraceToString())
                 if (e is UnknownHostException) {
-                    Logf(this::class, "[WebManager] It was a common internet connection error, don't worry too much")
+                    Logf(this::class, "It was a common internet connection error, don't worry too much")
                 }
                 this.catalogPeriodName = activity.getString(R.string.APP_VERSION).split(".").first()
                 this.catalogLastUpdatedDate = "offline"
@@ -79,7 +79,7 @@ object WebManager {
                 return@execute
             }
 
-            Logf(this::class, "[WebManager] Current version is %s, latest version is %s", currentVer, latestVer)
+            Logf(this::class, "Current version is %s, latest version is %s", currentVer, latestVer)
 
             if (latestVer != currentVer) { // prompts update dialog
                 activity.runOnUiThread {

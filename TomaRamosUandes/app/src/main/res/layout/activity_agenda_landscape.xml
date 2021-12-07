@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".AgendaLandscapeActivity">
+    tools:context=".activities.AgendaLandscapeActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/landAgenda_saveAsImage"
