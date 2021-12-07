@@ -45,13 +45,14 @@ fun String.spanishLowerCase() : String {
  * extra whitespaces.
  */
 fun String.multilineTrim() : String { // Note: does not ignore tabs "\t".
-    val newline_internal_marker :String = "+++|♣♦♠♥|+++"
-    return this
-        .replace("\\\n", newline_internal_marker) // avoiding intentioned newlines to be erased on next replace
-        .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
-        .replace(newline_internal_marker, "\n") // recovering intentioned newlines
-        .trim()
-        .replace("\n ", "\n") // <- TODO: improve this dumb solution. Do testing.
+    return this.replace("\\\n", "").trim()
+//    val newline_internal_marker :String = "+++|♣♦♠♥|+++"
+//    return this
+//        .replace("\\\n", newline_internal_marker) // avoiding intentioned newlines to be erased on next replace
+//        .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
+//        .replace(newline_internal_marker, "\n") // recovering intentioned newlines
+//        .trim()
+//        .replace("\n ", "\n") // <- TODO: improve this dumb solution. Do testing.
 }
 
 /**

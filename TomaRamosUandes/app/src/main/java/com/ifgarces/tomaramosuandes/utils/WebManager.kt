@@ -11,6 +11,7 @@ import com.ifgarces.tomaramosuandes.utils.WebManager.ONLINE_CSV_URL
 import com.ifgarces.tomaramosuandes.utils.WebManager.catalogPeriodName
 import java.net.URL
 import java.net.UnknownHostException
+import java.util.concurrent.Executors
 import kotlin.Exception
 
 
@@ -50,34 +51,36 @@ object WebManager {
     public fun getCatalogLastUpdateDate() = this.catalogLastUpdatedDate
 
     /**
-     * [This function needs to be called on a separated thread]
-     * Prompts a dialog if an update is available.
+     * Asynchronously checks for updates and prompts a proper dialog.
+     * @param activity Caller activity, needed for executing some tasks.
+     * @param onFinish Callback for when the initialization is complete.
      */
-    fun init(activity :Activity) {
-        // TODO: implement a "Do not show again" or "Ignore this update" feature
+    fun init(activity :Activity, onFinish :(success :Boolean) -> Unit) {
+        Executors.newSingleThreadExecutor().execute {
+            // TODO: implement a "Do not show again" or "Ignore this update" feature
 
-        Logf("[WebManager] Checking for updates...")
+            Logf("[WebManager] Checking for updates...")
 
-        val currentVer :String = activity.getString(R.string.APP_VERSION)
-        val latestVer :String
-        try {
-            latestVer = this.fetchLastestAppVersionName()
-            this.catalogPeriodName = this.fetchOnlineCatalogVersion()
-            this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
-        }
-        catch (e :Exception) {
-            Logf("[WebManager] Internet connection error: couldn't get app version or catalog version. %s", e.stackTraceToString())
-            if (e is UnknownHostException) Logf("[WebManager] It was a common internet connection error, don't worry too much")
-            this.catalogPeriodName = activity.getString(R.string.APP_VERSION).split(".").first()
-            this.catalogLastUpdatedDate = "offline"
-            return
-        }
+            val currentVer :String = activity.getString(R.string.APP_VERSION)
+            val latestVer :String
+            try {
+                latestVer = this.fetchLastestAppVersionName()
+                this.catalogPeriodName = this.fetchOnlineCatalogVersion()
+                this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
+            }
+            catch (e :Exception) {
+                Logf("[WebManager] Internet connection error: couldn't get app version or catalog version. %s", e.stackTraceToString())
+                if (e is UnknownHostException) Logf("[WebManager] It was a common internet connection error, don't worry too much")
+                this.catalogPeriodName = activity.getString(R.string.APP_VERSION).split(".").first()
+                this.catalogLastUpdatedDate = "offline"
+                onFinish.invoke(false)
+                return@execute
+            }
 
-        Logf("[WebManager] Current version is %s, latest version is %s", currentVer, latestVer)
+            Logf("[WebManager] Current version is %s, latest version is %s", currentVer, latestVer)
 
-        if (latestVer != currentVer) { // prompts update dialog
-            activity.runOnUiThread {
-                try {
+            if (latestVer != currentVer) { // prompts update dialog
+                activity.runOnUiThread {
                     activity.yesNoDialog(
                         title = "Actualización disponible",
                         message = "Hay una nueva versión de esta app: %s.\n\n¿Ir al link de descarga ahora?".format(latestVer),
@@ -89,10 +92,8 @@ object WebManager {
                         icon = R.drawable.exclamation_icon
                     )
                 }
-                catch (e :Exception) { //! this is messy. Catching exception that happens sometime when trying to display this dialog asynchronously
-                    activity.toastf("Actualización disponible!")
-                }
             }
+            onFinish.invoke(true)
         }
     }
 

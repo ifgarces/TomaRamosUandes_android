@@ -23,7 +23,6 @@
             android:exported="false"
             />
         <activity android:name=".EvaluationsActivity" android:exported="false" />
-        <activity android:name=".CatalogActivity" android:exported="false" />
         <activity android:name=".AgendaPortraitActivity"
             android:screenOrientation="portrait"
             android:exported="true" />

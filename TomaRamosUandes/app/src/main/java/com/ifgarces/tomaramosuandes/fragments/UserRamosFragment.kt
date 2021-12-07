@@ -51,6 +51,7 @@ class UserRamosFragment : Fragment() {
                     this.showHelp()
                 }
             )
+            homeActivity.setBottomNavItemSelected(this::class)
 
             UI.ramosRecycler.layoutManager = LinearLayoutManager(homeActivity)
             UI.ramosRecycler.adapter = CatalogRamosAdapter(

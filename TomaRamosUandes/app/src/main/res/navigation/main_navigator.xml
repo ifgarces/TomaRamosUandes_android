@@ -9,5 +9,14 @@
         android:id="@+id/homeFragment"
         android:name="com.ifgarces.tomaramosuandes.fragments.UserRamosFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_user_ramos" />
+        tools:layout="@layout/fragment_user_ramos" >
+        <action
+            android:id="@+id/action_homeFragment_to_ramosCatalogFragment"
+            app:destination="@id/ramosCatalogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ramosCatalogFragment"
+        android:name="com.ifgarces.tomaramosuandes.fragments.RamosCatalogFragment"
+        android:label="fragment_ramos_catalog"
+        tools:layout="@layout/fragment_ramos_catalog" />
 </navigation>
