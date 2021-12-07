@@ -44,14 +44,14 @@ class UserRamosFragment : Fragment() {
         this.UI = FragmentUI(owner=fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
+            homeActivity.setBottomNavItemSelected(this::class)
             homeActivity.setTopToolbarValues(
-                title = "Simulador toma de ramos Uandes",
+                title = "Ver ramos",
                 subtitle = "",
                 onClick = {
                     this.showHelp()
                 }
             )
-            homeActivity.setBottomNavItemSelected(this::class)
 
             UI.ramosRecycler.layoutManager = LinearLayoutManager(homeActivity)
             UI.ramosRecycler.adapter = CatalogRamosAdapter(
@@ -62,10 +62,8 @@ class UserRamosFragment : Fragment() {
             UI.ramosRecycler.adapter = null
 
             UI.catalogButton.setOnClickListener {
-                //TODO: go to catalog fragment
-                throw NotImplementedError()
+                homeActivity.getNavigator().toRamosCatalog()
             }
-
         }
 
         return fragView 
@@ -75,7 +73,7 @@ class UserRamosFragment : Fragment() {
         super.onResume()
 
         // Hiding loading screen overlay
-        (this.requireActivity() as HomeActivity).hideLoadingScreen()
+        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? is this needed?
 
         // Dummy solution for issue #11, but doesn't seem to work...
         Logf("[UserRamosFragment] Updating recycler...")

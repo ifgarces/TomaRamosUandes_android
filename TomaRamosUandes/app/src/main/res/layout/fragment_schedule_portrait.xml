@@ -6,9 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".AgendaPortraitActivity">
-
-    <!-- TODO: hide floating buttons on scroll -->
+    tools:context=".fragments.SchedulePortraitFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/portrAgenda_saveAsImage"
@@ -131,16 +129,5 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <include
-        android:id="@+id/portrAgenda_loadScreen"
-        layout="@layout/load_screen"
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

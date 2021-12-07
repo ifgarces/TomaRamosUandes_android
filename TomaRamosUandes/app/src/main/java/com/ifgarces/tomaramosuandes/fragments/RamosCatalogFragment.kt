@@ -40,6 +40,7 @@ class RamosCatalogFragment : Fragment() {
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
+            homeActivity.setBottomNavItemSelected(this::class)
             homeActivity.setTopToolbarValues(
                 title = "Catálogo de Ramos",
                 subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate()),
@@ -47,7 +48,6 @@ class RamosCatalogFragment : Fragment() {
                     this.showHelp()
                 }
             )
-            homeActivity.setBottomNavItemSelected(this::class)
 
             this.catalogRamosAdapter = CatalogRamosAdapter(
                 data = DataMaster.getCatalogRamos().toMutableList(),
