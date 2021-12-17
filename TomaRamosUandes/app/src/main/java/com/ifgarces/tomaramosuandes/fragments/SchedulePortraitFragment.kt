@@ -97,11 +97,21 @@ class SchedulePortraitFragment : Fragment() {
             UI.saveAsImgButton.setColorFilter(Color.WHITE)
             UI.saveAsImgButton.setOnClickListener {
                 Logf(this::class, "Exporting agenda as image...")
-                ImageExportHandler.exportAgendaImage(
-                    activity = homeActivity,
-                    targetView = UI.agendaScroll,
-                    tallView = UI.agendaLayout
-                )
+                try {
+                    ImageExportHandler.exportAgendaImage(
+                        activity = homeActivity,
+                        targetView = UI.agendaScroll,
+                        tallView = UI.agendaLayout
+                    )
+                }
+                catch (e :Exception) {
+                    homeActivity.infoDialog(
+                        title = "Error",
+                        message = "Perdone caballero, ocurrió un error al intentar exportar el horario como imagen: %s".format(e::class),
+                        onDismiss = {},
+                        icon = R.drawable.alert_icon
+                    )
+                }
             }
             UI.fullScreenButton.setColorFilter(Color.WHITE)
             UI.fullScreenButton.setOnClickListener {

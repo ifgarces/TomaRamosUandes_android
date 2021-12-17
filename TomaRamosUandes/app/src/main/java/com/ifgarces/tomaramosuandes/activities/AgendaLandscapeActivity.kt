@@ -132,11 +132,21 @@ class AgendaLandscapeActivity : AppCompatActivity() {
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
             Logf(this::class, "Exporting agenda as image...")
-            ImageExportHandler.exportAgendaImage(
-                activity = this,
-                targetView = UI.agendaBodyScroll,
-                tallView = UI.agendaBodyLayout
-            )
+            try {
+                ImageExportHandler.exportAgendaImage(
+                    activity = this,
+                    targetView = UI.agendaBodyScroll,
+                    tallView = UI.agendaBodyLayout
+                )
+            }
+            catch (e :Exception) {
+                this.infoDialog(
+                    title = "Error",
+                    message = "Perdone caballero, ocurrió un error al intentar exportar el horario como imagen: %s".format(e::class),
+                    onDismiss = {},
+                    icon = R.drawable.alert_icon
+                )
+            }
         }
         UI.toggleFullScreenButton.setColorFilter(Color.WHITE)
         UI.toggleFullScreenButton.setOnClickListener {
