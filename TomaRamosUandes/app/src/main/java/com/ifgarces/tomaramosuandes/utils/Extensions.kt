@@ -10,7 +10,15 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.gson.Gson
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.models.RamoEvent
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 import java.util.Locale
 
@@ -26,9 +34,9 @@ fun Context.toastf(format :String, vararg args :Any?) {
 }
 
 /**
- * Simplified debug log with Java-style string formatting. All log under the same tag stored at
- * `LOG_TAG` constant, as by now logging is not heavy. This function is not an actual extended
- * method, but I still place it here. We will tell nobody.
+ * Simplified debug log with Java-style string formatting. Simplifies usage of Logcat for reading
+ * the log for when the output is not too heavy. This function is not an actual extended method, but
+ * I still place it here. We will tell nobody.
  * @author Ignacio F. Garcés.
  * @param scopeClass The class of the fragment or activity (or object) of the scope that desires to
  * log.
@@ -183,4 +191,58 @@ fun Activity.exitFullScreen() { // references: https://developer.android.com/tra
     this.window.decorView.systemUiVisibility = (
         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     )
+}
+
+/**
+ * Casting a Firebase doc to `Ramo`. Don't want to use `.toObject` as the model woult have to be
+ * modified (allowing empty constructor).
+ */
+fun QueryDocumentSnapshot.toRamo() :Ramo {
+    return Ramo(
+        NRC = this.data.getValue("nrc")!!.toString().toInt(),
+        nombre = this.data.getValue("nombre")!!.toString(),
+        profesor = this.data.getValue("profesor")!!.toString(),
+        créditos = this.data.getValue("créditos")!!.toString().toInt(),
+        materia = this.data.getValue("materia")!!.toString(),
+        curso = this.data.getValue("curso")!!.toString().toInt(),
+        sección = this.data.getValue("sección")!!.toString(),
+        planEstudios = this.data.getValue("planEstudios")!!.toString(),
+        conectLiga = this.data.getValue("conectLiga")!!.toString(),
+        listaCruzada = this.data.getValue("listaCruzada")!!.toString()
+    )
+}
+
+/**
+ * Casting a Firebase doc to `RamoEvent`. Don't want to use `.toObject` as the model woult have to be
+ * modified (allowing empty constructor).
+ */
+fun String.jsonToRamoEvent() :RamoEvent {
+    val rawMap = Gson().fromJson(this, Map::class.java)
+    return RamoEvent(
+        ID = rawMap.get("ID")!!.toString().toDouble().toInt(), // for some reason, need to cast to double and only then to integer
+        ramoNRC = rawMap.get("ramoNRC")!!.toString().toDouble().toInt(),
+        type = rawMap.get("type")!!.toString().toDouble().toInt(),
+        dayOfWeek = DayOfWeek.valueOf(rawMap.get("dayOfWeek")!!.toString()),
+        startTime = LocalTime.parse(rawMap.get("startTime")!!.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+        endTime = LocalTime.parse(rawMap.get("endTime")!!.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+        date = if (rawMap.get("date") == null) null else LocalDate.parse(rawMap.get("date")!!.toString(), DateTimeFormatter.ISO_DATE)
+    )
+}
+
+/**
+ * This is because LocalTime is not properly serialized to JSON without warning, for some reason.
+ * @returns JSON representation, with a custom serialization string for attributes of tupe
+ * `LocalTime`.
+ */
+fun RamoEvent.toJson() :String {
+    val rawMap = mapOf<String, Any?>(
+        "ID" to this.ID,
+        "ramoNRC" to this.ramoNRC,
+        "type" to this.type,
+        "dayOfWeek" to this.dayOfWeek,
+        "startTime" to this.startTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
+        "endTime" to this.endTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
+        "date" to if (date == null) null else this.date!!.format(DateTimeFormatter.ISO_DATE)!!
+    )
+    return Gson().toJson(rawMap)
 }

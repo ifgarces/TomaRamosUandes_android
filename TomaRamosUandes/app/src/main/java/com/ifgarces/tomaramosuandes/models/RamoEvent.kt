@@ -2,6 +2,8 @@ package com.ifgarces.tomaramosuandes.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.material.timepicker.TimeFormat
+import com.google.gson.annotations.JsonAdapter
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.multilineTrim

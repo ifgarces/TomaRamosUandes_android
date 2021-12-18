@@ -76,7 +76,7 @@ object DataMaster {
                 Logf(this::class, "Fetching CSV catalog data...")
                 var csv_body :String
                 try {
-                    csv_body = WebManager.fetchCatalogCSV()
+                    csv_body = WebManager.fetchCatalogCSV(activity)
                 }
                 catch (e :java.net.UnknownHostException) {
                     Logf(this::class, "Could not load online CSV: internet connection error")

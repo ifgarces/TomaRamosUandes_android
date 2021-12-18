@@ -2,7 +2,7 @@ package com.ifgarces.tomaramosuandes.local_db
 
 import androidx.room.TypeConverter
 import java.time.DayOfWeek
-import java.time.LocalDate
+    import java.time.LocalDate
 import java.time.LocalTime
 
 

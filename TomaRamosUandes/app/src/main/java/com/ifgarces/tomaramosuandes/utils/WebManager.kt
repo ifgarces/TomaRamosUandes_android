@@ -9,6 +9,8 @@ import com.ifgarces.tomaramosuandes.utils.WebManager.APP_LATEST_VERSION_URL
 import com.ifgarces.tomaramosuandes.utils.WebManager.USER_APP_URL
 import com.ifgarces.tomaramosuandes.utils.WebManager.ONLINE_CSV_URL
 import com.ifgarces.tomaramosuandes.utils.WebManager.catalogPeriodName
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.net.URL
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
@@ -36,6 +38,8 @@ import kotlin.Exception
  * `CATALOG_UPDATE_DATE` when needed, without making the actual HTTP GET.
  */
 object WebManager {
+    private const val OFFLINE_MODE :Boolean = true
+
     private const val APP_LATEST_VERSION_URL     :String = "https://drive.google.com/uc?id=1QtTMK5gU-47tJI8kpcf-v1v5PQvmANQQ&export=download"
     private const val CATALOG_LATEST_VERSION_URL :String = "https://drive.google.com/uc?export=download&id=1-XkBsoSb4emf0pBq5i6w9zVXTWy0DsCa"
     private const val APK_DOWNLOAD_URL           :String = "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
@@ -64,6 +68,7 @@ object WebManager {
             val currentVer :String = activity.getString(R.string.APP_VERSION)
             val latestVer :String
             try {
+                if (OFFLINE_MODE) throw Exception("Intentional exception for offline mode") // for reaching the catch code
                 latestVer = this.fetchLastestAppVersionName()
                 this.catalogPeriodName = this.fetchOnlineCatalogVersion()
                 this.catalogLastUpdatedDate = this.fetchLatestCatalogUpdateDate()
@@ -105,7 +110,18 @@ object WebManager {
      * @exception java.io.FileNotFoundException This happened when Google Drive detected many
      * queries and blocked file(s), avoiding to use them in an app like this.
      */
-    public fun fetchCatalogCSV() :String {
+    public fun fetchCatalogCSV(activity :Activity) :String {
+        if (OFFLINE_MODE) {
+            val reader :BufferedReader = BufferedReader(
+                InputStreamReader(
+                    activity.assets.open("catalog_offline.csv"),
+                    "UTF-8"
+                )
+            )
+            val lines :List<String> = reader.readLines()
+            reader.close()
+            return lines.joinToString("\n")
+        }
         return URL(this.DEBUG_CSV_URL).readText(charset=Charsets.UTF_8) //! Do not use `DEBUG_CSV_URL` in any release, don't forget!
     }
 

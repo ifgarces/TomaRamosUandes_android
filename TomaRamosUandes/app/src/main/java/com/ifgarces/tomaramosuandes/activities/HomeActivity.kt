@@ -6,14 +6,21 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.gson.Gson
+import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
 import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
 import com.ifgarces.tomaramosuandes.fragments.UserRamosFragment
+import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
+import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.WebManager
 import com.ifgarces.tomaramosuandes.utils.infoDialog
+import com.ifgarces.tomaramosuandes.utils.jsonToRamoEvent
+import com.ifgarces.tomaramosuandes.utils.toJson
 import kotlin.reflect.KClass
 
 
@@ -34,6 +41,32 @@ class HomeActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_home)
         this.UI = ActivityUI(owner = this)
         this.navigator = HomeNavigator(homeActivity = this)
+
+        // -----------------------------------------------------------------------------------------
+
+        val gson = Gson()
+        var got :RamoEvent
+        DataMaster.getCatalogEvents().forEach { expected :RamoEvent ->
+            got = expected.toJson().jsonToRamoEvent()
+            if (got != expected)
+                Logf(this::class, "Values do not match: %s != %s", got, expected)
+        }
+
+//        var failed :Boolean = false
+//        FirebaseMaster.uploadEvents {
+//            if (!failed) {
+//                failed = true
+//                this.infoDialog(
+//                    title = "Events upload failed",
+//                    message = "An error ocurred when uploading the Events to Firebase"
+//                )
+//            }
+//        }
+
+
+
+
+        // -----------------------------------------------------------------------------------------
 
         // Checking for updates here and blocking navigation until this async task is completed
         this.showLoadingScreen()
