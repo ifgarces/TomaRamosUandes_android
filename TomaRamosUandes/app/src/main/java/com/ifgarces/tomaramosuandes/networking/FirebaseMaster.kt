@@ -5,8 +5,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.utils.toAppMetadata
 import com.ifgarces.tomaramosuandes.utils.toRamo
 
 
@@ -21,32 +23,113 @@ object FirebaseMaster {
     private val db :FirebaseFirestore = FirebaseFirestore.getInstance()
 
     /**
-     * TEST
+     * Namespace-like object for encapsulating methods intended for the developer to update the
+     * catalog to a new period, update application metadata values in Firebase, etc. Don't know if
+     * this is the best place for this. All the write operations are here.
      */
-    public fun uploadRamos(
-        onFirstFailureCallback :(e :Exception) -> Unit
-    ) {
-        DataMaster.getCatalogRamos().forEach { ramo :Ramo ->
-            this.createRamo(
-                ramo = ramo,
-                onSuccess = {},
-                onFailure = {
-                    onFirstFailureCallback.invoke(it)
+    object Developer {
+        /**
+         * Inserting/updating a `Ramo` into Firebase DB.
+         */
+        public fun createRamo(
+            ramo :Ramo,
+            onSuccess :() -> Unit,
+            onFailure :(exception :Exception) -> Unit
+        ) {
+            val methodName :String = this::createRamo.name
+            FirebaseMaster.db.collection(Ramo.TABLE_NAME)
+                .document(ramo.NRC.toString()) // we give a fixed ID: the Ramo's NRC
+                .set(ramo)
+                .addOnSuccessListener {
+                    FirebaseMaster.logCallOk(methodName)
+                    onSuccess.invoke()
                 }
-            )
+                .addOnFailureListener { e :Exception ->
+                    FirebaseMaster.logCallFail(methodName, e)
+                    onFailure.invoke(e)
+                }
         }
-    }
-    public fun uploadEvents(
-        onFirstFailureCallback :(e :Exception) -> Unit
-    ) {
-        DataMaster.getCatalogEvents().forEach { ramoEvent :RamoEvent ->
-            this.createRamoEvent(
-                ramoEvent = ramoEvent,
-                onSuccess = {},
-                onFailure = {
-                    onFirstFailureCallback.invoke(it)
+
+        /**
+         * Inserting/updating a `RamoEvent` into Firebase DB.
+         */
+        public fun createRamoEvent(
+            ramoEvent :RamoEvent,
+            onSuccess :() -> Unit,
+            onFailure :(exception :Exception) -> Unit
+        ) {
+            val methodName :String = this::createRamoEvent.name
+            FirebaseMaster.db.collection(RamoEvent.TABLE_NAME)
+                .document(ramoEvent.ID.toString())
+                .set( // cannot add directly as there's trouble serializing some attributes
+                    RamoEvent.toRawMap(ramoEvent)
+                )
+                .addOnSuccessListener {
+                    FirebaseMaster.logCallOk(methodName)
+                    onSuccess.invoke()
                 }
-            )
+                .addOnFailureListener { e :Exception ->
+                    FirebaseMaster.logCallFail(methodName, e)
+                    onFailure.invoke(e)
+                }
+        }
+
+        /**
+         * For easily creating/updating a list of `Ramo`s.
+         */
+        public fun uploadRamoCollection(
+            ramos :List<Ramo>,
+            onFirstFailureCallback :(e :Exception) -> Unit
+        ) {
+            ramos.forEach { ramo :Ramo ->
+                this.createRamo(
+                    ramo = ramo,
+                    onSuccess = {},
+                    onFailure = {
+                        onFirstFailureCallback.invoke(it)
+                    }
+                )
+            }
+        }
+
+        /**
+         * For easily creating/updating a list of `RamoEvent`s.
+         */
+        public fun uploadEventCollection(
+            events :List<RamoEvent>,
+            onFirstFailureCallback :(e :Exception) -> Unit
+        ) {
+            events.forEach { ramoEvent :RamoEvent ->
+                this.createRamoEvent(
+                    ramoEvent = ramoEvent,
+                    onSuccess = {},
+                    onFailure = {
+                        onFirstFailureCallback.invoke(it)
+                    }
+                )
+            }
+        }
+
+        /**
+         * Inserting/updating the [single] `AppMetadata` object into Firebase DB.
+         */
+        public fun createAppMetadata(
+            metadata :AppMetadata,
+            onSuccess :() -> Unit,
+            onFailure :(exception :Exception) -> Unit
+        ) {
+            val methodName :String = this::createAppMetadata.name
+            FirebaseMaster.db.collection(AppMetadata.TABLE_NAME)
+                .document("0") // this will be a one-row table
+                .set(metadata)
+                .addOnSuccessListener {
+                    FirebaseMaster.logCallOk(methodName)
+                    onSuccess.invoke()
+                }
+                .addOnFailureListener { e :Exception ->
+                    FirebaseMaster.logCallFail(methodName, e)
+                    onFailure.invoke(e)
+                }
         }
     }
 
@@ -78,49 +161,6 @@ object FirebaseMaster {
             Log.d(this::class.simpleName, "%s - failure [%s]: %s".format(
                 methodName, e, aditionalMessage
             ))
-    }
-
-    /**
-     * Inserting/updating a `Ramo` into Firebase DB.
-     */
-    public fun createRamo(
-        ramo :Ramo,
-        onSuccess :() -> Unit,
-        onFailure :(exception :Exception) -> Unit
-    ) {
-        val methodName :String = this::createRamo.name
-        this.db.collection(Ramo.TABLE_NAME)
-            .document(ramo.NRC.toString()) // we give a fixed ID: the Ramo's NRC
-            .set(ramo)
-            .addOnSuccessListener {
-                this.logCallOk(methodName)
-                onSuccess.invoke()
-            }
-            .addOnFailureListener { e :Exception ->
-                this.logCallFail(methodName, e)
-                onFailure.invoke(e)
-            }
-    }
-
-    /**
-     * Inserting/updating a `RamoEvent` into Firebase DB.
-     */
-    public fun createRamoEvent(
-        ramoEvent :RamoEvent,
-        onSuccess :() -> Unit,
-        onFailure :(exception :Exception) -> Unit
-    ) {
-        val methodName :String = this::createRamoEvent.name
-        this.db.collection(RamoEvent.TABLE_NAME)
-            .add(ramoEvent)
-            .addOnSuccessListener {
-                this.logCallOk(methodName)
-                onSuccess.invoke()
-            }
-            .addOnFailureListener { e :Exception ->
-                this.logCallFail(methodName, e)
-                onFailure.invoke(e)
-            }
     }
 
     /**
@@ -178,9 +218,28 @@ object FirebaseMaster {
         this.db.collection(RamoEvent.TABLE_NAME)
             .get()
             .addOnSuccessListener { docs :QuerySnapshot ->
-                val gotEvents :List<RamoEvent> = docs.map { it.toObject(RamoEvent::class.java) }
+                val gotEventsRawMaps :List<Map<String, Any?>> = docs.documents.map { it.data!! }
+                val gotEvents :List<RamoEvent> = gotEventsRawMaps.map { RamoEvent.fromRawMap(it) }
                 this.logCallOk(methodName, "Got %d events".format(gotEvents.count()))
                 onSuccess.invoke(gotEvents)
+            }
+            .addOnFailureListener { e :Exception ->
+                this.logCallFail(methodName, e)
+                onFailure.invoke(e)
+            }
+    }
+
+    public fun getAppMetadata(
+        onSuccess :(gotMetadata :AppMetadata) -> Unit,
+        onFailure :(exception :Exception) -> Unit
+    ) {
+        val methodName :String = this::getAppMetadata.name
+        this.db.collection(AppMetadata.TABLE_NAME)
+            .get()
+            .addOnSuccessListener { docs :QuerySnapshot ->
+                val meta :AppMetadata = docs.first().toAppMetadata()
+                this.logCallOk(methodName, "Got: %s".format(meta))
+                onSuccess.invoke(meta)
             }
             .addOnFailureListener { e :Exception ->
                 this.logCallFail(methodName, e)

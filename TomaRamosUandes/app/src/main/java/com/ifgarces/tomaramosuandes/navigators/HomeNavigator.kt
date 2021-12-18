@@ -1,8 +1,8 @@
 package com.ifgarces.tomaramosuandes.navigators
 
 import androidx.navigation.findNavController
-import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.activities.HomeActivity
 
 
 class HomeNavigator(private val homeActivity :HomeActivity) {

@@ -2,6 +2,12 @@ package com.ifgarces.tomaramosuandes
 
 import android.app.Activity
 import androidx.room.Room
+import com.ifgarces.tomaramosuandes.DataMaster.catalog_events
+import com.ifgarces.tomaramosuandes.DataMaster.catalog_ramos
+import com.ifgarces.tomaramosuandes.DataMaster.eventsLock
+import com.ifgarces.tomaramosuandes.DataMaster.ramosLock
+import com.ifgarces.tomaramosuandes.DataMaster.user_events
+import com.ifgarces.tomaramosuandes.DataMaster.user_ramos
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent

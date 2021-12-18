@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.activities.AgendaLandscapeActivity.Companion.ONSCROLL_BUTTON_RESPAWN_TIME
+import com.ifgarces.tomaramosuandes.activities.AgendaLandscapeActivity.Companion.ROWS_COUNT
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.*

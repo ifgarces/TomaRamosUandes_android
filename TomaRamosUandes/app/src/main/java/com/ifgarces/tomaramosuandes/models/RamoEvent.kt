@@ -2,14 +2,14 @@ package com.ifgarces.tomaramosuandes.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.android.material.timepicker.TimeFormat
-import com.google.gson.annotations.JsonAdapter
+import com.google.gson.Gson
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -35,9 +35,50 @@ data class RamoEvent(
 ) {
     companion object {
         const val TABLE_NAME :String = "ramo_event"
+
+        /**
+         * Needed for interaction with Firebase, as `LocalTime` and `LocalDate` cannot be uploaded
+         * without some kind of serialization.
+         * @param event The `RamoEvent` instance to be converted.
+         * @return A map with the attributes as strings and the values accordingly, but dates and
+         * times are converted to string.
+         */
+        public fun toRawMap(event :RamoEvent) :Map<String, Any?> {
+            return mapOf<String, Any?>(
+                "ID" to event.ID,
+                "ramoNRC" to event.ramoNRC,
+                "type" to event.type,
+                "dayOfWeek" to event.dayOfWeek,
+                "startTime" to event.startTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
+                "endTime" to event.endTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
+                "date" to if (event.date == null) null else event.date!!.format(DateTimeFormatter.ISO_DATE)!!
+            )
+        }
+
+        /**
+         * Deserializes.
+         * @param map The map to be converted back to a `RamoEvent` instance.
+         */
+        public fun fromRawMap(map :Map<String, Any?>) :RamoEvent {
+            return RamoEvent(
+                ID = map["ID"]!!.toString().toDouble().toInt(), // for some reason, need to cast to double and only then to integer
+                ramoNRC = map["ramoNRC"]!!.toString().toDouble().toInt(),
+                type = map["type"]!!.toString().toDouble().toInt(),
+                dayOfWeek = DayOfWeek.valueOf(map["dayOfWeek"]!!.toString()),
+                startTime = LocalTime.parse(
+                    map["startTime"]!!.toString(), DateTimeFormatter.ofPattern("HH:mm")
+                ),
+                endTime = LocalTime.parse(
+                    map["endTime"]!!.toString(), DateTimeFormatter.ofPattern("HH:mm")
+                ),
+                date = if (map["date"] == null) null else LocalDate.parse(
+                    map["date"]!!.toString(), DateTimeFormatter.ISO_DATE
+                )
+            )
+        }
     }
 
-    public fun toLargeString() : String {
+    public fun toLargeString() :String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() } // TODO: make sure to use "dd/MM/yyyy" format
             else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
@@ -58,7 +99,7 @@ data class RamoEvent(
     /**
      * Single line and short `toString()` method. Used in event conflict reports.
      */
-    public fun toShortString() : String {
+    public fun toShortString() :String {
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() }
             else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
@@ -74,7 +115,7 @@ data class RamoEvent(
     /**
      * Checks if the event is a test or exam
      */
-    public fun isEvaluation() : Boolean {
+    public fun isEvaluation() :Boolean {
         return (this.type == RamoEventType.PRBA) || (this.type == RamoEventType.EXAM)
     }
 }

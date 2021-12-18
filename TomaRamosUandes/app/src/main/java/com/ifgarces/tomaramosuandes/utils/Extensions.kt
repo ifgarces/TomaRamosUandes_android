@@ -4,23 +4,21 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.view.WindowInsetsCompat.Type.systemBars
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.firestore.QueryDocumentSnapshot
-import com.google.gson.Gson
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
-import com.ifgarces.tomaramosuandes.models.RamoEvent
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.reflect.KClass
-import java.util.Locale
 
 
 const val LOGF_TAG :String = "_DEBUGLOG_"
@@ -48,11 +46,11 @@ fun Logf(scopeClass :KClass<*>, format :String, vararg args :Any?) {
 }
 
 fun String.spanishUpperCase() :String {
-    return this.toUpperCase( Locale("es", "ES") )
+    return this.uppercase(Locale("es", "ES"))
 }
 
 fun String.spanishLowerCase() :String {
-    return this.toLowerCase( Locale("es", "ES") )
+    return this.lowercase(Locale("es", "ES"))
 }
 
 /**
@@ -60,14 +58,7 @@ fun String.spanishLowerCase() :String {
  * extra whitespaces.
  */
 fun String.multilineTrim() :String { // Note: does not ignore tabs "\t".
-    return this.replace("\\\n", "").trim()
-//    val newline_internal_marker :String = "+++|♣♦♠♥|+++"
-//    return this
-//        .replace("\\\n", newline_internal_marker) // avoiding intentioned newlines to be erased on next replace
-//        .replace(Regex("\\s+"), " ") // removing 'redundant' whitespaces (also newlines). References: https://stackoverflow.com/a/37070443
-//        .replace(newline_internal_marker, "\n") // recovering intentioned newlines
-//        .trim()
-//        .replace("\n ", "\n") // <- TODO: improve this dumb solution. Do testing.
+    return this.replace("\\\n", "").trim() //TODO: unit tests
 }
 
 /**
@@ -173,24 +164,34 @@ fun Context.yesNoDialog(
  * Enters "inmersive mode", hiding system UI elements (navigation and notification bars) and expanding
  * the app to fill all of the screen.
  */
-fun Activity.enterFullScreen() { // references: https://developer.android.com/training/system-ui/immersive
-    this.window.decorView.systemUiVisibility = (
-        View.SYSTEM_UI_FLAG_IMMERSIVE
-        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        or View.SYSTEM_UI_FLAG_FULLSCREEN
-    )
+fun Activity.enterFullScreen() {
+    if (Build.VERSION.SDK_INT >= 30) {
+        with(WindowInsetsControllerCompat(window, window.decorView)) { // ref: https://stackoverflow.com/a/68055924/12684271
+            this.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
+            this.hide(systemBars())
+        }
+    } else {
+        if (this.actionBar != null) this.actionBar!!.hide()
+        this.window.decorView.systemUiVisibility = ( // ref: https://stackoverflow.com/a/66526368/12684271
+            View.SYSTEM_UI_FLAG_IMMERSIVE
+            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_FULLSCREEN
+        )
+    }
 }
 
 /**
  * Undoes `Activity.enterFullScreen()`.
  */
-fun Activity.exitFullScreen() { // references: https://developer.android.com/training/system-ui/immersive
-    this.window.decorView.systemUiVisibility = (
-        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-    )
+fun Activity.exitFullScreen() {
+    if (Build.VERSION.SDK_INT >= 30) {
+        WindowInsetsControllerCompat(window, window.decorView).show(systemBars()) // ref: https://stackoverflow.com/a/68055924/12684271
+    } else {
+        this.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE) // ref: https://developer.android.com/training/system-ui/immersive
+    }
 }
 
 /**
@@ -212,37 +213,11 @@ fun QueryDocumentSnapshot.toRamo() :Ramo {
     )
 }
 
-/**
- * Casting a Firebase doc to `RamoEvent`. Don't want to use `.toObject` as the model woult have to be
- * modified (allowing empty constructor).
- */
-fun String.jsonToRamoEvent() :RamoEvent {
-    val rawMap = Gson().fromJson(this, Map::class.java)
-    return RamoEvent(
-        ID = rawMap.get("ID")!!.toString().toDouble().toInt(), // for some reason, need to cast to double and only then to integer
-        ramoNRC = rawMap.get("ramoNRC")!!.toString().toDouble().toInt(),
-        type = rawMap.get("type")!!.toString().toDouble().toInt(),
-        dayOfWeek = DayOfWeek.valueOf(rawMap.get("dayOfWeek")!!.toString()),
-        startTime = LocalTime.parse(rawMap.get("startTime")!!.toString(), DateTimeFormatter.ofPattern("HH:mm")),
-        endTime = LocalTime.parse(rawMap.get("endTime")!!.toString(), DateTimeFormatter.ofPattern("HH:mm")),
-        date = if (rawMap.get("date") == null) null else LocalDate.parse(rawMap.get("date")!!.toString(), DateTimeFormatter.ISO_DATE)
+fun QueryDocumentSnapshot.toAppMetadata() :AppMetadata {
+    return AppMetadata(
+        latestVersionName = this.data.getValue("latestVersionName")!!.toString(),
+        catalogCurrentPeriod = this.data.getValue("catalogCurrentPeriod")!!.toString(),
+        catalogLastUpdated = this.data.getValue("catalogLastUpdated")!!.toString(),
     )
 }
 
-/**
- * This is because LocalTime is not properly serialized to JSON without warning, for some reason.
- * @returns JSON representation, with a custom serialization string for attributes of tupe
- * `LocalTime`.
- */
-fun RamoEvent.toJson() :String {
-    val rawMap = mapOf<String, Any?>(
-        "ID" to this.ID,
-        "ramoNRC" to this.ramoNRC,
-        "type" to this.type,
-        "dayOfWeek" to this.dayOfWeek,
-        "startTime" to this.startTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
-        "endTime" to this.endTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
-        "date" to if (date == null) null else this.date!!.format(DateTimeFormatter.ISO_DATE)!!
-    )
-    return Gson().toJson(rawMap)
-}
