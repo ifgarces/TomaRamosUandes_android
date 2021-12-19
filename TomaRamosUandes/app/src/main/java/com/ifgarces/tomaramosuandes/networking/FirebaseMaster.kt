@@ -26,6 +26,36 @@ object FirebaseMaster {
     private val db :FirebaseFirestore = FirebaseFirestore.getInstance()
 
     /**
+     * Utility method for easily writing to log in a standard format on a successful call. We won't
+     * be using `Logf` here, to distinguish logging from firebase, as it will get heavy.
+     * @author Ignacio F. Garcés.
+     * @param methodName The name of the call method of this object, for tracing.
+     * @param aditionalMessage Optional, custom message appended.
+     */
+    private fun logCallOk(methodName :String, aditionalMessage :String? = null) {
+        if (aditionalMessage == null)
+            Log.d(this::class.simpleName, "%s - success".format(methodName))
+        else
+            Log.d(this::class.simpleName, "%s - success: %s".format(methodName, aditionalMessage))
+    }
+
+    /**
+     * Utility method, similar to `logCallOk`, but for the case in which the call did not succeed.
+     * @author Ignacio F. Garcés.
+     * @param methodName The name of the call method of this object, for tracing.
+     * @param e Exception that caused the call to fail.
+     * @param aditionalMessage Optional, custom message appended.
+     */
+    private fun logCallFail(methodName :String, e :Exception, aditionalMessage :String? = null) {
+        if (aditionalMessage == null)
+            Log.d(this::class.simpleName, "%s - failure [%s]".format(methodName, e))
+        else
+            Log.d(this::class.simpleName, "%s - failure [%s]: %s".format(
+                methodName, e, aditionalMessage
+            ))
+    }
+
+    /**
      * Not sure this is the best place for this, but this method may be called on `MainActivity` and
      * `HomeActivity`. Displays a dialog noticing an internet connection failure. Intended for
      * easily calling for the case in which connection with Firebase failed.
@@ -151,36 +181,6 @@ siempre el catálogo más reciente.""".multilineTrim(),
                     onFailure.invoke(e)
                 }
         }
-    }
-
-    /**
-     * Utility method for easily writing to log in a standard format on a successful call. We won't
-     * be using `Logf` here, to distinguish logging from firebase, as it will get heavy.
-     * @author Ignacio F. Garcés.
-     * @param methodName The name of the call method of this object, for tracing.
-     * @param aditionalMessage Optional, custom message appended.
-     */
-    private fun logCallOk(methodName :String, aditionalMessage :String? = null) {
-        if (aditionalMessage == null)
-            Log.d(this::class.simpleName, "%s - success".format(methodName))
-        else
-            Log.d(this::class.simpleName, "%s - success: %s".format(methodName, aditionalMessage))
-    }
-
-    /**
-     * Utility method, similar to `logCallOk`, but for the case in which the call did not succeed.
-     * @author Ignacio F. Garcés.
-     * @param methodName The name of the call method of this object, for tracing.
-     * @param e Exception that caused the call to fail.
-     * @param aditionalMessage Optional, custom message appended.
-     */
-    private fun logCallFail(methodName :String, e :Exception, aditionalMessage :String? = null) {
-        if (aditionalMessage == null)
-            Log.d(this::class.simpleName, "%s - failure [%s]".format(methodName, e))
-        else
-            Log.d(this::class.simpleName, "%s - failure [%s]: %s".format(
-                methodName, e, aditionalMessage
-            ))
     }
 
     /**

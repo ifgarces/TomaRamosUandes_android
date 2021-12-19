@@ -1,24 +1,30 @@
-# Simulador de toma de ramos Uandes - Android
-Esta es una app para Android que permite planificar o simular la toma de ramos de la Universidad de los Andes.
+# *Simulador de toma de ramos Uandes - Android*
 
-Desarrollado en Android Studio (Kotlin).
-Autor: Ignacio F. Garcés Santander.
+Android application for inscribing Uandes' courses.
 
-## Funcionalidades
-- Construcción automática de horario.
-- Exportar horario como imagen (a la galería del teléfono).
-- Detección de conflictos de horario y de evaluaciones entre ramos.
-- Exportar evaluaciones al calendario del teléfono.
-- Los ramos tomados volverán a aparecer al reabrir la app.
-- Sólo se dispone de la malla de las carreras de ingeniería (no se pudo coordinación con las Facultades).
+Developed in Android Studio (Kotlin).
+Author: Ignacio F. Garcés.
+Universidad de los Andes.
 
-## Dependencias
-- Versión mínima de Android: 8.0 (Oreo)
+## Features
 
-## Permisos de la aplicación
-​- Acceso a internet: lectura del catálogo vigente (CSV) y revisar actualizaciones de la app al iniciar.
-- Acceso al almacenamiento (escritura): para guardar el horario como imagen e recordar el conjunto de ramos tomados.
-- Acceso al calendario (lectura y escritura): para que el usuario pueda exportar las evaluaciones al calendario que elija.
+- Automatic construction of week schedule.
+- Exporting week schedule as image to the device's gallery.
+- Detection of conflict between events when inscribing courses.
+- Exportation of evaluations of inscribed courses to the device's calendar of choice.
+- Persistance of inscribed courses in storage, so they will reappear when reopening the app.
+- **Only courses from the engineering curriculum map are available**, as I have no access to other schools's courses.
 
-## Log
-- Como no hay mucho output personalizado al Log, todo irá etiquetado bajo `_DEBUGLOG_`.
+## Project dependencies
+
+- Android SDK 26 (8.0 Oreo) or higher.
+
+## App permissions
+
+- Internet: for accessing the latest catalog and checking for updates (via Firebase Firestore remote database).
+- Storage (write): for storing the week schedule as image for the inscribed courses of the user.
+- Calendar (read and write): for exporting evaluations to a calendar from the device, chosen by the user.
+
+## Logging
+
+There's not too much logging, so all of it is labelled `_DEBUGLOG_` (for easily accessing it with Android Studio's logcat), except Firebase-related output (see [`FirebaseMaster.kt`](./TomaRamosUandes/app/src/main/java/com/ifgarces/tomaramosuandes/networking/FirebaseMaster.kt)), which is labelled `FirebaseMaster`, just as that object's name.
