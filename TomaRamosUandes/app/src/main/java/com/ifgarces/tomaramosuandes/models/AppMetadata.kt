@@ -2,8 +2,7 @@ package com.ifgarces.tomaramosuandes.models
 
 
 /**
- * WIll be user on `WebManager` to get app metadata from Firebase, like the current period and
- * latest app version.
+ * Encapsulates metadata values for the app itself. Fetched from Firebase.
  * @property latestVersionName Latest available version of the app itself (e.g. "2021-10.1"). For
  * checking for updates.
  * @property catalogCurrentPeriod Latest catalog period (e.g. "2021-10").

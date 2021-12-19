@@ -8,7 +8,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
 import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
@@ -17,12 +16,8 @@ import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
 import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
-import com.ifgarces.tomaramosuandes.utils.toastf
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
 

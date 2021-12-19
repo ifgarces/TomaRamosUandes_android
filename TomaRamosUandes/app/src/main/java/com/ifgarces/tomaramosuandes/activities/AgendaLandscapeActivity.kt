@@ -144,7 +144,9 @@ class AgendaLandscapeActivity : AppCompatActivity() {
             catch (e :Exception) {
                 this.infoDialog(
                     title = "Error",
-                    message = "Perdone caballero, ocurrió un error al intentar exportar el horario como imagen: %s".format(e::class),
+                    message = """\
+Oops! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Probablemente la \
+versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
                     onDismiss = {},
                     icon = R.drawable.alert_icon
                 )

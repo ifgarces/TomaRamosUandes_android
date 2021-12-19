@@ -96,9 +96,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Sala: [Location]"
+            android:text="Sala: [location]"
             android:textAlignment="center"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="#2A0065"
 
             android:textSize="12sp"

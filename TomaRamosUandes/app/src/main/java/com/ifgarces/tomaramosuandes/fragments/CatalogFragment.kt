@@ -91,8 +91,7 @@ class CatalogFragment : Fragment() {
             message = """\
 Presione un ramo para ver detalles y eventualmente tomarlo. Los ramos con fondo azul \
 son los que ud. ya ha tomado. Puede usar la caja de búsqueda para filtrar ramos por \
-nombre o NRC. \
-            """.multilineTrim()
+nombre o NRC.""".multilineTrim()
         )
     }
 
@@ -104,7 +103,7 @@ nombre o NRC. \
         val results :MutableList<Ramo> = mutableListOf()
         val sanitizedSearchText :String = searchText.spanishNonAccent().spanishUpperCase().trim()
         DataMaster.getCatalogRamos().forEach {
-            // considering `nombre` is upper-cased for each `Ramo`
+            // Considering `nombre` is upper-cased for each `Ramo`
             if (
                 it.nombre.spanishNonAccent().contains(sanitizedSearchText) ||
                 it.NRC.toString().contains(sanitizedSearchText)

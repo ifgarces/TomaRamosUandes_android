@@ -9,7 +9,6 @@ import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
-import org.w3c.dom.Text
 
 
 class RamoEventsAdapter(
@@ -42,7 +41,13 @@ class RamoEventsAdapter(
         fun bind(event :RamoEvent, position :Int) {
             this.ti.text = event.startTime.toString()
             this.tf.text = event.endTime.toString()
-            this.location.text = "Sala: %s".format(event.location)
+            if (event.location != "") {
+                this.location.text = "Sala: %s".format(event.location)
+            } else {
+                this.location.text = "(sala no informada)"
+                this.location.setTextColor(this.location.context.getColor(R.color.lightGray))
+            }
+
 
             /* deciding if to show date or week day */
             if (event.isEvaluation()) { // evaluación
