@@ -45,10 +45,11 @@ object CsvHandler {
         val MIÉRCOLES     :Int = 11
         val JUEVES        :Int = 12
         val VIERNES       :Int = 13
-        val FECHA_INICIO  :Int = 14
-        val FECHA_FIN     :Int = 15 // <- UNUSED
-        val TIPO_EVENTO   :Int = 16
-        val PROFESOR      :Int = 17
+        val FECHA_INICIO  :Int = 15
+        val FECHA_FIN     :Int = 16 // <- UNUSED
+        val SALA          :Int = 17
+        val TIPO_EVENTO   :Int = 18
+        val PROFESOR      :Int = 19
 
         fun toDayOfWeek(column :Int) : DayOfWeek? {
             return when(column) {
@@ -117,7 +118,7 @@ object CsvHandler {
                 current.NRC = -(badNRCsCount++)
             }
 //            catch (e :IndexOutOfBoundsException) {
-//                Logf("Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
+//                Logf(this::class, "Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
 //            }
 
             try {
@@ -259,6 +260,7 @@ object CsvHandler {
                     ID = eventsCounter++,
                     type = eventTypeAux,
                     ramoNRC = current.NRC,
+                    location = line[csv_columns.SALA].trim(),
                     dayOfWeek = current.dayOfWeek,
                     startTime = current.startTime,
                     endTime = current.endTime,

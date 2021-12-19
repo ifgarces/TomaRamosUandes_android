@@ -59,6 +59,7 @@ fun String.spanishLowerCase() :String {
  */
 fun String.multilineTrim() :String { // Note: does not ignore tabs "\t".
     return this.replace("\\\n", "").trim() //TODO: unit tests
+    //? is this really needed?
 }
 
 /**

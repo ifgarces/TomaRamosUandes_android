@@ -19,7 +19,7 @@ import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
-import com.ifgarces.tomaramosuandes.utils.WebManager
+import com.ifgarces.tomaramosuandes.models.AppMetadata
 
 
 /**
@@ -89,7 +89,12 @@ class UserRamosFragment : Fragment() {
                 dialog.dismiss()
             }
             .setNegativeButton("Saber más") { dialog :DialogInterface, _ :Int ->
-                WebManager.openAppUrl(activity=this.requireActivity())
+                this.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(AppMetadata.USER_APP_URL)
+                    )
+                )
                 dialog.dismiss()
             }
         val diagView :View = this.layoutInflater.inflate(R.layout.about_and_help_dialog, null)

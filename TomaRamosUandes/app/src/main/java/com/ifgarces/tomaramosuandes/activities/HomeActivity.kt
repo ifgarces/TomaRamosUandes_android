@@ -1,11 +1,14 @@
 package com.ifgarces.tomaramosuandes.activities
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
 import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
@@ -14,8 +17,10 @@ import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
 import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.WebManager
 import com.ifgarces.tomaramosuandes.utils.infoDialog
+import com.ifgarces.tomaramosuandes.utils.multilineTrim
+import com.ifgarces.tomaramosuandes.utils.toastf
+import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
@@ -31,7 +36,11 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var UI :ActivityUI
     private lateinit var navigator :HomeNavigator
+    private var latestMetadata :AppMetadata? = null // will remain null internet is not available
+
+    // Getters
     public fun getNavigator() = this.navigator
+    public fun getLatestAppMetadat() = this.latestMetadata
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,43 +48,53 @@ class HomeActivity : AppCompatActivity() {
         this.UI = ActivityUI(owner = this)
         this.navigator = HomeNavigator(homeActivity = this)
 
-        // ---------------- TEST AREA ----------------
-        val today :LocalDate = LocalDate.now()
+        // -----------------------------------------------------------------------------------------
+        /* For updating app metadata when the catalog or app version changes */
+//        FirebaseMaster.Developer.updateAppMetadata(
+//            metadata = AppMetadata(
+//                latestVersionName = this.getString(R.string.APP_VERSION),
+//                catalogCurrentPeriod = this.getString(R.string.CATALOG_PERIOD),
+//                catalogLastUpdated = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+//            ),
+//            onSuccess = {
+//                this.toastf("AppMetadata uploaded successfully")
+//            },
+//            onFailure = {
+//
+//            }
+//        )
 
-        FirebaseMaster.Developer.createAppMetadata(
-            metadata = AppMetadata(
-                latestVersionName = this.getString(R.string.APP_VERSION),
-                catalogCurrentPeriod = this.getString(R.string.CATALOG_PERIOD),
-                catalogLastUpdated = today.format(DateTimeFormatter.ISO_DATE)
-            ),
-            onSuccess = {
-                this.infoDialog("Yay!", "Metadata created")
-            },
-            onFailure = {
-                this.infoDialog("No", "Metadata failed to upload: %e".format(it))
-            }
-        )
+        /* For updating the catalog itself */
+//        FirebaseMaster.Developer.uploadRamoCollection(
+//            ramos = DataMaster.getCatalogRamos(),
+//            onFirstFailureCallback = {
+//                this.infoDialog("Error", "Couldn't upload ramos")
+//            }
+//        )
+//        FirebaseMaster.Developer.uploadEventCollection(
+//            events = DataMaster.getCatalogEvents(),
+//            onFirstFailureCallback = {
+//                this.infoDialog("Error", "Couldn't upload events")
+//            }
+//        )
+        // -----------------------------------------------------------------------------------------
 
-        // -------------------------------------------
-
-
-
-        // Checking for updates here and blocking navigation until this async task is completed
+        // Showing progress bar until we get app metadata for the latest catalog version, app
+        // version itself (check for updates), etc.
         this.showLoadingScreen()
-        WebManager.init(
-            activity = this,
-            onFinish = { success :Boolean ->
-                this.runOnUiThread {
-                    this.hideLoadingScreen()
-                    if (!success) {
-                        this.infoDialog(
-                            title = "Error de conexión",
-                            message = "No se pudo verificar la actualización de la app",
-                            onDismiss = {},
-                            icon = R.drawable.alert_icon
-                        )
+        FirebaseMaster.getAppMetadata(
+            onSuccess = { gotMetadata :AppMetadata ->
+                this.hideLoadingScreen()
+                this.latestMetadata = gotMetadata // storing latest metadata in memory
+                if (gotMetadata.latestVersionName != this.getString(R.string.APP_VERSION)) {
+                    this.runOnUiThread { // update available
+                        this.showUpdateAvailableDialog(gotMetadata)
                     }
                 }
+            },
+            onFailure = {
+                this.hideLoadingScreen()
+                FirebaseMaster.showInternetConnectionErrorDialog(this)
             }
         )
 
@@ -101,7 +120,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() { //! this will destroy everything is the user rotates the screen, should change for setting this behaviour for onBackPressed?
+    override fun onDestroy() { //! this will destroy everything is the user rotates the screen, should change for setting this behaviour for onBackPressed? anyway, the solution is just set the activity as portrait-mode only.
         super.onDestroy()
         this.finishAffinity()
     }
@@ -161,5 +180,26 @@ class HomeActivity : AppCompatActivity() {
             else -> null
         }
         UI.bottomNavbar.menu.getItem(index!!).isChecked = true
+    }
+
+    public fun showUpdateAvailableDialog(mostRecientMetadata :AppMetadata) {
+        this.yesNoDialog(
+            title = "Actualización disponible",
+            message = """\
+Hay una nueva versión de esta app: ${mostRecientMetadata.latestVersionName}.
+¿Ir al link de descarga ahora?
+
+* Si tiene problemas para actualizar, desinstale la app manualmente e instale la versión más \
+reciente.""".multilineTrim(),
+            onYesClicked = { // opens direct APK download link in default browser
+                this.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(AppMetadata.APK_DOWNLOAD_URL)
+                    )
+                )
+            },
+            icon = R.drawable.exclamation_icon
+        )
     }
 }

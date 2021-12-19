@@ -9,6 +9,7 @@ import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
+import org.w3c.dom.Text
 
 
 class RamoEventsAdapter(
@@ -32,14 +33,16 @@ class RamoEventsAdapter(
     }
 
     inner class EventVH(v :View) : RecyclerView.ViewHolder(v) {
-        private val dayData :TextView = v.findViewById(R.id.ramoEvent_when)
-        private val ti      :TextView = v.findViewById(R.id.ramoEvent_ti)
-        private val tf      :TextView = v.findViewById(R.id.ramoEvent_tf)
-        private val evType  :TextView = v.findViewById(R.id.ramoEvent_type)
+        private val dayData  :TextView = v.findViewById(R.id.ramoEvent_when)
+        private val ti       :TextView = v.findViewById(R.id.ramoEvent_ti)
+        private val tf       :TextView = v.findViewById(R.id.ramoEvent_tf)
+        private val evType   :TextView = v.findViewById(R.id.ramoEvent_type)
+        private val location :TextView = v.findViewById(R.id.ramoEvent_location)
 
         fun bind(event :RamoEvent, position :Int) {
             this.ti.text = event.startTime.toString()
             this.tf.text = event.endTime.toString()
+            this.location.text = "Sala: %s".format(event.location)
 
             /* deciding if to show date or week day */
             if (event.isEvaluation()) { // evaluación

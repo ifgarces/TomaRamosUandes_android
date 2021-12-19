@@ -1,13 +1,16 @@
 package com.ifgarces.tomaramosuandes.networking
 
+import android.app.Activity
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.utils.infoDialog
+import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.toAppMetadata
 import com.ifgarces.tomaramosuandes.utils.toRamo
 
@@ -21,6 +24,23 @@ import com.ifgarces.tomaramosuandes.utils.toRamo
  */
 object FirebaseMaster {
     private val db :FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    /**
+     * Not sure this is the best place for this, but this method may be called on `MainActivity` and
+     * `HomeActivity`. Displays a dialog noticing an internet connection failure. Intended for
+     * easily calling for the case in which connection with Firebase failed.
+     */
+    public fun showInternetConnectionErrorDialog(targetActivity :Activity) {
+        targetActivity.infoDialog(
+            title = "Error de conexión",
+            message = """\
+No se pudo obtener los ramos más actuales, verifique su conexión a internet. La app cuenta con un \
+catálogo offline, por lo que puede continuar, pero se recomeienda tener conexión para obtener \
+siempre el catálogo más reciente.""".multilineTrim(),
+            onDismiss = {},
+            icon = R.drawable.no_internet_icon
+        )
+    }
 
     /**
      * Namespace-like object for encapsulating methods intended for the developer to update the
@@ -113,12 +133,12 @@ object FirebaseMaster {
         /**
          * Inserting/updating the [single] `AppMetadata` object into Firebase DB.
          */
-        public fun createAppMetadata(
+        public fun updateAppMetadata(
             metadata :AppMetadata,
             onSuccess :() -> Unit,
             onFailure :(exception :Exception) -> Unit
         ) {
-            val methodName :String = this::createAppMetadata.name
+            val methodName :String = this::updateAppMetadata.name
             FirebaseMaster.db.collection(AppMetadata.TABLE_NAME)
                 .document("0") // this will be a one-row table
                 .set(metadata)
@@ -237,6 +257,12 @@ object FirebaseMaster {
         this.db.collection(AppMetadata.TABLE_NAME)
             .get()
             .addOnSuccessListener { docs :QuerySnapshot ->
+                if (docs.count() == 0) { // this should be handled on the OnFailure callback, but for some reason this check is needed
+                    val e = Exception("Internet connection error")
+                    this.logCallFail(methodName, e, "Couldn't get first document of QuerySnapshot")
+                    onFailure(e)
+                    return@addOnSuccessListener
+                }
                 val meta :AppMetadata = docs.first().toAppMetadata()
                 this.logCallOk(methodName, "Got: %s".format(meta))
                 onSuccess.invoke(meta)

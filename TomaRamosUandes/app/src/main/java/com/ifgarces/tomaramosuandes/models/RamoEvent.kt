@@ -2,7 +2,6 @@ package com.ifgarces.tomaramosuandes.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.Gson
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
@@ -17,6 +16,7 @@ import java.time.format.DateTimeFormatter
  * @property ID Primary key.
  * @property ramoNRC Foreignt key referencing the `Ramo` this event belongs to.
  * @property type Represents the type (assistenship, class, laboratory, tutorial, test or exam).
+ * @property location Location for the event (room).
  * @property dayOfWeek Day it takes place, when it is weekly repetitive, like a class.
  * @property startTime Starting time (block start).
  * @property endTime Finish time (block end).
@@ -28,6 +28,7 @@ data class RamoEvent(
     @PrimaryKey(autoGenerate=false) val ID :Int,
     val ramoNRC   :Int,
     val type      :Int,
+    val location  :String,
     val dayOfWeek :DayOfWeek,
     val startTime :LocalTime,
     val endTime   :LocalTime,
@@ -47,6 +48,7 @@ data class RamoEvent(
             return mapOf<String, Any?>(
                 "ID" to event.ID,
                 "ramoNRC" to event.ramoNRC,
+                "location" to event.location,
                 "type" to event.type,
                 "dayOfWeek" to event.dayOfWeek,
                 "startTime" to event.startTime.format(DateTimeFormatter.ofPattern("HH:mm"))!!,
@@ -64,6 +66,7 @@ data class RamoEvent(
                 ID = map["ID"]!!.toString().toDouble().toInt(), // for some reason, need to cast to double and only then to integer
                 ramoNRC = map["ramoNRC"]!!.toString().toDouble().toInt(),
                 type = map["type"]!!.toString().toDouble().toInt(),
+                location = map["location"]!!.toString(),
                 dayOfWeek = DayOfWeek.valueOf(map["dayOfWeek"]!!.toString()),
                 startTime = LocalTime.parse(
                     map["startTime"]!!.toString(), DateTimeFormatter.ofPattern("HH:mm")

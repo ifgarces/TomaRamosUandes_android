@@ -13,8 +13,8 @@ import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
+import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
-import com.ifgarces.tomaramosuandes.utils.WebManager
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.onTextChangedListener
@@ -43,9 +43,21 @@ class CatalogFragment : Fragment() {
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
+            val catalogPeriod :String
+            val catalogLastUpdateDate :String
+            homeActivity.getLatestAppMetadat().let { meta :AppMetadata? ->
+                if (meta != null) {
+                    catalogPeriod = meta.catalogCurrentPeriod
+                    catalogLastUpdateDate = meta.catalogLastUpdated
+                } else {
+                    catalogPeriod = homeActivity.getString(R.string.CATALOG_PERIOD)
+                    catalogLastUpdateDate = "[offline]"
+                }
+            }
+
             homeActivity.setTopToolbarValues(
                 title = "Catálogo de Ramos",
-                subtitle = "%s, actualizado el %s".format(WebManager.getCatalogLastPeriodName(), WebManager.getCatalogLastUpdateDate()),
+                subtitle = "${catalogPeriod}, actualizado el ${catalogLastUpdateDate}",
                 onClick = {
                     this.showHelp()
                 }
@@ -85,7 +97,8 @@ nombre o NRC. \
     }
 
     /**
-     * Modifies the catalog's `RecyclerView` to show `Ramo`s whose `nombre` attribute contains `searchText`.
+     * Modifies the catalog's `RecyclerView` to show `Ramo`s whose `nombre` attribute contains
+     * `searchText`.
      */
     private fun applySearch(searchText :String) { // TODO: tests.
         val results :MutableList<Ramo> = mutableListOf()

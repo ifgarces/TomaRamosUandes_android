@@ -12,8 +12,8 @@ import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
+import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.*
-import java.io.FileNotFoundException
 import java.time.DayOfWeek
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
@@ -32,36 +32,47 @@ import java.util.concurrent.locks.ReentrantLock
 object DataMaster {
     private lateinit var localDB :LocalRoomDB
 
-    @Volatile private lateinit var catalog_ramos  :List<Ramo>;      fun getCatalogRamos() = this.catalog_ramos
-    @Volatile private lateinit var catalog_events :List<RamoEvent>; fun getCatalogEvents() = this.catalog_events
-    private lateinit var user_stats               :UserStats;       fun getUserStats() = this.user_stats
+    // Current catalog
+    @Volatile private lateinit var catalog_ramos  :List<Ramo>
+    @Volatile private lateinit var catalog_events :List<RamoEvent>
 
-    @Volatile private lateinit var user_ramos  :MutableList<Ramo>;      fun getUserRamos() = this.user_ramos
-    @Volatile private lateinit var user_events :MutableList<RamoEvent>//; fun getUserEvents() = this.user_events
+    // User data
+    private lateinit var user_stats               :UserStats
+    @Volatile private lateinit var user_ramos     :MutableList<Ramo>
+    @Volatile private lateinit var user_events    :MutableList<RamoEvent>
 
+    // Locks for concurrency
     private lateinit var ramosLock  :ReentrantLock
     private lateinit var eventsLock :ReentrantLock
 
+    // Getters
+    fun getCatalogRamos() = this.catalog_ramos
+    fun getCatalogEvents() = this.catalog_events
+    fun getUserStats() = this.user_stats
+    fun getUserRamos() = this.user_ramos
+
     /**
      * Fetches the catalog from a the internet, calling `WebManager` and processes it.
-     * @param clearDatabase If true, deletes the local Room database. Must be always false on any
-     * serious build.
-     * @param onSuccess Executed when successfully finished database initialization.
-     * @param onInternetError Executed when the data file can't be fetched or its elements are
-     * invalid somehow.
-     * @param onCsvParseError Callback executed when there's an incompatibility of the CSV online
-     * data for this app version. May happen when the CSV scheme changes on a new version.
+     * @param activity The caller activity, for accessing assets and constant resources.
+     * @param clearDatabase **DEBUGGING ONLY** If true, deletes the local Room database. Must be
+     * always false on any serious build.
+     * @param forceLoadOfflineCSV **DEBUGGING ONLY** For forcing to use the offline catalog from the
+     * CSV asset file, e.g. when updating the catalog to a newer version (not the best way to do it
+     * though). Must be always false on any serious build.
+     * @param onSuccess Callback executed when successfully finished database initialization.
+     * @param onFirebaseError Callback for when connection with the remote firebase fails. When this
+     * happens, this will be invoked before the offline CSV catalog is parsed.
      * @param onRoomError Callback executed when it is not possible to load user's local Room
      * database (Room build error). This could happen when trying to load outdated `Ramo`s data from
      * a previous app version (on database model change).
      */
     fun init(
-        activity        :Activity,
-        clearDatabase   :Boolean,
-        onSuccess       :() -> Unit,
-        onInternetError :() -> Unit,
-        onCsvParseError :() -> Unit,
-        onRoomError     :() -> Unit
+        activity            :Activity,
+        clearDatabase       :Boolean,
+        forceLoadOfflineCSV :Boolean,
+        onSuccess           :() -> Unit,
+        onFirebaseError     :(e :Exception) -> Unit,
+        onRoomError         :(e :Exception) -> Unit
     ) {
         this.catalog_ramos = listOf()
         this.user_ramos = mutableListOf()
@@ -69,87 +80,49 @@ object DataMaster {
         this.ramosLock = ReentrantLock()
         this.eventsLock = ReentrantLock()
 
-        Executors.newSingleThreadExecutor().execute {
-            try {
-                this.localDB = Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
-            }
-            catch (e :Exception) {
-                Logf(this::class, "Error: could not load local room database. %s", e)
-                onRoomError.invoke()
-            }
+        if (forceLoadOfflineCSV) {
+            // Connection with remote database failed, using local offline catalog
+            // instead
+            this.loadLocalOfflineCatalog(activity)
 
-            try {
-                Logf(this::class, "Fetching CSV catalog data...")
-                var csv_body :String
-                try {
-                    csv_body = WebManager.fetchCatalogCSV(activity)
-                }
-                catch (e :java.net.UnknownHostException) {
-                    Logf(this::class, "Could not load online CSV: internet connection error")
-                    Logf(this::class, "Now using local CSV...")
-                    onInternetError.invoke()
-                    csv_body = activity.assets.open("catalog_offline.csv").bufferedReader(Charsets.UTF_8).readText()
-                }
-                catch (e: FileNotFoundException) {
-                    Logf(this::class, "Could not load online CSV: fatal error, probably the CSV file was temporarily banned. Details: %s", e.stackTraceToString())
-                    Logf(this::class, "Now using local CSV...")
-                    onInternetError.invoke()
-                    csv_body = activity.assets.open("catalog_offline.csv").bufferedReader(Charsets.UTF_8).readText()
-                }
-
-                Logf(this::class, "Parsing CSV...")
-                val aux :Pair<List<Ramo>, List<RamoEvent>> = CsvHandler.parseCSV(csv_lines=csv_body.split("\n"))!!
-                this.catalog_ramos = aux.first
-                this.catalog_events = aux.second
-
-                Logf(this::class, "CSV parsing complete. Catalog size: %d", this.catalog_ramos.count())
-
-                if (clearDatabase) { // removing all data in memory and in local room database
-                    this.clear()
-                }
-
-                this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
-                this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
-
-                if (this.isUserDataSyncedWithCatalog()) {
-                    Logf(this::class, "User inscribed ramos are not consistent with the current catalog.")
-                    activity.infoDialog(
-                        title = "Error de sincronización de ramos",
-                        message = """
-                            Se encontraron ramos tomados por ud. que son inconsistentes con el \
-                            catálogo vigente \
-                            Esto se debe a que el catálogo fue actualizado y algún ramo suyo fue \
-                            removido y modificado de alguna forma.
-                            Su conjunto de ramos tomados fue limpiado.
-                        """.multilineTrim()
-                    )
-                    this.clear()
-                }
-
-                with (this.localDB.userStatsDAO().getStats()) {
-                    if (this.count() == 0) { // happens at first run of the app since installation
-                        // TODO: check what happens on upgrade, i.e. when installing a newer version with the app already installed
-                        this@DataMaster.user_stats = UserStats()
-                        this@DataMaster.user_stats.firstRunOfApp = false
-                        this@DataMaster.localDB.userStatsDAO().insert(this@DataMaster.user_stats)
-                        this@DataMaster.user_stats.firstRunOfApp = true
-                    } else {
-                        this@DataMaster.user_stats = this.first()
-                        //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
+            Executors.newSingleThreadExecutor().execute {
+                this.loadRoomUserData(
+                    activity = activity,
+                    onSuccess = {
+                        if (clearDatabase) this.clear()
+                        onSuccess.invoke()
+                    },
+                    onFailure = { e :Exception ->
+                        onRoomError.invoke(e)
                     }
+                )
+            }
+        } else {
+            // Getting latest catalog and storing in memory
+            this.getCatalogFromFirebase(
+                onSuccess = {
+                    Executors.newSingleThreadExecutor().execute {
+                        // Loading local user data, e.g. inscribed `Ramo`s
+                        this.loadRoomUserData(
+                            activity = activity,
+                            onSuccess = {
+                                // Clearing local Room database, if desired (debugging only!)
+                                if (clearDatabase) this.clear()
+                                onSuccess.invoke()
+                            },
+                            onFailure = { e :Exception ->
+                                onRoomError.invoke(e)
+                            }
+                        )
+                    }
+                },
+                onFailure = { e :Exception ->
+                    // Connection with remote database failed, using local offline catalog
+                    // instead
+                    this.loadLocalOfflineCatalog(activity)
+                    onFirebaseError.invoke(e)
                 }
-                Logf(this::class, "Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
-
-                //if (this.user_ramos.count() > 0) {
-                //    activity.runOnUiThread { activity.toastf("Se recuperó su conjunto de ramos tomados.") }
-                //}
-
-                onSuccess.invoke()
-            }
-            catch (e :NullPointerException) {
-                Logf(this::class, "Invalid online CSV data (for this app version)")
-                onCsvParseError.invoke()
-            }
+            )
         }
     }
 
@@ -167,6 +140,105 @@ object DataMaster {
         Logf(this::class, "Local database cleaned.")
     }
 
+    private fun loadRoomUserData(
+        activity :Activity,
+        onSuccess :() -> Unit,
+        onFailure :(e :Exception) -> Unit
+    ) {
+        // Building Room database. Will fail sometimes when updating the app. Must uninstall it
+        // and install the new version manually on the device.
+        try {
+            this.localDB = Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
+        }
+        catch (e :Exception) {
+            Logf(this::class, "Error: could not load local Room database. %s", e)
+            onFailure.invoke(e)
+        }
+
+        // Loading local database (user's inscribed Ramos)
+        this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
+        this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
+
+        // Checking consistency of current catalog with existing data inscribed by the user found in
+        // local storage
+        if (this.isUserDataSyncedWithCatalog()) {
+            Logf(this::class, "User inscribed ramos are not consistent with the current catalog. User data cleared.")
+            this.clear()
+            activity.infoDialog(
+                title = "Error de sincronización de ramos",
+                message = """\
+Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe a \
+que el catálogo fue actualizado y algún ramo suyo fue removido y modificado de alguna forma. \
+Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
+            )
+        }
+
+        this.localDB.userStatsDAO().getStats().let { stats :List<UserStats> ->
+            if (stats.count() == 0) { // happens at first run of the app since installation
+                this@DataMaster.user_stats = UserStats()
+                this@DataMaster.user_stats.firstRunOfApp = false
+                this@DataMaster.localDB.userStatsDAO().insert(this@DataMaster.user_stats)
+                this@DataMaster.user_stats.firstRunOfApp = true
+            } else {
+                this@DataMaster.user_stats = stats.first()
+                //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
+            }
+        }
+        Logf(this::class, "Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
+
+        onSuccess.invoke()
+    }
+
+    /**
+     * Fetches latest `Ramo`s and their `RamoEvent`s via Firebase.
+     * @param onSuccess Callback for when interaction with Firebase succeded.
+     * @param onFailure Callback invoked when interaction with Firebase failed.
+     */
+    private fun getCatalogFromFirebase(
+        onSuccess :() -> Unit,
+        onFailure :(e :Exception) -> Unit
+    ) {
+        Logf(this::class, "Fetching catalog data...")
+        FirebaseMaster.getAllRamos(
+            onSuccess = { gotRamos :List<Ramo> ->
+                FirebaseMaster.getAllRamoEvents(
+                    onSuccess = { gotEvents :List<RamoEvent> ->
+                        this.catalog_ramos = gotRamos
+                        this.catalog_events = gotEvents
+
+                        Logf(this::class, "Fetched %d ramos and %d events from Firebase",
+                            this.catalog_ramos.count(), this.catalog_events.count()
+                        )
+                        onSuccess.invoke()
+                    },
+                    onFailure = { e :Exception ->
+                        onFailure.invoke(e)
+                    }
+                )
+            },
+            onFailure = { e :Exception ->
+                onFailure.invoke(e)
+            }
+        )
+    }
+
+    private fun loadLocalOfflineCatalog(activity :Activity) {
+        // Connection with remote database failed, using offline catalog
+        val csv_body :String = activity.assets.open("catalog_offline.csv")
+            .bufferedReader(Charsets.UTF_8).readText()
+
+        Logf(this::class, "Parsing CSV...")
+        val (offlineRamos :List<Ramo>, offlineEvents :List<RamoEvent>) = CsvHandler.parseCSV(
+            csv_lines = csv_body.split("\n")
+        )!!
+        this.catalog_ramos = offlineRamos
+        this.catalog_events = offlineEvents
+
+        Logf(this::class, "CSV parsing complete. Got %d ramos and %d events",
+            this.catalog_ramos.count(), this.catalog_events.count()
+        )
+    }
+
     /**
      * Returns `true` if the user inscribed `Ramo`s (and their `RamoEvent`s) are consistent with the
      * catalog, i.e. all of them exist in the current catalog and there are no differences (due
@@ -174,10 +246,8 @@ object DataMaster {
      * `user_ramos` and `user_events`.
      * Warning: time execution will grow explosively with lenght of `catalog_ramos` and `catalog_events`.
      */
-    private fun isUserDataSyncedWithCatalog() : Boolean {
-        // TODO: check if this extra heavy time consuming function worths it.
-
-        Logf(this::class, "Checking wether user ramos is consistent with catalog...")
+    private fun isUserDataSyncedWithCatalog() :Boolean { //TODO: find out how to optimize this time-consuming method
+        Logf(this::class, "Checking ")
         var failure :Boolean
         this.catalog_ramos.forEach { catalogRamo :Ramo ->
             failure = true
@@ -186,7 +256,13 @@ object DataMaster {
                     failure = false
                 }
             }
-            if (failure) return false
+            if (failure) {
+                Logf(this::class,
+                    "Error: found catalog Ramo that is not consisten with user inscribed Ramos: %s",
+                    catalogRamo
+                )
+                return false
+            }
         }
         this.catalog_events.forEach { catalogEvent :RamoEvent ->
             failure = true
@@ -195,7 +271,13 @@ object DataMaster {
                     failure = false
                 }
             }
-            if (failure) return false
+            if (failure) {
+                Logf(this::class,
+                    "Error: found catalog RamoEvent that is not consisten with user inscribed RamoEvents: %s",
+                    catalogEvent
+                )
+                return false
+            }
         }
         return true
     }
@@ -203,7 +285,7 @@ object DataMaster {
     /**
      * Returns all the `RamoEvent`s of all inscribed `Ramo`s that are a test or exam (not classes, etc.).
      */
-    public fun getUserEvaluations() : List<RamoEvent> {
+    public fun getUserEvaluations() :List<RamoEvent> {
         return this.user_events.filter { it.isEvaluation() }
     }
 
@@ -212,7 +294,7 @@ object DataMaster {
      * @param searchInUserList If true, will look into events incribed by user, otherwise it will
      * search along all the events of the catalog.
      */
-    public fun getEventsOfRamo(ramo :Ramo, searchInUserList :Boolean) : List<RamoEvent> {
+    public fun getEventsOfRamo(ramo :Ramo, searchInUserList :Boolean) :List<RamoEvent> {
         return if (searchInUserList) {
             this.user_events.filter { it.ramoNRC == ramo.NRC }
         } else {
@@ -227,7 +309,7 @@ object DataMaster {
      * If not, searches along the hole catalog.
      * @return Returns null if not found.
      */
-    public fun findRamo(NRC :Int, searchInUserList :Boolean) : Ramo? {
+    public fun findRamo(NRC :Int, searchInUserList :Boolean) :Ramo? {
         if (searchInUserList) {
             try {
                 this.ramosLock.lock()
@@ -262,21 +344,28 @@ object DataMaster {
         }
 
         if (conflictReport == "") { // no conflict was found
-            Executors.newSingleThreadExecutor().execute {
-                this.inscribeRamoAction(ramo)
-                onFinish.invoke()
-            }
-        } else { // conflict(s) found
+            this.inscribeRamoAction(
+                ramo = ramo,
+                onFinish = {
+                    onFinish.invoke()
+                }
+            )
+        } else { // conflict(s) found, asking user confirmation for inscribing
             activity.runOnUiThread {
                 activity.yesNoDialog(
                     title = "Conflicto de eventos",
-                    message = "Advertencia, los siguientes eventos entran en conflicto:\n\n%s\n¿Tomar %s de todas formas?"
-                        .format(conflictReport, ramo.nombre),
+                    message = """\
+Advertencia, los siguientes eventos entran en conflicto:
+
+${conflictReport}
+¿Tomar ${ramo.nombre} de todas formas?""".multilineTrim(),
                     onYesClicked = {
-                        Executors.newSingleThreadExecutor().execute {
-                            this.inscribeRamoAction(ramo) // need this AsyncTask form in order to be certain to call `onFinish` AFTER `ramo` is inscribed into the database.
-                            onFinish.invoke()
-                        }
+                        this.inscribeRamoAction(
+                            ramo = ramo,
+                            onFinish = {
+                                onFinish.invoke()
+                            }
+                        )
                     },
                     onNoClicked = {
                         onFinish.invoke()
@@ -288,27 +377,31 @@ object DataMaster {
     }
 
     /**
-     * [This function needs to be called on a separated thread]
      * Executes the inscription of `ramo` to the user inscribed list. Should be called after conflict check.
      */
-    private fun inscribeRamoAction(ramo :Ramo) {
-        var eventCount :Int = 0
-        try {
-            this.ramosLock.lock()
-            this.eventsLock.lock()
-            this.user_ramos.add(ramo)
-            this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
-            this.getEventsOfRamo(ramo=ramo, searchInUserList=false)
-                .forEach { event :RamoEvent ->
-                    eventCount++
-                    this.user_events.add(event)
-                    this.localDB.eventsDAO().insert(event)
-                }
-        } finally {
-            this.ramosLock.unlock()
-            this.eventsLock.unlock()
+    private fun inscribeRamoAction(ramo :Ramo, onFinish :() -> Unit) {
+        Executors.newSingleThreadExecutor().execute {
+            var eventCount :Int = 0
+            try {
+                this.ramosLock.lock()
+                this.eventsLock.lock()
+                this.user_ramos.add(ramo)
+                this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
+                this.getEventsOfRamo(ramo=ramo, searchInUserList=false)
+                    .forEach { event :RamoEvent ->
+                        eventCount++
+                        this.user_events.add(event)
+                        this.localDB.eventsDAO().insert(event)
+                    }
+            } finally {
+                this.ramosLock.unlock()
+                this.eventsLock.unlock()
+            }
+            Logf(this::class, "Ramo{NRC=%s}, along %d of its events, were inscribed.",
+                ramo.NRC, eventCount
+            )
+            onFinish.invoke()
         }
-        Logf(this::class, "Ramo{NRC=%s}, along %d of its events, were inscribed.", ramo.NRC, eventCount)
     }
 
     /**
@@ -320,7 +413,9 @@ object DataMaster {
 
         val ramo :Ramo? = this.findRamo(NRC=NRC, searchInUserList=true)
         if (ramo == null) { // kind of dymmy solution, but this may be needed if the user do stuff quickly, due async tasks
-            Logf(this::class, "This Ramo seems to be already deleted and couldn't be found. Aborting.")
+            Logf(this::class,
+                "This Ramo seems to be already deleted and couldn't be found. Aborting."
+            )
             return
         }
 
@@ -359,13 +454,15 @@ object DataMaster {
         } finally {
             this.ramosLock.unlock()
         }
-        Logf(this::class, "Ramo{NRC=%d}, along %d of its events, were un-inscribed.", NRC, eventCount)
+        Logf(this::class, "Ramo{NRC=%d}, along %d of its events, were un-inscribed.",
+            NRC, eventCount
+        )
     }
 
     /**
      * Returns the total amount of `crédito` for the user inscribed list.
      */
-    public fun getUserCreditSum() : Int {
+    public fun getUserCreditSum() :Int {
         var creditosTotal :Int = 0
         try {
             this.ramosLock.lock()
@@ -384,7 +481,7 @@ object DataMaster {
      * an evaluation event with a non-evaluation event, or if their `date` is null (when
      * passing evaluation evaluation).
      */
-    public fun areEventsConflicted(ev1 :RamoEvent, ev2 :RamoEvent) : Boolean? {
+    public fun areEventsConflicted(ev1 :RamoEvent, ev2 :RamoEvent) :Boolean? {
         val first_isEval :Boolean = ev1.isEvaluation()
         val second_isEval :Boolean = ev2.isEvaluation()
         if (first_isEval && second_isEval) { // comparing evaluation events (date and time)
@@ -405,7 +502,7 @@ object DataMaster {
      * @return The other events that collide with `event`, including itself (at first position).
      * The list will be empty if there is no conflict.
      */
-    public fun getConflictsOf(event :RamoEvent) : List<RamoEvent> {
+    public fun getConflictsOf(event :RamoEvent) :List<RamoEvent> {
         val conflicts :MutableList<RamoEvent> = mutableListOf()
         try {
             this.ramosLock.lock()
@@ -428,7 +525,7 @@ object DataMaster {
      * [This function needs to be called on a separated thread]
      * Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek`
      */
-    public fun getEventsByWeekDay() : Map<DayOfWeek, List<RamoEvent>> {
+    public fun getEventsByWeekDay() :Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(
             DayOfWeek.MONDAY to mutableListOf(),
             DayOfWeek.TUESDAY to mutableListOf(),
@@ -441,7 +538,7 @@ object DataMaster {
             this.user_ramos.forEach { ramo :Ramo ->
                 this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
                     if (! event.isEvaluation()) {
-                        when(event.dayOfWeek) {
+                        when (event.dayOfWeek) {
                             DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
                             DayOfWeek.TUESDAY   -> { results[DayOfWeek.TUESDAY]?.add(event) }
                             DayOfWeek.WEDNESDAY -> { results[DayOfWeek.WEDNESDAY]?.add(event) }

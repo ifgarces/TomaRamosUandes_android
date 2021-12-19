@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.MainActivity.Companion.PROGRESSBAR_SPAWN_TIMEOUT
+import com.ifgarces.tomaramosuandes.models.AppMetadata
+import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.*
 
 
@@ -45,42 +47,12 @@ class MainActivity : AppCompatActivity() {
         DataMaster.init(
             activity = this,
             clearDatabase = false, //! should be `false` on any release, don't forget!!
+            forceLoadOfflineCSV = false, //! should be `false` on any release, don't forget!!
             onSuccess = {
                 Logf(this::class, "DataMaster successfully initialized.")
                 this.startActivity(
                     Intent(this@MainActivity, HomeActivity::class.java)
                 )
-            },
-            onInternetError = {
-                this.runOnUiThread {
-                    this.infoDialog(
-                        title = "Error al obtener catálogo",
-                        message = """\
-No se pudo obtener correctamente el catálogo de ramos ${this.getString(R.string.CATALOG_PERIOD)}. \
-Su conexión a internet no es buena o es posible que los servidores que usa la app estén colapsados. \
-Se usará el catálogo offline de la app. \
-                            """.multilineTrim(),
-                        // the last part is not 100% true, but the user will understand♠. See issue #12
-                        icon = R.drawable.alert_icon
-                    )
-                }
-            },
-            onCsvParseError = {
-                this.runOnUiThread {
-                    this.infoDialog(
-                        title = "Catálogo incompatible",
-                        message = "Hubo un error al procesar el catálogo de la app. Por favor descargue la última versión de la app en %s".format(
-                            WebManager.USER_APP_URL
-                        ),
-                        onDismiss = {
-                            this.startActivity(
-                                Intent(Intent.ACTION_VIEW, Uri.parse(WebManager.USER_APP_URL))
-                            )
-                            this.finish()
-                        },
-                        icon = null
-                    )
-                }
             },
             onRoomError = {
                 this.runOnUiThread {
@@ -88,11 +60,9 @@ Se usará el catálogo offline de la app. \
                         title = "Error",
                         message = """\
 Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
-Los datos están dañados o no compatibles con esta versión del programa. \
-                            """.multilineTrim(),
+Los datos están dañados o no compatibles con esta versión del programa.""".multilineTrim(),
                         onDismiss = {
-                            Logf(
-                                this::class,
+                            Logf(this::class,
                                 "Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app."
                             )
                             DataMaster.clear()
@@ -100,6 +70,11 @@ Los datos están dañados o no compatibles con esta versión del programa. \
                         icon = R.drawable.alert_icon
                     )
                 }
+            },
+            onFirebaseError = {
+                // Nothing for now, as this dialog will appear on `HomeActivity` anyway, if there
+                // are internet connection issues. Probably.
+                //FirebaseMaster.showInternetConnectionErrorDialog(this)
             }
         )
     }
