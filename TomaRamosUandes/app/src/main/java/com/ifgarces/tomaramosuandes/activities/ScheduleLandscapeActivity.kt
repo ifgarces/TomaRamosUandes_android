@@ -137,7 +137,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
-            Logf(this::class, "Exporting schedule as image...")
+            Logf.debug(this::class, "Exporting schedule as image...")
             try {
                 ImageExportHandler.exportWeekScheduleImage(
                     activity = this,
@@ -148,8 +148,8 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
                 this.infoDialog(
                     title = "Error",
                     message = """\
-Oops! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Probablemente la \
-versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
+Uy! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Estamos trabajando \
+para usted.""".multilineTrim(),
                     onDismiss = {},
                     icon = R.drawable.alert_icon
                 )
@@ -278,7 +278,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
          * Displays the non-evaluation events for each user inscribed `Ramo`s in the schedule.
          */
         public fun buildSchedule(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
-            Logf(this::class, "Building week schedule...")
+            Logf.debug(this::class, "Building week schedule...")
 
             /* initializing */
             scheduleData.clear()
@@ -345,7 +345,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
                             }
                         }
                     }
-                    Logf(this::class, "Agenda successfully built.")
+                    Logf.debug(this::class, "Agenda successfully built.")
                 }
             }
         }

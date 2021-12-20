@@ -2,12 +2,6 @@ package com.ifgarces.tomaramosuandes
 
 import android.app.Activity
 import androidx.room.Room
-import com.ifgarces.tomaramosuandes.DataMaster.catalog_events
-import com.ifgarces.tomaramosuandes.DataMaster.catalog_ramos
-import com.ifgarces.tomaramosuandes.DataMaster.eventsLock
-import com.ifgarces.tomaramosuandes.DataMaster.ramosLock
-import com.ifgarces.tomaramosuandes.DataMaster.user_events
-import com.ifgarces.tomaramosuandes.DataMaster.user_ramos
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
@@ -141,7 +135,7 @@ object DataMaster {
         this.localDB.ramosDAO().clear()
         this.localDB.eventsDAO().clear()
         this.localDB.userStatsDAO().clear()
-        Logf(this::class, "Local database cleaned.")
+        Logf.debug(this::class, "Local database cleaned.")
     }
 
     private fun loadRoomUserData(
@@ -155,7 +149,7 @@ object DataMaster {
             this.localDB =
                 Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
         } catch (e :Exception) {
-            Logf(this::class, "Error: could not load local Room database. %s", e)
+            Logf.error(this::class, "Error: could not load local Room database. %s", e)
             onFailure.invoke(e)
         }
 
@@ -165,19 +159,26 @@ object DataMaster {
 
         // Checking consistency of current catalog with existing data inscribed by the user found in
         // local storage
-        if (this.isUserDataSyncedWithCatalog()) {
-            Logf(
+        if (! this.checkUserAndCatalogConsistency()) {
+            Logf.warn(
                 this::class,
                 "User inscribed ramos are not consistent with the current catalog. User data cleared."
             )
-            this.clear()
-            activity.infoDialog(
-                title = "Error de sincronización de ramos",
-                message = """\
-Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe a \
-que el catálogo fue actualizado y algún ramo suyo fue removido y modificado de alguna forma. \
-Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
+            val oldUserRamosReport :String = "- %s".format(
+                this.user_ramos.map { it.nombre }
+                    .joinToString("\n- ")
             )
+            this.clear()
+            activity.runOnUiThread {
+                activity.infoDialog(
+                    title = "Error de sincronización de ramos",
+                    message = """\
+Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe \
+a que el catálogo fue actualizado y algún ramo suyo fue removido y modificado de alguna forma. \
+Los siguientes ramos fueron removidos por esta razón:
+${oldUserRamosReport}""".multilineTrim()
+                )
+            }
         }
 
         this.localDB.userStatsDAO().getStats().let { stats :List<UserStats> ->
@@ -191,7 +192,7 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
                 //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
             }
         }
-        Logf(
+        Logf.debug(
             this::class,
             "Recovered user local data: %s ramos (with %d events).",
             this.user_ramos.count(),
@@ -210,14 +211,14 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
         onSuccess :() -> Unit,
         onFailure :(e :Exception) -> Unit
     ) {
-        Logf(this::class, "Fetching catalog data...")
+        Logf.debug(this::class, "Fetching catalog data...")
         FirebaseMaster.getAllRamos(
             onSuccess = { gotRamos :List<Ramo> ->
                 FirebaseMaster.getAllRamoEvents(
                     onSuccess = { gotEvents :List<RamoEvent> ->
                         this.catalog_ramos = gotRamos
                         this.catalog_events = gotEvents
-                        Logf(
+                        Logf.debug(
                             this::class, "Fetched %d ramos and %d events from Firebase",
                             this.catalog_ramos.count(), this.catalog_events.count()
                         )
@@ -239,14 +240,14 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
         val csv_body :String = activity.assets.open("catalog_offline.csv")
             .bufferedReader(Charsets.UTF_8).readText()
 
-        Logf(this::class, "Parsing CSV...")
+        Logf.debug(this::class, "Parsing CSV...")
         val (offlineRamos :List<Ramo>, offlineEvents :List<RamoEvent>) = CsvHandler.parseCSV(
             csv_lines = csv_body.split("\n")
         )!!
         this.catalog_ramos = offlineRamos
         this.catalog_events = offlineEvents
 
-        Logf(
+        Logf.debug(
             this::class, "CSV parsing complete. Got %d ramos and %d events",
             this.catalog_ramos.count(), this.catalog_events.count()
         )
@@ -254,42 +255,38 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
 
     /**
      * Returns `true` if the user inscribed `Ramo`s (and their `RamoEvent`s) are consistent with the
-     * catalog, i.e. all of them exist in the current catalog and there are no differences (due
-     * Uandes' SAF catalog updates). Returns `false` otherwise. This functions checks whitin
-     * `user_ramos` and `user_events`.
-     * Warning: time execution will grow explosively with lenght of `catalog_ramos` and `catalog_events`.
+     * current `DataMaster`'s catalog, i.e. whether all of them exist in the current catalog and
+     * there are no differences (due Uandes' SAF catalog updates).
+     * Warning: time execution will grow explosively with lenght of `catalog_ramos` and
+     * `catalog_events`...
      */
-    private fun isUserDataSyncedWithCatalog() :Boolean { //TODO: find out how to optimize this time-consuming method
-        Logf(this::class, "Checking ")
-        var failure :Boolean
+    private fun checkUserAndCatalogConsistency() :Boolean {
         this.catalog_ramos.forEach { catalogRamo :Ramo ->
-            failure = true
             this.user_ramos.forEach { userRamo :Ramo ->
-                if (userRamo == catalogRamo) {
-                    failure = false
+                if (userRamo.NRC == catalogRamo.NRC && userRamo != catalogRamo) {
+                    // This will run when there's a user-inscribed Ramo that does not perfectly
+                    // match the current catalog and therefore is not valid [anymore]
+                    Logf.warn(
+                        this::class,
+                        "Found a user-inscribed Ramo that is not consistent with catalog, respectively: %s != %s",
+                        userRamo, catalogRamo
+                    )
+                    return false
                 }
-            }
-            if (failure) {
-                Logf(
-                    this::class,
-                    "Error: found catalog Ramo that is not consisten with user inscribed Ramos: %s",
-                    catalogRamo
-                )
-                return false
             }
         }
         this.catalog_events.forEach { catalogEvent :RamoEvent ->
-            failure = true
             this.user_events.forEach { userEvent :RamoEvent ->
-                if (userEvent == catalogEvent) failure = false
-            }
-            if (failure) {
-                Logf(
-                    this::class,
-                    "Error: found catalog RamoEvent that is not consisten with user inscribed RamoEvents: %s",
-                    catalogEvent
-                )
-                return false
+                if (userEvent.ID == catalogEvent.ID && userEvent != catalogEvent) {
+                    // This will run when there's an event of a user-inscribed Ramo that does not
+                    // perfectly match the current catalog and therefore is not valid [anymore]
+                    Logf.warn(
+                        this::class,
+                        "Found a user-inscribed RamoEvent that is not consistent with catalog, respectively: %s != %s",
+                        userEvent, catalogEvent
+                    )
+                    return false
+                }
             }
         }
         return true
@@ -409,7 +406,7 @@ ${conflictReport}
                 this.ramosLock.unlock()
                 this.eventsLock.unlock()
             }
-            Logf(
+            Logf.debug(
                 this::class, "Ramo{NRC=%s}, along %d of its events, were inscribed.",
                 ramo.NRC, eventCount
             )
@@ -426,7 +423,7 @@ ${conflictReport}
 
         val ramo :Ramo? = this.findRamo(NRC = NRC, searchInUserList = true)
         if (ramo == null) { // kind of dymmy solution, but this may be needed if the user do stuff quickly, due async tasks
-            Logf(
+            Logf.debug(
                 this::class,
                 "This Ramo seems to be already deleted and couldn't be found. Aborting."
             )
@@ -468,7 +465,7 @@ ${conflictReport}
         } finally {
             this.ramosLock.unlock()
         }
-        Logf(
+        Logf.debug(
             this::class, "Ramo{NRC=%d}, along %d of its events, were un-inscribed.",
             NRC, eventCount
         )
@@ -563,7 +560,7 @@ ${conflictReport}
                                 DayOfWeek.WEDNESDAY -> results[DayOfWeek.WEDNESDAY]?.add(event)
                                 DayOfWeek.THURSDAY -> results[DayOfWeek.THURSDAY]?.add(event)
                                 DayOfWeek.FRIDAY -> results[DayOfWeek.FRIDAY]?.add(event)
-                                else -> Logf( // ignored
+                                else -> Logf.warn( // ignored
                                     this::class, "Warning: unknown day for this event: %s", event
                                 )
                             }

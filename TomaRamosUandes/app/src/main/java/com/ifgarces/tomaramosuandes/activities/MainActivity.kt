@@ -45,9 +45,8 @@ class MainActivity : AppCompatActivity() {
         DataMaster.init(
             activity = this,
             clearDatabase = false, //! should be `false` on any release, don't forget!!
-            forceLoadOfflineCSV = true, //! should be `false` on any release, don't forget!!
+            forceLoadOfflineCSV = false, //! should be `false` on any release, don't forget!!
             onSuccess = {
-                Logf(this::class, "DataMaster successfully initialized.")
                 this.startActivity(
                     Intent(this@MainActivity, HomeActivity::class.java)
                 )
@@ -60,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
 Los datos están dañados o no compatibles con esta versión del programa.""".multilineTrim(),
                         onDismiss = {
-                            Logf(
+                            Logf.debug(
                                 this::class,
                                 "Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app."
                             )

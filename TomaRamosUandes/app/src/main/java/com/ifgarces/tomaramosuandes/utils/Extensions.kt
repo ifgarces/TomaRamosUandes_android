@@ -7,7 +7,6 @@ import android.content.DialogInterface
 import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -18,10 +17,7 @@ import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
 import java.util.*
-import kotlin.reflect.KClass
 
-
-const val LOGF_TAG :String = "_DEBUGLOG_"
 
 /**
  * Simple long toast with Java-style string formatting.
@@ -29,20 +25,6 @@ const val LOGF_TAG :String = "_DEBUGLOG_"
  */
 fun Context.toastf(format :String, vararg args :Any?) {
     Toast.makeText(this, format.format(*args), Toast.LENGTH_LONG).show()
-}
-
-/**
- * Simplified debug log with Java-style string formatting. Simplifies usage of Logcat for reading
- * the log for when the output is not too heavy. This function is not an actual extended method, but
- * I still place it here. We will tell nobody.
- * @author Ignacio F. Garcés.
- * @param scopeClass The class of the fragment or activity (or object) of the scope that desires to
- * log.
- * @param format String format.
- * @param args String format args.
- */
-fun Logf(scopeClass :KClass<*>, format :String, vararg args :Any?) {
-    Log.d(LOGF_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))
 }
 
 fun String.spanishUpperCase() :String {

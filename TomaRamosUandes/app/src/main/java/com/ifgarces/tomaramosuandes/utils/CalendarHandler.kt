@@ -67,7 +67,7 @@ object CalendarHandler {
                     )
                 )
             } catch (e :NullPointerException) {
-                Logf(
+                Logf.debug(
                     this::class,
                     "Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s",
                     cur.position,
@@ -93,26 +93,27 @@ object CalendarHandler {
         onError :() -> Unit
     ) {
         val userCalendars :List<UserCalendar> = this.getUserCalendars(activity)
-        Logf(this::class, "Calendars in device: %s", userCalendars)
+        Logf.debug(this::class, "Calendars in device: %s", userCalendars)
         val selectables :MutableList<String> = mutableListOf()
         userCalendars.forEach {
             selectables.add(it.name)
         }
 
-        val diag :AlertDialog.Builder =
-            AlertDialog.Builder(activity) // references: https://stackoverflow.com/a/43532478/12684271
-                .setTitle("Seleccione calendario")
-                .setCancelable(true)
-                .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
-                    val cal :UserCalendar? = userCalendars[which]
-                    Logf(this::class, "User has selected %s (index: %d)", cal, which)
-                    if (cal == null) {
-                        onError.invoke()
-                        return@setItems
-                    }
-                    onItemSelected.invoke(cal.ID, cal.name)
-                    dialog.dismiss()
+        // Displaying dialog to select the calendar.
+        // References: https://stackoverflow.com/a/43532478/12684271
+        val diag :AlertDialog.Builder = AlertDialog.Builder(activity)
+            .setTitle("Seleccione calendario")
+            .setCancelable(true)
+            .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
+                val cal :UserCalendar? = userCalendars[which]
+                Logf.debug(this::class, "User has selected %s (index: %d)", cal, which)
+                if (cal == null) {
+                    onError.invoke()
+                    return@setItems
                 }
+                onItemSelected.invoke(cal.ID, cal.name)
+                dialog.dismiss()
+            }
         diag.create().show()
     }
 
@@ -140,7 +141,7 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
             },
             onItemSelected = { calendarID :Int, calendarName :String ->
                 val evaluations :List<RamoEvent> = DataMaster.getUserEvaluations()
-                Logf(this::class, "Starting to export %d events...", evaluations.count())
+                Logf.debug(this::class, "Starting to export %d events...", evaluations.count())
                 var e :ContentValues
                 var result :Uri? // will hold the got internal feedback for each event insertion in calendar
                 var zoneAux :ZonedDateTime
@@ -149,7 +150,7 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
                     mutableListOf() // will contain events that somehow couldn't be exported
 
                 evaluations.forEach { event :RamoEvent ->
-                    Logf(this::class, "Exporting %s", event)
+                    Logf.debug(this::class, "Exporting %s", event)
                     e = ContentValues()
                     e.put(CalendarContract.Events.CALENDAR_ID, calendarID)
                     e.put(
@@ -161,10 +162,7 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
                         event.toLargeString().replace("\n", ";")
                     )
 
-                    zoneAux = LocalDateTime.of(
-                        event.date!!,
-                        event.startTime
-                    ) // we are exporting evaluations, whose date are always assigned, do not worry about NullPointerException
+                    zoneAux = LocalDateTime.of(event.date!!, event.startTime) // we are exporting evaluations, whose date are always non-null, do not worry about NullPointerException
                         .atZone(ZoneId.of("America/Santiago"))
                     e.put(CalendarContract.Events.DTSTART, zoneAux.toInstant().toEpochMilli())
                     zoneAux = LocalDateTime.of(event.date!!, event.endTime)
@@ -177,7 +175,7 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
 
                     result = activity.contentResolver.insert(baseUri, e)
                     if (result == null) {
-                        Logf(
+                        Logf.debug(
                             this::class,
                             "Error: got null URI response when inserting the event at the calendar with ID=%d",
                             calendarID
@@ -187,7 +185,7 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
                 }
 
                 if (errors.count() > 0) {
-                    Logf(this::class, "Finished event export with %d errors", errors.count())
+                    Logf.debug(this::class, "Finished event export with %d errors", errors.count())
                     // showing error report-like
                     var aux :String = ""
                     errors.forEach {
@@ -202,7 +200,7 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
                         icon = R.drawable.alert_icon
                     )
                 } else {
-                    Logf(
+                    Logf.debug(
                         this::class,
                         "Events successfully exported to calendar named \"%s\"",
                         calendarName
@@ -218,7 +216,7 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
     }
 
     private fun ensurePermissions(activity :Activity) {
-        Logf(this::class, "Checking permissions...")
+        Logf.debug(this::class, "Checking permissions...")
         while (
             ActivityCompat.checkSelfPermission(
                 activity,
@@ -229,10 +227,9 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
                 Manifest.permission.READ_CALENDAR
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            this.askPermissions(activity)
-            // TODO: add a small wait here, because if user hasn't set permisions yet, it seems to be a busy cycle until they decide to grant the permission
+            this.askPermissions(activity) //! this is not good for performance on the main thread...
         }
-        Logf(this::class, "Calendar permissios granted.")
+        Logf.debug(this::class, "Calendar permissios granted.")
     }
 
     private fun askPermissions(activity :Activity) {
@@ -258,9 +255,9 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
             try {
                 stream.write(content.toByteArray())
                 stream.close()
-                Logf(this::class, "ICS file successfully exported inside folder '%s'.", saveFolder)
+                Logf.debug(this::class, "ICS file successfully exported inside folder '%s'.", saveFolder)
             } catch (e :IOException) {
-                Logf(this::class, "Failed to export ICS file. %s", e)
+                Logf.debug(this::class, "Failed to export ICS file. %s", e)
             }
         }
 
@@ -304,7 +301,7 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
                 fileMetadata
             )
         }
-        Logf(this::class, "iCalendar/ICS file created at %s", icsFile.path)
+        Logf.debug(this::class, "iCalendar/ICS file created at %s", icsFile.path)
     }
 
     /**

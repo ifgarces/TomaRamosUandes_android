@@ -29,4 +29,4 @@ Universidad de los Andes.
 
 ## Logging
 
-There's not too much logging, so all of it is labelled `_DEBUGLOG_` (for easily accessing it with Android Studio's logcat), except Firebase-related output (see [`FirebaseMaster.kt`](./TomaRamosUandes/app/src/main/java/com/ifgarces/tomaramosuandes/networking/FirebaseMaster.kt)), which is labelled `FirebaseMaster`, just as that object's name.
+There's not too much logging, so all of it is labelled `LOGF` (for easily accessing it with Android Studio's logcat), except Firebase-related output (see [`FirebaseMaster.kt`](./TomaRamosUandes/app/src/main/java/com/ifgarces/tomaramosuandes/networking/FirebaseMaster.kt)), which is labelled `FirebaseMaster`, just as that object's name. For more details about logging for this particular project, see [`Logf.kt`](./TomaRamosUandes/app/src/main/java/com/ifgarces/tomaramosuandes/utils/Logf.kt).

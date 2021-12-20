@@ -108,7 +108,7 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 else -> {
-                    Logf(
+                    Logf.warn(
                         this::class,
                         "Warning: unknown bottom navbar element pressed (id=%d)",
                         item.itemId
@@ -156,7 +156,7 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
-                    Logf(
+                    Logf.warn(
                         this::class,
                         "Warning: unknown top toolbar element pressed (id=%d)",
                         item.itemId

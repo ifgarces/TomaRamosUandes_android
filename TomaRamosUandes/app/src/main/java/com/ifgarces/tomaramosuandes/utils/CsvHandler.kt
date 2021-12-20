@@ -111,7 +111,7 @@ object CsvHandler {
             try {
                 current.NRC = line[csv_columns.NRC].toInt()
             } catch (e :NumberFormatException) {
-                Logf(
+                Logf.warn(
                     this::class,
                     "Warning: NRC could not be parsed to integer at CSV line %d '%s'. %s. Assuming NRC assign is yet pending and assigning negative one.",
                     lineNum + 1, csv_lines[lineNum], e
@@ -119,13 +119,13 @@ object CsvHandler {
                 current.NRC = -(badNRCsCount++)
             }
 //            catch (e :IndexOutOfBoundsException) {
-//                Logf(this::class, "Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
+//                Logf.debug(this::class, "Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
 //            }
 
             try {
                 current.curso = line[csv_columns.CURSONUM].toInt()
             } catch (e :NumberFormatException) {
-                Logf(
+                Logf.warn(
                     this::class,
                     "Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.",
                     lineNum + 1, csv_lines[lineNum], e
@@ -164,7 +164,7 @@ object CsvHandler {
                         )
                     )
                 } catch (e :NumberFormatException) { // `String.toInt()` error
-                    Logf(
+                    Logf.error(
                         this::class,
                         "Error: mandatory integer cast exception at CSV line %d: '%s'. %s",
                         lineNum + 1, csv_lines[lineNum], e
@@ -183,7 +183,7 @@ object CsvHandler {
                     current.dayOfWeek = csv_columns.toDayOfWeek(column)!!
                     splitterAux = stringAux.split(TIME_SEPARATOR)
                     if (splitterAux.count() != 2) {
-                        Logf(
+                        Logf.debug(
                             this::class,
                             "Error: unexpected split result on row %d: '%s'. Could not get time interval for event.",
                             lineNum + 1, line
@@ -195,7 +195,7 @@ object CsvHandler {
                         current.startTime = LocalTime.parse(splitterAux[0], time_format)
                         current.endTime = LocalTime.parse(splitterAux[1], time_format)
                     } catch (e :DateTimeParseException) {
-                        Logf(
+                        Logf.debug(
                             this::class,
                             "Error: time parsing exception at CSV line %d: '%s'. %s",
                             lineNum + 1, csv_lines[lineNum], e
@@ -206,7 +206,7 @@ object CsvHandler {
                 }
             }
             if (!dayAssigned) { // this means there's a missing DayOfWeek and start-end times assignment in the CSV
-                Logf(
+                Logf.warn(
                     this::class,
                     "Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'",
                     lineNum + 1, csv_lines[lineNum]
@@ -238,7 +238,7 @@ object CsvHandler {
                     eventTypeAux = RamoEventType.EXAM
                 }
                 else -> {
-                    Logf(
+                    Logf.debug(
                         this::class,
                         "Error at CSV line %d: %s. Unknown event type '%s'",
                         lineNum + 1, line, current.eventType
@@ -262,7 +262,7 @@ object CsvHandler {
                     current.date =
                         LocalDate.parse(auxDateFormatFields.joinToString("/"), date_format)
                 } catch (e :DateTimeParseException) {
-                    Logf(
+                    Logf.debug(
                         this::class,
                         "Error: date parsing exception at CSV line %d: '%s'. %s",
                         lineNum + 1, csv_lines[lineNum], e

@@ -48,9 +48,9 @@ object FirebaseMaster {
      */
     private fun logCallFail(methodName :String, e :Exception, aditionalMessage :String? = null) {
         if (aditionalMessage == null)
-            Log.d(this::class.simpleName, "%s - failure [%s]".format(methodName, e))
+            Log.e(this::class.simpleName, "%s - failure [%s]".format(methodName, e))
         else
-            Log.d(
+            Log.e(
                 this::class.simpleName, "%s - failure [%s]: %s".format(
                     methodName, e, aditionalMessage
                 )

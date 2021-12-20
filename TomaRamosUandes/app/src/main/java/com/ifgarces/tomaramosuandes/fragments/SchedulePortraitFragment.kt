@@ -101,7 +101,7 @@ class SchedulePortraitFragment : Fragment() {
 
             UI.saveAsImgButton.setColorFilter(Color.WHITE)
             UI.saveAsImgButton.setOnClickListener {
-                Logf(this::class, "Exporting user schedule as image...")
+                Logf.debug(this::class, "Exporting user schedule as image...")
                 try {
                     ImageExportHandler.exportWeekScheduleImage(
                         activity = homeActivity,
@@ -109,15 +109,15 @@ class SchedulePortraitFragment : Fragment() {
                         tallView = UI.agendaLayout
                     )
                 } catch (e :Exception) {
-                    Logf(
+                    Logf.error(
                         this::class, "Error catched on exporting image: %s",
                         e.stackTraceToString()
                     )
                     homeActivity.infoDialog(
                         title = "Error",
                         message = """\
-Oops! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Probablemente la \
-versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
+Uy! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Estamos trabajando \
+para usted.""".multilineTrim(),
                         onDismiss = {},
                         icon = R.drawable.alert_icon
                     )
