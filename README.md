@@ -1,9 +1,11 @@
 # *Simulador de toma de ramos Uandes - Android*
 
-Android application for inscribing Uandes' courses.
+Android application for automating weekly schedule construction and other features when inscribing Uandes' courses.
 
 Developed in Android Studio (Kotlin).
+
 Author: Ignacio F. Garcés.
+
 Universidad de los Andes.
 
 ## Features
