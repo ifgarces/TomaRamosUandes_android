@@ -99,7 +99,7 @@
             android:text="Sala: [location]"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textColor="#2A0065"
+            android:textColor="@color/prettyPurple"
 
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"

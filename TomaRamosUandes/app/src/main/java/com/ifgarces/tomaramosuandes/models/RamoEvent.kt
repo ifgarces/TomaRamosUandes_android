@@ -85,18 +85,11 @@ data class RamoEvent(
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() } // TODO: make sure to use "dd/MM/yyyy" format
             else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
-        return """
-                Tipo: %s\
-                Ramo: %s (NRC %d)\
-                Fecha: %s (%s - %s)
-            """.multilineTrim().format(
-            SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,
-            DataMaster.findRamo(NRC=this.ramoNRC, searchInUserList=false)!!.nombre,
-            this.ramoNRC,
-            dateOrDay,
-            this.startTime, // TODO: make sure to use "HH:mm" format
-            this.endTime
-        )
+        return """\
+Tipo: ${SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!}
+Ramo: ${DataMaster.findRamo(NRC=this.ramoNRC, searchInUserList=false)!!.nombre} (NRC ${this.ramoNRC})
+Fecha: ${dateOrDay} (${this.startTime} - ${this.endTime})
+Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim()
     }
 
     /**
@@ -106,7 +99,10 @@ data class RamoEvent(
         val dateOrDay :String =
             if (this.isEvaluation()) { this.date.toString() }
             else { SpanishToStringOf.dayOfWeek(this.dayOfWeek) }
-        return "%s: %s\n\t\t(%s %s-%s)".format(
+        return """\
+${SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!}: ${DataMaster.findRamo(NRC=this.ramoNRC, searchInUserList=false)!!.nombre}
+(${dateOrDay} ${this.startTime} - ${this.endTime})
+Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim().format(
             SpanishToStringOf.ramoEventType(eventType=this.type, shorten=false)!!,
             DataMaster.findRamo(NRC=this.ramoNRC, searchInUserList=false)!!.nombre,
             dateOrDay,
