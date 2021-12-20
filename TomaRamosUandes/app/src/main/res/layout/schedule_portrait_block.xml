@@ -16,7 +16,7 @@
 
         <TextView
             android:id="@+id/schedulePblock_ramo"
-            style="@style/agendaPortrait_ramoName"
+            style="@style/schedulePortrait_ramoName"
             android:layout_width="0dp"
 
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/schedulePblock_ti"
-            style="@style/agendaPortrait_time"
+            style="@style/schedulePortrait_time"
             android:layout_width="wrap_content"
 
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
 
         <TextView
             android:id="@+id/schedulePblock_static01"
-            style="@style/agendaPortrait_time"
+            style="@style/schedulePortrait_time"
             android:text=" - "
 
             android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
 
         <TextView
             android:id="@+id/schedulePblock_tf"
-            style="@style/agendaPortrait_time"
+            style="@style/schedulePortrait_time"
             android:layout_width="wrap_content"
 
             android:layout_height="wrap_content"

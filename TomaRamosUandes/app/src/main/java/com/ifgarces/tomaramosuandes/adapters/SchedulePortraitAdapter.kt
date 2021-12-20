@@ -16,7 +16,7 @@ import java.util.concurrent.Executors
 
 
 /**
- * Adapter used to display events in the portrait agenda view.
+ * Adapter used to display events in the portrait schedule view.
  */
 class SchedulePortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<SchedulePortraitAdapter.EventCardVH>() {
 
@@ -59,7 +59,7 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.
                         RamoEventType.CLAS -> homeActivity.getColor(R.color.clas)
                         RamoEventType.AYUD -> homeActivity.getColor(R.color.ayud)
                         RamoEventType.LABT, RamoEventType.TUTR -> homeActivity.getColor(R.color.labt)
-                        else -> throw Exception("Invalid/unexpected event type for %s".format(event)) // exception if invalid event or evaluation event, which should not go here (agenda)
+                        else -> throw Exception("Invalid/unexpected event type for %s".format(event)) // exception if invalid event or evaluation event, which should not go here (schedule)
                     }
                 )
 

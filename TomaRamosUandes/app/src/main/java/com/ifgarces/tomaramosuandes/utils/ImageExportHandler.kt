@@ -19,21 +19,21 @@ import java.io.OutputStream
 
 
 /**
- * Contains methods to export the agenda view (i.e. an UI element) as an image to external storage.
+ * Contains methods to export the schedule view (i.e. an UI element) as an image to external storage.
  */
 object ImageExportHandler {
     private const val IMG_SAVE_FOLDER :String = "Pictures/Horario" // folder name inside "Pictures" standard folder
     //private const val LANDSCAPE_AGENDA_IMG_WIDTH :Int = 40//2000f // agenda with (in dp) when it is exported as picture (so resulting image should be equivalent in any device)
 
     /**
-     * Exports the agenda as a PNG image, at path "Pictures/`this.saveFolder`"
+     * Exports the week schedule as a PNG image, at path "Pictures/`this.saveFolder`"
      * @param activity Needs the calling activity for several methods.
      * @param targetView The view that has all the elements that are wanted to be captured,
      * including itself (ScrollView).
      * @param tallView The view inside the `targetView`, which height could be larger (taller)
      * than the device's display height (LinearLayout).
      */
-    public fun exportAgendaImage(activity :Activity, targetView :View, tallView :View) {
+    public fun exportWeekScheduleImage(activity :Activity, targetView :View, tallView :View) {
 
         // TODO: enlarge targetView width (height will be according to context, do not touch it). After export, restore dimensions.
         /* The following does not work, for some reason... */
@@ -103,7 +103,7 @@ object ImageExportHandler {
             activity.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.IMG_SAVE_FOLDER)
         }
         catch (e :Exception) { // <==> IOException ??
-            Logf(this::class, "Error: could not save agenda as image. %s", e)
+            Logf(this::class, "Error: could not save schedule as image. %s", e)
             activity.infoDialog(
                 title = "Error",
                 message = "Ocurrió un error al guardar el horario como imagen. Intente nuevamente."

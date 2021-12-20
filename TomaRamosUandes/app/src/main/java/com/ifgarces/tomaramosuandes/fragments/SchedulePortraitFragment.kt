@@ -30,29 +30,29 @@ import java.time.DayOfWeek
 class SchedulePortraitFragment : Fragment() {
     
     private class FragmentUI(owner :View) {
-        val saveAsImgButton  :FloatingActionButton = owner.findViewById(R.id.portrAgenda_saveAsImage)
-        val fullScreenButton :FloatingActionButton = owner.findViewById(R.id.portrAgenda_fullScreen)
-        val agendaScroll     :ScrollView = owner.findViewById(R.id.portrAgenda_scrollView)
-        val agendaLayout     :LinearLayout = owner.findViewById(R.id.portrAgenda_layout)
+        val saveAsImgButton  :FloatingActionButton = owner.findViewById(R.id.portrSchedule_saveAsImage)
+        val fullScreenButton :FloatingActionButton = owner.findViewById(R.id.portrSchedule_fullScreen)
+        val agendaScroll     :ScrollView = owner.findViewById(R.id.portrSchedule_scrollView)
+        val agendaLayout     :LinearLayout = owner.findViewById(R.id.portrSchedule_layout)
         val recyclerTeamMon  :Pair<View, RecyclerView> = Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
-            owner.findViewById(R.id.portrAgenda_mondayHead),
-            owner.findViewById(R.id.portrAgenda_mondayRecycler)
+            owner.findViewById(R.id.portrSchedule_mondayHead),
+            owner.findViewById(R.id.portrSchedule_mondayRecycler)
         )
         val recyclerTeamTue  :Pair<View, RecyclerView> = Pair(
-            owner.findViewById(R.id.portrAgenda_tuesdayHead),
-            owner.findViewById(R.id.portrAgenda_tuesdayRecycler)
+            owner.findViewById(R.id.portrSchedule_tuesdayHead),
+            owner.findViewById(R.id.portrSchedule_tuesdayRecycler)
         )
         val recyclerTeamWed  :Pair<View, RecyclerView> = Pair(
-            owner.findViewById(R.id.portrAgenda_wednesdayHead),
-            owner.findViewById(R.id.portrAgenda_wednesdayRecycler)
+            owner.findViewById(R.id.portrSchedule_wednesdayHead),
+            owner.findViewById(R.id.portrSchedule_wednesdayRecycler)
         )
         val recyclerTeamThu  :Pair<View, RecyclerView> = Pair(
-            owner.findViewById(R.id.portrAgenda_thursdayHead),
-            owner.findViewById(R.id.portrAgenda_thursdayRecycler)
+            owner.findViewById(R.id.portrSchedule_thursdayHead),
+            owner.findViewById(R.id.portrSchedule_thursdayRecycler)
         )
         val recyclerTeamFri  :Pair<View, RecyclerView> = Pair(
-            owner.findViewById(R.id.portrAgenda_fridayHead),
-            owner.findViewById(R.id.portrAgenda_fridayRecycler)
+            owner.findViewById(R.id.portrSchedule_fridayHead),
+            owner.findViewById(R.id.portrSchedule_fridayRecycler)
         )
     }
     
@@ -97,15 +97,18 @@ class SchedulePortraitFragment : Fragment() {
 
             UI.saveAsImgButton.setColorFilter(Color.WHITE)
             UI.saveAsImgButton.setOnClickListener {
-                Logf(this::class, "Exporting agenda as image...")
+                Logf(this::class, "Exporting user schedule as image...")
                 try {
-                    ImageExportHandler.exportAgendaImage(
+                    ImageExportHandler.exportWeekScheduleImage(
                         activity = homeActivity,
                         targetView = UI.agendaScroll,
                         tallView = UI.agendaLayout
                     )
                 }
                 catch (e :Exception) {
+                    Logf(this::class, "Error catched on exporting image: %s",
+                        e.stackTraceToString()
+                    )
                     homeActivity.infoDialog(
                         title = "Error",
                         message = """\

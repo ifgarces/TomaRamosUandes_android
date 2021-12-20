@@ -19,7 +19,7 @@
         <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton.Dialog</item>
     </style>
 
-    <style name="agendaLandscape_header" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="scheduleLandscape_header" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textAllCaps">false</item>
@@ -34,7 +34,7 @@
         <item name="android:layout_margin">0dp</item>
     </style>
 
-    <style name="agendaLandscape_timeBlock">
+    <style name="scheduleLandscape_timeBlock">
         <item name="android:fontFamily">@font/ubuntu_condensed</item>
         <item name="android:textSize">14sp</item>
         <item name="android:background">@android:color/transparent</item>
@@ -47,7 +47,7 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="agendaLandscape_block" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="scheduleLandscape_block" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textAllCaps">true</item>
@@ -62,7 +62,7 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="agendaPortrait_header">
+    <style name="schedulePortrait_header">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:background">@color/gray</item>
         <item name="android:textColor">@android:color/white</item>
@@ -75,7 +75,7 @@
         <item name="android:layout_marginTop">12dp</item>
     </style>
 
-    <style name="agendaPortrait_ramoName">
+    <style name="schedulePortrait_ramoName">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:textColor">@color/almostBlack</item>
@@ -84,7 +84,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="agendaPortrait_time">
+    <style name="schedulePortrait_time">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/almostBlack</item>

@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         DataMaster.init(
             activity = this,
             clearDatabase = false, //! should be `false` on any release, don't forget!!
-            forceLoadOfflineCSV = false, //! should be `false` on any release, don't forget!!
+            forceLoadOfflineCSV = true, //! should be `false` on any release, don't forget!!
             onSuccess = {
                 Logf(this::class, "DataMaster successfully initialized.")
                 this.startActivity(

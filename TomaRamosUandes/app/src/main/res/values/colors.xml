@@ -24,7 +24,7 @@
     <color name="PE2016">#004924</color>
     <color name="PE2011">#001150</color>
 
-    <!-- Background tint for event type boxes in `AgendaPortraitActivity` -->
+    <!-- Background tint for event type boxes in `SchedulePortraitActivity` -->
     <color name="clas">@android:color/transparent</color>
     <color name="ayud">#DBFFC5</color>
     <color name="labt">#DEF0FE</color>

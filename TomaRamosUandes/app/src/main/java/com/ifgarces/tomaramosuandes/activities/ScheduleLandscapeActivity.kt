@@ -25,7 +25,7 @@ import java.util.concurrent.Executors
  * regarding the device orientation sensor.
  * @property ONSCROLL_BUTTON_RESPAWN_TIME Time (milliseconds) passed between the
  * FloatingActionButton dissapears due scrolling and it appears again.
- * @property ROWS_COUNT Number of rows of agenda i.e. number of blocks per day of week.
+ * @property ROWS_COUNT Number of rows of schedule i.e. number of blocks per day of week.
  * @property isFullScreenOn Whether the system UI is hidden (i.e. full screen mode is activated).
  */
 class ScheduleLandscapeActivity : AppCompatActivity() {
@@ -38,8 +38,8 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
     private class ActivityUI(owner :AppCompatActivity) {
         val saveAsImgButton        :FloatingActionButton = owner.findViewById(R.id.landSchedule_saveAsImage)
         val toggleFullScreenButton :FloatingActionButton = owner.findViewById(R.id.landSchedule_toggleFullScreen)
-        val agendaBodyScroll       :View = owner.findViewById(R.id.landSchedule_bodyScrollView) // ScrollView
-        val agendaBodyLayout       :View = owner.findViewById(R.id.landSchedule_bodyLayout) // LinearLayout
+        val scheduleBodyScroll     :View = owner.findViewById(R.id.landSchedule_bodyScrollView) // ScrollView
+        val scheduleBodyLayout     :View = owner.findViewById(R.id.landSchedule_bodyLayout) // LinearLayout
         val blocksMap              :Map<DayOfWeek, List<Button>> = mapOf(
             DayOfWeek.MONDAY to listOf(
                 owner.findViewById(R.id.landSchedule_lun0),
@@ -133,12 +133,12 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
-            Logf(this::class, "Exporting agenda as image...")
+            Logf(this::class, "Exporting schedule as image...")
             try {
-                ImageExportHandler.exportAgendaImage(
+                ImageExportHandler.exportWeekScheduleImage(
                     activity = this,
-                    targetView = UI.agendaBodyScroll,
-                    tallView = UI.agendaBodyLayout
+                    targetView = UI.scheduleBodyScroll,
+                    tallView = UI.scheduleBodyLayout
                 )
             }
             catch (e :Exception) {
@@ -166,7 +166,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             )) {
                 UI.blocksMap.getValue(key=day)[row].text = ""
                 UI.blocksMap.getValue(key=day)[row].setOnClickListener {
-                    AgendaWorker.onBlockClicked(
+                    ScheduleWorker.onBlockClicked(
                         sender = UI.blocksMap.getValue(key = day)[row],
                         context = this
                     )
@@ -174,8 +174,8 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             }
         }
 
-        /* Hiding the floating button when user scrolls the agenda and showing it after some time */
-        UI.agendaBodyScroll.setOnScrollChangeListener { _ :View, _ :Int, _ :Int, _ :Int, _ :Int ->
+        /* Hiding the floating button when user scrolls the schedule and showing it after some time */
+        UI.scheduleBodyScroll.setOnScrollChangeListener { _ :View, _ :Int, _ :Int, _ :Int, _ :Int ->
             if (UI.toggleFullScreenButton.visibility == View.VISIBLE) {
                 UI.toggleFullScreenButton.visibility = View.GONE
                 UI.toggleFullScreenButton.postDelayed({
@@ -190,7 +190,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             }
         }
 
-        AgendaWorker.buildAgenda(activity = this, blocksMap = UI.blocksMap)
+        ScheduleWorker.buildSchedule(activity = this, blocksMap = UI.blocksMap)
 
         if (DataMaster.getUserRamos().count() == 0) {
             UI.saveAsImgButton.isEnabled = false
@@ -204,7 +204,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
      */
     override fun onWindowFocusChanged(hasFocus :Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && this.isFullScreenOn) { this.enterFullScreen() }
+        if (hasFocus && this.isFullScreenOn) this.enterFullScreen()
     }
 
     private var isFullScreenOn :Boolean = false
@@ -226,16 +226,16 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
     }
 
     /**
-     * Encapsulates the methods for agenda building.
+     * Encapsulates the methods for weekly schedule building.
      */
-    private object AgendaWorker {
-        private val agendaData :MutableList<AgendaBlock> = mutableListOf()
+    private object ScheduleWorker {
+        private val scheduleData :MutableList<ScheduleBlock> = mutableListOf()
 
-        data class AgendaBlock(
+        data class ScheduleBlock(
             val button :Button,
             val events :MutableList<RamoEvent>
         )
-        fun MutableList<AgendaBlock>.findEventsOf(button :Button) : MutableList<RamoEvent>? {
+        fun MutableList<ScheduleBlock>.findEventsOf(button :Button) : MutableList<RamoEvent>? {
             this.forEach {
                 if (it.button == button) { return it.events }
             }
@@ -243,10 +243,10 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
         }
 
         /**
-         * Click listener for an agenda block button.
+         * Click listener for an schedule block button.
          */
         public fun onBlockClicked(sender :Button, context : Context) {
-            val blockEvents :MutableList<RamoEvent> = agendaData.findEventsOf(button = sender)!!
+            val blockEvents :MutableList<RamoEvent> = scheduleData.findEventsOf(button = sender)!!
             if (blockEvents.count() == 0) { return }
 
             var info :String
@@ -268,27 +268,27 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
         }
 
         /**
-         * Displays the non-evaluation events for each user inscribed `Ramo`s in the agenda
+         * Displays the non-evaluation events for each user inscribed `Ramo`s in the schedule.
          */
-        public fun buildAgenda(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
-            Logf(this::class, "Building agenda...")
+        public fun buildSchedule(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
+            Logf(this::class, "Building week schedule...")
 
             /* initializing */
-            agendaData.clear()
+            scheduleData.clear()
             blocksMap.forEach { (_ :DayOfWeek, buttons :List<Button>) ->
                 buttons.forEach {
-                    agendaData.add(AgendaBlock(button=it, events=mutableListOf()))
+                    scheduleData.add(ScheduleBlock(button=it, events=mutableListOf()))
                 }
             }
 
             Executors.newSingleThreadExecutor().execute {
-                /* filling `agendaData` i.e. mapping agenda block buttons with corresponding event(s) */
+                /* filling `scheduleData` i.e. mapping schedule block buttons with corresponding event(s) */
                 var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
                 DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
                     for (ev : RamoEvent in events) {
                         rowInterval = timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
                         for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
-                            agendaData.findEventsOf(
+                            scheduleData.findEventsOf(
                                 button = blocksMap.getValue(key = day)[rowNum]
                             )!!.add(ev)
                         }
@@ -298,7 +298,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
                 /* displaying events assigned to each block button */
                 activity.runOnUiThread {
                     var break_loop :Boolean = false
-                    agendaData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
+                    scheduleData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
                         if (break_loop) { return@forEach }
                         events.forEachIndexed { index :Int, event : RamoEvent ->
                             if (index == 0) {
@@ -341,7 +341,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
         private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) :Pair<Int, Int>? {
             var rowStart :Int = supportedHours_start.indexOf(start.hour)
             var rowEnd   :Int = supportedHours_end.indexOf(end.hour)+1
-            if (rowStart == -1 || rowEnd == -1) { return null } // invalid hour(s): block wouldn't fit in agenda
+            if (rowStart == -1 || rowEnd == -1) { return null } // invalid hour(s): block wouldn't fit in schedule
             if (start.minute > 30) { rowStart+=1 }
             if (end.minute > 20) { rowEnd+=1 }
             return Pair(rowStart, rowEnd)

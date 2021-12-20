@@ -15,31 +15,31 @@
         android:layout_height="wrap_content">
 
         <TextView
-            style="@style/agendaLandscape_header"
+            style="@style/scheduleLandscape_header"
             android:text="Hora" />
 
         <TextView
-            style="@style/agendaLandscape_header"
+            style="@style/scheduleLandscape_header"
             android:padding="1dp"
             android:text="Lunes" />
 
         <TextView
-            style="@style/agendaLandscape_header"
+            style="@style/scheduleLandscape_header"
             android:padding="1dp"
             android:text="Martes" />
 
         <TextView
-            style="@style/agendaLandscape_header"
+            style="@style/scheduleLandscape_header"
             android:padding="1dp"
             android:text="Miércoles" />
 
         <TextView
-            style="@style/agendaLandscape_header"
+            style="@style/scheduleLandscape_header"
             android:padding="1dp"
             android:text="Jueves" />
 
         <TextView
-            style="@style/agendaLandscape_header"
+            style="@style/scheduleLandscape_header"
             android:padding="1dp"
             android:text="Viernes" />
     </TableRow>
