@@ -25,12 +25,13 @@ class MainActivity : AppCompatActivity() {
     private class ActivityUI(owner :AppCompatActivity) {
         val loadScreen :View = owner.findViewById(R.id.main_loadScreen)
     }
+
     private lateinit var UI :ActivityUI
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
-        this.UI = ActivityUI(owner=this)
+        this.UI = ActivityUI(owner = this)
 
         UI.loadScreen.visibility = View.GONE
 
@@ -59,7 +60,8 @@ class MainActivity : AppCompatActivity() {
 Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
 Los datos están dañados o no compatibles con esta versión del programa.""".multilineTrim(),
                         onDismiss = {
-                            Logf(this::class,
+                            Logf(
+                                this::class,
                                 "Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app."
                             )
                             DataMaster.clear()

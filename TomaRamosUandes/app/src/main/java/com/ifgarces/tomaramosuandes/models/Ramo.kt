@@ -17,9 +17,9 @@ import androidx.room.PrimaryKey
  * @property conectLiga ??
  * @property listaCruzada ??
  */
-@Entity(tableName=Ramo.TABLE_NAME)
+@Entity(tableName = Ramo.TABLE_NAME)
 data class Ramo(
-    @PrimaryKey(autoGenerate=false) val NRC :Int, // ~ ID
+    @PrimaryKey(autoGenerate = false) val NRC :Int, // ~ ID
     val nombre       :String, // nombre/título
     val profesor     :String, // profesor
     val créditos     :Int,    // número de créditos

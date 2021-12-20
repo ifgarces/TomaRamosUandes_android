@@ -49,17 +49,20 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
         val evals        :RecyclerView = owner.findViewById(R.id.ramoDialog_pruebasRecycler)
         val actionButton :MaterialButton = owner.findViewById(R.id.ramoDialog_button)
     }
+
     private lateinit var UI :FragmentUI
 
     override fun onViewCreated(view :View, savedInstanceState :Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.UI = FragmentUI(owner=view)
+        this.UI = FragmentUI(owner = view)
 
         listOf(UI.clases, UI.ayuds, UI.labs, UI.evals).forEach { recycler :RecyclerView ->
-            recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            recycler.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
-        val ramo_isInscribed :Boolean = this.requireActivity().intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
+        val ramo_isInscribed :Boolean =
+            this.requireActivity().intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
         val nrc :Int = this.requireActivity().intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
         val ramo :Ramo = DataMaster.findRamo(nrc, searchInUserList = false)!!
 
@@ -79,32 +82,33 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
                 .filter { it.ramoNRC == ramo.NRC }
 
             UI.clases.adapter = RamoEventsAdapter(
-                data = events.filter{ it.type == RamoEventType.CLAS },
+                data = events.filter { it.type == RamoEventType.CLAS },
                 showEventType = false
             )
             UI.ayuds.adapter = RamoEventsAdapter(
-                data = events.filter{ it.type == RamoEventType.AYUD },
+                data = events.filter { it.type == RamoEventType.AYUD },
                 showEventType = false
             )
             UI.labs.adapter = RamoEventsAdapter(
-                data = events.filter{ it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR },
+                data = events.filter { it.type == RamoEventType.LABT || it.type == RamoEventType.TUTR },
                 showEventType = false
             )
             UI.evals.adapter = RamoEventsAdapter(
-                data = events.filter{ it.isEvaluation() },
+                data = events.filter { it.isEvaluation() },
                 showEventType = true
             )
         }
 
         if (ramo_isInscribed) { // `ramo` already in user list
-            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(),
+            UI.actionButton.icon = ContextCompat.getDrawable(
+                this.requireContext(),
                 R.drawable.trash_icon
             ) // <==> this.context!!.getDrawable(R.drawable.trash_icon)
             UI.actionButton.text = "Borrar ramo"
             UI.actionButton.setOnClickListener { this.actionUnInscribe(ramo) }
-        }
-        else { // `ramo` not yet inscribed by user
-            UI.actionButton.icon = ContextCompat.getDrawable(this.requireContext(),
+        } else { // `ramo` not yet inscribed by user
+            UI.actionButton.icon = ContextCompat.getDrawable(
+                this.requireContext(),
                 R.drawable.add_icon
             )
             UI.actionButton.text = "Tomar ramo"
@@ -120,8 +124,10 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
             val bottomSheet :View = dialog!!.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
             val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from(bottomSheet)
-            val layout :LinearLayout = UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout
-            layout.viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            val layout :LinearLayout =
+                UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout
+            layout.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     try {
                         layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -135,7 +141,11 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
         }
     }
 
-    override fun onCreateView(inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?) : View? {
+    override fun onCreateView(
+        inflater :LayoutInflater,
+        container :ViewGroup?,
+        savedInstanceState :Bundle?
+    ) :View? {
         return inflater.inflate(R.layout.fragment_ramo_dialog, container, false)
     }
 

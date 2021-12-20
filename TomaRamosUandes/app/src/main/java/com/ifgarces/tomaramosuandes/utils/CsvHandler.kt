@@ -32,27 +32,27 @@ object CsvHandler {
     // Each line of the CSV file describes an event. These are the columns and their index:
     private val csv_columns = object {
         val PLAN_ESTUDIOS :Int = 0
-        val NRC           :Int = 1
+        val NRC :Int = 1
         val CONECTOR_LIGA :Int = 2
         val LISTA_CRUZADA :Int = 3
-        val MATERIA       :Int = 4
-        val CURSONUM      :Int = 5
-        val SECCIÓN       :Int = 6
-        val NOMBRE        :Int = 7
-        val CRÉDITO       :Int = 8
-        val LUNES         :Int = 9
-        val MARTES        :Int = 10
-        val MIÉRCOLES     :Int = 11
-        val JUEVES        :Int = 12
-        val VIERNES       :Int = 13
-        val FECHA_INICIO  :Int = 15
-        val FECHA_FIN     :Int = 16 // <- UNUSED
-        val SALA          :Int = 17
-        val TIPO_EVENTO   :Int = 18
-        val PROFESOR      :Int = 19
+        val MATERIA :Int = 4
+        val CURSONUM :Int = 5
+        val SECCIÓN :Int = 6
+        val NOMBRE :Int = 7
+        val CRÉDITO :Int = 8
+        val LUNES :Int = 9
+        val MARTES :Int = 10
+        val MIÉRCOLES :Int = 11
+        val JUEVES :Int = 12
+        val VIERNES :Int = 13
+        val FECHA_INICIO :Int = 15
+        val FECHA_FIN :Int = 16 // <- UNUSED
+        val SALA :Int = 17
+        val TIPO_EVENTO :Int = 18
+        val PROFESOR :Int = 19
 
-        fun toDayOfWeek(column :Int) : DayOfWeek? {
-            return when(column) {
+        fun toDayOfWeek(column :Int) :DayOfWeek? {
+            return when (column) {
                 9 -> DayOfWeek.MONDAY
                 10 -> DayOfWeek.TUESDAY
                 11 -> DayOfWeek.WEDNESDAY
@@ -64,12 +64,13 @@ object CsvHandler {
     }
 
     private val event_types = object { //! This may vary on time
-        val CLASE       :String = "CLAS"
-        val AYUDANTÍA   :String = "AYUD"
+        val CLASE :String = "CLAS"
+        val AYUDANTÍA :String = "AYUD"
         val LABORATORIO :String = "LABT"
+
         //val TUTORIAL    :String = "TUTR"
-        val PRUEBA      :String = "PRBA"
-        val EXAMEN      :String = "EXAM"
+        val PRUEBA :String = "PRBA"
+        val EXAMEN :String = "EXAM"
     }
 
     /**
@@ -82,19 +83,19 @@ object CsvHandler {
         // [!] TODO: fix last row not being successfully parsed
         // [!] ---
 
-        val catalogResult :Pair< MutableList<Ramo>, MutableList<RamoEvent> >
-            = Pair(mutableListOf(), mutableListOf()) // ~ (ramos, events)
+        val catalogResult :Pair<MutableList<Ramo>, MutableList<RamoEvent>> =
+            Pair(mutableListOf(), mutableListOf()) // ~ (ramos, events)
 
         val NRCs :MutableList<Int> = mutableListOf()
         var line :List<String>
         val current = object { // buffer-like object, temporal data holder
-            var NRC   :Int = 0
+            var NRC :Int = 0
             var curso :Int = 0
             lateinit var dayOfWeek :DayOfWeek
             lateinit var eventType :String
             lateinit var startTime :LocalTime
-            lateinit var endTime   :LocalTime
-            var date   :LocalDate? = null
+            lateinit var endTime :LocalTime
+            var date :LocalDate? = null
             var events :MutableList<RamoEvent>? = null
         }
         var stringAux :String
@@ -109,11 +110,11 @@ object CsvHandler {
 
             try {
                 current.NRC = line[csv_columns.NRC].toInt()
-            }
-            catch (e :NumberFormatException) {
-                Logf(this::class,
+            } catch (e :NumberFormatException) {
+                Logf(
+                    this::class,
                     "Warning: NRC could not be parsed to integer at CSV line %d '%s'. %s. Assuming NRC assign is yet pending and assigning negative one.",
-                    lineNum+1, csv_lines[lineNum], e
+                    lineNum + 1, csv_lines[lineNum], e
                 )
                 current.NRC = -(badNRCsCount++)
             }
@@ -123,17 +124,17 @@ object CsvHandler {
 
             try {
                 current.curso = line[csv_columns.CURSONUM].toInt()
-            }
-            catch (e :NumberFormatException) {
-                Logf(this::class,
+            } catch (e :NumberFormatException) {
+                Logf(
+                    this::class,
                     "Warning: CursoNum could not be parsed to integer at CSV line %d: '%s'. %s. Assuming CursoNum assign is yet pending and assigning zero.",
-                    lineNum+1, csv_lines[lineNum], e
+                    lineNum + 1, csv_lines[lineNum], e
                 )
                 current.curso = 0
             }
 
 
-            if (! NRCs.contains(current.NRC)) { // NUEVO `RAMO`
+            if (!NRCs.contains(current.NRC)) { // NUEVO `RAMO`
                 // finishing parsing of previus `Ramo`
                 if (catalogResult.first.count() > 0) {
                     catalogResult.second.addAll(current.events!!)
@@ -162,11 +163,11 @@ object CsvHandler {
                                 .replace(EXPLICIT_COMMA_MARKER, ",")
                         )
                     )
-                }
-                catch (e :NumberFormatException) { // `String.toInt()` error
-                    Logf(this::class,
+                } catch (e :NumberFormatException) { // `String.toInt()` error
+                    Logf(
+                        this::class,
                         "Error: mandatory integer cast exception at CSV line %d: '%s'. %s",
-                        lineNum+1, csv_lines[lineNum], e
+                        lineNum + 1, csv_lines[lineNum], e
                     )
                     return null
                 }
@@ -175,16 +176,17 @@ object CsvHandler {
 
             // getting day of week and time interval of the event
             var dayAssigned :Boolean = false
-            for ( column :Int in (csv_columns.LUNES .. csv_columns.VIERNES) ) {
+            for (column :Int in (csv_columns.LUNES..csv_columns.VIERNES)) {
                 stringAux = line[column].replace(" ", "")
                 if (stringAux != "") {
                     dayAssigned = true
                     current.dayOfWeek = csv_columns.toDayOfWeek(column)!!
                     splitterAux = stringAux.split(TIME_SEPARATOR)
                     if (splitterAux.count() != 2) {
-                        Logf(this::class,
+                        Logf(
+                            this::class,
                             "Error: unexpected split result on row %d: '%s'. Could not get time interval for event.",
-                            lineNum+1, line
+                            lineNum + 1, line
                         )
                         return null
                     }
@@ -192,21 +194,22 @@ object CsvHandler {
                     try {
                         current.startTime = LocalTime.parse(splitterAux[0], time_format)
                         current.endTime = LocalTime.parse(splitterAux[1], time_format)
-                    }
-                    catch (e :DateTimeParseException) {
-                        Logf(this::class,
+                    } catch (e :DateTimeParseException) {
+                        Logf(
+                            this::class,
                             "Error: time parsing exception at CSV line %d: '%s'. %s",
-                            lineNum+1, csv_lines[lineNum], e
+                            lineNum + 1, csv_lines[lineNum], e
                         )
                         return null
                     }
                     break
                 }
             }
-            if (! dayAssigned) { // this means there's a missing DayOfWeek and start-end times assignment in the CSV
-                Logf(this::class,
+            if (!dayAssigned) { // this means there's a missing DayOfWeek and start-end times assignment in the CSV
+                Logf(
+                    this::class,
                     "Warning: event ignored due missing assign of day of week (and start-end times) at line %d: '%s'",
-                    lineNum+1, csv_lines[lineNum]
+                    lineNum + 1, csv_lines[lineNum]
                 )
                 // in this case, just ignoring that row.
                 continue
@@ -214,17 +217,31 @@ object CsvHandler {
 
             current.eventType = line[csv_columns.TIPO_EVENTO].spanishUpperCase().replace(" ", "")
 
-            when (current.eventType.replace(regex=Regex("[0-9 ]"), replacement="")) { // "PRON1" -> "PRON", etc.
-                event_types.CLASE       -> { eventTypeAux = RamoEventType.CLAS }
-                event_types.AYUDANTÍA   -> { eventTypeAux = RamoEventType.AYUD }
-                event_types.LABORATORIO -> { eventTypeAux = RamoEventType.LABT }
+            when (current.eventType.replace(
+                regex = Regex("[0-9 ]"),
+                replacement = ""
+            )) { // "PRON1" -> "PRON", etc.
+                event_types.CLASE -> {
+                    eventTypeAux = RamoEventType.CLAS
+                }
+                event_types.AYUDANTÍA -> {
+                    eventTypeAux = RamoEventType.AYUD
+                }
+                event_types.LABORATORIO -> {
+                    eventTypeAux = RamoEventType.LABT
+                }
                 //event_types.TUTORIAL    -> { eventTypeAux = RamoEventType.TUTR }
-                event_types.PRUEBA      -> { eventTypeAux = RamoEventType.PRBA }
-                event_types.EXAMEN      -> { eventTypeAux = RamoEventType.EXAM }
+                event_types.PRUEBA -> {
+                    eventTypeAux = RamoEventType.PRBA
+                }
+                event_types.EXAMEN -> {
+                    eventTypeAux = RamoEventType.EXAM
+                }
                 else -> {
-                    Logf(this::class,
+                    Logf(
+                        this::class,
                         "Error at CSV line %d: %s. Unknown event type '%s'",
-                        lineNum+1, line, current.eventType
+                        lineNum + 1, line, current.eventType
                     )
                     return null
                 }
@@ -234,24 +251,25 @@ object CsvHandler {
             if (eventTypeAux == RamoEventType.PRBA || eventTypeAux == RamoEventType.EXAM) {
                 try {
                     // making date parsing able to parse incorrectly formatted dates like 4/11/2021, where 04/11/2021 is expected
-                    val auxDateFormatFields :MutableList<String> = line[csv_columns.FECHA_INICIO].split("/").toMutableList()
+                    val auxDateFormatFields :MutableList<String> =
+                        line[csv_columns.FECHA_INICIO].split("/").toMutableList()
                     for (k in (0 until auxDateFormatFields.count())) {
                         if (auxDateFormatFields[k].length < 2) { // prepending the zero when needed
                             auxDateFormatFields[k] = "0" + auxDateFormatFields[k]
                         }
                     }
                     // actual parsing now
-                    current.date = LocalDate.parse( auxDateFormatFields.joinToString("/"), date_format )
-                }
-                catch (e :DateTimeParseException) {
-                    Logf(this::class,
+                    current.date =
+                        LocalDate.parse(auxDateFormatFields.joinToString("/"), date_format)
+                } catch (e :DateTimeParseException) {
+                    Logf(
+                        this::class,
                         "Error: date parsing exception at CSV line %d: '%s'. %s",
-                        lineNum+1, csv_lines[lineNum], e
+                        lineNum + 1, csv_lines[lineNum], e
                     )
                     return null
                 }
-            }
-            else {
+            } else {
                 current.date = null
             }
 

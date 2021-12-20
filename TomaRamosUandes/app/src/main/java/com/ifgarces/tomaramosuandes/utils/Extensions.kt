@@ -66,8 +66,8 @@ fun String.multilineTrim() :String { // Note: does not ignore tabs "\t".
  * Gets the equivalent non-accented spanish character, with the exception of "ñ"/"Ñ".
  */
 fun String.spanishNonAccent() :String {
-    val lowerAccents    :String = "áéíóúü"
-    val upperAccents    :String = "ÁÉÍÓÚÜ"
+    val lowerAccents :String = "áéíóúü"
+    val upperAccents :String = "ÁÉÍÓÚÜ"
     val lowerNonAccents :String = "aeiouu"
     val upperNonAccents :String = "AEIOUU"
 
@@ -107,10 +107,10 @@ fun EditText.onTextChangedListener(action :(text :String) -> Unit) {
  * @param icon Dialog icon, placed to the left of the title. Must be a drawable resource ID.
  */
 fun Context.infoDialog(
-    title      :String,
-    message    :String,
-    onDismiss  :() -> Unit = {},
-    icon       :Int? = null
+    title :String,
+    message :String,
+    onDismiss :() -> Unit = {},
+    icon :Int? = null
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
         .setTitle(title)
@@ -137,11 +137,11 @@ fun Context.infoDialog(
  * @param icon Dialog icon, placed to the left of the title. Must be a drawable resource ID.
  */
 fun Context.yesNoDialog(
-    title         :String,
-    message       :String,
-    onYesClicked  :() -> Unit,
-    onNoClicked   :() -> Unit = {},
-    icon          :Int? = null
+    title :String,
+    message :String,
+    onYesClicked :() -> Unit,
+    onNoClicked :() -> Unit = {},
+    icon :Int? = null
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
         .setTitle(title)
@@ -166,14 +166,19 @@ fun Context.yesNoDialog(
  * the app to fill all of the screen.
  */
 fun Activity.enterFullScreen() {
-    if (Build.VERSION.SDK_INT >= 30) {
-        with(WindowInsetsControllerCompat(window, window.decorView)) { // ref: https://stackoverflow.com/a/68055924/12684271
+    if (Build.VERSION.SDK_INT >= 30) { // ref: https://stackoverflow.com/a/68055924/12684271
+        with(
+            WindowInsetsControllerCompat(
+                window,
+                window.decorView
+            )
+        ) {
             this.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
             this.hide(systemBars())
         }
-    } else {
+    } else { // ref: https://stackoverflow.com/a/66526368/12684271
         if (this.actionBar != null) this.actionBar!!.hide()
-        this.window.decorView.systemUiVisibility = ( // ref: https://stackoverflow.com/a/66526368/12684271
+        this.window.decorView.systemUiVisibility = (
             View.SYSTEM_UI_FLAG_IMMERSIVE
             or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -188,10 +193,13 @@ fun Activity.enterFullScreen() {
  * Undoes `Activity.enterFullScreen()`.
  */
 fun Activity.exitFullScreen() {
-    if (Build.VERSION.SDK_INT >= 30) {
-        WindowInsetsControllerCompat(window, window.decorView).show(systemBars()) // ref: https://stackoverflow.com/a/68055924/12684271
-    } else {
-        this.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE) // ref: https://developer.android.com/training/system-ui/immersive
+    if (Build.VERSION.SDK_INT >= 30) { // ref: https://stackoverflow.com/a/68055924/12684271
+        WindowInsetsControllerCompat(
+            window,
+            window.decorView
+        ).show(systemBars())
+    } else { // ref: https://developer.android.com/training/system-ui/immersive
+        this.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
     }
 }
 

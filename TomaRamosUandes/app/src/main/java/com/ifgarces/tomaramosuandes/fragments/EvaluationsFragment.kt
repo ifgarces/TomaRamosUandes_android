@@ -1,4 +1,5 @@
 package com.ifgarces.tomaramosuandes.fragments
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,12 +20,12 @@ import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 
 
 class EvaluationsFragment : Fragment() {
-    
+
     private class FragmentUI(owner :View) {
         val eventsRecycler     :RecyclerView = owner.findViewById(R.id.evals_eventsRecycler)
         val eventsExportButton :Button = owner.findViewById(R.id.evals_exportEventsButton)
     }
-    
+
     private lateinit var UI :FragmentUI
 
     override fun onCreateView(
@@ -45,7 +46,7 @@ class EvaluationsFragment : Fragment() {
 
             UI.eventsRecycler.layoutManager = LinearLayoutManager(homeActivity)
             val userRamos :List<Ramo> = DataMaster.getUserRamos()
-            UI.eventsRecycler.adapter = RamoEventsExpandedAdapter(data=userRamos)
+            UI.eventsRecycler.adapter = RamoEventsExpandedAdapter(data = userRamos)
             if (userRamos.count() == 0) {
                 UI.eventsExportButton.isEnabled = false
             }
@@ -53,8 +54,8 @@ class EvaluationsFragment : Fragment() {
                 this.exportEvaluations()
             }
         }
-        
-        return fragView 
+
+        return fragView
     }
 
     /**
@@ -66,7 +67,7 @@ class EvaluationsFragment : Fragment() {
             title = "Exportar evaluaciones",
             message = "Las pruebas y exámenes de sus ramos tomados serán exportadas al calendario que escoja. ¿Continuar?",
             onYesClicked = {
-                CalendarHandler.exportEventsToCalendar(activity=this.requireActivity())
+                CalendarHandler.exportEventsToCalendar(activity = this.requireActivity())
             },
             onNoClicked = {},
             icon = null

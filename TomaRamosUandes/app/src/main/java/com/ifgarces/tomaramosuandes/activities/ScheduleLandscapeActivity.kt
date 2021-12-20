@@ -36,11 +36,15 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
     }
 
     private class ActivityUI(owner :AppCompatActivity) {
-        val saveAsImgButton        :FloatingActionButton = owner.findViewById(R.id.landSchedule_saveAsImage)
-        val toggleFullScreenButton :FloatingActionButton = owner.findViewById(R.id.landSchedule_toggleFullScreen)
-        val scheduleBodyScroll     :View = owner.findViewById(R.id.landSchedule_bodyScrollView) // ScrollView
-        val scheduleBodyLayout     :View = owner.findViewById(R.id.landSchedule_bodyLayout) // LinearLayout
-        val blocksMap              :Map<DayOfWeek, List<Button>> = mapOf(
+        val saveAsImgButton :FloatingActionButton =
+            owner.findViewById(R.id.landSchedule_saveAsImage)
+        val toggleFullScreenButton :FloatingActionButton =
+            owner.findViewById(R.id.landSchedule_toggleFullScreen)
+        val scheduleBodyScroll :View =
+            owner.findViewById(R.id.landSchedule_bodyScrollView) // ScrollView
+        val scheduleBodyLayout :View =
+            owner.findViewById(R.id.landSchedule_bodyLayout) // LinearLayout
+        val blocksMap :Map<DayOfWeek, List<Button>> = mapOf(
             DayOfWeek.MONDAY to listOf(
                 owner.findViewById(R.id.landSchedule_lun0),
                 owner.findViewById(R.id.landSchedule_lun1),
@@ -126,7 +130,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
     private lateinit var UI :ActivityUI
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_schedule_landscape)
         this.UI = ActivityUI(owner = this)
@@ -140,8 +144,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
                     targetView = UI.scheduleBodyScroll,
                     tallView = UI.scheduleBodyLayout
                 )
-            }
-            catch (e :Exception) {
+            } catch (e :Exception) {
                 this.infoDialog(
                     title = "Error",
                     message = """\
@@ -164,8 +167,8 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
                 DayOfWeek.THURSDAY,
                 DayOfWeek.FRIDAY
             )) {
-                UI.blocksMap.getValue(key=day)[row].text = ""
-                UI.blocksMap.getValue(key=day)[row].setOnClickListener {
+                UI.blocksMap.getValue(key = day)[row].text = ""
+                UI.blocksMap.getValue(key = day)[row].setOnClickListener {
                     ScheduleWorker.onBlockClicked(
                         sender = UI.blocksMap.getValue(key = day)[row],
                         context = this
@@ -179,8 +182,8 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             if (UI.toggleFullScreenButton.visibility == View.VISIBLE) {
                 UI.toggleFullScreenButton.visibility = View.GONE
                 UI.toggleFullScreenButton.postDelayed({
-                    UI.toggleFullScreenButton.visibility = View.VISIBLE
-                }, ONSCROLL_BUTTON_RESPAWN_TIME +120) // <- this tiny extra delay causes a nice translation animation, besides the fade in, for this button
+                        UI.toggleFullScreenButton.visibility = View.VISIBLE
+                }, ONSCROLL_BUTTON_RESPAWN_TIME + 120) // this tiny extra delay causes a nice translation animation, besides the fade in, for this button
             }
             if (UI.saveAsImgButton.visibility == View.VISIBLE) {
                 UI.saveAsImgButton.visibility = View.GONE
@@ -235,9 +238,12 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             val button :Button,
             val events :MutableList<RamoEvent>
         )
-        fun MutableList<ScheduleBlock>.findEventsOf(button :Button) : MutableList<RamoEvent>? {
+
+        fun MutableList<ScheduleBlock>.findEventsOf(button :Button) :MutableList<RamoEvent>? {
             this.forEach {
-                if (it.button == button) { return it.events }
+                if (it.button == button) {
+                    return it.events
+                }
             }
             return null
         }
@@ -245,15 +251,16 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
         /**
          * Click listener for an schedule block button.
          */
-        public fun onBlockClicked(sender :Button, context : Context) {
+        public fun onBlockClicked(sender :Button, context :Context) {
             val blockEvents :MutableList<RamoEvent> = scheduleData.findEventsOf(button = sender)!!
-            if (blockEvents.count() == 0) { return }
+            if (blockEvents.count() == 0) {
+                return
+            }
 
             var info :String
             if (blockEvents.count() == 1) {
                 info = blockEvents[0].toShortString()
-            }
-            else { // conflict: more than one event on the same block
+            } else { // conflict: more than one event on the same block
                 info = "Múltiples eventos (conflicto):\n"
                 for (event :RamoEvent in blockEvents) {
                     info += "• %s\n".format(event.toShortString())
@@ -277,45 +284,50 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             scheduleData.clear()
             blocksMap.forEach { (_ :DayOfWeek, buttons :List<Button>) ->
                 buttons.forEach {
-                    scheduleData.add(ScheduleBlock(button=it, events=mutableListOf()))
+                    scheduleData.add(ScheduleBlock(button = it, events = mutableListOf()))
                 }
             }
 
             Executors.newSingleThreadExecutor().execute {
                 /* filling `scheduleData` i.e. mapping schedule block buttons with corresponding event(s) */
                 var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
-                DataMaster.getEventsByWeekDay().forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
-                    for (ev : RamoEvent in events) {
-                        rowInterval = timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
-                        for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
-                            scheduleData.findEventsOf(
-                                button = blocksMap.getValue(key = day)[rowNum]
-                            )!!.add(ev)
+                DataMaster.getEventsByWeekDay()
+                    .forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
+                        for (ev :RamoEvent in events) {
+                            rowInterval =
+                                timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
+                            for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
+                                scheduleData.findEventsOf(
+                                    button = blocksMap.getValue(key = day)[rowNum]
+                                )!!.add(ev)
+                            }
                         }
                     }
-                }
 
                 /* displaying events assigned to each block button */
                 activity.runOnUiThread {
                     var break_loop :Boolean = false
                     scheduleData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
-                        if (break_loop) { return@forEach }
-                        events.forEachIndexed { index :Int, event : RamoEvent ->
+                        if (break_loop) {
+                            return@forEach
+                        }
+                        events.forEachIndexed { index :Int, event :RamoEvent ->
                             if (index == 0) {
                                 block.text = DataMaster.findRamo(
                                     NRC = event.ramoNRC,
                                     searchInUserList = true
                                 )!!.nombre
-                                val backColor :Int? = when(event.type) { // setting background color according to eventType
-                                    RamoEventType.CLAS -> { activity.getColor(R.color.clas) }
-                                    RamoEventType.AYUD -> { activity.getColor(R.color.ayud) }
-                                    RamoEventType.LABT, RamoEventType.TUTR -> { activity.getColor(R.color.labt) }
-                                    else -> { null } // <- will never happen, unless dumb code mistake
-                                }
+                                val backColor :Int? =
+                                    when (event.type) { // setting background color according to eventType
+                                        RamoEventType.CLAS -> activity.getColor(R.color.clas)
+                                        RamoEventType.AYUD -> activity.getColor(R.color.ayud)
+                                        RamoEventType.LABT, RamoEventType.TUTR ->
+                                            activity.getColor(R.color.labt)
+                                        else -> null // <- will never happen, unless dumb code mistake
+                                    }
                                 block.setBackgroundColor(backColor!!)
-                            }
-                            else {
-                                block.setBackgroundColor( activity.getColor(R.color.conflict_background) ) // visibly marking block as conflicted
+                            } else {
+                                block.setBackgroundColor(activity.getColor(R.color.conflict_background)) // visibly marking block as conflicted
                                 // concatenating multiple events in same block
                                 block.text = "%s + %s".format(
                                     block.text, DataMaster.findRamo(
@@ -323,7 +335,9 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
                                         searchInUserList = true
                                     )!!.nombre
                                 )
-                                if (block.text.toString().filter{ it == '+' }.count() >= 2) { // if three or more events are in the same block, avoid showing all of them. They all can be viewed when on click.
+                                // If three or more events are in the same block, avoid showing all
+                                // of them. They all can be viewed when on click
+                                if (block.text.toString().filter { it == '+' } .count() >= 2) {
                                     block.text = "%s + ...".format(block.text)
                                     break_loop = true // finishing this loop and parent loop
                                     return@forEach
@@ -340,10 +354,10 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
         private val supportedHours_end :List<Int> = (9..22).toList() // [9, 22]
         private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) :Pair<Int, Int>? {
             var rowStart :Int = supportedHours_start.indexOf(start.hour)
-            var rowEnd   :Int = supportedHours_end.indexOf(end.hour)+1
-            if (rowStart == -1 || rowEnd == -1) { return null } // invalid hour(s): block wouldn't fit in schedule
-            if (start.minute > 30) { rowStart+=1 }
-            if (end.minute > 20) { rowEnd+=1 }
+            var rowEnd :Int = supportedHours_end.indexOf(end.hour) + 1
+            if (rowStart == -1 || rowEnd == -1) return null // invalid hour(s): block wouldn't fit in schedule
+            if (start.minute > 30) rowStart++
+            if (end.minute > 20) rowEnd++
             return Pair(rowStart, rowEnd)
         }
     }

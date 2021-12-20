@@ -26,12 +26,11 @@ import com.ifgarces.tomaramosuandes.models.AppMetadata
  * Displays inscribed user's `Ramo`s,
  */
 class UserRamosFragment : Fragment() {
-    
+
     private class FragmentUI(owner :View) {
-        val catalogButton       :Button = owner.findViewById(R.id.userRamos_catalogButton)
-        val ramosRecycler       :RecyclerView = owner.findViewById(R.id.userRamos_ramosRecycler)
-        val emptyRecyclerMarker :TextView = owner.findViewById(R.id.userRamos_emptyRecyclerTextNotice)
-        val creditosCounter     :TextView = owner.findViewById(R.id.userRamos_creditosSum)
+        val catalogButton   :Button = owner.findViewById(R.id.userRamos_catalogButton)
+        val ramosRecycler   :RecyclerView = owner.findViewById(R.id.userRamos_ramosRecycler)
+        val creditosCounter :TextView = owner.findViewById(R.id.userRamos_creditosSum)
     }
 
     private lateinit var UI :FragmentUI
@@ -40,7 +39,7 @@ class UserRamosFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(R.layout.fragment_user_ramos, container, false)
-        this.UI = FragmentUI(owner=fragView)
+        this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
             homeActivity.setBottomNavItemSelected(this::class)
@@ -63,7 +62,7 @@ class UserRamosFragment : Fragment() {
             }
         }
 
-        return fragView 
+        return fragView
     }
 
     override fun onResume() {
@@ -83,20 +82,21 @@ class UserRamosFragment : Fragment() {
      * Prompts a dialog with information/help about this view.
      */
     private fun showHelp() {
-        val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(this.requireContext(), R.style.myDialogTheme)
-            .setCancelable(true)
-            .setPositiveButton("Cerrar") { dialog :DialogInterface, _ :Int ->
-                dialog.dismiss()
-            }
-            .setNegativeButton("Saber más") { dialog :DialogInterface, _ :Int ->
-                this.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(AppMetadata.USER_APP_URL)
+        val diagBuilder :AlertDialog.Builder =
+            AlertDialog.Builder(this.requireContext(), R.style.myDialogTheme)
+                .setCancelable(true)
+                .setPositiveButton("Cerrar") { dialog :DialogInterface, _ :Int ->
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Saber más") { dialog :DialogInterface, _ :Int ->
+                    this.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(AppMetadata.USER_APP_URL)
+                        )
                     )
-                )
-                dialog.dismiss()
-            }
+                    dialog.dismiss()
+                }
         val diagView :View = this.layoutInflater.inflate(R.layout.about_and_help_dialog, null)
         diagBuilder.setView(diagView)
 
@@ -107,8 +107,9 @@ class UserRamosFragment : Fragment() {
             "text/html",
             "UTF-8"
         )
-        diagWebView.webViewClient = object : WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852
-            override fun shouldOverrideUrlLoading(view :WebView?, url :String?) : Boolean {
+        diagWebView.webViewClient = object :
+            WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852
+            override fun shouldOverrideUrlLoading(view :WebView?, url :String?) :Boolean {
                 if (url != null) {
                     view!!.context.startActivity(
                         Intent(Intent.ACTION_VIEW, Uri.parse(url))

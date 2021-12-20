@@ -14,7 +14,7 @@ import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
 class CatalogRamosAdapter(
-    private var data           :MutableList<Ramo>,
+    private var data :MutableList<Ramo>,
     private val isAllInscribed :Boolean // indicates whether all ramos in `data` are inscribed. If not, will highlight inscribed ones
 ) : RecyclerView.Adapter<CatalogRamosAdapter.CatalogVH>() {
 
@@ -23,7 +23,7 @@ class CatalogRamosAdapter(
         var isInstanceActive :Boolean = false
     }
 
-    override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : CatalogVH {
+    override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :CatalogVH {
         return CatalogVH(
             LayoutInflater.from(parent.context).inflate(R.layout.ramo_item, parent, false)
         )
@@ -31,7 +31,8 @@ class CatalogRamosAdapter(
 
     override fun getItemCount() = this.data.count()
 
-    override fun onBindViewHolder(holder :CatalogVH, position :Int) = holder.bind(this.data[position], position)
+    override fun onBindViewHolder(holder :CatalogVH, position :Int) =
+        holder.bind(this.data[position], position)
 
     public fun updateData(data :MutableList<Ramo>) {
         this.data = data
@@ -39,7 +40,7 @@ class CatalogRamosAdapter(
     }
 
     inner class CatalogVH(v :View) : RecyclerView.ViewHolder(v) {
-        private val parentView   :View     = v // CardView
+        private val parentView   :View = v // CardView
         private val nombre       :TextView = v.findViewById(R.id.ramoCatalog_nombre)
         private val planEstudios :TextView = v.findViewById(R.id.ramoCatalog_pe)
         private val materia      :TextView = v.findViewById(R.id.ramoCatalog_materia)
@@ -54,7 +55,7 @@ class CatalogRamosAdapter(
             this.sección.text = ramo.sección
 
             // Setting card background color based on inscribe status
-            if (! this@CatalogRamosAdapter.isAllInscribed) { // distinguishing between inscribed and uninscribed (in catalog)
+            if (!this@CatalogRamosAdapter.isAllInscribed) { // distinguishing between inscribed and uninscribed (in catalog)
                 if (ramo in DataMaster.getUserRamos()) {
                     this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_inscribed))
                 } else {
@@ -64,19 +65,24 @@ class CatalogRamosAdapter(
 
             // Setting `planEstudios` background color
             if (ramo.planEstudios == "PE2016") {
-                this.planEstudios.setTextColor( this.parentView.context.getColor(R.color.PE2016) )
+                this.planEstudios.setTextColor(this.parentView.context.getColor(R.color.PE2016))
             } else { // "PE2011", "PE2011/PE2016"
-                this.planEstudios.setTextColor( this.parentView.context.getColor(R.color.PE2011) )
+                this.planEstudios.setTextColor(this.parentView.context.getColor(R.color.PE2011))
             }
 
             // Calling `Ramo` dialog card clicked
             this.parentView.setOnClickListener {
-                if (SingletonHelper.isInstanceActive) { return@setOnClickListener }
+                if (SingletonHelper.isInstanceActive) {
+                    return@setOnClickListener
+                }
                 SingletonHelper.isInstanceActive = true
 
                 val helper :FragmentActivity = this.parentView.context as FragmentActivity
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
-                helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, (ramo in DataMaster.getUserRamos()))
+                helper.intent.putExtra(
+                    IntentKeys.RAMO_IS_INSCRIBED,
+                    (ramo in DataMaster.getUserRamos())
+                )
 
                 RamoDialogFragment(onDismissAction = {
                     SingletonHelper.isInstanceActive = false

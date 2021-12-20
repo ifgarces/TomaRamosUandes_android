@@ -39,7 +39,7 @@ object CalendarHandler {
      * @property name Calendar name.
      */
     private data class UserCalendar(
-        val ID   :Int,
+        val ID :Int,
         val name :String
     )
 
@@ -47,7 +47,7 @@ object CalendarHandler {
      * Returns the list of all calendars of the user's device.
      */
     @SuppressLint("MissingPermission")
-    private fun getUserCalendars(activity :Activity) : List<UserCalendar> { // references: https://stackoverflow.com/a/49878686/12684271
+    private fun getUserCalendars(activity :Activity) :List<UserCalendar> { // references: https://stackoverflow.com/a/49878686/12684271
         val results :MutableList<UserCalendar> = mutableListOf()
 
         val cur :Cursor = activity.contentResolver.query(
@@ -66,9 +66,13 @@ object CalendarHandler {
                         name = cur.getString(cur.getColumnIndex(CalendarContract.Calendars.NAME))
                     )
                 )
-            }
-            catch (e :NullPointerException) {
-                Logf(this::class, "Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s", cur.position ,e)
+            } catch (e :NullPointerException) {
+                Logf(
+                    this::class,
+                    "Error catched: null pointer exception while trying to get next calendar on cursor position %d. Calendar ignored. Details: %s",
+                    cur.position,
+                    e
+                )
             }
         }
         cur.close()
@@ -84,9 +88,9 @@ object CalendarHandler {
      * privacy reasons of the linked account, I think.
      */
     private fun promptSelectCalendarDialog(
-        activity       :Activity,
+        activity :Activity,
         onItemSelected :(calendarID :Int, calendarName :String) -> Unit,
-        onError        :() -> Unit
+        onError :() -> Unit
     ) {
         val userCalendars :List<UserCalendar> = this.getUserCalendars(activity)
         Logf(this::class, "Calendars in device: %s", userCalendars)
@@ -95,19 +99,20 @@ object CalendarHandler {
             selectables.add(it.name)
         }
 
-        val diag :AlertDialog.Builder = AlertDialog.Builder(activity) // references: https://stackoverflow.com/a/43532478/12684271
-            .setTitle("Seleccione calendario")
-            .setCancelable(true)
-            .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
-                val cal :UserCalendar? = userCalendars[which]
-                Logf(this::class, "User has selected %s (index: %d)", cal, which)
-                if (cal == null) {
-                    onError.invoke()
-                    return@setItems
+        val diag :AlertDialog.Builder =
+            AlertDialog.Builder(activity) // references: https://stackoverflow.com/a/43532478/12684271
+                .setTitle("Seleccione calendario")
+                .setCancelable(true)
+                .setItems(selectables.toTypedArray()) { dialog :DialogInterface, which :Int ->
+                    val cal :UserCalendar? = userCalendars[which]
+                    Logf(this::class, "User has selected %s (index: %d)", cal, which)
+                    if (cal == null) {
+                        onError.invoke()
+                        return@setItems
+                    }
+                    onItemSelected.invoke(cal.ID, cal.name)
+                    dialog.dismiss()
                 }
-                onItemSelected.invoke(cal.ID, cal.name)
-                dialog.dismiss()
-            }
         diag.create().show()
     }
 
@@ -140,16 +145,26 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
                 var result :Uri? // will hold the got internal feedback for each event insertion in calendar
                 var zoneAux :ZonedDateTime
                 val baseUri :Uri = Uri.parse("content://com.android.calendar/events")
-                val errors :MutableList<RamoEvent> = mutableListOf() // will contain events that somehow couldn't be exported
+                val errors :MutableList<RamoEvent> =
+                    mutableListOf() // will contain events that somehow couldn't be exported
 
                 evaluations.forEach { event :RamoEvent ->
                     Logf(this::class, "Exporting %s", event)
                     e = ContentValues()
                     e.put(CalendarContract.Events.CALENDAR_ID, calendarID)
-                    e.put(CalendarContract.Events.TITLE, DataMaster.findRamo(NRC=event.ramoNRC, searchInUserList=true)!!.nombre)
-                    e.put(CalendarContract.Events.DESCRIPTION, event.toLargeString().replace("\n", ";"))
+                    e.put(
+                        CalendarContract.Events.TITLE,
+                        DataMaster.findRamo(NRC = event.ramoNRC, searchInUserList = true)!!.nombre
+                    )
+                    e.put(
+                        CalendarContract.Events.DESCRIPTION,
+                        event.toLargeString().replace("\n", ";")
+                    )
 
-                    zoneAux = LocalDateTime.of(event.date!!, event.startTime) // we are exporting evaluations, whose date are always assigned, do not worry about NullPointerException
+                    zoneAux = LocalDateTime.of(
+                        event.date!!,
+                        event.startTime
+                    ) // we are exporting evaluations, whose date are always assigned, do not worry about NullPointerException
                         .atZone(ZoneId.of("America/Santiago"))
                     e.put(CalendarContract.Events.DTSTART, zoneAux.toInstant().toEpochMilli())
                     zoneAux = LocalDateTime.of(event.date!!, event.endTime)
@@ -162,7 +177,11 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".mul
 
                     result = activity.contentResolver.insert(baseUri, e)
                     if (result == null) {
-                        Logf(this::class, "Error: got null URI response when inserting the event at the calendar with ID=%d", calendarID)
+                        Logf(
+                            this::class,
+                            "Error: got null URI response when inserting the event at the calendar with ID=%d",
+                            calendarID
+                        )
                         errors.add(event)
                     }
                 }
@@ -182,10 +201,17 @@ ${aux}
 Intente de nuevo con otro calendario.""".multilineTrim(),
                         icon = R.drawable.alert_icon
                     )
-                }
-                else {
-                    Logf(this::class, "Events successfully exported to calendar named \"%s\"", calendarName)
-                    activity.toastf("%d eventos exportados a \"%s\"", evaluations.count(), calendarName)
+                } else {
+                    Logf(
+                        this::class,
+                        "Events successfully exported to calendar named \"%s\"",
+                        calendarName
+                    )
+                    activity.toastf(
+                        "%d eventos exportados a \"%s\"",
+                        evaluations.count(),
+                        calendarName
+                    )
                 }
             }
         )
@@ -194,8 +220,14 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
     private fun ensurePermissions(activity :Activity) {
         Logf(this::class, "Checking permissions...")
         while (
-            ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.WRITE_CALENDAR
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.READ_CALENDAR
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             this.askPermissions(activity)
             // TODO: add a small wait here, because if user hasn't set permisions yet, it seems to be a busy cycle until they decide to grant the permission
@@ -216,7 +248,7 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
      * as calendar events. This file could later be used on any device (e.g. PC) to import the events there.
      */
     public fun exportAsICSFile(context :Context) {
-        val icsFile : File
+        val icsFile :File
 
         /* creating and saving temporal ICS (iCalendar) file */
         val saveFolder :String = "Download"
@@ -227,13 +259,13 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
                 stream.write(content.toByteArray())
                 stream.close()
                 Logf(this::class, "ICS file successfully exported inside folder '%s'.", saveFolder)
-            }
-            catch (e :IOException) {
+            } catch (e :IOException) {
                 Logf(this::class, "Failed to export ICS file. %s", e)
             }
         }
 
-        val fileMetadata :ContentValues = ContentValues() // TODO: make sure nothing breaks for using metadata intented for image files
+        val fileMetadata :ContentValues =
+            ContentValues() // TODO: make sure nothing breaks for using metadata intented for image files
         fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "text/calendar")
         fileMetadata.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
 
@@ -241,21 +273,36 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
             fileMetadata.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
 
-            val uri :Uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, fileMetadata)!!
+            val uri :Uri = context.contentResolver.insert(
+                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                fileMetadata
+            )!!
             icsFile = File(uri.path!!)
-            streamWriteFile(content=fileContent, stream=context.contentResolver.openOutputStream(uri)!!)
+            streamWriteFile(
+                content = fileContent,
+                stream = context.contentResolver.openOutputStream(uri)!!
+            )
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, false)
             context.contentResolver.update(uri, fileMetadata, null, null)
-        }
-        else {
-            val directory = File( "%s/%s".format(Environment.getExternalStorageDirectory().toString(), saveFolder) )
-            if (! directory.exists()) { directory.mkdirs() }
+        } else {
+            val directory = File(
+                "%s/%s".format(
+                    Environment.getExternalStorageDirectory().toString(),
+                    saveFolder
+                )
+            )
+            if (!directory.exists()) {
+                directory.mkdirs()
+            }
 
             val fileName :String = "%s.ics".format(System.currentTimeMillis().toString())
             icsFile = File(directory, fileName)
-            streamWriteFile(content=fileContent, stream=FileOutputStream(icsFile))
+            streamWriteFile(content = fileContent, stream = FileOutputStream(icsFile))
             fileMetadata.put(MediaStore.Images.Media.DATA, icsFile.absolutePath)
-            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
+            context.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                fileMetadata
+            )
         }
         Logf(this::class, "iCalendar/ICS file created at %s", icsFile.path)
     }
@@ -263,7 +310,7 @@ Intente de nuevo con otro calendario.""".multilineTrim(),
     /**
      * Generates the ICS file contents and returns it.
      */
-    private fun buildIcsContent(ramos :List<Ramo>) : String {
+    private fun buildIcsContent(ramos :List<Ramo>) :String {
 
         // TODO: make sure this function generates a 100% valid iCalendar file
 
@@ -277,33 +324,39 @@ X-WR-TIMEZONE:America/Santiago"""
         var fileBody :String = ""
         val fileFooter :String = "END:VCALENDAR"
 
-        var _year      :String
-        var _month     :String
-        var _day       :String
+        var _year :String
+        var _month :String
+        var _day :String
         var _startTime :String
-        var _endTime   :String
+        var _endTime :String
 
         /* processing evaluations... */
         ramos.forEach { ramo :Ramo ->
-            DataMaster.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
-                if (event.isEvaluation()) {
-                    _year = event.date!!.year.toString()
-                    _month = event.date!!.month.toString()
-                    _day = event.date!!.dayOfMonth.toString()
-                    _startTime = event.startTime.toString().replace(":", "")
-                    _endTime = event.endTime.toString().replace(":", "")
+            DataMaster.getEventsOfRamo(ramo = ramo, searchInUserList = true)
+                .forEach { event :RamoEvent ->
+                    if (event.isEvaluation()) {
+                        _year = event.date!!.year.toString()
+                        _month = event.date!!.month.toString()
+                        _day = event.date!!.dayOfMonth.toString()
+                        _startTime = event.startTime.toString().replace(":", "")
+                        _endTime = event.endTime.toString().replace(":", "")
 
-                    fileBody += """
+                        fileBody += """
 BEGIN:VEVENT
 DTSTART;TZID=America/Santiago:${_year}${_month}${_day}T${_startTime}00
 DTEND;TZID=America/Santiago:${_year}${_month}${_day}T${_endTime}00
 DESCRIPTION:[${ramo.materia} ${ramo.NRC}] ${ramo.nombre}
 STATUS:CONFIRMED
-SUMMARY:${SpanishToStringOf.ramoEventType(eventType=event.type, shorten=false)} ${ramo.nombre} (${event.startTime})
+SUMMARY:${
+                            SpanishToStringOf.ramoEventType(
+                                eventType = event.type,
+                                shorten = false
+                            )
+                        } ${ramo.nombre} (${event.startTime})
 END:VEVENT
 """
+                    }
                 }
-            }
         }
 
         return "%s%s%s".format(fileHeader, fileBody, fileFooter)

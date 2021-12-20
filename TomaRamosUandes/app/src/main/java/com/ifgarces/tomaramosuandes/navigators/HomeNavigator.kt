@@ -14,8 +14,9 @@ class HomeNavigator(private val homeActivity :HomeActivity) {
     fun toCatalog() = this.homeActivity.findNavController(R.id.homeActivity_fragmentContainer)
         .navigate(R.id.catalogFragment)
 
-    fun toSchedulePortrait() = this.homeActivity.findNavController(R.id.homeActivity_fragmentContainer)
-        .navigate(R.id.schedulePortraitFragment)
+    fun toSchedulePortrait() =
+        this.homeActivity.findNavController(R.id.homeActivity_fragmentContainer)
+            .navigate(R.id.schedulePortraitFragment)
 
     fun toEvaluations() = this.homeActivity.findNavController(R.id.homeActivity_fragmentContainer)
         .navigate(R.id.evaluationsFragment)

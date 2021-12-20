@@ -11,9 +11,9 @@ import androidx.room.PrimaryKey
  * @property ID Primary key.
  * @property firstRunOfApp Indicates whether the app is currently at its first run or not.
  */
-@Entity(tableName=UserStats.TABLE_NAME)
+@Entity(tableName = UserStats.TABLE_NAME)
 data class UserStats(
-    @PrimaryKey(autoGenerate=false) val ID :Int = 0,
+    @PrimaryKey(autoGenerate = false) val ID :Int = 0,
     var firstRunOfApp :Boolean = true
 ) {
     companion object {

@@ -22,7 +22,8 @@ import java.io.OutputStream
  * Contains methods to export the schedule view (i.e. an UI element) as an image to external storage.
  */
 object ImageExportHandler {
-    private const val IMG_SAVE_FOLDER :String = "Pictures/Horario" // folder name inside "Pictures" standard folder
+    private const val IMG_SAVE_FOLDER :String =
+        "Pictures/Horario" // folder name inside "Pictures" standard folder
     //private const val LANDSCAPE_AGENDA_IMG_WIDTH :Int = 40//2000f // agenda with (in dp) when it is exported as picture (so resulting image should be equivalent in any device)
 
     /**
@@ -48,8 +49,11 @@ object ImageExportHandler {
         this.saveImage(capture, activity)
     }
 
-    private fun getBitmapOf(targetView :View, tallView :View) : Bitmap { // references: http://hackerseve.com/android-save-view-as-image-and-share-externally/
-        val bitmap :Bitmap = Bitmap.createBitmap(
+    private fun getBitmapOf(
+        targetView :View,
+        tallView :View
+    ) :Bitmap { // references: http://hackerseve.com/android-save-view-as-image-and-share-externally/
+        val bitmap :Bitmap = Bitmap.createBitmap( //! <- this isn't working on Android 8.0 and 9.0...
             targetView.width, tallView.height, Bitmap.Config.ARGB_8888
         )
 
@@ -66,7 +70,10 @@ object ImageExportHandler {
         return bitmap
     }
 
-    private fun saveImage(bitmap :Bitmap, activity :Activity) { // references: https://stackoverflow.com/a/57265702
+    private fun saveImage(
+        bitmap :Bitmap,
+        activity :Activity
+    ) { // references: https://stackoverflow.com/a/57265702
 //        this.checkPermissions(activity)
 
         val fileMetadata :ContentValues = ContentValues()
@@ -78,31 +85,57 @@ object ImageExportHandler {
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, true)
             fileMetadata.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
 
-            val uri :Uri = activity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)!!
-            this.saveImageToStream(img=bitmap, stream=activity.contentResolver.openOutputStream(uri)!!, activity=activity)
+            val uri :Uri = activity.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                fileMetadata
+            )!!
+            this.saveImageToStream(
+                img = bitmap,
+                stream = activity.contentResolver.openOutputStream(uri)!!,
+                activity = activity
+            )
             fileMetadata.put(MediaStore.Images.Media.IS_PENDING, false)
             activity.contentResolver.update(uri, fileMetadata, null, null)
-        }
-        else {
-            val directory = File( "%s/%s".format(Environment.getExternalStorageDirectory().toString(), this.IMG_SAVE_FOLDER) )
-            if (! directory.exists()) { directory.mkdirs() }
+        } else {
+            val directory = File(
+                "%s/%s".format(
+                    Environment.getExternalStorageDirectory().toString(),
+                    this.IMG_SAVE_FOLDER
+                )
+            )
+            if (!directory.exists()) {
+                directory.mkdirs()
+            }
 
             val fileName :String = "%s.png".format(System.currentTimeMillis().toString())
             val file = File(directory, fileName)
-            this.saveImageToStream(img=bitmap, stream=FileOutputStream(file), activity=activity)
+            this.saveImageToStream(
+                img = bitmap,
+                stream = FileOutputStream(file),
+                activity = activity
+            )
             fileMetadata.put(MediaStore.Images.Media.DATA, file.absolutePath)
-            activity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileMetadata)
+            activity.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                fileMetadata
+            )
         }
     }
 
-    private fun saveImageToStream(img :Bitmap, stream :OutputStream, activity :Activity) { // references: https://stackoverflow.com/a/57265702
+    private fun saveImageToStream(
+        img :Bitmap,
+        stream :OutputStream,
+        activity :Activity
+    ) { // references: https://stackoverflow.com/a/57265702
         try {
             img.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
             Logf(this::class, "Image successfully saved at %s.", this.IMG_SAVE_FOLDER)
-            activity.toastf("Imagen guardada en carpeta %s.\nRevise su galería.", this.IMG_SAVE_FOLDER)
-        }
-        catch (e :Exception) { // <==> IOException ??
+            activity.toastf(
+                "Imagen guardada en carpeta %s.\nRevise su galería.",
+                this.IMG_SAVE_FOLDER
+            )
+        } catch (e :Exception) { // <==> IOException ??
             Logf(this::class, "Error: could not save schedule as image. %s", e)
             activity.infoDialog(
                 title = "Error",
@@ -117,8 +150,12 @@ object ImageExportHandler {
     private fun ensurePermissions(activity :Activity) {
         // TODO: fix this not working properly. Permission dialog-thing is never shown. Is this unnecessary???
         Logf(this::class, "Checking permissions...")
-        while (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
+        while (ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             this.askPermissions(activity)
         }
         Logf(this::class, "Storage permissions granted.")

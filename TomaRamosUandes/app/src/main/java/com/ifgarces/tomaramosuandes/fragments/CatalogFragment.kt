@@ -26,13 +26,13 @@ import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
  * Displays the available `Ramo`s catalog for the current period.
  */
 class CatalogFragment : Fragment() {
-    
+
     private class FragmentUI(owner :View) {
         val recycler        :RecyclerView = owner.findViewById(R.id.catalog_recycler)
         val searchboxLayout :TextInputLayout = owner.findViewById(R.id.catalog_searchBox_layout)
         val searchBox       :EditText = owner.findViewById(R.id.catalog_searchBox)
     }
-    
+
     private lateinit var UI :FragmentUI
     private lateinit var catalogRamosAdapter :CatalogRamosAdapter
 
@@ -74,12 +74,12 @@ class CatalogFragment : Fragment() {
             }
             UI.searchBox.onTextChangedListener {
                 if (it.length > 1) {
-                    this.applySearch(searchText=it)
+                    this.applySearch(searchText = it)
                 }
             }
         }
-        
-        return fragView 
+
+        return fragView
     }
 
     /**
@@ -108,10 +108,12 @@ nombre o NRC.""".multilineTrim()
                 it.nombre.spanishNonAccent().contains(sanitizedSearchText) ||
                 it.NRC.toString().contains(sanitizedSearchText)
             ) {
-                if (it !in results) { results.add(it) }
+                if (it !in results) {
+                    results.add(it)
+                }
             }
         }
-        this.catalogRamosAdapter.updateData(data=results)
+        this.catalogRamosAdapter.updateData(data = results)
         if (results.count() == 0) {
             UI.recycler.visibility = View.INVISIBLE
         } else {
@@ -124,7 +126,7 @@ nombre o NRC.""".multilineTrim()
      */
     private fun clearSearch() {
         UI.searchBox.setText("")
-        this.catalogRamosAdapter.updateData(data=DataMaster.getCatalogRamos().toMutableList())
+        this.catalogRamosAdapter.updateData(data = DataMaster.getCatalogRamos().toMutableList())
         UI.recycler.visibility = View.VISIBLE
     }
 }

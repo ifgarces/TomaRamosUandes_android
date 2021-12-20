@@ -12,11 +12,11 @@ import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 
 
 class RamoEventsAdapter(
-    private var data          :List<RamoEvent>,
+    private var data :List<RamoEvent>,
     private val showEventType :Boolean
 ) : RecyclerView.Adapter<RamoEventsAdapter.EventVH>() {
 
-    override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : EventVH {
+    override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventVH {
         return EventVH(
             LayoutInflater.from(parent.context).inflate(R.layout.ramoevent_item, parent, false)
         )
@@ -24,7 +24,8 @@ class RamoEventsAdapter(
 
     override fun getItemCount() = this.data.count()
 
-    override fun onBindViewHolder(holder :EventVH, position :Int) = holder.bind(this.data[position], position)
+    override fun onBindViewHolder(holder :EventVH, position :Int) =
+        holder.bind(this.data[position], position)
 
     fun updateData(data :List<RamoEvent>) {
         this.data = data
@@ -53,13 +54,15 @@ class RamoEventsAdapter(
             if (event.isEvaluation()) { // evaluación
                 this.dayData.text = SpanishToStringOf.localDate(event.date!!) // e.g. "18/11/2020"
             } else { // clase, ayudantía o laboratorio
-                this.dayData.text = SpanishToStringOf.dayOfWeek(event.dayOfWeek).spanishUpperCase() // e.g. "viernes"
+                this.dayData.text = SpanishToStringOf.dayOfWeek(event.dayOfWeek)
+                    .spanishUpperCase() // e.g. "viernes"
             }
 
             /* deciding if to show event type */
             if (this@RamoEventsAdapter.showEventType) {
                 this.evType.visibility = View.VISIBLE
-                this.evType.text = SpanishToStringOf.ramoEventType(eventType=event.type, shorten=false)
+                this.evType.text =
+                    SpanishToStringOf.ramoEventType(eventType = event.type, shorten = false)
             } else {
                 this.evType.visibility = View.GONE
             }

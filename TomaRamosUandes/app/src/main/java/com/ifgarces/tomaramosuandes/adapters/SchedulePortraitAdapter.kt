@@ -18,17 +18,20 @@ import java.util.concurrent.Executors
 /**
  * Adapter used to display events in the portrait schedule view.
  */
-class SchedulePortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<SchedulePortraitAdapter.EventCardVH>() {
+class SchedulePortraitAdapter(private var data :List<RamoEvent>) :
+    RecyclerView.Adapter<SchedulePortraitAdapter.EventCardVH>() {
 
-    override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : EventCardVH {
+    override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventCardVH {
         return EventCardVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.schedule_portrait_block, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.schedule_portrait_block, parent, false)
         )
     }
 
     override fun getItemCount() = this.data.count()
 
-    override fun onBindViewHolder(holder :EventCardVH, position :Int) = holder.bind(this.data[position], position)
+    override fun onBindViewHolder(holder :EventCardVH, position :Int) =
+        holder.bind(this.data[position], position)
 
     public fun updateData(data :List<RamoEvent>) {
         this.data = data
@@ -36,21 +39,22 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.
     }
 
     inner class EventCardVH(v :View) : RecyclerView.ViewHolder(v) {
-        private val parentView :View     = v
+        private val parentView :View = v
         private val ramoName   :TextView = v.findViewById(R.id.schedulePblock_ramo)
         private val startTime  :TextView = v.findViewById(R.id.schedulePblock_ti)
         private val endTime    :TextView = v.findViewById(R.id.schedulePblock_tf)
         private val type       :TextView = v.findViewById(R.id.schedulePblock_type)
         private val location   :TextView = v.findViewById(R.id.schedulePblock_location)
-    
+
         fun bind(event :RamoEvent, position :Int) {
             (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->
                 this.ramoName.text = DataMaster.findRamo(
-                    NRC=event.ramoNRC, searchInUserList=true
+                    NRC = event.ramoNRC, searchInUserList = true
                 )!!.nombre
                 this.startTime.text = event.startTime.toString()
                 this.endTime.text = event.endTime.toString()
-                this.type.text = SpanishToStringOf.ramoEventType(eventType=event.type, shorten=true)
+                this.type.text =
+                    SpanishToStringOf.ramoEventType(eventType = event.type, shorten = true)
                 this.location.text = event.location
 
                 // Colorizing background of event box
@@ -65,7 +69,9 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.
 
                 // Colorizing hole card if the event is on conflict status
                 Executors.newSingleThreadExecutor().execute {
-                    if (DataMaster.getConflictsOf(event).count() > 0) { // colorizing conflicted events
+                    if (DataMaster.getConflictsOf(event)
+                            .count() > 0
+                    ) { // colorizing conflicted events
                         homeActivity.runOnUiThread {
                             this.parentView.setBackgroundColor(
                                 homeActivity.getColor(R.color.conflict_background)

@@ -50,9 +50,11 @@ object FirebaseMaster {
         if (aditionalMessage == null)
             Log.d(this::class.simpleName, "%s - failure [%s]".format(methodName, e))
         else
-            Log.d(this::class.simpleName, "%s - failure [%s]: %s".format(
-                methodName, e, aditionalMessage
-            ))
+            Log.d(
+                this::class.simpleName, "%s - failure [%s]: %s".format(
+                    methodName, e, aditionalMessage
+                )
+            )
     }
 
     /**
@@ -75,7 +77,8 @@ siempre el catálogo más reciente.""".multilineTrim(),
     /**
      * Namespace-like object for encapsulating methods intended for the developer to update the
      * catalog to a new period, update application metadata values in Firebase, etc. Don't know if
-     * this is the best place for this. All the write operations are here.
+     * this is the best place for this. All the write operations are here. Anyway, writes on
+     * Firestore can be disabled on the back-end (through Firebase's rules).
      */
     object Developer {
         /**

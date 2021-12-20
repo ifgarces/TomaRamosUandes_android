@@ -6,7 +6,7 @@ import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 
 
-data class RamoAndEventLinker (
+data class RamoAndEventLinker(
     @Embedded val ramo :Ramo,
     @Relation(
         parentColumn = "NRC",

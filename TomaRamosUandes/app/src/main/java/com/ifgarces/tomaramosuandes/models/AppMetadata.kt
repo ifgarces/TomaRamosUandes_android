@@ -14,13 +14,14 @@ package com.ifgarces.tomaramosuandes.models
  * build are available.
  */
 data class AppMetadata(
-    val latestVersionName :String,
+    val latestVersionName    :String,
     val catalogCurrentPeriod :String,
-    val catalogLastUpdated :String
+    val catalogLastUpdated   :String
 ) {
     companion object {
-        const val TABLE_NAME       :String = "app_metadata"
-        const val USER_APP_URL     :String = "https://bit.ly/TomadorRamosUandes"
-        const val APK_DOWNLOAD_URL :String = "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
+        const val TABLE_NAME :String = "app_metadata"
+        const val USER_APP_URL :String = "https://bit.ly/TomadorRamosUandes"
+        const val APK_DOWNLOAD_URL :String =
+            "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
     }
 }

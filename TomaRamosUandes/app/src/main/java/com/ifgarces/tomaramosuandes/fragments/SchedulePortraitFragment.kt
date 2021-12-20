@@ -1,4 +1,5 @@
 package com.ifgarces.tomaramosuandes.fragments
+
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -13,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
+import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity
 import com.ifgarces.tomaramosuandes.adapters.SchedulePortraitAdapter
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
@@ -28,41 +29,44 @@ import java.time.DayOfWeek
  * Fragment for displaying the week shcedule for the inscribed `Ramo`s in a portrait layout.
  */
 class SchedulePortraitFragment : Fragment() {
-    
+
     private class FragmentUI(owner :View) {
-        val saveAsImgButton  :FloatingActionButton = owner.findViewById(R.id.portrSchedule_saveAsImage)
-        val fullScreenButton :FloatingActionButton = owner.findViewById(R.id.portrSchedule_fullScreen)
-        val agendaScroll     :ScrollView = owner.findViewById(R.id.portrSchedule_scrollView)
-        val agendaLayout     :LinearLayout = owner.findViewById(R.id.portrSchedule_layout)
-        val recyclerTeamMon  :Pair<View, RecyclerView> = Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
-            owner.findViewById(R.id.portrSchedule_mondayHead),
-            owner.findViewById(R.id.portrSchedule_mondayRecycler)
-        )
-        val recyclerTeamTue  :Pair<View, RecyclerView> = Pair(
+        val saveAsImgButton :FloatingActionButton =
+            owner.findViewById(R.id.portrSchedule_saveAsImage)
+        val fullScreenButton :FloatingActionButton =
+            owner.findViewById(R.id.portrSchedule_fullScreen)
+        val agendaScroll    :ScrollView = owner.findViewById(R.id.portrSchedule_scrollView)
+        val agendaLayout    :LinearLayout = owner.findViewById(R.id.portrSchedule_layout)
+        val recyclerTeamMon :Pair<View, RecyclerView> =
+            Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
+                owner.findViewById(R.id.portrSchedule_mondayHead),
+                owner.findViewById(R.id.portrSchedule_mondayRecycler)
+            )
+        val recyclerTeamTue :Pair<View, RecyclerView> = Pair(
             owner.findViewById(R.id.portrSchedule_tuesdayHead),
             owner.findViewById(R.id.portrSchedule_tuesdayRecycler)
         )
-        val recyclerTeamWed  :Pair<View, RecyclerView> = Pair(
+        val recyclerTeamWed :Pair<View, RecyclerView> = Pair(
             owner.findViewById(R.id.portrSchedule_wednesdayHead),
             owner.findViewById(R.id.portrSchedule_wednesdayRecycler)
         )
-        val recyclerTeamThu  :Pair<View, RecyclerView> = Pair(
+        val recyclerTeamThu :Pair<View, RecyclerView> = Pair(
             owner.findViewById(R.id.portrSchedule_thursdayHead),
             owner.findViewById(R.id.portrSchedule_thursdayRecycler)
         )
-        val recyclerTeamFri  :Pair<View, RecyclerView> = Pair(
+        val recyclerTeamFri :Pair<View, RecyclerView> = Pair(
             owner.findViewById(R.id.portrSchedule_fridayHead),
             owner.findViewById(R.id.portrSchedule_fridayRecycler)
         )
     }
-    
+
     private lateinit var UI :FragmentUI
 
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(R.layout.fragment_schedule_portrait, container, false)
-        this.UI = FragmentUI(owner=fragView)
+        this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
             homeActivity.setBottomNavItemSelected(this::class)
@@ -80,14 +84,14 @@ class SchedulePortraitFragment : Fragment() {
                 /* initializing recyclers and hiding weekdays without events */
                 val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
                 mapOf(
-                    DayOfWeek.MONDAY    to UI.recyclerTeamMon,
-                    DayOfWeek.TUESDAY   to UI.recyclerTeamTue,
+                    DayOfWeek.MONDAY to UI.recyclerTeamMon,
+                    DayOfWeek.TUESDAY to UI.recyclerTeamTue,
                     DayOfWeek.WEDNESDAY to UI.recyclerTeamWed,
-                    DayOfWeek.THURSDAY  to UI.recyclerTeamThu,
-                    DayOfWeek.FRIDAY    to UI.recyclerTeamFri
-                ).forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) ->
+                    DayOfWeek.THURSDAY to UI.recyclerTeamThu,
+                    DayOfWeek.FRIDAY to UI.recyclerTeamFri
+                ).forEach { (day :DayOfWeek, team :Pair<View, RecyclerView>) ->
                     team.second.layoutManager = LinearLayoutManager(homeActivity)
-                    team.second.adapter = SchedulePortraitAdapter(data=agendaEvents.getValue(day))
+                    team.second.adapter = SchedulePortraitAdapter(data = agendaEvents.getValue(day))
                     if (agendaEvents.getValue(day).count() == 0) {
                         team.first.visibility = View.GONE
                         team.second.visibility = View.GONE
@@ -104,9 +108,9 @@ class SchedulePortraitFragment : Fragment() {
                         targetView = UI.agendaScroll,
                         tallView = UI.agendaLayout
                     )
-                }
-                catch (e :Exception) {
-                    Logf(this::class, "Error catched on exporting image: %s",
+                } catch (e :Exception) {
+                    Logf(
+                        this::class, "Error catched on exporting image: %s",
                         e.stackTraceToString()
                     )
                     homeActivity.infoDialog(
@@ -132,8 +136,8 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
                 UI.fullScreenButton.isEnabled = false
             }
         }
-        
-        return fragView 
+
+        return fragView
     }
 
     override fun onResume() {

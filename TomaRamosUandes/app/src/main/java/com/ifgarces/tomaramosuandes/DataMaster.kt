@@ -33,16 +33,20 @@ object DataMaster {
     private lateinit var localDB :LocalRoomDB
 
     // Current catalog
-    @Volatile private lateinit var catalog_ramos  :List<Ramo>
-    @Volatile private lateinit var catalog_events :List<RamoEvent>
+    @Volatile
+    private lateinit var catalog_ramos :List<Ramo>
+    @Volatile
+    private lateinit var catalog_events :List<RamoEvent>
 
     // User data
-    private lateinit var user_stats               :UserStats
-    @Volatile private lateinit var user_ramos     :MutableList<Ramo>
-    @Volatile private lateinit var user_events    :MutableList<RamoEvent>
+    private lateinit var user_stats :UserStats
+    @Volatile
+    private lateinit var user_ramos :MutableList<Ramo>
+    @Volatile
+    private lateinit var user_events :MutableList<RamoEvent>
 
     // Locks for concurrency
-    private lateinit var ramosLock  :ReentrantLock
+    private lateinit var ramosLock :ReentrantLock
     private lateinit var eventsLock :ReentrantLock
 
     // Getters
@@ -67,12 +71,12 @@ object DataMaster {
      * a previous app version (on database model change).
      */
     fun init(
-        activity            :Activity,
-        clearDatabase       :Boolean,
+        activity :Activity,
+        clearDatabase :Boolean,
         forceLoadOfflineCSV :Boolean,
-        onSuccess           :() -> Unit,
-        onFirebaseError     :(e :Exception) -> Unit,
-        onRoomError         :(e :Exception) -> Unit
+        onSuccess :() -> Unit,
+        onFirebaseError :(e :Exception) -> Unit,
+        onRoomError :(e :Exception) -> Unit
     ) {
         this.catalog_ramos = listOf()
         this.user_ramos = mutableListOf()
@@ -148,9 +152,9 @@ object DataMaster {
         // Building Room database. Will fail sometimes when updating the app. Must uninstall it
         // and install the new version manually on the device.
         try {
-            this.localDB = Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
-        }
-        catch (e :Exception) {
+            this.localDB =
+                Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
+        } catch (e :Exception) {
             Logf(this::class, "Error: could not load local Room database. %s", e)
             onFailure.invoke(e)
         }
@@ -162,7 +166,10 @@ object DataMaster {
         // Checking consistency of current catalog with existing data inscribed by the user found in
         // local storage
         if (this.isUserDataSyncedWithCatalog()) {
-            Logf(this::class, "User inscribed ramos are not consistent with the current catalog. User data cleared.")
+            Logf(
+                this::class,
+                "User inscribed ramos are not consistent with the current catalog. User data cleared."
+            )
             this.clear()
             activity.infoDialog(
                 title = "Error de sincronización de ramos",
@@ -184,7 +191,12 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
                 //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
             }
         }
-        Logf(this::class, "Recovered user local data: %s ramos (with %d events).", this.user_ramos.count(), this.user_events.count())
+        Logf(
+            this::class,
+            "Recovered user local data: %s ramos (with %d events).",
+            this.user_ramos.count(),
+            this.user_events.count()
+        )
 
         onSuccess.invoke()
     }
@@ -205,8 +217,8 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
                     onSuccess = { gotEvents :List<RamoEvent> ->
                         this.catalog_ramos = gotRamos
                         this.catalog_events = gotEvents
-
-                        Logf(this::class, "Fetched %d ramos and %d events from Firebase",
+                        Logf(
+                            this::class, "Fetched %d ramos and %d events from Firebase",
                             this.catalog_ramos.count(), this.catalog_events.count()
                         )
                         onSuccess.invoke()
@@ -234,7 +246,8 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
         this.catalog_ramos = offlineRamos
         this.catalog_events = offlineEvents
 
-        Logf(this::class, "CSV parsing complete. Got %d ramos and %d events",
+        Logf(
+            this::class, "CSV parsing complete. Got %d ramos and %d events",
             this.catalog_ramos.count(), this.catalog_events.count()
         )
     }
@@ -257,7 +270,8 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
                 }
             }
             if (failure) {
-                Logf(this::class,
+                Logf(
+                    this::class,
                     "Error: found catalog Ramo that is not consisten with user inscribed Ramos: %s",
                     catalogRamo
                 )
@@ -267,12 +281,11 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
         this.catalog_events.forEach { catalogEvent :RamoEvent ->
             failure = true
             this.user_events.forEach { userEvent :RamoEvent ->
-                if (userEvent == catalogEvent) {
-                    failure = false
-                }
+                if (userEvent == catalogEvent) failure = false
             }
             if (failure) {
-                Logf(this::class,
+                Logf(
+                    this::class,
                     "Error: found catalog RamoEvent that is not consisten with user inscribed RamoEvents: %s",
                     catalogEvent
                 )
@@ -314,15 +327,14 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
             try {
                 this.ramosLock.lock()
                 this.user_ramos.forEach {
-                    if (it.NRC == NRC) { return it }
+                    if (it.NRC == NRC) return it
                 }
             } finally {
                 this.ramosLock.unlock()
             }
-        }
-        else {
+        } else {
             this.catalog_ramos.forEach {
-                if (it.NRC == NRC) { return it }
+                if (it.NRC == NRC) return it
             }
         }
         return null
@@ -337,7 +349,7 @@ Sus ramos tomados fueron removidos por esta razón.""".multilineTrim()
     public fun inscribeRamo(ramo :Ramo, activity :Activity, onFinish :() -> Unit) {
         var conflictReport :String = ""
 
-        this.getEventsOfRamo(ramo=ramo, searchInUserList=false).forEach { event :RamoEvent ->
+        this.getEventsOfRamo(ramo = ramo, searchInUserList = false).forEach { event :RamoEvent ->
             this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
                 conflictReport += "• %s\n".format(conflictedEvent.toShortString())
             }
@@ -387,7 +399,7 @@ ${conflictReport}
                 this.eventsLock.lock()
                 this.user_ramos.add(ramo)
                 this.localDB.ramosDAO().insert(ramo) // assuming we're already in a separate thread
-                this.getEventsOfRamo(ramo=ramo, searchInUserList=false)
+                this.getEventsOfRamo(ramo = ramo, searchInUserList = false)
                     .forEach { event :RamoEvent ->
                         eventCount++
                         this.user_events.add(event)
@@ -397,7 +409,8 @@ ${conflictReport}
                 this.ramosLock.unlock()
                 this.eventsLock.unlock()
             }
-            Logf(this::class, "Ramo{NRC=%s}, along %d of its events, were inscribed.",
+            Logf(
+                this::class, "Ramo{NRC=%s}, along %d of its events, were inscribed.",
                 ramo.NRC, eventCount
             )
             onFinish.invoke()
@@ -411,9 +424,10 @@ ${conflictReport}
     public fun unInscribeRamo(NRC :Int) {
         var eventCount :Int = 0
 
-        val ramo :Ramo? = this.findRamo(NRC=NRC, searchInUserList=true)
+        val ramo :Ramo? = this.findRamo(NRC = NRC, searchInUserList = true)
         if (ramo == null) { // kind of dymmy solution, but this may be needed if the user do stuff quickly, due async tasks
-            Logf(this::class,
+            Logf(
+                this::class,
                 "This Ramo seems to be already deleted and couldn't be found. Aborting."
             )
             return
@@ -428,7 +442,7 @@ ${conflictReport}
                 this.eventsLock.lock()
                 this.user_events.remove(event)
                 Executors.newSingleThreadExecutor().execute {
-                    this.localDB.eventsDAO().deleteRamoEvent(id=event.ID)
+                    this.localDB.eventsDAO().deleteRamoEvent(id = event.ID)
                 }
             } finally {
                 this.eventsLock.unlock()
@@ -446,7 +460,7 @@ ${conflictReport}
                 if (r.NRC == NRC) {
                     ramoIterator.remove()
                     Executors.newSingleThreadExecutor().execute {
-                        this.localDB.ramosDAO().deleteRamo(nrc=NRC)
+                        this.localDB.ramosDAO().deleteRamo(nrc = NRC)
                     }
                     break
                 }
@@ -454,7 +468,8 @@ ${conflictReport}
         } finally {
             this.ramosLock.unlock()
         }
-        Logf(this::class, "Ramo{NRC=%d}, along %d of its events, were un-inscribed.",
+        Logf(
+            this::class, "Ramo{NRC=%d}, along %d of its events, were un-inscribed.",
             NRC, eventCount
         )
     }
@@ -485,13 +500,13 @@ ${conflictReport}
         val first_isEval :Boolean = ev1.isEvaluation()
         val second_isEval :Boolean = ev2.isEvaluation()
         if (first_isEval && second_isEval) { // comparing evaluation events (date and time)
-            if (ev1.date == null || ev2.date == null) { return null } // error: missing date
-            if (ev1.date != ev2.date) { return false }
+            if (ev1.date == null || ev2.date == null) return null // error: missing date
+            if (ev1.date != ev2.date) return false
+        } else if ((!first_isEval) && (!second_isEval)) { // comparing non-evaluation events (dayOfWeek and time)
+            if (ev1.dayOfWeek != ev2.dayOfWeek) return false
+        } else {
+            return null // unconsistent types: comparing evaluation with non-evaluation
         }
-        else if ( (!first_isEval) && (!second_isEval) ) { // comparing non-evaluation events (dayOfWeek and time)
-            if (ev1.dayOfWeek != ev2.dayOfWeek) { return false }
-        }
-        else { return null } // unconsistent types: comparing evaluation with non-evaluation
 
         // "does i starts before j finished and i finishes after j starts?"
         return (ev1.startTime <= ev2.endTime) && (ev1.endTime >= ev2.startTime)
@@ -507,17 +522,20 @@ ${conflictReport}
         try {
             this.ramosLock.lock()
             this.user_ramos.forEach {
-                this.getEventsOfRamo(ramo=it, searchInUserList=true).forEach { ev :RamoEvent ->
+                this.getEventsOfRamo(ramo = it, searchInUserList = true).forEach { ev :RamoEvent ->
                     if (ev.ID != event.ID) {
-                        if (this.areEventsConflicted(ev, event) == true) { conflicts.add(ev) }
+                        if (this.areEventsConflicted(ev, event) == true) {
+                            conflicts.add(ev)
+                        }
                     }
                 }
             }
-        }
-        finally {
+        } finally {
             this.ramosLock.unlock()
         }
-        if (conflicts.count() > 0) { conflicts.add(index=0, element=event) } // addint itself, in order to inform to user in conflict dialog
+        if (conflicts.count() > 0) {
+            conflicts.add(index = 0, element = event)
+        } // addint itself, in order to inform to user in conflict dialog
         return conflicts
     }
 
@@ -536,20 +554,21 @@ ${conflictReport}
         try {
             this.ramosLock.lock()
             this.user_ramos.forEach { ramo :Ramo ->
-                this.getEventsOfRamo(ramo=ramo, searchInUserList=true).forEach { event :RamoEvent ->
-                    if (! event.isEvaluation()) {
-                        when (event.dayOfWeek) {
-                            DayOfWeek.MONDAY    -> { results[DayOfWeek.MONDAY]?.add(event) }
-                            DayOfWeek.TUESDAY   -> { results[DayOfWeek.TUESDAY]?.add(event) }
-                            DayOfWeek.WEDNESDAY -> { results[DayOfWeek.WEDNESDAY]?.add(event) }
-                            DayOfWeek.THURSDAY  -> { results[DayOfWeek.THURSDAY]?.add(event) }
-                            DayOfWeek.FRIDAY    -> { results[DayOfWeek.FRIDAY]?.add(event) }
-                            else -> { // ignored
-                                Logf(this::class, "Warning: unknown day for this event: %s", event)
+                this.getEventsOfRamo(ramo = ramo, searchInUserList = true)
+                    .forEach { event :RamoEvent ->
+                        if (!event.isEvaluation()) {
+                            when (event.dayOfWeek) {
+                                DayOfWeek.MONDAY ->  results[DayOfWeek.MONDAY]?.add(event)
+                                DayOfWeek.TUESDAY -> results[DayOfWeek.TUESDAY]?.add(event)
+                                DayOfWeek.WEDNESDAY -> results[DayOfWeek.WEDNESDAY]?.add(event)
+                                DayOfWeek.THURSDAY -> results[DayOfWeek.THURSDAY]?.add(event)
+                                DayOfWeek.FRIDAY -> results[DayOfWeek.FRIDAY]?.add(event)
+                                else -> Logf( // ignored
+                                    this::class, "Warning: unknown day for this event: %s", event
+                                )
                             }
                         }
                     }
-                }
             }
         } finally {
             this.ramosLock.unlock()

@@ -108,7 +108,11 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 else -> {
-                    Logf(this::class, "Warning: unknown bottom navbar element pressed (id=%d)", item.itemId)
+                    Logf(
+                        this::class,
+                        "Warning: unknown bottom navbar element pressed (id=%d)",
+                        item.itemId
+                    )
                     return@setOnItemSelectedListener false
                 }
             }
@@ -152,7 +156,11 @@ class HomeActivity : AppCompatActivity() {
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
-                    Logf(this::class, "Warning: unknown top toolbar element pressed (id=%d)", item.itemId)
+                    Logf(
+                        this::class,
+                        "Warning: unknown top toolbar element pressed (id=%d)",
+                        item.itemId
+                    )
                     return@setOnMenuItemClickListener false
                 }
             }
@@ -168,7 +176,7 @@ class HomeActivity : AppCompatActivity() {
      * nav bar.
      */
     public fun setBottomNavItemSelected(fragment :KClass<*>) {
-        val index :Int? = when(fragment) {
+        val index :Int? = when (fragment) {
             UserRamosFragment::class -> 0
             SchedulePortraitFragment::class -> 1
             EvaluationsFragment::class -> 2
