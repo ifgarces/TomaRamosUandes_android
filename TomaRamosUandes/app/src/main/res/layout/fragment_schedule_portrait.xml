@@ -52,7 +52,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/portrAgenda_mondayRecycler"
-                tools:listitem="@layout/agenda_portrait_block"
+                tools:listitem="@layout/schedule_portrait_block"
                 tools:itemCount="3"
                 android:nestedScrollingEnabled="false"
 
@@ -69,7 +69,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/portrAgenda_tuesdayRecycler"
-                tools:listitem="@layout/agenda_portrait_block"
+                tools:listitem="@layout/schedule_portrait_block"
                 tools:itemCount="3"
                 android:nestedScrollingEnabled="false"
 
@@ -86,7 +86,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/portrAgenda_wednesdayRecycler"
-                tools:listitem="@layout/agenda_portrait_block"
+                tools:listitem="@layout/schedule_portrait_block"
                 tools:itemCount="3"
                 android:nestedScrollingEnabled="false"
 
@@ -103,7 +103,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/portrAgenda_thursdayRecycler"
-                tools:listitem="@layout/agenda_portrait_block"
+                tools:listitem="@layout/schedule_portrait_block"
                 tools:itemCount="3"
                 android:nestedScrollingEnabled="false"
 
@@ -120,7 +120,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/portrAgenda_fridayRecycler"
-                tools:listitem="@layout/agenda_portrait_block"
+                tools:listitem="@layout/schedule_portrait_block"
                 tools:itemCount="3"
                 android:nestedScrollingEnabled="false"
 

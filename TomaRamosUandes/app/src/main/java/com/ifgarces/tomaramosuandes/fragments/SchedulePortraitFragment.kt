@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.activities.AgendaLandscapeActivity
+import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
-import com.ifgarces.tomaramosuandes.adapters.AgendaPortraitAdapter
+import com.ifgarces.tomaramosuandes.adapters.SchedulePortraitAdapter
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
 import com.ifgarces.tomaramosuandes.utils.Logf
@@ -87,7 +87,7 @@ class SchedulePortraitFragment : Fragment() {
                     DayOfWeek.FRIDAY    to UI.recyclerTeamFri
                 ).forEach { (day :DayOfWeek, team :Pair<View, RecyclerView> ) ->
                     team.second.layoutManager = LinearLayoutManager(homeActivity)
-                    team.second.adapter = AgendaPortraitAdapter(data=agendaEvents.getValue(day))
+                    team.second.adapter = SchedulePortraitAdapter(data=agendaEvents.getValue(day))
                     if (agendaEvents.getValue(day).count() == 0) {
                         team.first.visibility = View.GONE
                         team.second.visibility = View.GONE
@@ -120,7 +120,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
             UI.fullScreenButton.setOnClickListener {
                 homeActivity.showLoadingScreen()
                 this.startActivity(
-                    Intent(homeActivity, AgendaLandscapeActivity::class.java)
+                    Intent(homeActivity, ScheduleLandscapeActivity::class.java)
                 )
             }
 
@@ -135,7 +135,7 @@ versión de Android de su dispositivo es demasiado vieja.""".multilineTrim(),
 
     override fun onResume() {
         super.onResume()
-        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? needed for when coming back from AgendaLandscapeActivity, right?
+        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? needed for when coming back from ScheduleLandscapeActivity, right?
     }
 
     private fun showHelp() {

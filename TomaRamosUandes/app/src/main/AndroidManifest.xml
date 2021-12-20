@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activities.AgendaLandscapeActivity"
+            android:name=".activities.ScheduleLandscapeActivity"
             android:screenOrientation="landscape"
             android:exported="false" />
         <activity

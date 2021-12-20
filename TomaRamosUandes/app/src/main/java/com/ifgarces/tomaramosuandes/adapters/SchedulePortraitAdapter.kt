@@ -18,11 +18,11 @@ import java.util.concurrent.Executors
 /**
  * Adapter used to display events in the portrait agenda view.
  */
-class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<AgendaPortraitAdapter.EventCardVH>() {
+class SchedulePortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Adapter<SchedulePortraitAdapter.EventCardVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) : EventCardVH {
         return EventCardVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.agenda_portrait_block, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.schedule_portrait_block, parent, false)
         )
     }
 
@@ -37,11 +37,11 @@ class AgendaPortraitAdapter(private var data :List<RamoEvent>) : RecyclerView.Ad
 
     inner class EventCardVH(v :View) : RecyclerView.ViewHolder(v) {
         private val parentView :View     = v
-        private val ramoName   :TextView = v.findViewById(R.id.agendaPblock_ramo)
-        private val startTime  :TextView = v.findViewById(R.id.agendaPblock_ti)
-        private val endTime    :TextView = v.findViewById(R.id.agendaPblock_tf)
-        private val type       :TextView = v.findViewById(R.id.agendaPblock_type)
-        private val location   :TextView = v.findViewById(R.id.agendaPblock_location)
+        private val ramoName   :TextView = v.findViewById(R.id.schedulePblock_ramo)
+        private val startTime  :TextView = v.findViewById(R.id.schedulePblock_ti)
+        private val endTime    :TextView = v.findViewById(R.id.schedulePblock_tf)
+        private val type       :TextView = v.findViewById(R.id.schedulePblock_type)
+        private val location   :TextView = v.findViewById(R.id.schedulePblock_location)
     
         fun bind(event :RamoEvent, position :Int) {
             (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->

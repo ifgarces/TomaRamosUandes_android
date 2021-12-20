@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <TableRow
-        android:id="@+id/landAgenda_headersRow"
+        android:id="@+id/landSchedule_headersRow"
         android:background="@color/gray"
         android:elevation="1dp"
 

@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.activities.AgendaLandscapeActivity.Companion.ONSCROLL_BUTTON_RESPAWN_TIME
-import com.ifgarces.tomaramosuandes.activities.AgendaLandscapeActivity.Companion.ROWS_COUNT
+import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity.Companion.ONSCROLL_BUTTON_RESPAWN_TIME
+import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity.Companion.ROWS_COUNT
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.*
@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
  * @property ROWS_COUNT Number of rows of agenda i.e. number of blocks per day of week.
  * @property isFullScreenOn Whether the system UI is hidden (i.e. full screen mode is activated).
  */
-class AgendaLandscapeActivity : AppCompatActivity() {
+class ScheduleLandscapeActivity : AppCompatActivity() {
 
     companion object {
         const val ONSCROLL_BUTTON_RESPAWN_TIME :Long = 1500
@@ -36,90 +36,90 @@ class AgendaLandscapeActivity : AppCompatActivity() {
     }
 
     private class ActivityUI(owner :AppCompatActivity) {
-        val saveAsImgButton        :FloatingActionButton = owner.findViewById(R.id.landAgenda_saveAsImage)
-        val toggleFullScreenButton :FloatingActionButton = owner.findViewById(R.id.landAgenda_toggleFullScreen)
-        val agendaBodyScroll       :View = owner.findViewById(R.id.landAgenda_bodyScrollView) // ScrollView
-        val agendaBodyLayout       :View = owner.findViewById(R.id.landAgenda_bodyLayout) // LinearLayout
+        val saveAsImgButton        :FloatingActionButton = owner.findViewById(R.id.landSchedule_saveAsImage)
+        val toggleFullScreenButton :FloatingActionButton = owner.findViewById(R.id.landSchedule_toggleFullScreen)
+        val agendaBodyScroll       :View = owner.findViewById(R.id.landSchedule_bodyScrollView) // ScrollView
+        val agendaBodyLayout       :View = owner.findViewById(R.id.landSchedule_bodyLayout) // LinearLayout
         val blocksMap              :Map<DayOfWeek, List<Button>> = mapOf(
             DayOfWeek.MONDAY to listOf(
-                owner.findViewById(R.id.landAgenda_lun0),
-                owner.findViewById(R.id.landAgenda_lun1),
-                owner.findViewById(R.id.landAgenda_lun2),
-                owner.findViewById(R.id.landAgenda_lun3),
-                owner.findViewById(R.id.landAgenda_lun4),
-                owner.findViewById(R.id.landAgenda_lun5),
-                owner.findViewById(R.id.landAgenda_lun6),
-                owner.findViewById(R.id.landAgenda_lun7),
-                owner.findViewById(R.id.landAgenda_lun8),
-                owner.findViewById(R.id.landAgenda_lun9),
-                owner.findViewById(R.id.landAgenda_lun10),
-                owner.findViewById(R.id.landAgenda_lun11),
-                owner.findViewById(R.id.landAgenda_lun12),
-                owner.findViewById(R.id.landAgenda_lun13)
+                owner.findViewById(R.id.landSchedule_lun0),
+                owner.findViewById(R.id.landSchedule_lun1),
+                owner.findViewById(R.id.landSchedule_lun2),
+                owner.findViewById(R.id.landSchedule_lun3),
+                owner.findViewById(R.id.landSchedule_lun4),
+                owner.findViewById(R.id.landSchedule_lun5),
+                owner.findViewById(R.id.landSchedule_lun6),
+                owner.findViewById(R.id.landSchedule_lun7),
+                owner.findViewById(R.id.landSchedule_lun8),
+                owner.findViewById(R.id.landSchedule_lun9),
+                owner.findViewById(R.id.landSchedule_lun10),
+                owner.findViewById(R.id.landSchedule_lun11),
+                owner.findViewById(R.id.landSchedule_lun12),
+                owner.findViewById(R.id.landSchedule_lun13)
             ),
             DayOfWeek.TUESDAY to listOf(
-                owner.findViewById(R.id.landAgenda_mar0),
-                owner.findViewById(R.id.landAgenda_mar1),
-                owner.findViewById(R.id.landAgenda_mar2),
-                owner.findViewById(R.id.landAgenda_mar3),
-                owner.findViewById(R.id.landAgenda_mar4),
-                owner.findViewById(R.id.landAgenda_mar5),
-                owner.findViewById(R.id.landAgenda_mar6),
-                owner.findViewById(R.id.landAgenda_mar7),
-                owner.findViewById(R.id.landAgenda_mar8),
-                owner.findViewById(R.id.landAgenda_mar9),
-                owner.findViewById(R.id.landAgenda_mar10),
-                owner.findViewById(R.id.landAgenda_mar11),
-                owner.findViewById(R.id.landAgenda_mar12),
-                owner.findViewById(R.id.landAgenda_mar13)
+                owner.findViewById(R.id.landSchedule_mar0),
+                owner.findViewById(R.id.landSchedule_mar1),
+                owner.findViewById(R.id.landSchedule_mar2),
+                owner.findViewById(R.id.landSchedule_mar3),
+                owner.findViewById(R.id.landSchedule_mar4),
+                owner.findViewById(R.id.landSchedule_mar5),
+                owner.findViewById(R.id.landSchedule_mar6),
+                owner.findViewById(R.id.landSchedule_mar7),
+                owner.findViewById(R.id.landSchedule_mar8),
+                owner.findViewById(R.id.landSchedule_mar9),
+                owner.findViewById(R.id.landSchedule_mar10),
+                owner.findViewById(R.id.landSchedule_mar11),
+                owner.findViewById(R.id.landSchedule_mar12),
+                owner.findViewById(R.id.landSchedule_mar13)
             ),
             DayOfWeek.WEDNESDAY to listOf(
-                owner.findViewById(R.id.landAgenda_mie0),
-                owner.findViewById(R.id.landAgenda_mie1),
-                owner.findViewById(R.id.landAgenda_mie2),
-                owner.findViewById(R.id.landAgenda_mie3),
-                owner.findViewById(R.id.landAgenda_mie4),
-                owner.findViewById(R.id.landAgenda_mie5),
-                owner.findViewById(R.id.landAgenda_mie6),
-                owner.findViewById(R.id.landAgenda_mie7),
-                owner.findViewById(R.id.landAgenda_mie8),
-                owner.findViewById(R.id.landAgenda_mie9),
-                owner.findViewById(R.id.landAgenda_mie10),
-                owner.findViewById(R.id.landAgenda_mie11),
-                owner.findViewById(R.id.landAgenda_mie12),
-                owner.findViewById(R.id.landAgenda_mie13)
+                owner.findViewById(R.id.landSchedule_mie0),
+                owner.findViewById(R.id.landSchedule_mie1),
+                owner.findViewById(R.id.landSchedule_mie2),
+                owner.findViewById(R.id.landSchedule_mie3),
+                owner.findViewById(R.id.landSchedule_mie4),
+                owner.findViewById(R.id.landSchedule_mie5),
+                owner.findViewById(R.id.landSchedule_mie6),
+                owner.findViewById(R.id.landSchedule_mie7),
+                owner.findViewById(R.id.landSchedule_mie8),
+                owner.findViewById(R.id.landSchedule_mie9),
+                owner.findViewById(R.id.landSchedule_mie10),
+                owner.findViewById(R.id.landSchedule_mie11),
+                owner.findViewById(R.id.landSchedule_mie12),
+                owner.findViewById(R.id.landSchedule_mie13)
             ),
             DayOfWeek.THURSDAY to listOf(
-                owner.findViewById(R.id.landAgenda_jue0),
-                owner.findViewById(R.id.landAgenda_jue1),
-                owner.findViewById(R.id.landAgenda_jue2),
-                owner.findViewById(R.id.landAgenda_jue3),
-                owner.findViewById(R.id.landAgenda_jue4),
-                owner.findViewById(R.id.landAgenda_jue5),
-                owner.findViewById(R.id.landAgenda_jue6),
-                owner.findViewById(R.id.landAgenda_jue7),
-                owner.findViewById(R.id.landAgenda_jue8),
-                owner.findViewById(R.id.landAgenda_jue9),
-                owner.findViewById(R.id.landAgenda_jue10),
-                owner.findViewById(R.id.landAgenda_jue11),
-                owner.findViewById(R.id.landAgenda_jue12),
-                owner.findViewById(R.id.landAgenda_jue13)
+                owner.findViewById(R.id.landSchedule_jue0),
+                owner.findViewById(R.id.landSchedule_jue1),
+                owner.findViewById(R.id.landSchedule_jue2),
+                owner.findViewById(R.id.landSchedule_jue3),
+                owner.findViewById(R.id.landSchedule_jue4),
+                owner.findViewById(R.id.landSchedule_jue5),
+                owner.findViewById(R.id.landSchedule_jue6),
+                owner.findViewById(R.id.landSchedule_jue7),
+                owner.findViewById(R.id.landSchedule_jue8),
+                owner.findViewById(R.id.landSchedule_jue9),
+                owner.findViewById(R.id.landSchedule_jue10),
+                owner.findViewById(R.id.landSchedule_jue11),
+                owner.findViewById(R.id.landSchedule_jue12),
+                owner.findViewById(R.id.landSchedule_jue13)
             ),
             DayOfWeek.FRIDAY to listOf(
-                owner.findViewById(R.id.landAgenda_vie0),
-                owner.findViewById(R.id.landAgenda_vie1),
-                owner.findViewById(R.id.landAgenda_vie2),
-                owner.findViewById(R.id.landAgenda_vie3),
-                owner.findViewById(R.id.landAgenda_vie4),
-                owner.findViewById(R.id.landAgenda_vie5),
-                owner.findViewById(R.id.landAgenda_vie6),
-                owner.findViewById(R.id.landAgenda_vie7),
-                owner.findViewById(R.id.landAgenda_vie8),
-                owner.findViewById(R.id.landAgenda_vie9),
-                owner.findViewById(R.id.landAgenda_vie10),
-                owner.findViewById(R.id.landAgenda_vie11),
-                owner.findViewById(R.id.landAgenda_vie12),
-                owner.findViewById(R.id.landAgenda_vie13)
+                owner.findViewById(R.id.landSchedule_vie0),
+                owner.findViewById(R.id.landSchedule_vie1),
+                owner.findViewById(R.id.landSchedule_vie2),
+                owner.findViewById(R.id.landSchedule_vie3),
+                owner.findViewById(R.id.landSchedule_vie4),
+                owner.findViewById(R.id.landSchedule_vie5),
+                owner.findViewById(R.id.landSchedule_vie6),
+                owner.findViewById(R.id.landSchedule_vie7),
+                owner.findViewById(R.id.landSchedule_vie8),
+                owner.findViewById(R.id.landSchedule_vie9),
+                owner.findViewById(R.id.landSchedule_vie10),
+                owner.findViewById(R.id.landSchedule_vie11),
+                owner.findViewById(R.id.landSchedule_vie12),
+                owner.findViewById(R.id.landSchedule_vie13)
             )
         )
     }
@@ -128,7 +128,7 @@ class AgendaLandscapeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setContentView(R.layout.activity_agenda_landscape)
+        this.setContentView(R.layout.activity_schedule_landscape)
         this.UI = ActivityUI(owner = this)
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
