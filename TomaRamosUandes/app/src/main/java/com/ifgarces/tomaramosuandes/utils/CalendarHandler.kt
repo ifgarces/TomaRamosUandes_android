@@ -130,8 +130,7 @@ object CalendarHandler {
                     icon = R.drawable.alert_icon,
                     message = """\
 No se pudo acceder al calendario escogido, probablemente por configuraciones \
-de seguridad estrictas de la cuenta asociada. Por favor intente con otro. \
-                    """.multilineTrim()
+de seguridad estrictas de la cuenta asociada. Por favor intente con otro.""".multilineTrim()
                 )
             },
             onItemSelected = { calendarID :Int, calendarName :String ->
@@ -178,10 +177,9 @@ de seguridad estrictas de la cuenta asociada. Por favor intente con otro. \
                     activity.infoDialog(
                         title = "Error",
                         message = """\
-No se pudo exportar al calendario de nombre ""%s"" los siguientes eventos: \
-%s \
-Intente de nuevo con otro calendario. \
-                        """.multilineTrim().format(calendarName, aux),
+No se pudo exportar al calendario de nombre ""${calendarName}"" los siguientes eventos: \
+${aux}
+Intente de nuevo con otro calendario.""".multilineTrim(),
                         icon = R.drawable.alert_icon
                     )
                 }

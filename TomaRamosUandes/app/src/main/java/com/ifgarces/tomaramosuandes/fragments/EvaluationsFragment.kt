@@ -82,8 +82,7 @@ class EvaluationsFragment : Fragment() {
             message = """\
 Aquí se ven las pruebas y exámenes de cada ramo que ud. haya tomado. \
 Use el botón "Exportar al calendario" para indexar las evaluaciones en su calendario (de Google, \
-por ejemplo). \
-            """.multilineTrim()
+por ejemplo).""".multilineTrim()
         )
     }
 }
