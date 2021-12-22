@@ -13,19 +13,13 @@ android {
         minSdkVersion 26
         targetSdkVersion 31
         versionCode 1
-        versionName APP_VERSION
+        versionName "2022-10.1"
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        buildTypes.each {
-            it.resValue 'string', 'CATALOG_PERIOD', CATALOG_PERIOD
-            it.resValue 'string', 'APP_VERSION', APP_VERSION
-            it.resValue 'string', 'APP_NAME', APP_NAME
-        }
-
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

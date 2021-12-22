@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ifgarces.tomaramosuandes.BuildConfig
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
@@ -103,7 +104,7 @@ class UserRamosFragment : Fragment() {
         val diagWebView :WebView = diagView.findViewById(R.id.about_webView)
         diagWebView.loadData( // loading HTML from asset file
             this.requireActivity().assets.open("AboutAndHelp.html").bufferedReader().readText()
-                .format(this.getString(R.string.APP_NAME), this.getString(R.string.APP_VERSION)),
+                .format(this.getString(R.string.app_name), BuildConfig.VERSION_NAME),
             "text/html",
             "UTF-8"
         )

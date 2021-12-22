@@ -82,6 +82,9 @@ data class RamoEvent(
         }
     }
 
+    /**
+     * Multiline description for the event.
+     */
     public fun toLargeString() :String {
         val dateOrDay :String =
             if (this.isEvaluation()) {
@@ -92,18 +95,16 @@ data class RamoEvent(
             }
         return """\
 Tipo: ${SpanishToStringOf.ramoEventType(eventType = this.type, shorten = false)!!}
-Ramo: ${
-            DataMaster.findRamo(
-                NRC = this.ramoNRC,
-                searchInUserList = false
-            )!!.nombre
-        } (NRC ${this.ramoNRC})
+Ramo: ${DataMaster.findRamo(
+    NRC = this.ramoNRC,
+    searchInUserList = false
+)!!.nombre} (NRC ${this.ramoNRC})
 Fecha: ${dateOrDay} (${this.startTime} - ${this.endTime})
 Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim()
     }
 
     /**
-     * Single line and short `toString()` method. Used in event conflict reports.
+     * Shortened description, e.g. for displaying a dialog with less characters and line breaks.
      */
     public fun toShortString() :String {
         val dateOrDay :String =
@@ -114,23 +115,16 @@ Sala: ${if (this.location != "") this.location else "(no informada)"}""".multili
             }
         return """\
 ${SpanishToStringOf.ramoEventType(eventType = this.type, shorten = false)!!}: ${
-            DataMaster.findRamo(
-                NRC = this.ramoNRC,
-                searchInUserList = false
-            )!!.nombre
-        }
+DataMaster.findRamo(
+    NRC = this.ramoNRC,
+    searchInUserList = false
+)!!.nombre}
 (${dateOrDay} ${this.startTime} - ${this.endTime})
-Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim().format(
-            SpanishToStringOf.ramoEventType(eventType = this.type, shorten = false)!!,
-            DataMaster.findRamo(NRC = this.ramoNRC, searchInUserList = false)!!.nombre,
-            dateOrDay,
-            this.startTime,
-            this.endTime
-        )
+Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim()
     }
 
     /**
-     * Checks if the event is a test or exam
+     * Checks whether the event is a test or exam.
      */
     public fun isEvaluation() :Boolean {
         return (this.type == RamoEventType.PRBA) || (this.type == RamoEventType.EXAM)

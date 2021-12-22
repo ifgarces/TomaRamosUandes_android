@@ -50,7 +50,7 @@ class CatalogFragment : Fragment() {
                     catalogPeriod = meta.catalogCurrentPeriod
                     catalogLastUpdateDate = meta.catalogLastUpdated
                 } else {
-                    catalogPeriod = homeActivity.getString(R.string.CATALOG_PERIOD)
+                    catalogPeriod = homeActivity.getString(R.string.catalog_period)
                     catalogLastUpdateDate = "[offline]"
                 }
             }

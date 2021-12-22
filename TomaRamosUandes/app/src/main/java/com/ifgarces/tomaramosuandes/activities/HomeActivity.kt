@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.ifgarces.tomaramosuandes.BuildConfig
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
 import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
@@ -44,21 +45,6 @@ class HomeActivity : AppCompatActivity() {
         this.navigator = HomeNavigator(homeActivity = this)
 
         // -----------------------------------------------------------------------------------------
-        /* For updating app metadata when the catalog or app version changes */
-//        FirebaseMaster.Developer.updateAppMetadata(
-//            metadata = AppMetadata(
-//                latestVersionName = this.getString(R.string.APP_VERSION),
-//                catalogCurrentPeriod = this.getString(R.string.CATALOG_PERIOD),
-//                catalogLastUpdated = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-//            ),
-//            onSuccess = {
-//                this.toastf("AppMetadata uploaded successfully")
-//            },
-//            onFailure = {
-//
-//            }
-//        )
-
         /* For updating the catalog itself */
 //        FirebaseMaster.Developer.uploadRamoCollection(
 //            ramos = DataMaster.getCatalogRamos(),
@@ -75,15 +61,34 @@ class HomeActivity : AppCompatActivity() {
         // -----------------------------------------------------------------------------------------
 
         // Showing progress bar until we get app metadata for the latest catalog version, app
-        // version itself (check for updates), etc.
+        // version itself, etc.
         this.showLoadingScreen()
         FirebaseMaster.getAppMetadata(
             onSuccess = { gotMetadata :AppMetadata ->
+                // Noticing the user in case an update is available
                 this.hideLoadingScreen()
-                this.latestMetadata = gotMetadata // storing latest metadata in memory
-                if (gotMetadata.latestVersionName != this.getString(R.string.APP_VERSION)) {
-                    this.runOnUiThread { // update available
-                        this.showUpdateAvailableDialog(gotMetadata)
+                this.latestMetadata = gotMetadata
+                if (gotMetadata.latestVersionName != BuildConfig.VERSION_NAME) {
+                    this.runOnUiThread {
+                        this.yesNoDialog(
+                            title = "Actualización disponible",
+                            message = """\
+Hay una nueva versión de esta app: ${gotMetadata.latestVersionName}.
+¿Ir al link de descarga ahora?
+
+* Si tiene problemas para actualizar, borre los datos de la app (revise el documento 'LÉEME' \
+disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
+                            onYesClicked = {
+                                // Opens direct APK download link in web browser
+                                this.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(AppMetadata.APK_DOWNLOAD_URL)
+                                    )
+                                )
+                            },
+                            icon = R.drawable.exclamation_icon
+                        )
                     }
                 }
             },
@@ -93,6 +98,7 @@ class HomeActivity : AppCompatActivity() {
             }
         )
 
+        // Setting click listener for bottom navbar
         UI.bottomNavbar.setOnItemSelectedListener { item :MenuItem ->
             when (item.itemId) {
                 R.id.bottom_nav_ramos -> {
@@ -119,20 +125,21 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() { //! this will destroy everything is the user rotates the screen, should change for setting this behaviour for onBackPressed? anyway, the solution is just set the activity as portrait-mode only.
+    override fun onDestroy() { //! this will destroy everything is the user rotates the screen, should change for setting this behaviour for onBackPressed? anyway, the solution is just set the activity as portrait-mode only. That will do for now.
         super.onDestroy()
         this.finishAffinity()
     }
 
     /**
-     * Displays a traslucid large loading screen in front of all other views (except top toolbar).
+     * Displays a half-transparent large loading screen in front of all other views, except the top
+     * toolbar, avoiding the user to click UI elements of the current fragment, etc.
      */
     public fun showLoadingScreen() {
         UI.loadScreenOverlay.visibility = View.VISIBLE
     }
 
     /**
-     * Hides the traslucid loading screen.
+     * Hides the overlay-like loading screen.
      */
     public fun hideLoadingScreen() {
         UI.loadScreenOverlay.visibility = View.GONE
@@ -144,7 +151,7 @@ class HomeActivity : AppCompatActivity() {
      * the toolbar to be loaded just once (on the activity) and its behaviour is updated on the fly
      * depending on the currently active fragment.
      * @author Ignacio F. Garcés.
-     * @param onClick Callback to run when the "help" button is clicked.
+     * @param onClick Callback to run when the "help" toolbar menu item is clicked.
      */
     public fun setTopToolbarValues(title :String, subtitle :String, onClick :() -> Unit) {
         UI.topToolbar.title = title
@@ -168,41 +175,27 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /**
-     * Sets the item in the bottom nav bar to display as selected, given a fragment class. Used to
-     * reflect navigations from one fragment to another in that bar.
+     * Sets the item in the bottom nav bar to display as selected, given a valid fragment class.
+     * Used to reflect navigations from one fragment to another in that bar.
      * References: https://www.py4u.net/discuss/603053
      * @author Ignacio F. Garcés.
-     * @param fragment The kotlin class for the fragment desired to be displayed as selected in the
+     * @exception Exception When the `fragment` parameter is an unexpected class (not corresponding
+     * to the Fragments attached to the bottom navbar items, which would be a dumb code mistake).
+     * @param fragment The kotlin class for the Fragment desired to be displayed as selected in the
      * nav bar.
      */
     public fun setBottomNavItemSelected(fragment :KClass<*>) {
-        val index :Int? = when (fragment) {
-            UserRamosFragment::class -> 0
-            SchedulePortraitFragment::class -> 1
-            EvaluationsFragment::class -> 2
-            else -> null
-        }
-        UI.bottomNavbar.menu.getItem(index!!).isChecked = true
-    }
-
-    public fun showUpdateAvailableDialog(mostRecientMetadata :AppMetadata) {
-        this.yesNoDialog(
-            title = "Actualización disponible",
-            message = """\
-Hay una nueva versión de esta app: ${mostRecientMetadata.latestVersionName}.
-¿Ir al link de descarga ahora?
-
-* Si tiene problemas para actualizar, desinstale la app manualmente e instale la versión más \
-reciente.""".multilineTrim(),
-            onYesClicked = { // opens direct APK download link in default browser
-                this.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(AppMetadata.APK_DOWNLOAD_URL)
+        UI.bottomNavbar.menu.getItem(
+            when (fragment) {
+                UserRamosFragment::class -> 0
+                SchedulePortraitFragment::class -> 1
+                EvaluationsFragment::class -> 2
+                else -> throw Exception(
+                    "Invalid target fragment class %s for HomeActivity.setBottomNavItemSelected".format(
+                        fragment.simpleName
                     )
                 )
-            },
-            icon = R.drawable.exclamation_icon
-        )
+            }
+        ).isChecked = true
     }
 }

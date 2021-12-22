@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity.Companion.ONSCROLL_BUTTON_RESPAWN_TIME
-import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity.Companion.ROWS_COUNT
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.*
@@ -138,27 +136,20 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
         UI.saveAsImgButton.setOnClickListener {
             Logf.debug(this::class, "Exporting schedule as image...")
-            try {
-                ImageExportHandler.exportWeekScheduleImage(
-                    activity = this,
-                    targetView = UI.scheduleBodyScroll,
-                    tallView = UI.scheduleBodyLayout
-                )
-            } catch (e :Exception) {
-                this.infoDialog(
-                    title = "Error",
-                    message = """\
-Uy! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Estamos trabajando \
-para usted.""".multilineTrim(),
-                    onDismiss = {},
-                    icon = R.drawable.alert_icon
-                )
+            if (!ImageExportHandler.exportWeekScheduleImage(
+                activity = this,
+                targetView = UI.scheduleBodyScroll,
+                tallView = UI.scheduleBodyLayout
+            )) {
+                ImageExportHandler.showImageExportErrorDialog(this)
             }
         }
         UI.toggleFullScreenButton.setColorFilter(Color.WHITE)
         UI.toggleFullScreenButton.setOnClickListener {
             this.toggleFullScreen()
         }
+
+        // Setting click listeners for each corresponding schedule block
         for (row :Int in (0 until ROWS_COUNT)) {
             for (day :DayOfWeek in listOf(
                 DayOfWeek.MONDAY,
@@ -252,10 +243,10 @@ para usted.""".multilineTrim(),
          * Click listener for an schedule block button.
          */
         public fun onBlockClicked(sender :Button, context :Context) {
-            val blockEvents :MutableList<RamoEvent> = scheduleData.findEventsOf(button = sender)!!
-            if (blockEvents.count() == 0) {
-                return
-            }
+            val blockEvents :MutableList<RamoEvent> = this.scheduleData.findEventsOf(
+                button = sender
+            )!!
+            if (blockEvents.count() == 0) return
 
             var info :String
             if (blockEvents.count() == 1) {
@@ -280,16 +271,17 @@ para usted.""".multilineTrim(),
         public fun buildSchedule(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
             Logf.debug(this::class, "Building week schedule...")
 
-            /* initializing */
-            scheduleData.clear()
+            // Initializing
+            this.scheduleData.clear()
             blocksMap.forEach { (_ :DayOfWeek, buttons :List<Button>) ->
                 buttons.forEach {
-                    scheduleData.add(ScheduleBlock(button = it, events = mutableListOf()))
+                    this.scheduleData.add(ScheduleBlock(button = it, events = mutableListOf()))
                 }
             }
 
             Executors.newSingleThreadExecutor().execute {
-                /* filling `scheduleData` i.e. mapping schedule block buttons with corresponding event(s) */
+                // Filling `scheduleData` i.e. mapping schedule block buttons with corresponding
+                // event(s)
                 var rowInterval :Pair<Int, Int> // ~ (rowStart, rowEnd)
                 DataMaster.getEventsByWeekDay()
                     .forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
@@ -297,22 +289,21 @@ para usted.""".multilineTrim(),
                             rowInterval =
                                 timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
                             for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
-                                scheduleData.findEventsOf(
+                                this.scheduleData.findEventsOf(
                                     button = blocksMap.getValue(key = day)[rowNum]
                                 )!!.add(ev)
                             }
                         }
                     }
 
-                /* displaying events assigned to each block button */
+                // Displaying events assigned to each block button (modifying Views on UI thread)
                 activity.runOnUiThread {
                     var break_loop :Boolean = false
-                    scheduleData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
-                        if (break_loop) {
-                            return@forEach
-                        }
+                    this.scheduleData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
+                        if (break_loop) return@forEach
+
                         events.forEachIndexed { index :Int, event :RamoEvent ->
-                            if (index == 0) {
+                            if (index == 0) { // no conflict, single event in block
                                 block.text = DataMaster.findRamo(
                                     NRC = event.ramoNRC,
                                     searchInUserList = true
@@ -326,9 +317,9 @@ para usted.""".multilineTrim(),
                                         else -> null // <- will never happen, unless dumb code mistake
                                     }
                                 block.setBackgroundColor(backColor!!)
-                            } else {
-                                block.setBackgroundColor(activity.getColor(R.color.conflict_background)) // visibly marking block as conflicted
-                                // concatenating multiple events in same block
+                            } else { // block with multiple events
+                                block.setBackgroundColor(activity.getColor(R.color.conflict_background))
+                                // Concatenating multiple events in same block
                                 block.text = "%s + %s".format(
                                     block.text, DataMaster.findRamo(
                                         NRC = event.ramoNRC,
@@ -336,7 +327,8 @@ para usted.""".multilineTrim(),
                                     )!!.nombre
                                 )
                                 // If three or more events are in the same block, avoid showing all
-                                // of them. They all can be viewed when on click
+                                // of them, preventing the `View` to get too big. They all can be
+                                // viewed when on click.
                                 if (block.text.toString().filter { it == '+' } .count() >= 2) {
                                     block.text = "%s + ...".format(block.text)
                                     break_loop = true // finishing this loop and parent loop
@@ -345,16 +337,22 @@ para usted.""".multilineTrim(),
                             }
                         }
                     }
-                    Logf.debug(this::class, "Agenda successfully built.")
+                    Logf.debug(this::class, "Week shcedule successfully built")
                 }
             }
         }
 
+        // Defining supported time interval for displaying in the schedule table blocks
         private val supportedHours_start :List<Int> = (8..21).toList() // [8, 21]
         private val supportedHours_end :List<Int> = (9..22).toList() // [9, 22]
+
+        /**
+         * Given a `start` and `end` time objects, returns the indexes of the block rows
+         * corresponding for that times, as a pair `(startRowIndex, endRowIndex)`.
+         */
         private fun timesToBlockIndexes(start :LocalTime, end :LocalTime) :Pair<Int, Int>? {
-            var rowStart :Int = supportedHours_start.indexOf(start.hour)
-            var rowEnd :Int = supportedHours_end.indexOf(end.hour) + 1
+            var rowStart :Int = this.supportedHours_start.indexOf(start.hour)
+            var rowEnd :Int = this.supportedHours_end.indexOf(end.hour) + 1
             if (rowStart == -1 || rowEnd == -1) return null // invalid hour(s): block wouldn't fit in schedule
             if (start.minute > 30) rowStart++
             if (end.minute > 20) rowEnd++

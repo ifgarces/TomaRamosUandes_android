@@ -21,7 +21,6 @@ import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
-import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import java.time.DayOfWeek
 
 
@@ -102,29 +101,18 @@ class SchedulePortraitFragment : Fragment() {
             UI.saveAsImgButton.setColorFilter(Color.WHITE)
             UI.saveAsImgButton.setOnClickListener {
                 Logf.debug(this::class, "Exporting user schedule as image...")
-                try {
-                    ImageExportHandler.exportWeekScheduleImage(
-                        activity = homeActivity,
-                        targetView = UI.agendaScroll,
-                        tallView = UI.agendaLayout
-                    )
-                } catch (e :Exception) {
-                    Logf.error(
-                        this::class, "Error catched on exporting image: %s",
-                        e.stackTraceToString()
-                    )
-                    homeActivity.infoDialog(
-                        title = "Error",
-                        message = """\
-Uy! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Estamos trabajando \
-para usted.""".multilineTrim(),
-                        onDismiss = {},
-                        icon = R.drawable.alert_icon
-                    )
+                if (!ImageExportHandler.exportWeekScheduleImage(
+                    activity = homeActivity,
+                    targetView = UI.agendaScroll,
+                    tallView = UI.agendaLayout
+                )) {
+                    ImageExportHandler.showImageExportErrorDialog(homeActivity)
                 }
             }
             UI.fullScreenButton.setColorFilter(Color.WHITE)
             UI.fullScreenButton.setOnClickListener {
+                // As navigating to `ScheduleLandscapeActivity` is heavy as there are many `View`s
+                // currently, we show a loading screen. We dismiss this loading screen `onResume`.
                 homeActivity.showLoadingScreen()
                 this.startActivity(
                     Intent(homeActivity, ScheduleLandscapeActivity::class.java)
@@ -142,7 +130,8 @@ para usted.""".multilineTrim(),
 
     override fun onResume() {
         super.onResume()
-        (this.requireActivity() as HomeActivity).hideLoadingScreen() //? needed for when coming back from ScheduleLandscapeActivity, right?
+        // The following is needed for when coming back from `ScheduleLandscapeActivity`
+        (this.requireActivity() as HomeActivity).hideLoadingScreen()
     }
 
     private fun showHelp() {

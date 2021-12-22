@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import com.ifgarces.tomaramosuandes.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -23,22 +24,57 @@ object ImageExportHandler {
     private const val IMG_SAVE_FOLDER :String = "Pictures/Horario"
 
     /**
+     * Displays a dialog noticing the user that there was an error while attempting to save the week
+     * schedule view as image to storage. I think I could find a better place for this auxiliar
+     * method?
+     */
+    public fun showImageExportErrorDialog(targetActivity :Activity) {
+        targetActivity.infoDialog(
+            title = "Error",
+            message = """\
+Uy! Ocurrió un error al intentar exportar el horario como imagen, qué pena. Estamos trabajando \
+para usted.""".multilineTrim(),
+            onDismiss = {},
+            icon = R.drawable.alert_icon
+        )
+    }
+
+    /**
      * Exports the week schedule as a PNG image, at path "Pictures/`this.saveFolder`"
+     * @exception Exception On storage permission issues or compatibility problems with Android API
+     * versions.
      * @param activity Needs the calling activity for several methods.
      * @param targetView The view that has all the elements that are wanted to be captured,
      * including itself (ScrollView).
      * @param tallView The view inside the `targetView`, which height could be larger (taller)
      * than the device's display height (LinearLayout).
+     * @returns Whether the operation was successfull or not.
      */
-    public fun exportWeekScheduleImage(activity :Activity, targetView :View, tallView :View) {
-        val capture :Bitmap = this.getBitmapOf(targetView, tallView)
-        this.saveImage(capture, activity)
+    public fun exportWeekScheduleImage(
+        activity :Activity, targetView :View, tallView :View
+    ) :Boolean {
+        try {
+            val capture :Bitmap = this.getBitmapOf(targetView, tallView)
+            this.saveImage(capture, activity)
+        } catch (e :Exception) {
+            Logf.error(
+                this::class,
+                "Could not export schedule as image: %s",
+                e.stackTraceToString()
+            )
+            return false
+        }
+        return true
     }
 
-    private fun getBitmapOf(
-        targetView :View,
-        tallView :View
-    ) :Bitmap { // references: http://hackerseve.com/android-save-view-as-image-and-share-externally/
+    /**
+     * Gets the `Bitmap` (image) object for a given UI `View`.
+     * References: http://hackerseve.com/android-save-view-as-image-and-share-externally/
+     * @param targetView The `View` desired to be converted to `Bitmap`.
+     * @param tallView The `View` object whose height could exceed the dimensions of the device's
+     * screen, e.g. a scrollable one.
+     */
+    private fun getBitmapOf(targetView :View, tallView :View) :Bitmap {
         val bitmap :Bitmap = Bitmap.createBitmap( //! <- see issue #16
             targetView.width, tallView.height, Bitmap.Config.ARGB_8888
         )
@@ -56,11 +92,16 @@ object ImageExportHandler {
         return bitmap
     }
 
-    private fun saveImage(
-        bitmap :Bitmap,
-        activity :Activity
-    ) { // references: https://stackoverflow.com/a/57265702
+    /**
+     * Saves the given `bitmap` as a PNG file in the default device directory for folders.
+     * @exception Exception Could happen due lack of permissions (for writting to storage) or
+     * compatibility issues between Android OS versions.
+     * References: https://stackoverflow.com/a/57265702
+     */
+    private fun saveImage(bitmap :Bitmap, activity :Activity) {
 //        this.checkPermissions(activity)
+
+        throw Exception("Testing exception scenario")
 
         val fileMetadata :ContentValues = ContentValues()
         fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "image/png")

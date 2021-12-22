@@ -10,8 +10,8 @@ package com.ifgarces.tomaramosuandes.models
  * Format: `DateTimeFormatter.ISO_DATE`. As string, for avoiding problems with serialization on DB.
  * @property TABLE_NAME Firebase table name (won't use Room local database for this data class).
  * @property APK_DOWNLOAD_URL Used to download the latest app itself (direct link to APK file).
- * @property USER_APP_URL The main user link of this project, where general information and latest
- * build are available.
+ * @property USER_APP_URL The main user link of this project (shortened), where general information
+ * and latest release build are available.
  */
 data class AppMetadata(
     val latestVersionName    :String,

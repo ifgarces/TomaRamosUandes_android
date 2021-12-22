@@ -3,22 +3,21 @@ package com.ifgarces.tomaramosuandes.utils
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import com.ifgarces.tomaramosuandes.utils.CsvHandler.EXPLICIT_COMMA_MARKER
-import com.ifgarces.tomaramosuandes.utils.CsvHandler.TIME_SEPARATOR
-import com.ifgarces.tomaramosuandes.utils.CsvHandler.date_format
-import com.ifgarces.tomaramosuandes.utils.CsvHandler.time_format
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.*
+import java.util.Locale
 
 
 /**
  * Handles CSV parsing.
- * @property EXPLICIT_COMMA_MARKER Indicates a comma inside an element of the CSV. Used to have elements like "element with;; comma" instead of "\"element with, comma\"" (harder to parse, and I do not want to use an external CSV parser).
- * @property TIME_SEPARATOR The symbol used to separate a beggining time from an ending time for an event in the CSV, e.g. "10:30 - 12:20".
+ * @property EXPLICIT_COMMA_MARKER Indicates a comma inside an element of the CSV. Used to have
+ * elements like "element with;; comma" instead of "\"element with, comma\"" (harder to parse, and I
+ * do not want to use an external CSV parser).
+ * @property TIME_SEPARATOR The symbol used to separate a beggining time from an ending time for an
+ * event in the CSV, e.g. "10:30 - 12:20".
  * @property date_format The date format for the events given in the CSV.
  * @property time_format The time format for the events given in the CSV.
  */

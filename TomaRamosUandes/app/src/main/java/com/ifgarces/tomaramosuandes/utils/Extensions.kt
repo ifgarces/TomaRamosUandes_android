@@ -16,7 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
-import java.util.*
+import java.util.Locale
 
 
 /**
@@ -41,7 +41,7 @@ fun String.spanishLowerCase() :String {
  */
 fun String.multilineTrim() :String { // Note: does not ignore tabs "\t".
     return this.replace("\\\n", "").trim() //TODO: unit tests
-    //? is this really needed?
+    //? Is this really needed? try with a standarized alternative for this.
 }
 
 /**
@@ -186,8 +186,8 @@ fun Activity.exitFullScreen() {
 }
 
 /**
- * Casting a Firebase doc to `Ramo`. Don't want to use `.toObject` as the model woult have to be
- * modified (allowing empty constructor).
+ * Casting a Firebase doc to `Ramo`. Don't want to use `.toObject`, as the model would have to be
+ * modified (allowing empty constructor, which is bad actually, I prefer this).
  */
 fun QueryDocumentSnapshot.toRamo() :Ramo {
     return Ramo(
@@ -204,6 +204,10 @@ fun QueryDocumentSnapshot.toRamo() :Ramo {
     )
 }
 
+/**
+ * Similarly to `QueryDocumentSnapshot.toRamo()`, casts a `QueryDocumentSnapshot` to `AppMetadata`,
+ * avoiding `.toObject` constraints for the target class.
+ */
 fun QueryDocumentSnapshot.toAppMetadata() :AppMetadata {
     return AppMetadata(
         latestVersionName = this.data.getValue("latestVersionName")!!.toString(),
@@ -211,4 +215,3 @@ fun QueryDocumentSnapshot.toAppMetadata() :AppMetadata {
         catalogLastUpdated = this.data.getValue("catalogLastUpdated")!!.toString(),
     )
 }
-
