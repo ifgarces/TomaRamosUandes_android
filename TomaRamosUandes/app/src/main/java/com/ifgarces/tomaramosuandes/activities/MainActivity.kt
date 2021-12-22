@@ -4,21 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.activities.MainActivity.Companion.PROGRESSBAR_SPAWN_TIMEOUT
 import com.ifgarces.tomaramosuandes.utils.*
 
 
 /**
- * Waits for the initialization of all catalog and user data and then, if successfull,
- * launches `HomeActivity`. If an error is triggered, prompts an info dialog and terminates the program.
+ * Waits for the initialization of all catalog and user data and then, if successfull, launches
+ * `HomeActivity`. If an error is triggered, prompts an info dialog and terminates the application.
  * @property PROGRESSBAR_SPAWN_TIMEOUT The amount of seconds before the ProgressBar appears in front
  * of the app icon when it just starts.
  */
 class MainActivity : AppCompatActivity() {
 
-    companion object {
+    private companion object {
         const val PROGRESSBAR_SPAWN_TIMEOUT :Long = 2
     }
 
@@ -33,8 +33,16 @@ class MainActivity : AppCompatActivity() {
         this.setContentView(R.layout.activity_main)
         this.UI = ActivityUI(owner = this)
 
-        UI.loadScreen.visibility = View.GONE
+        // Making sure Crashlytics is correctly configured (is this really needed?)
+        try {
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        } catch (e :Exception) { // catching, just in case
+            Logf.error(this::class, "Could not configure Crashlytics: %s", e.stackTraceToString())
+        }
 
+        // Displaying loading screen when it takes more than `PROGRESSBAR_SPAWN_TIMEOUT` seconds to
+        // initialize tha app
+        UI.loadScreen.visibility = View.GONE
         Thread { // <==> UI.loadScreen.postDelayed({ ... }, PROGRESSBAR_SPAWN_TIMEOUT)
             Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT * 1000)
             this.runOnUiThread {
@@ -42,6 +50,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.start()
 
+        // Initializing data: fetching latest catalog (Firebase) and loading local user data (Room)
         DataMaster.init(
             activity = this,
             clearDatabase = false, //! should be `false` on any release, don't forget!!

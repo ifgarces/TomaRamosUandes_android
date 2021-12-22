@@ -129,22 +129,16 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
             layout.viewTreeObserver?.addOnGlobalLayoutListener(object :
                 ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    try {
-                        layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        behavior.peekHeight = layout.height
-                        view?.requestLayout()
-                    } catch (e :Exception) {
-                        throw e
-                    }
+                    layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    behavior.peekHeight = layout.height
+                    view?.requestLayout()
                 }
             })
         }
     }
 
     override fun onCreateView(
-        inflater :LayoutInflater,
-        container :ViewGroup?,
-        savedInstanceState :Bundle?
+        inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View? {
         return inflater.inflate(R.layout.fragment_ramo_dialog, container, false)
     }

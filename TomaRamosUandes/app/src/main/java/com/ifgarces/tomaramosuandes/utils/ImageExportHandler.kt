@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.R
 import java.io.File
 import java.io.FileOutputStream
@@ -62,6 +63,7 @@ para usted.""".multilineTrim(),
                 "Could not export schedule as image: %s",
                 e.stackTraceToString()
             )
+            FirebaseCrashlytics.getInstance().recordException(e) // reporting to Crashlytics
             return false
         }
         return true
@@ -100,8 +102,6 @@ para usted.""".multilineTrim(),
      */
     private fun saveImage(bitmap :Bitmap, activity :Activity) {
 //        this.checkPermissions(activity)
-
-        throw Exception("Testing exception scenario")
 
         val fileMetadata :ContentValues = ContentValues()
         fileMetadata.put(MediaStore.Images.Media.MIME_TYPE, "image/png")

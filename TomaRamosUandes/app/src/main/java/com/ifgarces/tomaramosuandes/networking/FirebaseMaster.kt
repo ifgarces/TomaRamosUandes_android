@@ -27,7 +27,8 @@ object FirebaseMaster {
 
     /**
      * Utility method for easily writing to log in a standard format on a successful call. We won't
-     * be using `Logf` here, to distinguish logging from firebase, as it will get heavy.
+     * be using `Logf` here, to distinguish logging from firebase, as it will get heavy (not using
+     * `Logf`'s common tag tagging as the name of this object instead).
      * @author Ignacio F. Garcés.
      * @param methodName The name of the call method of this object, for tracing.
      * @param aditionalMessage Optional, custom message appended.
