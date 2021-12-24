@@ -28,60 +28,59 @@ object CsvHandler {
     private val date_format = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale("ES", "ES"))
     private val time_format = DateTimeFormatter.ISO_TIME
 
-    // Each line of the CSV file describes an event. These are the columns and their index:
+    /**
+     * Each line of the CSV file describes an event. These are the columns and their index.
+     */
     private val csv_columns = object {
         val PLAN_ESTUDIOS :Int = 0
-        val NRC :Int = 1
+        val NRC           :Int = 1
         val CONECTOR_LIGA :Int = 2
         val LISTA_CRUZADA :Int = 3
-        val MATERIA :Int = 4
-        val CURSONUM :Int = 5
-        val SECCIÓN :Int = 6
-        val NOMBRE :Int = 7
-        val CRÉDITO :Int = 8
-        val LUNES :Int = 9
-        val MARTES :Int = 10
-        val MIÉRCOLES :Int = 11
-        val JUEVES :Int = 12
-        val VIERNES :Int = 13
-        val FECHA_INICIO :Int = 15
-        val FECHA_FIN :Int = 16 // <- UNUSED
-        val SALA :Int = 17
-        val TIPO_EVENTO :Int = 18
-        val PROFESOR :Int = 19
+        val MATERIA       :Int = 4
+        val CURSONUM      :Int = 5
+        val SECCIÓN       :Int = 6
+        val NOMBRE        :Int = 7
+        val CRÉDITO       :Int = 8
+        val LUNES         :Int = 9
+        val MARTES        :Int = 10
+        val MIÉRCOLES     :Int = 11
+        val JUEVES        :Int = 12
+        val VIERNES       :Int = 13
+        val FECHA_INICIO  :Int = 15
+        val FECHA_FIN     :Int = 16 // <- UNUSED
+        val SALA          :Int = 17
+        val TIPO_EVENTO   :Int = 18
+        val PROFESOR      :Int = 19
 
         fun toDayOfWeek(column :Int) :DayOfWeek? {
             return when (column) {
-                9 -> DayOfWeek.MONDAY
-                10 -> DayOfWeek.TUESDAY
-                11 -> DayOfWeek.WEDNESDAY
-                12 -> DayOfWeek.THURSDAY
-                13 -> DayOfWeek.FRIDAY
+                this.LUNES -> DayOfWeek.MONDAY
+                this.MARTES -> DayOfWeek.TUESDAY
+                this.MIÉRCOLES -> DayOfWeek.WEDNESDAY
+                this.JUEVES -> DayOfWeek.THURSDAY
+                this.VIERNES -> DayOfWeek.FRIDAY
                 else -> null
             }
         }
     }
 
-    private val event_types = object { //! This may vary on time
-        val CLASE :String = "CLAS"
-        val AYUDANTÍA :String = "AYUD"
+    /**
+     * Encapsulates values for identifying event types (for the `TIPO_EVENTO` column).
+     */
+    private val event_types = object {
+        val CLASE       :String = "CLAS"
+        val AYUDANTÍA   :String = "AYUD"
         val LABORATORIO :String = "LABT"
-
+        val PRUEBA      :String = "PRBA"
+        val EXAMEN      :String = "EXAM"
         //val TUTORIAL    :String = "TUTR"
-        val PRUEBA :String = "PRBA"
-        val EXAMEN :String = "EXAM"
     }
 
     /**
-     * Converts the contents of the CSV (holding the period catalog) into a collection of `Ramo` and `RamoEvent`.
-     * On fatal parsing error (invalid `csv_lines`), returns null.
+     * Converts the contents of the CSV (holding the period catalog) into a collection of `Ramo` and
+     * `RamoEvent`. On fatal parsing error (invalid `csv_lines`), returns null.
      */
     public fun parseCSV(csv_lines :List<String>) :Pair<List<Ramo>, List<RamoEvent>>? {
-
-        // [!] ---
-        // [!] TODO: fix last row not being successfully parsed
-        // [!] ---
-
         val catalogResult :Pair<MutableList<Ramo>, MutableList<RamoEvent>> =
             Pair(mutableListOf(), mutableListOf()) // ~ (ramos, events)
 
@@ -104,7 +103,7 @@ object CsvHandler {
         var lineNum :Int = 0
         var badNRCsCount :Int = 0
 
-        while (lineNum++ < csv_lines.count() - 1) {
+        while (lineNum++ <= csv_lines.count()) {
             line = csv_lines[lineNum].split(",")
 
             try {
@@ -117,9 +116,6 @@ object CsvHandler {
                 )
                 current.NRC = -(badNRCsCount++)
             }
-//            catch (e :IndexOutOfBoundsException) {
-//                Logf.debug(this::class, "Error: index out of range when trying to get NRC for line %d: '%s'", lineNum, csv_lines[lineNum])
-//            }
 
             try {
                 current.curso = line[csv_columns.CURSONUM].toInt()
@@ -132,14 +128,15 @@ object CsvHandler {
                 current.curso = 0
             }
 
-
-            if (!NRCs.contains(current.NRC)) { // NUEVO `RAMO`
-                // finishing parsing of previus `Ramo`
+            // Will be trye when parsing a new `Ramo` (asumming they are properly ordered in the CSV
+            // file).
+            if (!NRCs.contains(current.NRC)) { //! on new `Ramo`
+                // Finishing parsing of previus `Ramo`
                 if (catalogResult.first.count() > 0) {
                     catalogResult.second.addAll(current.events!!)
                 }
 
-                // preparing parsing of new `Ramo`
+                // Preparing parsing of new `Ramo`
                 NRCs.add(current.NRC)
                 current.events = mutableListOf()
                 try {

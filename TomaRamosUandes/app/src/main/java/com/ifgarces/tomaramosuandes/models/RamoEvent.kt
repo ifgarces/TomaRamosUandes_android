@@ -32,7 +32,7 @@ data class RamoEvent(
     val dayOfWeek :DayOfWeek,
     val startTime :LocalTime,
     val endTime   :LocalTime,
-    var date      :LocalDate?
+    var date      :LocalDate? //TODO: set as non-null! due change on CsvHandler
 ) {
     companion object {
         const val TABLE_NAME :String = "ramo_event"

@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         // Displaying loading screen when it takes more than `PROGRESSBAR_SPAWN_TIMEOUT` seconds to
         // initialize tha app
         UI.loadScreen.visibility = View.GONE
-        Thread { // <==> UI.loadScreen.postDelayed({ ... }, PROGRESSBAR_SPAWN_TIMEOUT)
+        Thread {
             Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT * 1000)
             this.runOnUiThread {
                 UI.loadScreen.visibility = View.VISIBLE

@@ -10,9 +10,9 @@ Universidad de los Andes.
 
 ## Features
 
-- Automatic construction of week schedule.
+- Automatic construction of student's week schedule.
 - Exporting week schedule as image to the device's gallery.
-- Detection of conflict between events when inscribing courses.
+- Detection of conflicts between events when inscribing courses.
 - Exportation of evaluations of inscribed courses to the device's calendar of choice.
 - Persistance of inscribed courses in storage, so they will reappear when reopening the app.
 - **Only courses from the engineering curriculum map are available**, as I have no access to other schools's courses.

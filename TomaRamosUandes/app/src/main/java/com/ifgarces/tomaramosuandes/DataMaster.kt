@@ -2,6 +2,7 @@ package com.ifgarces.tomaramosuandes
 
 import android.app.Activity
 import androidx.room.Room
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
@@ -91,6 +92,7 @@ object DataMaster {
                         onSuccess.invoke()
                     },
                     onFailure = { e :Exception ->
+                        FirebaseCrashlytics.getInstance().recordException(e)
                         onRoomError.invoke(e)
                     }
                 )
@@ -109,6 +111,7 @@ object DataMaster {
                                 onSuccess.invoke()
                             },
                             onFailure = { e :Exception ->
+                                FirebaseCrashlytics.getInstance().recordException(e)
                                 onRoomError.invoke(e)
                             }
                         )
@@ -341,7 +344,8 @@ ${oldUserRamosReport}""".multilineTrim()
      * Attemps to inscribe `ramo` and add it to the user list. If any event of `ramo` collides with
      * another already inscribed `Ramo`, prompts conflict confirmation dialog and, if the user
      * decides to continue neverdeless, finishes the action.
-     * @param onFinish Will be executed when the inscription operation finished (because this is asyncronous).
+     * @param onFinish Will be executed when the inscription operation finished (because this is
+     * asyncronous).
      */
     public fun inscribeRamo(ramo :Ramo, activity :Activity, onFinish :() -> Unit) {
         var conflictReport :String = ""
