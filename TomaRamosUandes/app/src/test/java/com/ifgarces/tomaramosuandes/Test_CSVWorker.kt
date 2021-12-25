@@ -3,7 +3,7 @@ package com.ifgarces.tomaramosuandes
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import com.ifgarces.tomaramosuandes.utils.CsvHandler2
+import com.ifgarces.tomaramosuandes.utils.CsvHandler
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -54,6 +54,7 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
             charset = Charsets.UTF_8
         )
 
+        var k :Int = 0
         val expectedResult :Pair<List<Ramo>, List<RamoEvent>> = Pair(
             listOf(
                 Ramo(
@@ -84,7 +85,7 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
                     NRC = 3794,
                     nombre = "ALGEBRA LINEAL",
                     profesor = "BASTARRICA/MELGAREJO JOSEFINA ESTEFANIA",
-                    créditos = 10,
+                    créditos = 6,
                     materia = "ING",
                     curso = 1201,
                     sección = "1",
@@ -96,7 +97,7 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
                     NRC = 3795,
                     nombre = "ALGEBRA LINEAL",
                     profesor = "CARRASCO/BRIONES MIGUEL ANGEL",
-                    créditos = 10,
+                    créditos = 6,
                     materia = "ING",
                     curso = 1201,
                     sección = "2",
@@ -119,7 +120,7 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
             ),
             listOf(
                 RamoEvent(
-                    ID = 0,
+                    ID = k,
                     ramoNRC = 3789,
                     type = RamoEventType.CLAS,
                     location = "R-14",
@@ -129,7 +130,7 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
                     date = LocalDate.of(2022, 3, 2)
                 ),
                 RamoEvent(
-                    ID = 1,
+                    ID = ++k,
                     ramoNRC = 3789,
                     type = RamoEventType.CLAS,
                     location = "R-14",
@@ -139,17 +140,17 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
                     date = LocalDate.of(2022, 3, 2)
                 ),
                 RamoEvent(
-                    ID = 2,
+                    ID = ++k,
                     ramoNRC = 3789,
                     type = RamoEventType.AYUD,
                     location = "",
                     dayOfWeek = DayOfWeek.MONDAY,
                     startTime = LocalTime.of(14, 30),
                     endTime = LocalTime.of(16, 20),
-                    date = LocalDate.of(2022, 3, 2)
+                    date = LocalDate.of(2022, 3, 7)
                 ),
                 RamoEvent(
-                    ID = 3,
+                    ID = ++k,
                     ramoNRC = 3789,
                     type = RamoEventType.PRBA,
                     location = "",
@@ -159,7 +160,7 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
                     date = LocalDate.of(2022, 3, 24)
                 ),
                 RamoEvent(
-                    ID = 4,
+                    ID = ++k,
                     ramoNRC = 3790,
                     type = RamoEventType.PRBA,
                     location = "",
@@ -168,19 +169,315 @@ PE2016,3797,Foo,,ICC,4101,1,ALGORITHMS AND COMPETITIVE PRO,6,,,,15:30 -19:20,,,7
                     endTime = LocalTime.of(21, 20),
                     date = LocalDate.of(2022, 3, 24)
                 ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3789,
+                    type = RamoEventType.CLAS,
+                    location = "",
+                    dayOfWeek = DayOfWeek.TUESDAY,
+                    startTime = LocalTime.of(8, 30),
+                    endTime = LocalTime.of(12, 20),
+                    date = LocalDate.of(2022, 3, 2)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3789,
+                    type = RamoEventType.EXAM,
+                    location = "",
+                    dayOfWeek = DayOfWeek.TUESDAY,
+                    startTime = LocalTime.of(9, 30),
+                    endTime = LocalTime.of(11, 20),
+                    date = LocalDate.of(2022, 6, 28)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3789,
+                    type = RamoEventType.AYUD,
+                    location = "",
+                    dayOfWeek = DayOfWeek.WEDNESDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(17, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.CLAS,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(8, 30),
+                    endTime = LocalTime.of(10, 20),
+                    date = LocalDate.of(2022, 3, 2)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.AYUD,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(14, 30),
+                    endTime = LocalTime.of(16, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3789,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 4, 11)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 4, 11)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.CLAS,
+                    location = "R-11",
+                    dayOfWeek = DayOfWeek.TUESDAY,
+                    startTime = LocalTime.of(8, 30),
+                    endTime = LocalTime.of(12, 20),
+                    date = LocalDate.of(2022, 3, 2)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.EXAM,
+                    location = "",
+                    dayOfWeek = DayOfWeek.TUESDAY,
+                    startTime = LocalTime.of(9, 30),
+                    endTime = LocalTime.of(11, 20),
+                    date = LocalDate.of(2022, 6, 28)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.AYUD,
+                    location = "",
+                    dayOfWeek = DayOfWeek.WEDNESDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(17, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3790,
+                    type = RamoEventType.CLAS,
+                    location = "R-12",
+                    dayOfWeek = DayOfWeek.THURSDAY,
+                    startTime = LocalTime.of(8, 30),
+                    endTime = LocalTime.of(10, 20),
+                    date = LocalDate.of(2022, 3, 2)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.CLAS,
+                    location = "B-32",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(8, 30),
+                    endTime = LocalTime.of(10, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 4, 4)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 4, 4)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 5, 2)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.AYUD,
+                    location = "",
+                    dayOfWeek = DayOfWeek.TUESDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(17, 20),
+                    date = LocalDate.of(2022, 3, 14)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.EXAM,
+                    location = "",
+                    dayOfWeek = DayOfWeek.WEDNESDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(17, 20),
+                    date = LocalDate.of(2022, 6, 29)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 5, 2)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.CLAS,
+                    location = "R-14",
+                    dayOfWeek = DayOfWeek.FRIDAY,
+                    startTime = LocalTime.of(8, 30),
+                    endTime = LocalTime.of(10, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.CLAS,
+                    location = "I201",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(14, 30),
+                    endTime = LocalTime.of(16, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.THURSDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 5, 26)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.THURSDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 5, 26)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3794,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 6, 13)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.AYUD,
+                    location = "",
+                    dayOfWeek = DayOfWeek.TUESDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(17, 20),
+                    date = LocalDate.of(2022, 3, 14)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.CLAS,
+                    location = "H-208",
+                    dayOfWeek = DayOfWeek.WEDNESDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(17, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.EXAM,
+                    location = "",
+                    dayOfWeek = DayOfWeek.WEDNESDAY,
+                    startTime = LocalTime.of(11, 30),
+                    endTime = LocalTime.of(13, 20),
+                    date = LocalDate.of(2022, 6, 29)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3795,
+                    type = RamoEventType.PRBA,
+                    location = "",
+                    dayOfWeek = DayOfWeek.MONDAY,
+                    startTime = LocalTime.of(19, 30),
+                    endTime = LocalTime.of(21, 20),
+                    date = LocalDate.of(2022, 6, 13)
+                ),
+                RamoEvent(
+                    ID = ++k,
+                    ramoNRC = 3797,
+                    type = RamoEventType.CLAS,
+                    location = "",
+                    dayOfWeek = DayOfWeek.THURSDAY,
+                    startTime = LocalTime.of(15, 30),
+                    endTime = LocalTime.of(19, 20),
+                    date = LocalDate.of(2022, 3, 7)
+                ),
             )
         )
 
-        throw NotImplementedError()
+        val gotResult :Pair<List<Ramo>, List<RamoEvent>> = CsvHandler.parseCsv(
+            fileStream = tempFile.inputStream()
+        )
 
-        val gotResult :Pair<List<Ramo>, List<RamoEvent>> = CsvHandler2.parseCsv(tempFile)
-
-        if (expectedResult != gotResult) {
-            Assert.fail(
-                "[%s] Test failed.\nExpected:\n\t%s\nGot:\n\t%s".format(this::class.simpleName,
-                    expectedResult, gotResult
+        // The following is for debugging, for checking the precise difference between expected and
+        // got values, as built-in report for when `Assert.assertEquals` ain't too smart
+        expectedResult.first.forEach { eRamo :Ramo ->
+            if (!gotResult.first.contains(eRamo)) {
+                Assert.fail(
+                    "Expected %s not matching/missing from got results. Found with same MRC: %s".format(
+                        eRamo, gotResult.first.first { it.NRC == eRamo.NRC }
+                    )
                 )
-            )
+            }
         }
+        expectedResult.second.forEach { eRamoEvent :RamoEvent ->
+            if (!gotResult.second.contains(eRamoEvent)) {
+                Assert.fail(
+                    "Expected %s not matching/missing from got results. Found with same ID: %s".format(
+                        eRamoEvent, gotResult.second.first { it.ID == eRamoEvent.ID }
+                    )
+                )
+            }
+        }
+
+        // Ensuring equality
+        Assert.assertEquals(expectedResult, gotResult)
     }
 }

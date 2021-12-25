@@ -72,7 +72,7 @@ Los datos están dañados o no compatibles con esta versión del programa.""".mu
                                 this::class,
                                 "Wiping out existing Room database to avoid this same error to repeat eternally when re-opening the app."
                             )
-                            DataMaster.clear()
+                            DataMaster.clearUserRamos()
                         },
                         icon = R.drawable.alert_icon
                     )

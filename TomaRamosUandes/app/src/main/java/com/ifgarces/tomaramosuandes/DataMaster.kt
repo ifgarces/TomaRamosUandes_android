@@ -88,7 +88,7 @@ object DataMaster {
                 this.loadRoomUserData(
                     activity = activity,
                     onSuccess = {
-                        if (clearDatabase) this.clear()
+                        if (clearDatabase) this.clearUserRamos()
                         onSuccess.invoke()
                     },
                     onFailure = { e :Exception ->
@@ -107,7 +107,7 @@ object DataMaster {
                             activity = activity,
                             onSuccess = {
                                 // Clearing local Room database, if desired (debugging only!)
-                                if (clearDatabase) this.clear()
+                                if (clearDatabase) this.clearUserRamos()
                                 onSuccess.invoke()
                             },
                             onFailure = { e :Exception ->
@@ -129,18 +129,23 @@ object DataMaster {
 
     /**
      * Wipes out all `Ramo` and `RamoEvent`s from the user inscribed data. This does not affect
-     * the catalog.
-     * Warning: the `UserStats` are also cleared!
+     * the catalog. Does not clear `UserStats`.
      */
-    public fun clear() {
-        this.user_ramos.clear()
-        this.user_events.clear()
-        this.localDB.ramosDAO().clear()
-        this.localDB.eventsDAO().clear()
-        this.localDB.userStatsDAO().clear()
-        Logf.debug(this::class, "Local database cleaned.")
+    public fun clearUserRamos() {
+        Executors.newSingleThreadExecutor().execute {
+            this.user_ramos.clear()
+            this.user_events.clear()
+            this.localDB.ramosDAO().clear()
+            this.localDB.eventsDAO().clear()
+            Logf.debug(this::class, "Local database cleaned.")
+        }
     }
 
+    /**
+     * [This method must be executed in another thread]
+     * Loads local data from Room, ensures locally saved user-inscribed `Ramo`s are consistent with
+     * the current available catalog.
+     */
     private fun loadRoomUserData(
         activity :Activity,
         onSuccess :() -> Unit,
@@ -168,33 +173,28 @@ object DataMaster {
                 "User inscribed ramos are not consistent with the current catalog. User data cleared."
             )
             val oldUserRamosReport :String = "- %s".format(
-                this.user_ramos.map { it.nombre }
+                this.user_ramos.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
                     .joinToString("\n- ")
             )
-            this.clear()
             activity.runOnUiThread {
                 activity.infoDialog(
                     title = "Error de sincronización de ramos",
                     message = """\
 Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe \
-a que el catálogo fue actualizado y algún ramo suyo fue removido y modificado de alguna forma. \
+a que el catálogo fue actualizado y algún ramo suyo fue removido o modificado de alguna forma. \
 Los siguientes ramos fueron removidos por esta razón:
-${oldUserRamosReport}""".multilineTrim()
+${oldUserRamosReport}""".multilineTrim(),
+                    onDismiss = {
+                        this.initUserStats()
+                        this.clearUserRamos()
+                        onSuccess.invoke()
+                    }
                 )
             }
+            return
         }
 
-        this.localDB.userStatsDAO().getStats().let { stats :List<UserStats> ->
-            if (stats.count() == 0) { // happens at first run of the app since installation
-                this@DataMaster.user_stats = UserStats()
-                this@DataMaster.user_stats.firstRunOfApp = false
-                this@DataMaster.localDB.userStatsDAO().insert(this@DataMaster.user_stats)
-                this@DataMaster.user_stats.firstRunOfApp = true
-            } else {
-                this@DataMaster.user_stats = stats.first()
-                //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
-            }
-        }
+        this.initUserStats()
         Logf.debug(
             this::class,
             "Recovered user local data: %s ramos (with %d events).",
@@ -203,6 +203,25 @@ ${oldUserRamosReport}""".multilineTrim()
         )
 
         onSuccess.invoke()
+    }
+
+    /**
+     * Initializes `UserStats` from local Room database.
+     */
+    private fun initUserStats() {
+        Executors.newSingleThreadExecutor().execute {
+            this.localDB.userStatsDAO().getStats().let { stats :List<UserStats> ->
+                if (stats.count() == 0) { // happens at first run of the app since installation
+                    this@DataMaster.user_stats = UserStats()
+                    this@DataMaster.user_stats.firstRunOfApp = false
+                    this@DataMaster.localDB.userStatsDAO().insert(this@DataMaster.user_stats)
+                    this@DataMaster.user_stats.firstRunOfApp = true
+                } else {
+                    this@DataMaster.user_stats = stats.first()
+                    //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
+                }
+            }
+        }
     }
 
     /**
@@ -240,13 +259,10 @@ ${oldUserRamosReport}""".multilineTrim()
 
     private fun loadLocalOfflineCatalog(activity :Activity) {
         // Connection with remote database failed, using offline catalog
-        val csv_body :String = activity.assets.open("catalog_offline.csv")
-            .bufferedReader(Charsets.UTF_8).readText()
-
-        Logf.debug(this::class, "Parsing CSV...")
-        val (offlineRamos :List<Ramo>, offlineEvents :List<RamoEvent>) = CsvHandler.parseCSV(
-            csv_lines = csv_body.split("\n")
-        )!!
+        Logf.debug(this::class, "Loading offline catalog from CSV file...")
+        val (offlineRamos :List<Ramo>, offlineEvents :List<RamoEvent>) = CsvHandler.parseCsv(
+            fileStream = activity.assets.open(CsvHandler.CSV_FILE_NAME)
+        )
         this.catalog_ramos = offlineRamos
         this.catalog_events = offlineEvents
 
