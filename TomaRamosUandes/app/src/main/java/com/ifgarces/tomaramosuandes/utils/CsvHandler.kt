@@ -3,7 +3,6 @@ package com.ifgarces.tomaramosuandes.utils
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import java.io.File
 import java.io.InputStream
 import java.time.DayOfWeek
 import java.time.LocalDate

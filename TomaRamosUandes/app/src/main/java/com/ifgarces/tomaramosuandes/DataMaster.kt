@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Handles the database. This is like the controller in the MVC model. I'm too lazy to use
- * ViewModels instead.
+ * ViewModels instead. Never liked those anyway.
  * @property catalog_ramos Collection of available `Ramo` for the current period.
  * @property catalog_events Collection of available `RamoEvents` for the current period.
  * @property user_ramos Set of inscribed `Ramo` by the user.
@@ -92,7 +92,6 @@ object DataMaster {
                         onSuccess.invoke()
                     },
                     onFailure = { e :Exception ->
-                        FirebaseCrashlytics.getInstance().recordException(e)
                         onRoomError.invoke(e)
                     }
                 )
@@ -111,7 +110,6 @@ object DataMaster {
                                 onSuccess.invoke()
                             },
                             onFailure = { e :Exception ->
-                                FirebaseCrashlytics.getInstance().recordException(e)
                                 onRoomError.invoke(e)
                             }
                         )
@@ -137,7 +135,7 @@ object DataMaster {
             this.user_events.clear()
             this.localDB.ramosDAO().clear()
             this.localDB.eventsDAO().clear()
-            Logf.debug(this::class, "Local database cleaned.")
+            Logf.debug(this::class, "Local user-inscribed Ramos and RamoEvents cleared")
         }
     }
 
@@ -154,10 +152,14 @@ object DataMaster {
         // Building Room database. Will fail sometimes when updating the app. Must uninstall it
         // and install the new version manually on the device.
         try {
-            this.localDB =
-                Room.databaseBuilder(activity, LocalRoomDB::class.java, Ramo.TABLE_NAME).build()
+            this.localDB = Room.databaseBuilder(
+                activity, LocalRoomDB::class.java, Ramo.TABLE_NAME
+            ).build()
         } catch (e :Exception) {
-            Logf.error(this::class, "Error: could not load local Room database. %s", e)
+            Logf.error(
+                this::class, "Error: could not load local Room database. %s", e.stackTraceToString()
+            )
+            FirebaseCrashlytics.getInstance().recordException(e)
             onFailure.invoke(e)
         }
 
@@ -557,8 +559,8 @@ ${conflictReport}
     }
 
     /**
-     * [This function needs to be called on a separated thread]
-     * Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek`
+     * [This function needs to be called on a another thread]
+     * Gets all the non-evaluation events, filtered by each non-weekend `DayOfWeek`.
      */
     public fun getEventsByWeekDay() :Map<DayOfWeek, List<RamoEvent>> {
         val results :MutableMap<DayOfWeek, MutableList<RamoEvent>> = mutableMapOf(

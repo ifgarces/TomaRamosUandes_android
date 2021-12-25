@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                         title = "Error",
                         message = """\
 Se encontraron datos de ramos tomados por el usuario, pero no se pudieron cargar. \
-Los datos están dañados o no compatibles con esta versión del programa.""".multilineTrim(),
+Los datos están dañados o no compatibles con esta versión del programa. Qué tragedia.""".multilineTrim(),
                         onDismiss = {
                             Logf.debug(
                                 this::class,
