@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.BuildConfig
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
@@ -24,7 +24,7 @@ import com.ifgarces.tomaramosuandes.models.AppMetadata
 
 
 /**
- * Displays inscribed user's `Ramo`s,
+ * Displays inscribed user's `Ramo`s and allows navigating to the current catalog.
  */
 class UserRamosFragment : Fragment() {
 

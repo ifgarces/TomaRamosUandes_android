@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.utils.*
 
@@ -46,7 +46,13 @@ class MainActivity : AppCompatActivity() {
         Thread {
             Thread.sleep(PROGRESSBAR_SPAWN_TIMEOUT * 1000)
             this.runOnUiThread {
-                UI.loadScreen.visibility = View.VISIBLE
+                try {
+                    UI.loadScreen.visibility = View.VISIBLE
+                } catch (e :Exception) {
+                    // This may happen when the application takes far less time than expected for
+                    // initialization. If that's possible, the scenario is covered, just in case.
+                    Logf.warn(this::class, "Could not change visibility for load screen")
+                }
             }
         }.start()
 

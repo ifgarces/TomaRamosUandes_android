@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
@@ -168,12 +168,12 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
             }
         }
 
-        /* Hiding the floating button when user scrolls the schedule and showing it after some time */
+        // Hiding the floating button when user scrolls the schedule and showing it after some time
         UI.scheduleBodyScroll.setOnScrollChangeListener { _ :View, _ :Int, _ :Int, _ :Int, _ :Int ->
             if (UI.toggleFullScreenButton.visibility == View.VISIBLE) {
                 UI.toggleFullScreenButton.visibility = View.GONE
                 UI.toggleFullScreenButton.postDelayed({
-                        UI.toggleFullScreenButton.visibility = View.VISIBLE
+                    UI.toggleFullScreenButton.visibility = View.VISIBLE
                 }, ONSCROLL_BUTTON_RESPAWN_TIME + 120) // this tiny extra delay causes a nice translation animation, besides the fade in, for this button
             }
             if (UI.saveAsImgButton.visibility == View.VISIBLE) {
@@ -186,15 +186,16 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
         ScheduleWorker.buildSchedule(activity = this, blocksMap = UI.blocksMap)
 
+        // Disabling floating actions when there is not a single `Ramo` to display
         if (DataMaster.getUserRamos().count() == 0) {
-            UI.saveAsImgButton.isEnabled = false
-            UI.toggleFullScreenButton.isEnabled = false
+            listOf(UI.saveAsImgButton, UI.toggleFullScreenButton).forEach { floatingButt :FloatingActionButton ->
+                floatingButt.isEnabled = false
+            }
         }
     }
 
     /**
-     * Re-enabling fullscreen mode after dismissing a dialog, which
-     * causes to exit fullscreen mode
+     * Re-enabling fullscreen mode after dismissing a dialog, which causes to exit fullscreen mode.
      */
     override fun onWindowFocusChanged(hasFocus :Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -204,13 +205,13 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
     private var isFullScreenOn :Boolean = false
 
     /**
-     * Switches between full screen and normal screen modes
+     * Switches between full screen and normal screen modes.
      */
     private fun toggleFullScreen() {
         if (this.isFullScreenOn) {
             this.exitFullScreen()
             UI.toggleFullScreenButton.setImageResource(R.drawable.fullscreen_icon)
-            UI.toggleFullScreenButton.setColorFilter(Color.WHITE)
+            UI.toggleFullScreenButton.setColorFilter(Color.WHITE) // color filter must be aplied again, as the drawable gets refreshed
         } else {
             this.enterFullScreen()
             UI.toggleFullScreenButton.setImageResource(R.drawable.exit_fullscreen_icon)
@@ -230,13 +231,10 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
             val events :MutableList<RamoEvent>
         )
 
-        fun MutableList<ScheduleBlock>.findEventsOf(button :Button) :MutableList<RamoEvent>? {
-            this.forEach {
-                if (it.button == button) {
-                    return it.events
-                }
-            }
-            return null
+        fun MutableList<ScheduleBlock>.findEventsOf(button :Button) :MutableList<RamoEvent> {
+            return this.first { block :ScheduleBlock ->
+                block.button == button
+            }.events
         }
 
         /**
@@ -245,7 +243,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
         public fun onBlockClicked(sender :Button, context :Context) {
             val blockEvents :MutableList<RamoEvent> = this.scheduleData.findEventsOf(
                 button = sender
-            )!!
+            )
             if (blockEvents.count() == 0) return
 
             var info :String
@@ -291,7 +289,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
                             for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
                                 this.scheduleData.findEventsOf(
                                     button = blocksMap.getValue(key = day)[rowNum]
-                                )!!.add(ev)
+                                ).add(ev)
                             }
                         }
                     }

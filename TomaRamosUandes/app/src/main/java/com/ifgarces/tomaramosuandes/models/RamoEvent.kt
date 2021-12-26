@@ -2,7 +2,7 @@ package com.ifgarces.tomaramosuandes.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import java.time.DayOfWeek
@@ -95,7 +95,8 @@ data class RamoEvent(
             }
         return """\
 Tipo: ${SpanishToStringOf.ramoEventType(eventType = this.type, shorten = false)!!}
-Ramo: ${DataMaster.findRamo(
+Ramo: ${
+            DataMaster.findRamo(
     NRC = this.ramoNRC,
     searchInUserList = false
 )!!.nombre} (NRC ${this.ramoNRC})

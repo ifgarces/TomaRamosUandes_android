@@ -10,8 +10,8 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -63,7 +63,7 @@ para usted.""".multilineTrim(),
                 "Could not export schedule as image: %s",
                 e.stackTraceToString()
             )
-            FirebaseCrashlytics.getInstance().recordException(e) // reporting to Crashlytics
+            FirebaseMaster.reportErrorToCrashlytics(e) // reporting to Crashlytics
             return false
         }
         return true

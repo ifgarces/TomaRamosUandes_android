@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.activities.ScheduleLandscapeActivity
@@ -34,8 +34,8 @@ class SchedulePortraitFragment : Fragment() {
             owner.findViewById(R.id.portrSchedule_saveAsImage)
         val fullScreenButton :FloatingActionButton =
             owner.findViewById(R.id.portrSchedule_fullScreen)
-        val agendaScroll    :ScrollView = owner.findViewById(R.id.portrSchedule_scrollView)
-        val agendaLayout    :LinearLayout = owner.findViewById(R.id.portrSchedule_layout)
+        val scheduleScrollView :ScrollView = owner.findViewById(R.id.portrSchedule_scrollView)
+        val scheduleLayout :LinearLayout = owner.findViewById(R.id.portrSchedule_layout)
         val recyclerTeamMon :Pair<View, RecyclerView> =
             Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
                 owner.findViewById(R.id.portrSchedule_mondayHead),
@@ -103,8 +103,8 @@ class SchedulePortraitFragment : Fragment() {
                 Logf.debug(this::class, "Exporting user schedule as image...")
                 if (!ImageExportHandler.exportWeekScheduleImage(
                     activity = homeActivity,
-                    targetView = UI.agendaScroll,
-                    tallView = UI.agendaLayout
+                    targetView = UI.scheduleScrollView,
+                    tallView = UI.scheduleLayout
                 )) {
                     ImageExportHandler.showImageExportErrorDialog(homeActivity)
                 }
@@ -119,9 +119,11 @@ class SchedulePortraitFragment : Fragment() {
                 )
             }
 
+            // Disabling floating actions when there is not a single `Ramo` to display
             if (DataMaster.getUserRamos().count() == 0) {
-                UI.saveAsImgButton.isEnabled = false
-                UI.fullScreenButton.isEnabled = false
+                listOf(UI.saveAsImgButton, UI.fullScreenButton).forEach { floatingButt :FloatingActionButton ->
+                    floatingButt.isEnabled = false
+                }
             }
         }
 

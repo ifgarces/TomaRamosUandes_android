@@ -2,6 +2,7 @@ package com.ifgarces.tomaramosuandes.networking
 
 import android.app.Activity
 import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -73,6 +74,13 @@ siempre el catálogo más reciente.""".multilineTrim(),
             onDismiss = {},
             icon = R.drawable.no_internet_icon
         )
+    }
+
+    /**
+     * Intended for manually recording a non-fatal `Exception` to Firebase Crashlytics service.
+     */
+    public fun reportErrorToCrashlytics(t :Throwable) {
+        FirebaseCrashlytics.getInstance().recordException(t)
     }
 
     /**

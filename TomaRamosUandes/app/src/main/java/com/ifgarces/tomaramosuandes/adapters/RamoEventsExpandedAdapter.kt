@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.fragments.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
@@ -84,10 +84,12 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) :
                 helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
                 helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, true)
 
-                RamoDialogFragment(onDismissAction = {
-                    SingletonHelper.isInstanceActive = false
-                    this@RamoEventsExpandedAdapter.notifyDataSetChanged()
-                }).show(helper.supportFragmentManager, this::class.simpleName)
+                RamoDialogFragment(
+                    onDismissAction = {
+                        SingletonHelper.isInstanceActive = false
+                        this@RamoEventsExpandedAdapter.notifyDataSetChanged()
+                    }
+                ).show(helper.supportFragmentManager, this::class.simpleName)
             }
         }
     }

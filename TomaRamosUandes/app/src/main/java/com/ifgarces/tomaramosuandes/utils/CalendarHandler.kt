@@ -11,10 +11,9 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
 import androidx.core.app.ActivityCompat
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.ifgarces.tomaramosuandes.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -66,7 +65,7 @@ object CalendarHandler {
                     cur.position,
                     e.stackTraceToString()
                 )
-                FirebaseCrashlytics.getInstance().recordException(e)
+                FirebaseMaster.reportErrorToCrashlytics(e)
             }
         }
         cur.close()

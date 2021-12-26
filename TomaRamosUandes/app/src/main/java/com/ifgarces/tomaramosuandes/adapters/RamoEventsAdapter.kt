@@ -50,7 +50,7 @@ class RamoEventsAdapter(
             }
 
 
-            /* deciding if to show date or week day */
+            // Deciding whether to show date or week day
             if (event.isEvaluation()) { // evaluación
                 this.dayData.text = SpanishToStringOf.localDate(event.date!!) // e.g. "18/11/2020"
             } else { // clase, ayudantía o laboratorio
@@ -58,7 +58,7 @@ class RamoEventsAdapter(
                     .spanishUpperCase() // e.g. "viernes"
             }
 
-            /* deciding if to show event type */
+            // Deciding whether to show event type or not
             if (this@RamoEventsAdapter.showEventType) {
                 this.evType.visibility = View.VISIBLE
                 this.evType.text =

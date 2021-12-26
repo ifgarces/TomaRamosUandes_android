@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.ifgarces.tomaramosuandes.DataMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.fragments.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
@@ -84,10 +84,12 @@ class CatalogRamosAdapter(
                     (ramo in DataMaster.getUserRamos())
                 )
 
-                RamoDialogFragment(onDismissAction = {
-                    SingletonHelper.isInstanceActive = false
-                    this@CatalogRamosAdapter.notifyDataSetChanged()
-                }).show(helper.supportFragmentManager, this::class.simpleName)
+                RamoDialogFragment(
+                    onDismissAction = {
+                        SingletonHelper.isInstanceActive = false
+                        this@CatalogRamosAdapter.notifyDataSetChanged()
+                    }
+                ).show(helper.supportFragmentManager, this::class.simpleName)
             }
         }
     }
