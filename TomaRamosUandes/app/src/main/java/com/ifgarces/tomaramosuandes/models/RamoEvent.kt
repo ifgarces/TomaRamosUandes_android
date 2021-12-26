@@ -120,7 +120,7 @@ DataMaster.findRamo(
     NRC = this.ramoNRC,
     searchInUserList = false
 )!!.nombre}
-(${dateOrDay} ${this.startTime} - ${this.endTime})
+${dateOrDay} ${this.startTime} - ${this.endTime}
 Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim()
     }
 

@@ -25,9 +25,9 @@ import kotlin.reflect.KClass
 class HomeActivity : AppCompatActivity() {
 
     private class ActivityUI(owner :AppCompatActivity) {
-        val topToolbar        :MaterialToolbar = owner.findViewById(R.id.homeActivity_topbar)
-        val bottomNavbar      :BottomNavigationView = owner.findViewById(R.id.homeActivity_bottomNavView)
-        val loadScreenOverlay :View = owner.findViewById(R.id.homeActivity_loadScreen)
+        val topToolbar        :MaterialToolbar = owner.findViewById(R.id.home_topbar)
+        val bottomNavbar      :BottomNavigationView = owner.findViewById(R.id.home_bottomNavView)
+        val loadScreenOverlay :View = owner.findViewById(R.id.home_loadScreen)
     }
 
     private lateinit var UI :ActivityUI

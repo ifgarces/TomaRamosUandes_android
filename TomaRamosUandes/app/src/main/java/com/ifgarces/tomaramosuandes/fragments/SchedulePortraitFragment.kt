@@ -21,6 +21,7 @@ import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
+import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import java.time.DayOfWeek
 
 
@@ -80,7 +81,7 @@ class SchedulePortraitFragment : Fragment() {
             homeActivity.hideLoadingScreen()
 
             homeActivity.runOnUiThread {
-                /* initializing recyclers and hiding weekdays without events */
+                // Initializing recyclers and hiding weekdays without events
                 val agendaEvents :Map<DayOfWeek, List<RamoEvent>> = DataMaster.getEventsByWeekDay()
                 mapOf(
                     DayOfWeek.MONDAY to UI.recyclerTeamMon,
@@ -132,6 +133,7 @@ class SchedulePortraitFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         // The following is needed for when coming back from `ScheduleLandscapeActivity`
         (this.requireActivity() as HomeActivity).hideLoadingScreen()
     }
@@ -139,7 +141,9 @@ class SchedulePortraitFragment : Fragment() {
     private fun showHelp() {
         this.requireContext().infoDialog(
             title = "Ayuda - Horario",
-            message = "En esta vista puede ver el horario semanal (clases, ayudantías y laboratorios) de sus ramos actualmente inscritos.",
+            message = """\
+En esta vista puede ver el horario semanal (clases, ayudantías y laboratorios) de sus ramos \
+actualmente inscritos.""".multilineTrim(),
             onDismiss = {}
         )
     }

@@ -302,10 +302,13 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
                         events.forEachIndexed { index :Int, event :RamoEvent ->
                             if (index == 0) { // no conflict, single event in block
-                                block.text = DataMaster.findRamo(
-                                    NRC = event.ramoNRC,
-                                    searchInUserList = true
-                                )!!.nombre
+                                block.text = "%s%s".format(
+                                    DataMaster.findRamo(
+                                        NRC = event.ramoNRC,
+                                        searchInUserList = true
+                                    )!!.nombre,
+                                    if (event.location != "") "\n[%s]".format(event.location) else ""
+                                )
                                 val backColor :Int? =
                                     when (event.type) { // setting background color according to eventType
                                         RamoEventType.CLAS -> activity.getColor(R.color.clas)

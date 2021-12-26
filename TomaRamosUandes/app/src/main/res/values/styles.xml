@@ -8,10 +8,12 @@
 
     <!-- TODO: support dark theme -->
     <style name="AppNightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:backgroundTint">#292929</item>
+        <item name="colorPrimary">@color/nightColorPrimary</item>
+        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>
+        <item name="colorAccent">@color/nightColorAccent</item>
+        <item name="android:backgroundTint">#656565</item>
+        <item name="android:textColor">@color/almostWhite</item>
+        <item name="android:foregroundTint">@color/almostWhite</item>
     </style>
 
     <!-- Using this for Dialogs because, otherwise, the default button style is the standard UnelevatedButton, whose zero spacing behaves bad on yes/no Dialogs. -->
@@ -97,7 +99,7 @@
     </style>
 
     <style name="standardFloatingButton">
-        <item name="android:backgroundTint">@color/colorAccent</item>
+        <item name="android:backgroundTint">@color/colorPrimary</item>
         <item name="android:clickable">true</item>
         <item name="android:elevation">3dp</item>
         <item name="android:scaleX">1.1</item>

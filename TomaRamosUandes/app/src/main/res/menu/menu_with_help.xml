@@ -14,7 +14,7 @@
         android:visible="true"
         android:enabled="true" />
 
-    <item
+<!--    <item
         android:id="@+id/menu_settings"
         android:orderInCategory="1"
         app:showAsAction="never"
@@ -23,6 +23,6 @@
         android:iconTint="@color/almostWhite"
 
         android:visible="true"
-        android:enabled="true" />
+        android:enabled="true" />-->
 
 </menu>

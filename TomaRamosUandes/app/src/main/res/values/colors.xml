@@ -2,15 +2,13 @@
 <resources>
     <!-- Default light theme colors -->
     <color name="colorPrimary">#FFA200</color>
-    <color name="colorPrimaryDark">#979797</color>
+    <color name="colorPrimaryDark">#A7731A</color>
     <color name="colorAccent">#00AAD4</color>
 
     <!-- Night/dark theme colors -->
-    <color name="nightColorPrimary">#E49900</color>
-    <color name="nightColorPrimaryDark">#808080</color>
+    <color name="nightColorPrimary">#E3960F</color>
+    <color name="nightColorPrimaryDark">#333333</color>
     <color name="nightColorAccent">#0C8EAE</color>
-    <color name="nightBackgroundColor">#333333</color>
-    <color name="nightTextColor">#D6D6D6</color>
 
     <!-- General colors -->
     <color name="lighterGray">#CDCDCD</color>
