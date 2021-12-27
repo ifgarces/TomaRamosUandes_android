@@ -6,9 +6,11 @@
     <color name="colorAccent">#00AAD4</color>
 
     <!-- Night/dark theme colors -->
-    <color name="nightColorPrimary">#E3960F</color>
-    <color name="nightColorPrimaryDark">#333333</color>
-    <color name="nightColorAccent">#0C8EAE</color>
+    <color name="nightPrimary">#E3960F</color>
+    <color name="nightPrimaryDark">#333333</color>
+    <color name="nightAccent">#0C8EAE</color>
+    <color name="nightDefaultBackground">#444444</color>
+    <color name="nightDefaultForeground">#CDCDCD</color>
 
     <!-- General colors -->
     <color name="lighterGray">#CDCDCD</color>

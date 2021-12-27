@@ -14,9 +14,20 @@
         android:visible="true"
         android:enabled="true" />
 
+    <item
+        android:id="@+id/menu_night_mode"
+        android:orderInCategory="1"
+        app:showAsAction="never"
+        android:title="Modo oscuro"
+        android:icon="@drawable/moon_icon"
+        android:iconTint="@color/almostWhite"
+
+        android:visible="true"
+        android:enabled="true" />
+
 <!--    <item
         android:id="@+id/menu_settings"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         app:showAsAction="never"
         android:title="Configuraciones"
         android:icon="@drawable/settings_icon"

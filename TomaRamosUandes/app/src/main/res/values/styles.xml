@@ -7,14 +7,14 @@
     </style>
 
     <!-- TODO: support dark theme -->
-    <style name="AppNightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/nightColorPrimary</item>
-        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>
-        <item name="colorAccent">@color/nightColorAccent</item>
-        <item name="android:backgroundTint">#656565</item>
-        <item name="android:textColor">@color/almostWhite</item>
-        <item name="android:foregroundTint">@color/almostWhite</item>
-    </style>
+<!--    <style name="AppNightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        <item name="colorPrimary">@color/nightColorPrimary</item>-->
+<!--        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>-->
+<!--        <item name="colorAccent">@color/nightColorAccent</item>-->
+<!--        <item name="android:backgroundTint">#656565</item>-->
+<!--        <item name="android:textColor">@color/almostWhite</item>-->
+<!--        <item name="android:foregroundTint">@color/almostWhite</item>-->
+<!--    </style>-->
 
     <!-- Using this for Dialogs because, otherwise, the default button style is the standard UnelevatedButton, whose zero spacing behaves bad on yes/no Dialogs. -->
     <style name="myDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">

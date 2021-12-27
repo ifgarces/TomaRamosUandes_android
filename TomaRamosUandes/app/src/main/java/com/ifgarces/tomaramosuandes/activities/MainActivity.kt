@@ -30,7 +30,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
+
         this.setContentView(R.layout.activity_main)
+
+        //TODO: implement night theme for this activity
+//        if (...) {
+//            this.setContentView(R.layout.activity_main)
+//        } else {
+//            this.setContentView(R.layout.night_activity_main)
+//        }
+
         this.UI = ActivityUI(owner = this)
 
         // Making sure Crashlytics is correctly configured (is this really needed?)

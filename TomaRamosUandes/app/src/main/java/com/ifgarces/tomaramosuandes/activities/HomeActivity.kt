@@ -16,12 +16,20 @@ import com.ifgarces.tomaramosuandes.fragments.UserRamosFragment
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
 import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 import kotlin.reflect.KClass
 
 
+/**
+ * Base activity for the app itself, when initialization is done in `MainActivity`.
+ * @property navigator Navigator for this activity.
+ * @property latestMetadata Latest got `AppMetadata` object from Firebase (if reachable), used to
+ * checking for updates, etc.
+ */
 class HomeActivity : AppCompatActivity() {
 
     private class ActivityUI(owner :AppCompatActivity) {
@@ -40,7 +48,12 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setContentView(R.layout.activity_home)
+
+        if (DataMaster.getUserStats().nightModeOn) {
+            this.setContentView(R.layout.night_activity_home)
+        } else {
+            this.setContentView(R.layout.activity_home)
+        }
         this.UI = ActivityUI(owner = this)
         this.navigator = HomeNavigator(homeActivity = this)
 
@@ -115,9 +128,7 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                 }
                 else -> {
                     Logf.warn(
-                        this::class,
-                        "Warning: unknown bottom navbar element pressed (id=%d)",
-                        item.itemId
+                        this::class, "Unknown bottom navbar element pressed (id=%d)", item.itemId
                     )
                     return@setOnItemSelectedListener false
                 }
@@ -162,11 +173,34 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                     onClick.invoke()
                     return@setOnMenuItemClickListener true
                 }
+                R.id.menu_night_mode -> {
+                    // Toggling current night mode setting and restarting current activity for
+                    // applying changes
+                    DataMaster.toggleNightMode(
+                        onFinish = {
+                            this.runOnUiThread {
+                                val isNightModeActive :Boolean = DataMaster.getUserStats().nightModeOn
+                                this.infoDialog(
+                                    title = "Cambiar tema a %s".format(
+                                        if (isNightModeActive) "OSCURO" else "NORMAL"
+                                    ),
+                                    message = "La app se cerrará para aplicar los cambios. Luego, tendrá que volver a abrirla manualmente.",
+                                    onDismiss = {
+                                        Logf.debug(this::class, "Switching night mode to %s (exitting...)".format(
+                                            if (isNightModeActive) "OFF" else "ON"
+                                        ))
+                                        this.finishAffinity()
+                                    },
+                                    icon = R.drawable.check_icon
+                                )
+                            }
+                        }
+                    )
+                    return@setOnMenuItemClickListener true
+                }
                 else -> {
                     Logf.warn(
-                        this::class,
-                        "Warning: unknown top toolbar element pressed (id=%d)",
-                        item.itemId
+                        this::class, "Unknown top toolbar element pressed (id=%d)", item.itemId
                     )
                     return@setOnMenuItemClickListener false
                 }

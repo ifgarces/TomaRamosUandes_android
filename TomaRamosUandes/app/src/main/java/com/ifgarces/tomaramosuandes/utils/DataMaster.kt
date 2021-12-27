@@ -33,6 +33,7 @@ object DataMaster {
     private lateinit var catalog_events :List<RamoEvent>
 
     // User data
+    @Volatile
     private lateinit var user_stats :UserStats
     @Volatile
     private lateinit var user_ramos :MutableList<Ramo>
@@ -43,11 +44,11 @@ object DataMaster {
     private lateinit var ramosLock :ReentrantLock
     private lateinit var eventsLock :ReentrantLock
 
-    // Getters
-    fun getCatalogRamos() = catalog_ramos
-    fun getCatalogEvents() = catalog_events
-    fun getUserStats() = user_stats
-    fun getUserRamos() = user_ramos
+    // Getters (memory)
+    fun getCatalogRamos() = this.catalog_ramos
+    fun getCatalogEvents() = this.catalog_events
+    fun getUserStats() = this.user_stats
+    fun getUserRamos() = this.user_ramos
 
     /**
      * Fetches the catalog from a the internet, calling `WebManager` and processes it.
@@ -72,19 +73,19 @@ object DataMaster {
         onFirebaseError :(e :Exception) -> Unit,
         onRoomError :(e :Exception) -> Unit
     ) {
-        catalog_ramos = listOf()
-        user_ramos = mutableListOf()
-        user_events = mutableListOf()
-        ramosLock = ReentrantLock()
-        eventsLock = ReentrantLock()
+        this.catalog_ramos = listOf()
+        this.user_ramos = mutableListOf()
+        this.user_events = mutableListOf()
+        this.ramosLock = ReentrantLock()
+        this.eventsLock = ReentrantLock()
 
         if (forceLoadOfflineCSV) {
             // Connection with remote database failed, using local offline catalog
             // instead
-            loadLocalOfflineCatalog(activity)
+            this.loadLocalOfflineCatalog(activity)
 
             Executors.newSingleThreadExecutor().execute {
-                loadRoomUserData(
+                this.loadRoomUserData(
                     activity = activity,
                     onSuccess = {
                         if (clearDatabase) clearUserRamos()
@@ -97,11 +98,11 @@ object DataMaster {
             }
         } else {
             // Getting latest catalog and storing in memory
-            getCatalogFromFirebase(
+            this.getCatalogFromFirebase(
                 onSuccess = {
                     Executors.newSingleThreadExecutor().execute {
                         // Loading local user data, e.g. inscribed `Ramo`s
-                        loadRoomUserData(
+                        this.loadRoomUserData(
                             activity = activity,
                             onSuccess = {
                                 // Clearing local Room database, if desired (debugging only!)
@@ -115,9 +116,8 @@ object DataMaster {
                     }
                 },
                 onFailure = { e :Exception ->
-                    // Connection with remote database failed, using local offline catalog
-                    // instead
-                    loadLocalOfflineCatalog(activity)
+                    // Connection with remote database failed, using local offline catalog instead
+                    this.loadLocalOfflineCatalog(activity)
                     onFirebaseError.invoke(e)
                 }
             )
@@ -130,10 +130,10 @@ object DataMaster {
      */
     public fun clearUserRamos() {
         Executors.newSingleThreadExecutor().execute {
-            user_ramos.clear()
-            user_events.clear()
-            localDB.ramosDAO().clear()
-            localDB.eventsDAO().clear()
+            this.user_ramos.clear()
+            this.user_events.clear()
+            this.localDB.ramosDAO().clear()
+            this.localDB.eventsDAO().clear()
             Logf.debug(this::class, "Local user-inscribed Ramos and RamoEvents cleared")
         }
     }
@@ -151,7 +151,7 @@ object DataMaster {
         // Building Room database. Will fail sometimes when updating the app. Must uninstall it
         // and install the new version manually on the device.
         try {
-            localDB = Room.databaseBuilder(
+            this.localDB = Room.databaseBuilder(
                 activity, LocalRoomDB::class.java, Ramo.TABLE_NAME
             ).build()
         } catch (e :Exception) {
@@ -162,66 +162,88 @@ object DataMaster {
             onFailure.invoke(e)
         }
 
-        // Loading local database (user's inscribed Ramos)
-        user_ramos = localDB.ramosDAO().getAllRamos().toMutableList()
-        user_events = localDB.eventsDAO().getAllEvents().toMutableList()
+        this.initUserStats(
+            onFinish = {
+                // Loading local database (user's inscribed Ramos)
+                this.user_ramos = this.localDB.ramosDAO().getAllRamos().toMutableList()
+                this.user_events = this.localDB.eventsDAO().getAllEvents().toMutableList()
 
-        // Checking consistency of current catalog with existing data inscribed by the user found in
-        // local storage
-        if (! checkUserAndCatalogConsistency()) {
-            Logf.warn(
-                this::class,
-                "User inscribed ramos are not consistent with the current catalog. User data cleared."
-            )
-            val oldUserRamosReport :String = "- %s".format(
-                user_ramos.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
-                    .joinToString("\n- ")
-            )
-            activity.runOnUiThread {
-                activity.infoDialog(
-                    title = "Error de sincronización de ramos",
-                    message = """\
+                // Checking consistency of current catalog with existing data inscribed by the user found in
+                // local storage
+                if (! this.checkUserAndCatalogConsistency()) {
+                    Logf.warn(
+                        this::class,
+                        "User inscribed ramos are not consistent with the current catalog. User data cleared."
+                    )
+                    val oldUserRamosReport :String = "- %s".format(
+                        this.user_ramos.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
+                            .joinToString("\n- ")
+                    )
+                    activity.runOnUiThread {
+                        activity.infoDialog(
+                            title = "Error de sincronización de ramos",
+                            message = """\
 Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe \
 a que el catálogo fue actualizado y algún ramo suyo fue removido o modificado de alguna forma. \
 Los siguientes ramos fueron removidos por esta razón:
 ${oldUserRamosReport}""".multilineTrim(),
-                    onDismiss = {
-                        initUserStats()
-                        clearUserRamos()
-                        onSuccess.invoke()
+                            onDismiss = {
+                                this.clearUserRamos()
+                                // Invoking `onSuccess` after that dialog is dismissed, so we can
+                                // avoid the user from navigating to the next activity until they
+                                // dismiss the dialog (otherwise it wouldn't be visible, as the next
+                                // activity would be on top)
+                                onSuccess.invoke()
+                            }
+                        )
                     }
+                    return@initUserStats
+                }
+
+                Logf.debug(
+                    this::class, "Recovered user local data: %s ramos (with %d events)",
+                    this.user_ramos.count(), this.user_events.count()
                 )
+                onSuccess.invoke()
             }
-            return
-        }
-
-        initUserStats()
-        Logf.debug(
-            this::class,
-            "Recovered user local data: %s ramos (with %d events).",
-            user_ramos.count(),
-            user_events.count()
         )
-
-        onSuccess.invoke()
     }
 
     /**
-     * Initializes `UserStats` from local Room database.
+     * Initializes `UserStats` from local Room database. This was originally private and called only
+     * from `Datamaster.init`, but in order for the night theme setting to work on `MainActivity`,
+     * this method is intended to be called there.
+     * @param onFinish Callback invoked after database transaction finished successfully.
      */
-    private fun initUserStats() {
+    private fun initUserStats(onFinish :() -> Unit) {
         Executors.newSingleThreadExecutor().execute {
-            localDB.userStatsDAO().getStats().let { stats :List<UserStats> ->
+            this.localDB.userStatsDAO().getStats().let { stats :List<UserStats> ->
                 if (stats.count() == 0) { // happens at first run of the app since installation
-                    user_stats = UserStats()
-                    user_stats.firstRunOfApp = false
-                    localDB.userStatsDAO().insert(user_stats)
-                    user_stats.firstRunOfApp = true
+                    // We immediately set `firstRunOfApp` to false in database, but keep it `true`
+                    // in memory, only for this run (first run)
+                    this.user_stats = UserStats()
+                    this.user_stats.firstRunOfApp = false
+                    this.localDB.userStatsDAO().insert(this.user_stats)
+                    this.user_stats.firstRunOfApp = true
                 } else {
-                    user_stats = stats.first()
-                    //this@DataMaster.user_stats.firstRunOfApp = false // <- this line should not be necessary if the stats are saved to Room database always on app close.
+                    this.user_stats = stats.first()
                 }
             }
+            Logf.debug(this::class, this.user_stats.toString())
+            onFinish.invoke()
+        }
+    }
+
+    /**
+     * Updates `UserStats` in database (and memory) in order to preserve the user preference on app
+     * theme. The night mode setting is switched.
+     * @param onFinish Callback invoked after database transaction finished successfully.
+     */
+    public fun toggleNightMode(onFinish :() -> Unit) {
+        Executors.newSingleThreadExecutor().execute {
+            this.user_stats.nightModeOn = !this.user_stats.nightModeOn
+            this.localDB.userStatsDAO().update(this.user_stats)
+            onFinish.invoke()
         }
     }
 
@@ -239,11 +261,11 @@ ${oldUserRamosReport}""".multilineTrim(),
             onSuccess = { gotRamos :List<Ramo> ->
                 FirebaseMaster.getAllRamoEvents(
                     onSuccess = { gotEvents :List<RamoEvent> ->
-                        catalog_ramos = gotRamos
-                        catalog_events = gotEvents
+                        this.catalog_ramos = gotRamos
+                        this.catalog_events = gotEvents
                         Logf.debug(
                             this::class, "Fetched %d ramos and %d events from Firebase",
-                            catalog_ramos.count(), catalog_events.count()
+                            this.catalog_ramos.count(), this.catalog_events.count()
                         )
                         onSuccess.invoke()
                     },
@@ -258,18 +280,22 @@ ${oldUserRamosReport}""".multilineTrim(),
         )
     }
 
+    /**
+     * Parses the local CSV for loading catalog with no internet connection, and stores `Ramo`s and
+     * `RamoEvent`s in memory.
+     */
     private fun loadLocalOfflineCatalog(activity :Activity) {
         // Connection with remote database failed, using offline catalog
         Logf.debug(this::class, "Loading offline catalog from CSV file...")
         val (offlineRamos :List<Ramo>, offlineEvents :List<RamoEvent>) = CsvHandler.parseCsv(
             fileStream = activity.assets.open(CsvHandler.CSV_FILE_NAME)
         )
-        catalog_ramos = offlineRamos
-        catalog_events = offlineEvents
+        this.catalog_ramos = offlineRamos
+        this.catalog_events = offlineEvents
 
         Logf.debug(
-            this::class, "CSV parsing complete. Got %d ramos and %d events",
-            catalog_ramos.count(), catalog_events.count()
+            this::class, "CSV parsing complete, got %d ramos and %d events",
+            this.catalog_ramos.count(), this.catalog_events.count()
         )
     }
 
@@ -281,8 +307,8 @@ ${oldUserRamosReport}""".multilineTrim(),
      * `catalog_events`...
      */
     private fun checkUserAndCatalogConsistency() :Boolean {
-        catalog_ramos.forEach { catalogRamo :Ramo ->
-            user_ramos.forEach { userRamo :Ramo ->
+        this.catalog_ramos.forEach { catalogRamo :Ramo ->
+            this.user_ramos.forEach { userRamo :Ramo ->
                 if (userRamo.NRC == catalogRamo.NRC && userRamo != catalogRamo) {
                     // This will run when there's a user-inscribed Ramo that does not perfectly
                     // match the current catalog and therefore is not valid [anymore]
@@ -295,8 +321,8 @@ ${oldUserRamosReport}""".multilineTrim(),
                 }
             }
         }
-        catalog_events.forEach { catalogEvent :RamoEvent ->
-            user_events.forEach { userEvent :RamoEvent ->
+        this.catalog_events.forEach { catalogEvent :RamoEvent ->
+            this.user_events.forEach { userEvent :RamoEvent ->
                 if (userEvent.ID == catalogEvent.ID && userEvent != catalogEvent) {
                     // This will run when there's an event of a user-inscribed Ramo that does not
                     // perfectly match the current catalog and therefore is not valid [anymore]
@@ -316,19 +342,19 @@ ${oldUserRamosReport}""".multilineTrim(),
      * Returns all the `RamoEvent`s of all inscribed `Ramo`s that are a test or exam (not classes, etc.).
      */
     public fun getUserEvaluations() :List<RamoEvent> {
-        return user_events.filter { it.isEvaluation() }
+        return this.user_events.filter { it.isEvaluation() }
     }
 
     /**
      * Returns all the events of `ramo`.
-     * @param searchInUserList If true, will look into events incribed by user, otherwise it will
-     * search along all the events of the catalog.
+     * @param searchInUserList If true, will look into events incribed by user only, otherwise it
+     * will search along all the events of the catalog only.
      */
     public fun getEventsOfRamo(ramo :Ramo, searchInUserList :Boolean) :List<RamoEvent> {
         return if (searchInUserList) {
-            user_events.filter { it.ramoNRC == ramo.NRC }
+            this.user_events.filter { it.ramoNRC == ramo.NRC }
         } else {
-            catalog_events.filter { it.ramoNRC == ramo.NRC }
+            this.catalog_events.filter { it.ramoNRC == ramo.NRC }
         }
     }
 
@@ -342,15 +368,15 @@ ${oldUserRamosReport}""".multilineTrim(),
     public fun findRamo(NRC :Int, searchInUserList :Boolean) :Ramo? {
         if (searchInUserList) {
             try {
-                ramosLock.lock()
-                user_ramos.forEach {
+                this.ramosLock.lock()
+                this.user_ramos.forEach {
                     if (it.NRC == NRC) return it
                 }
             } finally {
-                ramosLock.unlock()
+                this.ramosLock.unlock()
             }
         } else {
-            catalog_ramos.forEach {
+            this.catalog_ramos.forEach {
                 if (it.NRC == NRC) return it
             }
         }
@@ -367,14 +393,14 @@ ${oldUserRamosReport}""".multilineTrim(),
     public fun inscribeRamo(ramo :Ramo, activity :Activity, onFinish :() -> Unit) {
         var conflictReport :String = ""
 
-        getEventsOfRamo(ramo = ramo, searchInUserList = false).forEach { event :RamoEvent ->
-            getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
+        this.getEventsOfRamo(ramo = ramo, searchInUserList = false).forEach { event :RamoEvent ->
+            this.getConflictsOf(event).forEach { conflictedEvent :RamoEvent ->
                 conflictReport += "• %s\n".format(conflictedEvent.toShortString())
             }
         }
 
         if (conflictReport == "") { // no conflict was found
-            inscribeRamoAction(
+            this.inscribeRamoAction(
                 ramo = ramo,
                 onFinish = {
                     onFinish.invoke()
@@ -390,7 +416,7 @@ Advertencia, los siguientes eventos entran en conflicto:
 ${conflictReport}
 ¿Tomar ${ramo.nombre} de todas formas?""".multilineTrim(),
                     onYesClicked = {
-                        inscribeRamoAction(
+                        this.inscribeRamoAction(
                             ramo = ramo,
                             onFinish = {
                                 onFinish.invoke()
@@ -582,7 +608,7 @@ ${conflictReport}
                                 DayOfWeek.THURSDAY -> results[DayOfWeek.THURSDAY]?.add(event)
                                 DayOfWeek.FRIDAY -> results[DayOfWeek.FRIDAY]?.add(event)
                                 else -> Logf.warn( // ignored
-                                    this::class, "Warning: unknown day for this event: %s", event
+                                    this::class, "Unknown day for this event: %s", event
                                 )
                             }
                         }
