@@ -52,18 +52,31 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
 
     private lateinit var UI :FragmentUI
 
+    override fun onCreateView(
+        inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
+    ) :View? {
+        return inflater.inflate(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_ramo_dialog
+            else R.layout.fragment_ramo_dialog,
+            container, false
+        )
+    }
+
     override fun onViewCreated(view :View, savedInstanceState :Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.UI = FragmentUI(owner = view)
 
         listOf(UI.clases, UI.ayuds, UI.labs, UI.evals).forEach { recycler :RecyclerView ->
-            recycler.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            recycler.layoutManager = LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
         }
 
-        val ramo_isInscribed :Boolean =
-            this.requireActivity().intent.getBooleanExtra(IntentKeys.RAMO_IS_INSCRIBED, false)
-        val nrc :Int = this.requireActivity().intent.getIntExtra(IntentKeys.RAMO_NRC, -99999)
+        val ramo_isInscribed :Boolean = this.requireActivity().intent.getBooleanExtra(
+            IntentKeys.RAMO_IS_INSCRIBED, false
+        )
+        val nrc :Int = this.requireActivity().intent.getIntExtra(IntentKeys.RAMO_NRC, -1)
+        assert(nrc != -1)
         val ramo :Ramo = DataMaster.findRamo(nrc, searchInUserList = false)!!
 
         UI.nombre.text = ramo.nombre
@@ -116,31 +129,28 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
         }
     }
 
-    override fun onStart() { // references: https://medium.com/@mhrpatel12/making-most-out-of-android-bottom-sheet-352c04551fb4
+    override fun onStart() {
         super.onStart()
 
-        // initializing the `BottomSheetDialog` fully expanded
+        // Initializing the `BottomSheetDialog` fully expanded.
+        // References: https://medium.com/@mhrpatel12/making-most-out-of-android-bottom-sheet-352c04551fb4
         this.dialog!!.also {
             val bottomSheet :View = dialog!!.findViewById(R.id.design_bottom_sheet)!!
             bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
             val behavior :BottomSheetBehavior<View> = BottomSheetBehavior.from(bottomSheet)
-            val layout :LinearLayout =
-                UI.rootView.findViewById(R.id.ramoDialog_linearLayout) as LinearLayout
-            layout.viewTreeObserver?.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    behavior.peekHeight = layout.height
-                    view?.requestLayout()
+            val layout :LinearLayout = UI.rootView.findViewById(
+                R.id.ramoDialog_linearLayout
+            ) as LinearLayout
+            layout.viewTreeObserver?.addOnGlobalLayoutListener(
+                object : ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        layout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        behavior.peekHeight = layout.height
+                        view?.requestLayout()
+                    }
                 }
-            })
+            )
         }
-    }
-
-    override fun onCreateView(
-        inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
-    ) :View? {
-        return inflater.inflate(R.layout.fragment_ramo_dialog, container, false)
     }
 
     override fun onDismiss(dialog :DialogInterface) {
