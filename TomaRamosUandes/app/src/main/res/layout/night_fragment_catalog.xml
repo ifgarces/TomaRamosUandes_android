@@ -15,7 +15,12 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
         android:hint="Buscar ramo"
-        android:background="@color/lightGray"
+        app:startIconTint="@color/nightDefaultForeground"
+        android:foregroundTint="@color/nightDefaultForeground"
+        android:textColorHint="@color/nightDefaultForeground"
+        app:placeholderTextColor="@color/nightDefaultForeground"
+        app:hintTextColor="@color/nightDefaultForeground"
+        app:boxStrokeColor="@color/nightDefaultForeground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,11 +38,12 @@
             android:textAlignment="viewStart" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- This TextView will be visible when the search has 0 results -->
     <TextView
         android:id="@+id/catalog_emptyRecyclerTextNotice"
         style="@style/standardTextView"
         android:text="Sin resultados"
-
+        android:textColor="@color/nightDefaultForeground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_recycler"
@@ -48,11 +54,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/catalog_recycler"
-        tools:listitem="@layout/ramo_item"
+        tools:listitem="@layout/night_ramo_item"
         android:orientation="vertical"
         android:scrollbars="vertical"
         android:scrollbarSize="10dp"
-        android:background="@android:color/white"
+        android:background="@android:color/transparent"
 
         android:layout_marginTop="6dp"
         android:layout_width="match_parent"

@@ -19,6 +19,9 @@ import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 
 
+/**
+ * Shows the evaluation for each inscribed `Ramo`.
+ */
 class EvaluationsFragment : Fragment() {
 
     private class FragmentUI(owner :View) {
@@ -31,7 +34,11 @@ class EvaluationsFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_evaluations, container, false)
+        val fragView :View = inflater.inflate(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_evaluations
+            else R.layout.fragment_evaluations,
+            container, false
+        )
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->

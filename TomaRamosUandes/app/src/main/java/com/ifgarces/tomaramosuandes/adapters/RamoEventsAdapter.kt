@@ -38,11 +38,6 @@ class RamoEventsAdapter(
     override fun onBindViewHolder(holder :EventVH, position :Int) =
         holder.bind(this.data[position], position)
 
-    fun updateData(data :List<RamoEvent>) {
-        this.data = data
-        this.notifyDataSetChanged()
-    }
-
     inner class EventVH(v :View) : RecyclerView.ViewHolder(v) {
         private val dayData  :TextView = v.findViewById(R.id.ramoEvent_when)
         private val ti       :TextView = v.findViewById(R.id.ramoEvent_ti)

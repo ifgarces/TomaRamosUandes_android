@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:nestedScrollingEnabled="true"
-    android:background="@android:color/white"
+    android:background="@color/nightDefaultBackground"
     tools:context=".fragments.EvaluationsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,7 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/ramo_with_evals_item" />
+        tools:listitem="@layout/night_ramo_with_evals_item" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/evals_exportEventsButton"
@@ -30,7 +30,7 @@
         app:icon="@drawable/assignment_returned_icon"
         android:textAllCaps="true"
         android:textSize="@dimen/buttonMediumTextSize"
-
+        app:backgroundTint="@color/nightPrimary"
         android:layout_margin="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
