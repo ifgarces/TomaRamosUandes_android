@@ -39,7 +39,11 @@ class CatalogFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_catalog, container, false)
+        val fragView :View = inflater.inflate(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_catalog
+            else R.layout.fragment_catalog,
+            container, false
+        )
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
@@ -65,7 +69,7 @@ class CatalogFragment : Fragment() {
 
             this.catalogRamosAdapter = CatalogRamosAdapter(
                 data = DataMaster.getCatalogRamos().toMutableList(),
-                isAllInscribed = false
+                colorizeInscribed = false
             )
             UI.recycler.adapter = this.catalogRamosAdapter
             UI.recycler.layoutManager = LinearLayoutManager(homeActivity)

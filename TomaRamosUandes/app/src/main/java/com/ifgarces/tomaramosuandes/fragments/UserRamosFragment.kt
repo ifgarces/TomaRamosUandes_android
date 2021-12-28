@@ -39,7 +39,11 @@ class UserRamosFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_user_ramos, container, false)
+        val fragView :View = inflater.inflate(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_user_ramos
+            else R.layout.fragment_user_ramos,
+            container, false
+        )
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
@@ -55,7 +59,7 @@ class UserRamosFragment : Fragment() {
             UI.ramosRecycler.layoutManager = LinearLayoutManager(homeActivity)
             UI.ramosRecycler.adapter = CatalogRamosAdapter(
                 data = DataMaster.getUserRamos(),
-                isAllInscribed = true
+                colorizeInscribed = true
             )
 
             UI.catalogButton.setOnClickListener {

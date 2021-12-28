@@ -4,28 +4,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.fragments.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.utils.IntentKeys
 
 
+/**
+ * For displaying a collection of `Ramo`s.
+ * @property data The collection of items to display.
+ * @property colorizeInscribed Whether any inscribed `Ramo` being displayed should be highlighted in
+ * another color. This makes sense in the catalog, but not in `UserRamosFragment`.
+ */
 class CatalogRamosAdapter(
     private var data :MutableList<Ramo>,
-    private val isAllInscribed :Boolean // indicates whether all ramos in `data` are inscribed. If not, will highlight inscribed ones
+    private val colorizeInscribed :Boolean
 ) : RecyclerView.Adapter<CatalogRamosAdapter.CatalogVH>() {
 
+    /**
+     * Auxiliar object used to prevent the dialog from being invoked more than once if user clicks
+     * again while still loading from first click. This is very unlikely to happen, but just in
+     * case.
+     */
     private object SingletonHelper {
-        // used to prevent the dialog from being invoked more than once if user clicks again while still loading from first click
         var isInstanceActive :Boolean = false
     }
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :CatalogVH {
         return CatalogVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.ramo_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramo_item
+                else R.layout.ramo_item,
+                parent, false
+            )
         )
     }
 
@@ -54,42 +68,43 @@ class CatalogRamosAdapter(
             this.NRC.text = ramo.NRC.toString()
             this.sección.text = ramo.sección
 
-            // Setting card background color based on inscribe status
-            if (!this@CatalogRamosAdapter.isAllInscribed) { // distinguishing between inscribed and uninscribed (in catalog)
-                if (ramo in DataMaster.getUserRamos()) {
-                    this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_inscribed))
-                } else {
-                    this.parentView.setBackgroundColor(this.parentView.context.getColor(R.color.catalog_unInscribed))
+            (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->
+                val isInscribed :Boolean = ramo in DataMaster.getUserRamos()
+                // Setting card background color based on inscribe status
+                if (!this@CatalogRamosAdapter.colorizeInscribed) {
+                    this.parentView.setBackgroundColor(
+                        homeActivity.getColor(
+                            if (isInscribed) R.color.catalog_inscribed
+                            else R.color.catalog_unInscribed
+                        )
+                    )
                 }
-            }
 
-            // Setting `planEstudios` background color
-            if (ramo.planEstudios == "PE2016") {
-                this.planEstudios.setTextColor(this.parentView.context.getColor(R.color.PE2016))
-            } else { // "PE2011", "PE2011/PE2016"
-                this.planEstudios.setTextColor(this.parentView.context.getColor(R.color.PE2011))
-            }
-
-            // Calling `Ramo` dialog card clicked
-            this.parentView.setOnClickListener {
-                if (SingletonHelper.isInstanceActive) {
-                    return@setOnClickListener
-                }
-                SingletonHelper.isInstanceActive = true
-
-                val helper :FragmentActivity = this.parentView.context as FragmentActivity
-                helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
-                helper.intent.putExtra(
-                    IntentKeys.RAMO_IS_INSCRIBED,
-                    (ramo in DataMaster.getUserRamos())
+                // Setting `planEstudios` background color
+                this.planEstudios.setTextColor(
+                    homeActivity.getColor(
+                        if (ramo.planEstudios == "PE2016") R.color.PE2016
+                        else R.color.PE2011 // for both values "PE2011" and "PE2011/PE2016"
+                    )
                 )
 
-                RamoDialogFragment(
-                    onDismissAction = {
-                        SingletonHelper.isInstanceActive = false
-                        this@CatalogRamosAdapter.notifyDataSetChanged()
+                // Calling `Ramo` dialog card clicked
+                this.parentView.setOnClickListener {
+                    if (SingletonHelper.isInstanceActive) {
+                        return@setOnClickListener
                     }
-                ).show(helper.supportFragmentManager, this::class.simpleName)
+                    SingletonHelper.isInstanceActive = true
+
+                    homeActivity.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
+                    homeActivity.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, isInscribed)
+
+                    RamoDialogFragment(
+                        onDismissAction = {
+                            SingletonHelper.isInstanceActive = false
+                            this@CatalogRamosAdapter.notifyDataSetChanged() //! not the most optimal way to do this...
+                        }
+                    ).show(homeActivity.supportFragmentManager, RamoDialogFragment::class.simpleName)
+                }
             }
         }
     }

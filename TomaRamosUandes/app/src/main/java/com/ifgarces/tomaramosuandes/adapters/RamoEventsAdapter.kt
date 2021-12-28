@@ -7,10 +7,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 
 
+/**
+ * For displaying `RamoEvent`s.
+ * @property data The collection of items to display.
+ * @property showEventType Whether to display a TextView indicating the type for each event. Useful
+ * for when displaying different types (e.g. not for when displaying only evaluations).
+ */
 class RamoEventsAdapter(
     private var data :List<RamoEvent>,
     private val showEventType :Boolean
@@ -18,7 +25,11 @@ class RamoEventsAdapter(
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventVH {
         return EventVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.ramoevent_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramoevent_item
+                else R.layout.ramoevent_item,
+                parent, false
+            )
         )
     }
 
@@ -46,23 +57,25 @@ class RamoEventsAdapter(
                 this.location.text = "Sala: %s".format(event.location)
             } else {
                 this.location.text = "(sala no informada)"
-                this.location.setTextColor(this.location.context.getColor(R.color.lightGray))
+                this.location.setTextColor(this.location.context.getColor(
+                    if (DataMaster.getUserStats().nightModeOn) R.color.nightDefaultForeground
+                    else R.color.lightGray
+                ))
             }
 
-
-            // Deciding whether to show date or week day
+            // Deciding whether to show full date or just day of week
             if (event.isEvaluation()) { // evaluación
                 this.dayData.text = SpanishToStringOf.localDate(event.date!!) // e.g. "18/11/2020"
             } else { // clase, ayudantía o laboratorio
-                this.dayData.text = SpanishToStringOf.dayOfWeek(event.dayOfWeek)
-                    .spanishUpperCase() // e.g. "viernes"
+                this.dayData.text = SpanishToStringOf.dayOfWeek(event.dayOfWeek).spanishUpperCase() // e.g. "viernes"
             }
 
             // Deciding whether to show event type or not
             if (this@RamoEventsAdapter.showEventType) {
                 this.evType.visibility = View.VISIBLE
-                this.evType.text =
-                    SpanishToStringOf.ramoEventType(eventType = event.type, shorten = false)
+                this.evType.text = SpanishToStringOf.ramoEventType(
+                    eventType = event.type, shorten = false
+                )
             } else {
                 this.evType.visibility = View.GONE
             }

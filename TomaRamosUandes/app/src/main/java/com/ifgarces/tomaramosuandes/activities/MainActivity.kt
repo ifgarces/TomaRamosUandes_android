@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
@@ -32,8 +34,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         this.setContentView(R.layout.activity_main)
+        this.enterFullScreen()
 
-        //TODO: implement night theme for this activity
+        //TODO: implement night theme for this activity (would be great)
 //        if (...) {
 //            this.setContentView(R.layout.activity_main)
 //        } else {

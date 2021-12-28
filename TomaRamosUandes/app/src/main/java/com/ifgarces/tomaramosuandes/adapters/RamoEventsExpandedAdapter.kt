@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.fragments.RamoDialogFragment
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
@@ -23,14 +23,16 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) :
      * while the first one is still loading.
      */
     private object SingletonHelper {
-        @Volatile
         var isInstanceActive :Boolean = false
     }
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :ExpandedEventVH {
         return ExpandedEventVH(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.ramo_with_evals_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramo_with_evals_item
+                else R.layout.ramo_with_evals_item,
+                parent, false
+            )
         )
     }
 
@@ -38,11 +40,6 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) :
 
     override fun onBindViewHolder(holder :ExpandedEventVH, position :Int) =
         holder.bind(this.data[position], position)
-
-    fun updateData(data :List<Ramo>) {
-        this.data = data
-        this.notifyDataSetChanged()
-    }
 
     inner class ExpandedEventVH(v :View) : RecyclerView.ViewHolder(v) {
         private val parentView     :View = v // MaterialCardView
@@ -53,43 +50,43 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) :
         fun bind(ramo :Ramo, position :Int) {
             this.ramoName.text = ramo.nombre
 
-            /* deciding if to show empty recycler TextView or show the recycler */
-            val recyclerData :List<RamoEvent> =
-                DataMaster.getCatalogEvents().filter { it.ramoNRC == ramo.NRC }
-                    .filter { it.isEvaluation() } // using this instead of roomDB should improve performance
+            (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->
+                val recyclerData :List<RamoEvent> =
+                    DataMaster.getCatalogEvents().filter { it.ramoNRC == ramo.NRC }
+                        .filter { it.isEvaluation() } // using this instead of roomDB should improve performance
 
-            if (recyclerData.count() == 0) {
-                this.emptyMarker.visibility = View.VISIBLE
-                this.eventsRecycler.visibility = View.GONE
-            } else {
-                this.emptyMarker.visibility = View.GONE
-                this.eventsRecycler.visibility = View.VISIBLE
-                this.eventsRecycler.layoutManager = LinearLayoutManager(
-                    parentView.context!!,
-                    LinearLayoutManager.HORIZONTAL,
-                    false
-                )
-                this.eventsRecycler.adapter =
-                    RamoEventsAdapter(data = recyclerData, showEventType = true)
-            }
-
-            /* calling `Ramo` dialog card clicked */
-            this.parentView.setOnClickListener {
-                if (SingletonHelper.isInstanceActive) {
-                    return@setOnClickListener
+                // Deciding if to show empty recycler TextView or show the recycler
+                if (recyclerData.count() == 0) {
+                    this.emptyMarker.visibility = View.VISIBLE
+                    this.eventsRecycler.visibility = View.GONE
+                } else {
+                    this.emptyMarker.visibility = View.GONE
+                    this.eventsRecycler.visibility = View.VISIBLE
+                    this.eventsRecycler.layoutManager = LinearLayoutManager(
+                        homeActivity, LinearLayoutManager.HORIZONTAL, false
+                    )
+                    this.eventsRecycler.adapter = RamoEventsAdapter(
+                        data = recyclerData, showEventType = true
+                    )
                 }
-                SingletonHelper.isInstanceActive = true
 
-                val helper :FragmentActivity = this.parentView.context as FragmentActivity
-                helper.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
-                helper.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, true)
-
-                RamoDialogFragment(
-                    onDismissAction = {
-                        SingletonHelper.isInstanceActive = false
-                        this@RamoEventsExpandedAdapter.notifyDataSetChanged()
+                /* calling `Ramo` dialog card clicked */
+                this.parentView.setOnClickListener {
+                    if (SingletonHelper.isInstanceActive) {
+                        return@setOnClickListener
                     }
-                ).show(helper.supportFragmentManager, this::class.simpleName)
+                    SingletonHelper.isInstanceActive = true
+
+                    homeActivity.intent.putExtra(IntentKeys.RAMO_NRC, ramo.NRC)
+                    homeActivity.intent.putExtra(IntentKeys.RAMO_IS_INSCRIBED, true)
+
+                    RamoDialogFragment(
+                        onDismissAction = {
+                            SingletonHelper.isInstanceActive = false
+                            this@RamoEventsExpandedAdapter.notifyDataSetChanged() //! not optimal
+                        }
+                    ).show(homeActivity.supportFragmentManager, RamoDialogFragment::class.simpleName)
+                }
             }
         }
     }

@@ -6,17 +6,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- TODO: support dark theme -->
-<!--    <style name="AppNightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
-<!--        <item name="colorPrimary">@color/nightColorPrimary</item>-->
-<!--        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>-->
-<!--        <item name="colorAccent">@color/nightColorAccent</item>-->
-<!--        <item name="android:backgroundTint">#656565</item>-->
-<!--        <item name="android:textColor">@color/almostWhite</item>-->
-<!--        <item name="android:foregroundTint">@color/almostWhite</item>-->
-<!--    </style>-->
-
-    <!-- Using this for Dialogs because, otherwise, the default button style is the standard UnelevatedButton, whose zero spacing behaves bad on yes/no Dialogs. -->
+    <!-- Using this for Dialogs because, otherwise, the default button style is the standard
+    UnelevatedButton, whose zero spacing behaves bad on yes/no Dialogs. -->
     <style name="myDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton.Dialog</item>
     </style>
@@ -49,6 +40,10 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="nightScheduleLandscape_timeBlock" parent="scheduleLandscape_timeBlock">
+        <item name="android:textColor">@color/nightDefaultForeground</item>
+    </style>
+
     <style name="scheduleLandscape_block" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:fontFamily">@font/lato</item>
         <item name="android:textSize">13sp</item>
@@ -62,6 +57,10 @@
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="nightScheduleLandscape_block" parent="scheduleLandscape_block">
+        <item name="android:textColor">@color/nightDefaultForeground</item>
     </style>
 
     <style name="schedulePortrait_header">
@@ -102,12 +101,17 @@
         <item name="android:backgroundTint">@color/colorPrimary</item>
         <item name="android:clickable">true</item>
         <item name="android:elevation">3dp</item>
+        <item name="borderWidth">0dp</item>
         <item name="android:scaleX">1.1</item>
         <item name="android:scaleY">1.1</item>
         <item name="android:scaleType">center</item>
         <item name="android:layout_margin">16dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="nightFloatingButton" parent="standardFloatingButton">
+        <item name="android:backgroundTint">@color/nightPrimary</item>
     </style>
 
     <!-- TextView style for `Ramo` NRC -->

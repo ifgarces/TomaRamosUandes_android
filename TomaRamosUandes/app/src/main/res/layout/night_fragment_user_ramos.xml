@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/nightDefaultBackground"
     tools:context=".fragments.UserRamosFragment">
 
     <com.google.android.material.button.MaterialButton
@@ -17,9 +17,11 @@
         android:layout_marginVertical="10dp"
         android:paddingHorizontal="10dp"
         android:text="Ver catálogo de ramos"
-
         android:textAllCaps="true"
         android:textSize="16sp"
+        app:iconTint="@color/nightPrimary"
+        android:textColor="@color/nightDefaultForeground"
+        app:strokeColor="@color/nightPrimary"
         app:cornerRadius="@dimen/roundButton_radius"
         app:icon="@drawable/catalog_book_icon"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="0dp"
-        android:background="@drawable/box_thick"
+        android:background="@drawable/night_box_thick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -62,7 +64,7 @@
             android:id="@+id/userRamos_staticTextView02"
             style="@style/home_creditosCount"
             android:text="Créditos: "
-
+            android:textColor="@color/nightDefaultForeground"
             android:layout_marginTop="6dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,8 +74,8 @@
         <TextView
             android:id="@+id/userRamos_creditosSum"
             style="@style/home_creditosCount"
+            android:textColor="@color/nightCreditSum_ok"
             android:text="[créditos sum]"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@+id/userRamos_staticTextView02"
@@ -83,6 +85,7 @@
             android:id="@+id/userRamos_emptyRecyclerTextNotice"
             style="@style/standardTextView"
             android:text="Ningún ramo tomado"
+            android:textColor="@color/nightDefaultForeground"
 
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
@@ -93,7 +96,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/userRamos_ramosRecycler"
-            tools:listitem="@layout/ramo_item"
+            tools:listitem="@layout/night_ramo_item"
             android:orientation="vertical"
             android:scrollbars="vertical"
             android:background="@android:color/transparent"

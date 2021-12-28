@@ -65,7 +65,11 @@ class SchedulePortraitFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_schedule_portrait, container, false)
+        val fragView :View = inflater.inflate(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_schedule_portrait
+            else R.layout.fragment_schedule_portrait,
+            container, false
+        )
         this.UI = FragmentUI(owner = fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->

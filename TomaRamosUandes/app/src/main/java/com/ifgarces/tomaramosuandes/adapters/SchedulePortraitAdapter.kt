@@ -23,8 +23,11 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) :
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventCardVH {
         return EventCardVH(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.schedule_portrait_block, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_schedule_portrait_block
+                else R.layout.schedule_portrait_block,
+                parent, false
+            )
         )
     }
 
@@ -32,11 +35,6 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) :
 
     override fun onBindViewHolder(holder :EventCardVH, position :Int) =
         holder.bind(this.data[position], position)
-
-    public fun updateData(data :List<RamoEvent>) {
-        this.data = data
-        this.notifyDataSetChanged()
-    }
 
     inner class EventCardVH(v :View) : RecyclerView.ViewHolder(v) {
         private val parentView :View = v

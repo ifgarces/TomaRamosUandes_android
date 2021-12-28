@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    app:cardBackgroundColor="@color/nightCardBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/schedulePblock_ramo"
+            style="@style/schedulePortrait_ramoName"
+            android:text="[Ramo.nombre]"
+            android:textColor="@color/nightDefaultForeground"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/schedulePblock_location"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/schedulePblock_ti"
+            style="@style/schedulePortrait_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[start time]"
+            android:textColor="@color/nightDefaultForeground"
+            app:layout_constraintBottom_toBottomOf="@+id/schedulePblock_type"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/schedulePblock_type" />
+
+        <TextView
+            android:id="@+id/schedulePblock_static01"
+            style="@style/schedulePortrait_time"
+            android:text=" - "
+            android:textColor="@color/nightDefaultForeground"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/schedulePblock_ti"
+            app:layout_constraintTop_toTopOf="@+id/schedulePblock_ti" />
+
+        <TextView
+            android:id="@+id/schedulePblock_tf"
+            style="@style/schedulePortrait_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[end time]"
+            android:textColor="@color/nightDefaultForeground"
+            app:layout_constraintStart_toEndOf="@+id/schedulePblock_static01"
+            app:layout_constraintTop_toTopOf="@+id/schedulePblock_ti" />
+
+        <TextView
+            android:id="@+id/schedulePblock_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ramoAttrs_spacing"
+            android:background="@drawable/box_event_type"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="3dp"
+            android:text="[event type]"
+            android:textAllCaps="true"
+
+            android:textColor="@color/gray"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/schedulePblock_ramo" />
+
+        <TextView
+            android:id="@+id/schedulePblock_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[location]"
+            android:textColor="@color/prettyPurpleForNight"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/schedulePblock_ramo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/schedulePblock_ramo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

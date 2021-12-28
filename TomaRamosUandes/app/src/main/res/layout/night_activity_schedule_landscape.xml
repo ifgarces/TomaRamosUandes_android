@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nightDefaultBackground"
+    tools:context=".activities.ScheduleLandscapeActivity">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/landSchedule_saveAsImage"
+        style="@style/nightFloatingButton"
+        app:srcCompat="@drawable/export_image_icon"
+
+        app:layout_constraintBottom_toTopOf="@id/landSchedule_toggleFullScreen"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/landSchedule_toggleFullScreen"
+        style="@style/nightFloatingButton"
+        app:srcCompat="@drawable/fullscreen_icon"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/landSchedule_headersLayout"
+        android:elevation="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <include layout="@layout/agenda_landscape_headers" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/landSchedule_bodyScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:scrollbarSize="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/landSchedule_bodyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/agenda_landscape_headers" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:shrinkColumns="*"
+                android:stretchColumns="1,2,3,4,5">
+
+                <TableRow
+                    android:id="@+id/row1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="8:30 - 9:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun0"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar0"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie0"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue0"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie0"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="9:30 - 10:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun1"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar1"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie1"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue1"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie1"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="10:30 - 11:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun2"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar2"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie2"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue2"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie2"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="11:30 - 12:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun3"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar3"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie3"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue3"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie3"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="12:30 - 13:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun4"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar4"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie4"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue4"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie4"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="13:30 - 14:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun5"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar5"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie5"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue5"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie5"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="14:30 - 15:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun6"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar6"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie6"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue6"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie6"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="15:30 - 16:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun7"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar7"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie7"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue7"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie7"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row9"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="16:30 - 17:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun8"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar8"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie8"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue8"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie8"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="17:30 - 18:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun9"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar9"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie9"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue9"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie9"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="18:30 - 19:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun10"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar10"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie10"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue10"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie10"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="19:30 - 20:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun11"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar11"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie11"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue11"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie11"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row13"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="20:30 - 21:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun12"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar12"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie12"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue12"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie12"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/row14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/almostBlack">
+
+                    <TextView
+                        style="@style/nightScheduleLandscape_timeBlock"
+                        android:text="21:30 - 22:20" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_lun13"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[lun]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mar13"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mar]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_mie13"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[mie]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_jue13"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[jue]" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/landSchedule_vie13"
+                        style="@style/nightScheduleLandscape_block"
+                        android:text="[vie]" />
+                </TableRow>
+            </TableLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

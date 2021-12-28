@@ -11,6 +11,8 @@
     <color name="nightAccent">#0C8EAE</color>
     <color name="nightDefaultBackground">#444444</color>
     <color name="nightDefaultForeground">#CDCDCD</color>
+    <color name="nightCardBackground">#7C7C7C</color>
+    <color name="prettyPurpleForNight">#DABFED</color>
 
     <!-- General colors -->
     <color name="lighterGray">#CDCDCD</color>
@@ -39,4 +41,6 @@
     <!-- Text color of user credit sum in `HomeActivity` -->
     <color name="creditSum_ok">#1F5100</color>
     <color name="creditSum_bad">#CD1414</color>
+    <color name="nightCreditSum_ok">#8BC34A</color>
+    <color name="nightCreditSum_bad">#F65549</color>
 </resources>

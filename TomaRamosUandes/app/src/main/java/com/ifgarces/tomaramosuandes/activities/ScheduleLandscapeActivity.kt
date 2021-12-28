@@ -130,7 +130,11 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setContentView(R.layout.activity_schedule_landscape)
+
+        this.setContentView(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_activity_schedule_landscape
+            else R.layout.activity_schedule_landscape
+        )
         this.UI = ActivityUI(owner = this)
 
         UI.saveAsImgButton.setColorFilter(Color.WHITE)
@@ -309,15 +313,17 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
                                     )!!.nombre,
                                     if (event.location != "") "\n[%s]".format(event.location) else ""
                                 )
-                                val backColor :Int? =
+                                val backColor :Int =
                                     when (event.type) { // setting background color according to eventType
                                         RamoEventType.CLAS -> activity.getColor(R.color.clas)
                                         RamoEventType.AYUD -> activity.getColor(R.color.ayud)
                                         RamoEventType.LABT, RamoEventType.TUTR ->
                                             activity.getColor(R.color.labt)
-                                        else -> null // <- will never happen, unless dumb code mistake
+                                        else -> throw Exception(
+                                            "Unknown type %d for %s".format(event.type, event) // <- will never happen, unless dumb code mistake
+                                        )
                                     }
-                                block.setBackgroundColor(backColor!!)
+                                block.setBackgroundColor(backColor)
                             } else { // block with multiple events
                                 block.setBackgroundColor(activity.getColor(R.color.conflict_background))
                                 // Concatenating multiple events in same block

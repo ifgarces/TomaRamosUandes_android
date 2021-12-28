@@ -49,11 +49,10 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (DataMaster.getUserStats().nightModeOn) {
-            this.setContentView(R.layout.night_activity_home)
-        } else {
-            this.setContentView(R.layout.activity_home)
-        }
+        this.setContentView(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_activity_home
+            else R.layout.activity_home
+        )
         this.UI = ActivityUI(owner = this)
         this.navigator = HomeNavigator(homeActivity = this)
 
@@ -178,22 +177,14 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                     // applying changes
                     DataMaster.toggleNightMode(
                         onFinish = {
-                            this.runOnUiThread {
-                                val isNightModeActive :Boolean = DataMaster.getUserStats().nightModeOn
-                                this.infoDialog(
-                                    title = "Cambiar tema a %s".format(
-                                        if (isNightModeActive) "OSCURO" else "NORMAL"
-                                    ),
-                                    message = "La app se cerrará para aplicar los cambios. Luego, tendrá que volver a abrirla manualmente.",
-                                    onDismiss = {
-                                        Logf.debug(this::class, "Switching night mode to %s (exitting...)".format(
-                                            if (isNightModeActive) "OFF" else "ON"
-                                        ))
-                                        this.finishAffinity()
-                                    },
-                                    icon = R.drawable.check_icon
-                                )
-                            }
+                            Logf.debug(this::class, "Switching night mode to %s (restarting activity)".format(
+                                if (DataMaster.getUserStats().nightModeOn) "OFF" else "ON"
+                            ))
+                            // Restarting this activity (will avoid needing to wait for
+                            // `MainActivity` to initialize again)
+                            this.startActivity(
+                                Intent.makeRestartActivityTask(this.intent.component)
+                            )
                         }
                     )
                     return@setOnMenuItemClickListener true
