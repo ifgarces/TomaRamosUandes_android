@@ -40,11 +40,11 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var UI :ActivityUI
     private lateinit var navigator :HomeNavigator
-    private var latestMetadata :AppMetadata? = null // will remain null internet is not available
+    private var latestMetadata :AppMetadata? = null // will remain null when Firebase Firestore is not reachable
 
     // Getters
     public fun getNavigator() = this.navigator
-    public fun getLatestAppMetadat() = this.latestMetadata
+    public fun getLatestAppMetadata() = this.latestMetadata
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
@@ -177,11 +177,14 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                     // applying changes
                     DataMaster.toggleNightMode(
                         onFinish = {
-                            Logf.debug(this::class, "Switching night mode to %s (restarting activity)".format(
-                                if (DataMaster.getUserStats().nightModeOn) "OFF" else "ON"
-                            ))
+                            Logf.debug(
+                                this::class,
+                                "Switching night mode to %s (restarting this activity)".format(
+                                    if (DataMaster.getUserStats().nightModeOn) "OFF" else "ON"
+                                )
+                            )
                             // Restarting this activity (will avoid needing to wait for
-                            // `MainActivity` to initialize again)
+                            // `MainActivity` to initialize again, good for both performance and UX)
                             this.startActivity(
                                 Intent.makeRestartActivityTask(this.intent.component)
                             )

@@ -82,13 +82,17 @@ object DataMaster {
         if (forceLoadOfflineCSV) {
             // Connection with remote database failed, using local offline catalog
             // instead
+            Logf.warn(this::class, "WARNING: forcing usage of CSV offline catalog over Firebase online catalog")
             this.loadLocalOfflineCatalog(activity)
 
             Executors.newSingleThreadExecutor().execute {
                 this.loadRoomUserData(
                     activity = activity,
                     onSuccess = {
-                        if (clearDatabase) clearUserRamos()
+                        if (clearDatabase) {
+                            Logf.warn(this::class, "WARNING: clearing Room local database")
+                            this.clearUserRamos()
+                        }
                         onSuccess.invoke()
                     },
                     onFailure = { e :Exception ->
@@ -106,7 +110,10 @@ object DataMaster {
                             activity = activity,
                             onSuccess = {
                                 // Clearing local Room database, if desired (debugging only!)
-                                if (clearDatabase) clearUserRamos()
+                                if (clearDatabase) {
+                                    Logf.warn(this::class, "WARNING: clearing Room local database")
+                                    this.clearUserRamos()
+                                }
                                 onSuccess.invoke()
                             },
                             onFailure = { e :Exception ->

@@ -8,7 +8,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 
 /**
@@ -22,6 +22,8 @@ import java.util.Locale
  * @property TIME_SEPARATOR Character that separates start and end times for an event.
  * @property DATE_FORMAT The format for CSV date values.
  * @property TIME_FORMAT The format for CSV time values.
+ * @property EXPLICIT_COMMA_CHAR For adding a comma to a `Ramo.nombre` attribute. As CSV parsing is
+ * simply splitting "," characters, this is needed.
  */
 object CsvHandler {
     public const val CSV_FILE_NAME :String = "catalog_offline.csv"
@@ -30,6 +32,7 @@ object CsvHandler {
         "dd/MM/yyyy", Locale("ES", "ES")
     )
     private val TIME_FORMAT :DateTimeFormatter = DateTimeFormatter.ISO_TIME
+    private val EXPLICIT_COMMA_CHAR :Char = ";".single()
 
     /**
      * Auxiliar method for transforming date with format e.g. "d/M/yyyy" to the right "dd/MM/yyyy".
@@ -102,8 +105,8 @@ object CsvHandler {
         val jueves        :Pair<LocalTime, LocalTime>?,
         val viernes       :Pair<LocalTime, LocalTime>?,
         //val sábado        :Pair<LocalTime, LocalTime>?,
-        val fecha_inicio  :LocalDate,
-        val fecha_fin     :LocalDate,
+        val fecha_inicio  :LocalDate?,
+        val fecha_fin     :LocalDate?,
         val sala          :String,
         val tipo          :String,
         val profesor      :String
@@ -121,8 +124,13 @@ object CsvHandler {
                     LocalTime.parse(buff[1].trim(), TIME_FORMAT)
                 )
             }
-            fun parseDate(cellValue :String) :LocalDate {
-                return LocalDate.parse(CsvHandler.preProcessTimeFormat(cellValue), DATE_FORMAT)
+
+            /**
+             * For parsing a given date. Returns null if the string passed is blank.
+             */
+            fun parseDate(cellValue :String) :LocalDate? {
+                if (cellValue.isBlank()) return null // this seems to happen always for PEG courses, and may occur for other courses as well
+                return LocalDate.parse(preProcessTimeFormat(cellValue), DATE_FORMAT)
             }
         }
 
@@ -134,7 +142,7 @@ object CsvHandler {
             materia = columns[CsvCols.MATERIA].trim(),
             curso = columns[CsvCols.CURSONUM].trim().toInt(),
             sección = columns[CsvCols.SECCIÓN].trim(),
-            nombre = columns[CsvCols.NOMBRE].trim(),
+            nombre = columns[CsvCols.NOMBRE].trim().replace(EXPLICIT_COMMA_CHAR, ','),
             crédito = columns[CsvCols.CRÉDITO].trim().toInt(),
             lunes = parseTimeInterval(columns[CsvCols.LUNES].trim()),
             martes = parseTimeInterval(columns[CsvCols.MARTES].trim()),

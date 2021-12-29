@@ -16,7 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
-import java.util.Locale
+import java.util.*
 
 
 /**
@@ -94,7 +94,11 @@ fun Context.infoDialog(
     onDismiss :() -> Unit = {},
     icon :Int? = null
 ) {
-    val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
+    val diag :AlertDialog.Builder = AlertDialog.Builder(
+        this,
+        if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
+            else R.style.myDialogTheme
+    )
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)
@@ -125,7 +129,11 @@ fun Context.yesNoDialog(
     onNoClicked :() -> Unit = {},
     icon :Int? = null
 ) {
-    val diag :AlertDialog.Builder = AlertDialog.Builder(this, R.style.myDialogTheme)
+    val diag :AlertDialog.Builder = AlertDialog.Builder(
+        this,
+        if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
+            else R.style.myDialogTheme
+    )
         .setTitle(title)
         .setMessage(message)
         .setCancelable(false)

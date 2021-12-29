@@ -16,11 +16,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.BuildConfig
-import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.models.AppMetadata
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 
 
 /**
@@ -88,7 +88,11 @@ class UserRamosFragment : Fragment() {
      */
     private fun showHelp() {
         val diagBuilder :AlertDialog.Builder =
-            AlertDialog.Builder(this.requireContext(), R.style.myDialogTheme)
+            AlertDialog.Builder(
+                this.requireContext(),
+                if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
+                    else R.style.myDialogTheme
+            )
                 .setCancelable(true)
                 .setPositiveButton("Cerrar") { dialog :DialogInterface, _ :Int ->
                     dialog.dismiss()

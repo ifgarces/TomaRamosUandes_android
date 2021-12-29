@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
-import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.adapters.CatalogRamosAdapter
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.onTextChangedListener
@@ -49,12 +49,12 @@ class CatalogFragment : Fragment() {
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
             val catalogPeriod :String
             val catalogLastUpdateDate :String
-            homeActivity.getLatestAppMetadat().let { meta :AppMetadata? ->
+            homeActivity.getLatestAppMetadata().let { meta :AppMetadata? ->
                 if (meta != null) {
                     catalogPeriod = meta.catalogCurrentPeriod
                     catalogLastUpdateDate = meta.catalogLastUpdated
                 } else {
-                    catalogPeriod = homeActivity.getString(R.string.catalog_period)
+                    catalogPeriod = homeActivity.getString(R.string.offline_catalog_period)
                     catalogLastUpdateDate = "[offline]"
                 }
             }
