@@ -32,11 +32,12 @@
             android:textAlignment="viewStart" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- This TextView will be visible when the search has 0 results -->
     <TextView
         android:id="@+id/catalog_emptyRecyclerTextNotice"
         style="@style/standardTextView"
         android:text="Sin resultados"
-
+        android:elevation="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_recycler"
@@ -52,7 +53,6 @@
         android:scrollbars="vertical"
         android:scrollbarSize="10dp"
         android:background="@android:color/transparent"
-
         android:layout_marginTop="6dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"

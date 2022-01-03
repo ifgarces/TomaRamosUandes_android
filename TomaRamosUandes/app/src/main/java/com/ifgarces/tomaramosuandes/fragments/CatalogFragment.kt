@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,7 @@ import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
 class CatalogFragment : Fragment() {
 
     private class FragmentUI(owner :View) {
+        val emptyNoticeText :TextView = owner.findViewById(R.id.catalog_emptyRecyclerTextNotice)
         val recycler        :RecyclerView = owner.findViewById(R.id.catalog_recycler)
         val searchboxLayout :TextInputLayout = owner.findViewById(R.id.catalog_searchBox_layout)
         val searchBox       :EditText = owner.findViewById(R.id.catalog_searchBox)
@@ -119,9 +121,11 @@ nombre o NRC.""".multilineTrim()
         }
         this.catalogRamosAdapter.updateData(data = results)
         if (results.count() == 0) {
-            UI.recycler.visibility = View.INVISIBLE
+            UI.recycler.visibility = View.GONE
+            UI.emptyNoticeText.visibility = View.VISIBLE
         } else {
             UI.recycler.visibility = View.VISIBLE
+            UI.emptyNoticeText.visibility = View.GONE
         }
     }
 
@@ -132,5 +136,6 @@ nombre o NRC.""".multilineTrim()
         UI.searchBox.setText("")
         this.catalogRamosAdapter.updateData(data = DataMaster.getCatalogRamos().toMutableList())
         UI.recycler.visibility = View.VISIBLE
+        UI.emptyNoticeText.visibility = View.GONE
     }
 }

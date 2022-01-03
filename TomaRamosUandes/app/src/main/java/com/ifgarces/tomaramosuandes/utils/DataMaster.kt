@@ -235,9 +235,9 @@ ${oldUserRamosReport}""".multilineTrim(),
                 } else {
                     this.user_stats = stats.first()
                 }
+                Logf.debug(this::class, this.user_stats.toString())
+                onFinish.invoke()
             }
-            Logf.debug(this::class, this.user_stats.toString())
-            onFinish.invoke()
         }
     }
 

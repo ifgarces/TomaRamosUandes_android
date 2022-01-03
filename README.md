@@ -30,3 +30,7 @@ Universidad de los Andes.
 ## Logging
 
 There's not too much logging, so all of it is labelled `LOGF` (for easily accessing it with Android Studio's logcat), except Firebase-related output (see [`FirebaseMaster.kt`](./TomaRamosUandes/app/src/main/java/com/ifgarces/tomaramosuandes/networking/FirebaseMaster.kt)), which is labelled `FirebaseMaster`, just as that object's name. For more details about logging for this particular project, see [`Logf.kt`](./TomaRamosUandes/app/src/main/java/com/ifgarces/tomaramosuandes/utils/Logf.kt).
+
+## Code style
+
+The Kotlin code style for this project is slightly different than the default, as you can see in the files (spacing is changed). To load this code style in Android Studio for integration in code completion and formatting, go to *Editor > Code Style > Kotlin* in the IDE settings, and select *Import scheme...*, then select the file [`kotlin_code_style.xml`](./kotlin_code_style.xml).

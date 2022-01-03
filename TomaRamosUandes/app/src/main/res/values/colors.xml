@@ -35,6 +35,9 @@
     <color name="catalog_unInscribed">@color/almostWhite</color>
     <color name="catalog_inscribed">#73E3FF</color>
 
+    <color name="night_catalog_unInscribed">@color/nightCardBackground</color>
+    <color name="night_catalog_inscribed">@color/nightAccent</color>
+
     <!-- Indicates RamoEvent collide with another -->
     <color name="conflict_background">#FFC2B3</color>
 
