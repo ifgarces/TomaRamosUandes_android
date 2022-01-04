@@ -48,6 +48,8 @@ class CatalogFragment : Fragment() {
         )
         this.UI = FragmentUI(owner = fragView)
 
+        this.UI.emptyNoticeText.visibility = View.GONE
+
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
             val catalogPeriod :String
             val catalogLastUpdateDate :String

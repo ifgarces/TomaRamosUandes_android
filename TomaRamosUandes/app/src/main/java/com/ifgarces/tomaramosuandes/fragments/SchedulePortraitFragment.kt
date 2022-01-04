@@ -37,11 +37,12 @@ class SchedulePortraitFragment : Fragment() {
             owner.findViewById(R.id.portrSchedule_fullScreen)
         val scheduleScrollView :ScrollView = owner.findViewById(R.id.portrSchedule_scrollView)
         val scheduleLayout :LinearLayout = owner.findViewById(R.id.portrSchedule_layout)
-        val recyclerTeamMon :Pair<View, RecyclerView> =
-            Pair( // these hold the header (TextView) and their recycler attatched. They're a team.
-                owner.findViewById(R.id.portrSchedule_mondayHead),
-                owner.findViewById(R.id.portrSchedule_mondayRecycler)
-            )
+
+        // These hold the header (TextView) and their recycler attatched. They're a team.
+        val recyclerTeamMon :Pair<View, RecyclerView> = Pair(
+            owner.findViewById(R.id.portrSchedule_mondayHead),
+            owner.findViewById(R.id.portrSchedule_mondayRecycler)
+        )
         val recyclerTeamTue :Pair<View, RecyclerView> = Pair(
             owner.findViewById(R.id.portrSchedule_tuesdayHead),
             owner.findViewById(R.id.portrSchedule_tuesdayRecycler)

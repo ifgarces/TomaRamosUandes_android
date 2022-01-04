@@ -26,24 +26,27 @@
     <color name="PE2016">#004924</color>
     <color name="PE2011">#001150</color>
 
-    <!-- Background tint for event type boxes in `SchedulePortraitActivity` -->
-    <color name="clas">@android:color/transparent</color>
-    <color name="ayud">#DBFFC5</color>
-    <color name="labt">#DEF0FE</color>
+    <!-- Background tint for event type boxes in `SchedulePortraitFragment` -->
+    <color name="blockColor_clas">@android:color/transparent</color>
+    <color name="blockColor_ayud">#DBFFC5</color>
+    <color name="blockColor_labt">#DEF0FE</color>
+    <color name="night_blockColor_clas">@android:color/transparent</color>
+    <color name="night_blockColor_ayud">#4D47AF1B</color>
+    <color name="night_blockColor_labt">#4D2873AE</color>
 
     <!-- Card background color for catalog `Ramo` items -->
     <color name="catalog_unInscribed">@color/almostWhite</color>
     <color name="catalog_inscribed">#73E3FF</color>
-
     <color name="night_catalog_unInscribed">@color/nightCardBackground</color>
     <color name="night_catalog_inscribed">@color/nightAccent</color>
 
     <!-- Indicates RamoEvent collide with another -->
     <color name="conflict_background">#FFC2B3</color>
+    <color name="night_conflict_background">#80AC3229</color>
 
     <!-- Text color of user credit sum in `HomeActivity` -->
     <color name="creditSum_ok">#1F5100</color>
     <color name="creditSum_bad">#CD1414</color>
-    <color name="nightCreditSum_ok">#8BC34A</color>
-    <color name="nightCreditSum_bad">#F65549</color>
+    <color name="night_creditSum_ok">#8BC34A</color>
+    <color name="night_creditSum_bad">#F65549</color>
 </resources>

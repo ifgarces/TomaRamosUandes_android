@@ -74,7 +74,7 @@
         <TextView
             android:id="@+id/userRamos_creditosSum"
             style="@style/home_creditosCount"
-            android:textColor="@color/nightCreditSum_ok"
+            android:textColor="@color/night_creditSum_ok"
             android:text="[créditos sum]"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

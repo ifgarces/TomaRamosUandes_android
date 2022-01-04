@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
 import com.ifgarces.tomaramosuandes.utils.*
@@ -271,6 +272,8 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
          */
         public fun buildSchedule(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
             Logf.debug(this::class, "Building week schedule...")
+            val startMillis :Long = System.currentTimeMillis()
+            val isNightModeOn :Boolean = (DataMaster.getUserStats().nightModeOn)
 
             // Initializing
             this.scheduleData.clear()
@@ -287,8 +290,9 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
                 DataMaster.getEventsByWeekDay()
                     .forEach { (day :DayOfWeek, events :List<RamoEvent>) ->
                         for (ev :RamoEvent in events) {
-                            rowInterval =
-                                timesToBlockIndexes(start = ev.startTime, end = ev.endTime)!!
+                            rowInterval = this.timesToBlockIndexes(
+                                start = ev.startTime, end = ev.endTime
+                            )!!
                             for (rowNum :Int in (rowInterval.first until rowInterval.second)) {
                                 this.scheduleData.findEventsOf(
                                     button = blocksMap.getValue(key = day)[rowNum]
@@ -299,51 +303,45 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
 
                 // Displaying events assigned to each block button (modifying Views on UI thread)
                 activity.runOnUiThread {
-                    var break_loop :Boolean = false
                     this.scheduleData.forEach { (block :Button, events :MutableList<RamoEvent>) ->
-                        if (break_loop) return@forEach
+                        // Setting the display text for this block, given its events
+                        block.text = this.eventsOfBlockToString(events)
 
-                        events.forEachIndexed { index :Int, event :RamoEvent ->
-                            if (index == 0) { // no conflict, single event in block
-                                block.text = "%s%s".format(
-                                    DataMaster.findRamo(
-                                        NRC = event.ramoNRC,
-                                        searchInUserList = true
-                                    )!!.nombre,
-                                    if (event.location != "") "\n[%s]".format(event.location) else ""
-                                )
-                                val backColor :Int =
-                                    when (event.type) { // setting background color according to eventType
-                                        RamoEventType.CLAS -> activity.getColor(R.color.clas)
-                                        RamoEventType.AYUD -> activity.getColor(R.color.ayud)
-                                        RamoEventType.LABT, RamoEventType.TUTR ->
-                                            activity.getColor(R.color.labt)
-                                        else -> throw Exception(
-                                            "Unknown type %d for %s".format(event.type, event) // <- will never happen, unless dumb code mistake
-                                        )
-                                    }
-                                block.setBackgroundColor(backColor)
-                            } else { // block with multiple events
-                                block.setBackgroundColor(activity.getColor(R.color.conflict_background))
-                                // Concatenating multiple events in same block
-                                block.text = "%s + %s".format(
-                                    block.text, DataMaster.findRamo(
-                                        NRC = event.ramoNRC,
-                                        searchInUserList = true
-                                    )!!.nombre
-                                )
-                                // If three or more events are in the same block, avoid showing all
-                                // of them, preventing the `View` to get too big. They all can be
-                                // viewed when on click.
-                                if (block.text.toString().filter { it == '+' } .count() >= 2) {
-                                    block.text = "%s + ...".format(block.text)
-                                    break_loop = true // finishing this loop and parent loop
-                                    return@forEach
+                        // Setting block background color
+                        if (events.count() == 1) {
+                            val event :RamoEvent = events.first()
+                            block.setBackgroundColor(
+                                when (event.type) {
+                                    RamoEventType.CLAS -> activity.getColor(
+                                        if (isNightModeOn) R.color.night_blockColor_clas
+                                        else R.color.blockColor_clas
+                                    )
+                                    RamoEventType.AYUD -> activity.getColor(
+                                        if (isNightModeOn) R.color.night_blockColor_ayud
+                                        else R.color.blockColor_ayud
+                                    )
+                                    RamoEventType.LABT, RamoEventType.TUTR -> activity.getColor(
+                                        if (isNightModeOn) R.color.night_blockColor_labt
+                                        else R.color.blockColor_labt
+                                    )
+                                    else -> throw Exception(
+                                        "Unknown type %d for %s".format(event.type, event) // will never happen, unless dumb code mistake
+                                    )
                                 }
-                            }
+                            )
+                        } else if (events.count() > 1) {
+                            block.setBackgroundColor(activity.getColor(
+                                if (isNightModeOn) R.color.night_conflict_background
+                                else R.color.conflict_background
+                            ))
                         }
                     }
-                    Logf.debug(this::class, "Week shcedule successfully built")
+                    Logf.debug(
+                        this::class,
+                        "Landscape eeek shcedule built on %.2f seconds".format(
+                            (System.currentTimeMillis() - startMillis).toDouble() / 1000.0
+                        )
+                    )
                 }
             }
         }
@@ -363,6 +361,41 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
             if (start.minute > 30) rowStart++
             if (end.minute > 20) rowEnd++
             return Pair(rowStart, rowEnd)
+        }
+
+        /**
+         * Returns a proper string representing a collection of `RamoEvent`s, useful for when there
+         * are multiple events in, for instance, a single week schedule block.
+         * @param eventCollection The `RamoEvent`s belonging to a schedule block we desire to get
+         * the display text for.
+         * @returns A short string with the `RamoEvent`'s `Ramo` name and event location if the list
+         * has only one item, otherwise, a concatenation of event's `Ramo` names (with a maximum,
+         * avoiding the string to become indefinetly large.
+         */
+        private fun eventsOfBlockToString(eventCollection :List<RamoEvent>) :String {
+            val count :Int = eventCollection.count()
+            if (count == 0) return ""
+            // Single event block
+            if (count == 1) {
+                val event :RamoEvent = eventCollection.first()
+                return "%s%s".format(
+                    DataMaster.findRamo(
+                        NRC = event.ramoNRC,
+                        searchInUserList = true
+                    )!!.nombre,
+                    if (event.location != "") "\n[%s]".format(event.location) else ""
+                )
+            }
+            // Will display only information on the first two events (not including location)
+            val firstRamos :List<Ramo> = eventCollection.subList(0, 2).map { event :RamoEvent ->
+                DataMaster.findRamo(
+                    NRC = event.ramoNRC,
+                    searchInUserList = true
+                )!!
+            }
+            var result :String = "%s + %s".format(firstRamos[0].nombre, firstRamos[1].nombre)
+            if (count > 2) result += "\n(+%d)".format(count - 2)
+            return result
         }
     }
 }
