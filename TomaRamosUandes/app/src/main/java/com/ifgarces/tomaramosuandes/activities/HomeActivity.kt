@@ -18,7 +18,6 @@ import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
 import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
-import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 import kotlin.reflect.KClass
@@ -180,7 +179,7 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                             Logf.debug(
                                 this::class,
                                 "Switching night mode to %s (restarting this activity)".format(
-                                    if (DataMaster.getUserStats().nightModeOn) "OFF" else "ON"
+                                    if (DataMaster.getUserStats().nightModeOn) "ON" else "OFF"
                                 )
                             )
                             // Restarting this activity (will avoid needing to wait for
