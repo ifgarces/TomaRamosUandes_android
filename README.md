@@ -15,7 +15,8 @@ Universidad de los Andes.
 - Detection of conflicts between events when inscribing courses.
 - Exportation of evaluations of inscribed courses to the device's calendar of choice.
 - Persistance of inscribed courses in storage, so they will reappear when reopening the app.
-- **Only courses from the engineering curriculum map are available**, as I have no access to other schools's courses.
+- Dark mode.
+- **Only courses from the engineering curriculum map are available**, as I have no access to other schools's courses, sadly.
 
 ## Project dependencies
 
