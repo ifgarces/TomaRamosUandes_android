@@ -16,7 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.AppMetadata
 import com.ifgarces.tomaramosuandes.models.Ramo
-import java.util.*
+import java.util.Locale
 
 
 /**

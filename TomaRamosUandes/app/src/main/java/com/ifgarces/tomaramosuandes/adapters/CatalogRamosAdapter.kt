@@ -70,12 +70,17 @@ class CatalogRamosAdapter(
 
             (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->
                 val isInscribed :Boolean = ramo in DataMaster.getUserRamos()
+
                 // Setting card background color based on inscribe status
                 if (!this@CatalogRamosAdapter.colorizeInscribed) {
                     this.parentView.setBackgroundColor(
                         homeActivity.getColor(
-                            if (isInscribed) R.color.catalog_inscribed
-                            else R.color.catalog_unInscribed
+                            if (DataMaster.getUserStats().nightModeOn)
+                                if (isInscribed) R.color.night_catalog_inscribed
+                                else R.color.night_catalog_unInscribed
+                            else
+                                if (isInscribed) R.color.catalog_inscribed
+                                else R.color.catalog_unInscribed
                         )
                     )
                 }
