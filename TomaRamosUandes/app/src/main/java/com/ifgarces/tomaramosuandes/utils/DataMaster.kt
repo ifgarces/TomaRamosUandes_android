@@ -155,12 +155,11 @@ object DataMaster {
         onSuccess :() -> Unit,
         onFailure :(e :Exception) -> Unit
     ) {
-        // Building Room database. Will fail sometimes when updating the app. Must uninstall it
-        // and install the new version manually on the device.
+        // Building Room database
         try {
             this.localDB = Room.databaseBuilder(
-                activity, LocalRoomDB::class.java, Ramo.TABLE_NAME
-            ).build()
+                activity, LocalRoomDB::class.java, "tomaramosuandes.db"
+            ).fallbackToDestructiveMigration().build() // clear DB on missing migration: https://stackoverflow.com/a/60959586/12684271
         } catch (e :Exception) {
             Logf.error(
                 this::class, "Error: could not load local Room database. %s", e.stackTraceToString()
@@ -169,6 +168,7 @@ object DataMaster {
             onFailure.invoke(e)
         }
 
+        // Loading database
         this.initUserStats(
             onFinish = {
                 // Loading local database (user's inscribed Ramos)
