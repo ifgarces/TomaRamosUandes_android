@@ -18,6 +18,7 @@ import com.ifgarces.tomaramosuandes.navigators.HomeNavigator
 import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.yesNoDialog
 import kotlin.reflect.KClass
@@ -56,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
         this.navigator = HomeNavigator(homeActivity = this)
 
         // -----------------------------------------------------------------------------------------
-        /* For updating the catalog itself */
+        /* For easily updating the hole online catalog itself from the offline catalog, when the faculty performs changes */
 //        FirebaseMaster.Developer.uploadRamoCollection(
 //            ramos = DataMaster.getCatalogRamos(),
 //            onFirstFailureCallback = {

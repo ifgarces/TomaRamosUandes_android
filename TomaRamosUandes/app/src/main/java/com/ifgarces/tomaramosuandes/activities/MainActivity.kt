@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         this.enterFullScreen()
 
         //TODO: implement night theme for this activity (would be great)
+        // for this, would need to change `DataMaster.init` so the first thing loaded is the
+        // `UserStats` DB table, and add a callback for when that is loaded, for applying the theme
+        // ASAP.
 //        if (...) {
 //            this.setContentView(R.layout.activity_main)
 //        } else {
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     UI.loadScreen.visibility = View.VISIBLE
                 } catch (e :Exception) {
                     // This may happen when the application takes far less time than expected for
-                    // initialization. If that's possible, the scenario is covered, just in case.
+                    // initialization. Not sure if that is possible, but just in case.
                     Logf.warn(this::class, "Could not change visibility for load screen")
                 }
             }

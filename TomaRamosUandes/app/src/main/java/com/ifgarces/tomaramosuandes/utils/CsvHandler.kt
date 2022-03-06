@@ -104,7 +104,7 @@ object CsvHandler {
         val miércoles     :Pair<LocalTime, LocalTime>?,
         val jueves        :Pair<LocalTime, LocalTime>?,
         val viernes       :Pair<LocalTime, LocalTime>?,
-        //val sábado        :Pair<LocalTime, LocalTime>?,
+        //val sábado        :Pair<LocalTime, LocalTime>?, // not needed, as there are not non-evaluation events on saturdays. For evaulations, we care the date, not its DayOfWeek
         val fecha_inicio  :LocalDate?,
         val fecha_fin     :LocalDate?,
         val sala          :String,
@@ -114,7 +114,7 @@ object CsvHandler {
         companion object {
             /**
              * E.g. for parsing string values "11:30 - 13:20" to a pair of `LocalTime` boundaries.
-             * Will return null when the passed `colVal` is an empty string (non-filled CSV cell).
+             * Will return null when the passed `colVal` is a blank string (non-filled CSV cell).
              */
             fun parseTimeInterval(cellValue :String) :Pair<LocalTime, LocalTime>? {
                 if (cellValue.isBlank()) return null

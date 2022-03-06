@@ -10,7 +10,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // Google services Gradle plugin
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.gms:google-services:4.3.10'
 
         // Firebase Crashlytics Gradle plugin
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
@@ -27,6 +27,6 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
+task clean(type :Delete) {
     delete rootProject.buildDir
 }
