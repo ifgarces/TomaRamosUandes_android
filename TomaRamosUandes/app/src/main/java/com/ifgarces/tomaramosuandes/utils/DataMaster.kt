@@ -177,29 +177,50 @@ object DataMaster {
 
                 // Checking consistency of current catalog with existing data inscribed by the user found in
                 // local storage
-                if (! this.checkUserAndCatalogConsistency()) {
-                    Logf.warn(
-                        this::class,
-                        "User inscribed ramos are not consistent with the current catalog. User data cleared."
-                    )
-                    val oldUserRamosReport :String = "- %s".format(
-                        this.user_ramos.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
+                val consistencyIssues :Set<Ramo> = this.checkUserAndCatalogConsistency()
+                if (consistencyIssues.count() > 0) {
+                    val auxConsistencyIssuesString :String = "- %s".format(
+                        consistencyIssues.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
                             .joinToString("\n- ")
                     )
                     activity.runOnUiThread {
+                        // Invoking `onSuccess` after that dialog is dismissed, so we can
+                        // avoid the user from navigating to the next activity until they
+                        // dismiss the dialog (otherwise it wouldn't be visible, as the next
+                        // activity would be on top)
                         activity.infoDialog(
                             title = "Error de sincronización de ramos",
                             message = """\
 Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe \
-a que el catálogo fue actualizado y algún ramo suyo fue removido o modificado de alguna forma. \
-Los siguientes ramos fueron removidos por esta razón:
-${oldUserRamosReport}""".multilineTrim(),
+a que el catálogo fue actualizado y algún ramo suyo fue modificado de alguna forma. \
+Alguno de los siguientes ramos está(n) siendo afectado(s):
+${auxConsistencyIssuesString}
+
+Puede que existan diferencias de horario/pruebas con respecto a la última vez que abrió la app.""".multilineTrim(),
                             onDismiss = {
-                                this.clearUserRamos()
-                                // Invoking `onSuccess` after that dialog is dismissed, so we can
-                                // avoid the user from navigating to the next activity until they
-                                // dismiss the dialog (otherwise it wouldn't be visible, as the next
-                                // activity would be on top)
+                                // Removing `Ramo`s (and their events) conflicting with catalog
+                                Logf.debug(
+                                    this::class,
+                                    "Clearing user data from unconsistent Ramos with catalog"
+                                )
+                                consistencyIssues.forEach { conflictiveRamo :Ramo ->
+                                    this.unInscribeRamo(conflictiveRamo.NRC)
+                                }
+
+                                Logf.debug(
+                                    this::class,
+                                    "Re-inscribed new catalog Ramos accordingly"
+                                )
+                                var catalogRamo :Ramo?
+                                consistencyIssues.forEach { conflictiveRamo :Ramo ->
+                                    catalogRamo = this.findRamo(
+                                        NRC=conflictiveRamo.NRC, searchInUserList=false
+                                    )
+                                    if (catalogRamo != null) {
+                                        this.inscribeRamoAction(ramo = catalogRamo!!, onFinish = {})
+                                    }
+                                }
+
                                 onSuccess.invoke()
                             }
                         )
@@ -307,16 +328,29 @@ ${oldUserRamosReport}""".multilineTrim(),
     }
 
     /**
-     * Returns `true` if the user inscribed `Ramo`s (and their `RamoEvent`s) are consistent with the
+     * Checks whether the user inscribed `Ramo`s (and their `RamoEvent`s) are consistent with the
      * current `DataMaster`'s catalog, i.e. whether all of them exist in the current catalog and
      * there are no differences (due Uandes' SAF catalog updates).
      * Warning: time execution will grow explosively with lenght of `catalog_ramos` and
      * `catalog_events`...
+     * @returns A set containing all the user `Ramo`s conflicting with the catalog data. If the set
+     * is empty, no consistency issues exist.
      */
-    private fun checkUserAndCatalogConsistency() :Boolean {
+    private fun checkUserAndCatalogConsistency() :Set<Ramo> {
+        val consistencyIssues :MutableSet<Ramo> = mutableSetOf()
         this.catalog_ramos.forEach { catalogRamo :Ramo ->
             this.user_ramos.forEach { userRamo :Ramo ->
-                if (userRamo.NRC == catalogRamo.NRC && userRamo != catalogRamo) {
+                if (userRamo.NRC == catalogRamo.NRC && (
+                    userRamo.conectLiga != catalogRamo.conectLiga ||
+                    userRamo.créditos != catalogRamo.créditos ||
+                    userRamo.curso != catalogRamo.curso ||
+                    userRamo.listaCruzada != catalogRamo.listaCruzada ||
+                    userRamo.materia != catalogRamo.materia ||
+                    userRamo.nombre != catalogRamo.nombre ||
+                    userRamo.planEstudios != catalogRamo.planEstudios ||
+                    userRamo.profesor != catalogRamo.profesor ||
+                    userRamo.sección != catalogRamo.sección
+                )) {
                     // This will run when there's a user-inscribed Ramo that does not perfectly
                     // match the current catalog and therefore is not valid [anymore]
                     Logf.warn(
@@ -324,7 +358,7 @@ ${oldUserRamosReport}""".multilineTrim(),
                         "Found a user-inscribed Ramo that is not consistent with catalog, respectively: %s != %s",
                         userRamo, catalogRamo
                     )
-                    return false
+                    consistencyIssues.add(userRamo)
                 }
             }
         }
@@ -338,11 +372,13 @@ ${oldUserRamosReport}""".multilineTrim(),
                         "Found a user-inscribed RamoEvent that is not consistent with catalog, respectively: %s != %s",
                         userEvent, catalogEvent
                     )
-                    return false
+                    consistencyIssues.add(
+                        this.findRamo(NRC=userEvent.ramoNRC, searchInUserList=true)!!
+                    )
                 }
             }
         }
-        return true
+        return consistencyIssues
     }
 
     /**
