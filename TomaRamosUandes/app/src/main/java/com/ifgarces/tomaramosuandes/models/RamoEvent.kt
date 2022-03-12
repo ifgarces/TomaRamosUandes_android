@@ -32,13 +32,13 @@ data class RamoEvent(
     val dayOfWeek :DayOfWeek,
     val startTime :LocalTime,
     val endTime   :LocalTime,
-    var date      :LocalDate? //TODO: set as non-null! due change on CsvHandler
+    var date      :LocalDate?
 ) {
     companion object {
         const val TABLE_NAME :String = "ramo_event"
 
         /**
-         * Needed for interaction with Firebase, as `LocalTime` and `LocalDate` cannot be uploaded
+         * Needed for interaction with Firebase, as `LocalTime` and `LocalDate` cannot be stored
          * without some kind of serialization.
          * @param event The `RamoEvent` instance to be converted.
          * @return A map with the attributes as strings and the values accordingly, but dates and
@@ -58,13 +58,12 @@ data class RamoEvent(
         }
 
         /**
-         * Deserializes.
+         * Deserializes. Undoes `RamoEvent.toRawMap`.
          * @param map The map to be converted back to a `RamoEvent` instance.
          */
         public fun fromRawMap(map :Map<String, Any?>) :RamoEvent {
             return RamoEvent(
-                ID = map["ID"]!!.toString().toDouble()
-                    .toInt(), // for some reason, need to cast to double and only then to integer
+                ID = map["ID"]!!.toString().toDouble().toInt(), // for some reason, need to cast to double and only then to integer
                 ramoNRC = map["ramoNRC"]!!.toString().toDouble().toInt(),
                 type = map["type"]!!.toString().toDouble().toInt(),
                 location = map["location"]!!.toString(),
@@ -96,7 +95,7 @@ data class RamoEvent(
         return """\
 Tipo: ${SpanishToStringOf.ramoEventType(eventType = this.type, shorten = false)!!}
 Ramo: ${
-            DataMaster.findRamo(
+DataMaster.findRamo(
     NRC = this.ramoNRC,
     searchInUserList = false
 )!!.nombre} (NRC ${this.ramoNRC})
@@ -125,7 +124,7 @@ Sala: ${if (this.location != "") this.location else "(no informada)"}""".multili
     }
 
     /**
-     * Checks whether the event is a test or exam.
+     * Checks whether the event is an evaluation (test or exam) or not (class, labt, etc.).
      */
     public fun isEvaluation() :Boolean {
         return (this.type == RamoEventType.PRBA) || (this.type == RamoEventType.EXAM)

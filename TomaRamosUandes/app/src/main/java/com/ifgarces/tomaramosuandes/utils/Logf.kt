@@ -19,7 +19,6 @@ object Logf {
 
     /**
      * DEBUG log level.
-     * @author Ignacio F. Garcés.
      * @param scopeClass The class of the Fragment, Activity, Object, etc. of the scope that
      * desires to output to log.
      * @param format String format.
@@ -31,6 +30,10 @@ object Logf {
 
     /**
      * ERROR log level. For function documentation, see `Logf.debug`.
+     * @param scopeClass The class of the Fragment, Activity, Object, etc. of the scope that
+     * desires to output to log.
+     * @param format String format.
+     * @param args String format args.
      */
     public fun error(scopeClass :KClass<*>, format :String, vararg args :Any?) {
         Log.e(this.LOGF_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))
@@ -38,6 +41,10 @@ object Logf {
 
     /**
      * WARNING log level. For function documentation, see `Logf.debug`.
+     * @param scopeClass The class of the Fragment, Activity, Object, etc. of the scope that
+     * desires to output to log.
+     * @param format String format.
+     * @param args String format args.
      */
     public fun warn(scopeClass :KClass<*>, format :String, vararg args :Any?) {
         Log.w(this.LOGF_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))
@@ -45,6 +52,10 @@ object Logf {
 
     /**
      * INFO log level. For function documentation, see `Logf.debug`.
+     * @param scopeClass The class of the Fragment, Activity, Object, etc. of the scope that
+     * desires to output to log.
+     * @param format String format.
+     * @param args String format args.
      */
     public fun info(scopeClass :KClass<*>, format :String, vararg args :Any?) {
         Log.i(this.LOGF_TAG, "[%s] %s".format(scopeClass.simpleName!!, format.format(*args)))

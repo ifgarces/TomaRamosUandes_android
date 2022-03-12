@@ -178,6 +178,7 @@ object DataMaster {
                 // Checking consistency of current catalog with existing data inscribed by the user found in
                 // local storage
                 val consistencyIssues :Set<Ramo> = this.checkUserAndCatalogConsistency()
+                Logf.debug(this::class, "%d consistency issues found", consistencyIssues.count())
                 if (consistencyIssues.count() > 0) {
                     val auxConsistencyIssuesString :String = "- %s".format(
                         consistencyIssues.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
@@ -362,22 +363,71 @@ Puede que existan diferencias de horario/pruebas con respecto a la última vez q
                 }
             }
         }
-        this.catalog_events.forEach { catalogEvent :RamoEvent ->
-            this.user_events.forEach { userEvent :RamoEvent ->
-                if (userEvent.ID == catalogEvent.ID && userEvent != catalogEvent) {
-                    // This will run when there's an event of a user-inscribed Ramo that does not
-                    // perfectly match the current catalog and therefore is not valid [anymore]
-                    Logf.warn(
-                        this::class,
-                        "Found a user-inscribed RamoEvent that is not consistent with catalog, respectively: %s != %s",
-                        userEvent, catalogEvent
-                    )
-                    consistencyIssues.add(
-                        this.findRamo(NRC=userEvent.ramoNRC, searchInUserList=true)!!
-                    )
+
+        // Sorting `RamoEvent`s by ID, but relative to the `Ramo` they belong to, so as to better
+        // check for consistency issues between (online) catalog data and local user data
+        val sorted_catalog_events :List<List<RamoEvent>> = this.catalog_ramos
+            .filter { this.user_ramos.contains(it) } // filtering `Ramo`s that are not inscribed by the user
+            .sortedByDescending { it.NRC }
+            .map {
+                this.getEventsOfRamo(ramo = it, searchInUserList = false).sortedBy { it.ID }
+            }
+        val sorted_user_events :List<List<RamoEvent>> = this.user_ramos
+            .sortedByDescending { it.NRC }
+            .map {
+                this.getEventsOfRamo(ramo = it, searchInUserList = true).sortedBy { it.ID }
+            }
+
+        // At this point, `sorted_catalog_events` and `sorted_user_events` should have equal size
+        assert(sorted_catalog_events.count() == sorted_user_events.count())
+
+        // Defining auxiliary variables
+        var catRamoEvents :List<RamoEvent>
+        var usrRamoEvents :List<RamoEvent>
+        var catEvent :RamoEvent
+        var usrEvent :RamoEvent
+        var catRamoEventsCount :Int
+        var usrRamoEventsCount :Int
+        var ramo :Ramo
+
+        // Now we can compare data for matching `Ramo`s, as the `RamoEvent`s are sorted relatively
+        // to the `Ramo` they belong to.
+        for (ramoIndex :Int in (0 until sorted_catalog_events.count())) {
+            catRamoEvents = sorted_catalog_events[ramoIndex]
+            usrRamoEvents = sorted_user_events[ramoIndex]
+            catRamoEventsCount = catRamoEvents.count()
+            usrRamoEventsCount = usrRamoEvents.count()
+            ramo = this.findRamo(NRC = catRamoEvents.first().ramoNRC, searchInUserList = true)!!
+            if (catRamoEventsCount != usrRamoEventsCount) { // the number of events doesn't match, add to consistency issues
+                Logf.debug(
+                    this::class,
+                    "Amount of events for Ramo '%s' (NRC %s) differs between catalog (%d) and local user inscribed data (%d)".format(
+                    ramo.nombre, ramo.NRC, catRamoEventsCount, usrRamoEventsCount
+                ))
+                consistencyIssues.add(ramo)
+            } else { // checking differency between individual events
+                for (eventIndex :Int in (0 until catRamoEventsCount)) {
+                    catEvent = catRamoEvents[eventIndex]
+                    usrEvent = usrRamoEvents[eventIndex]
+                    if (
+                        catEvent.type != usrEvent.type ||
+                        catEvent.location != usrEvent.location ||
+                        catEvent.dayOfWeek != usrEvent.dayOfWeek ||
+                        catEvent.startTime != usrEvent.startTime ||
+                        catEvent.endTime != usrEvent.endTime ||
+                        catEvent.date != usrEvent.date
+                    ) {
+                        Logf.debug(
+                            this::class,
+                            "Event #%d of ramo '%s' (NRC %s) differs between catalog and local user data.\n%s != %s".format(
+                            eventIndex, ramo.nombre, ramo.NRC, catEvent, usrEvent
+                        ))
+                        consistencyIssues.add(ramo)
+                    }
                 }
             }
         }
+
         return consistencyIssues
     }
 
