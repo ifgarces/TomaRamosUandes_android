@@ -25,9 +25,20 @@
         android:visible="true"
         android:enabled="true" />
 
+    <item
+        android:id="@+id/menu_feedback"
+        android:orderInCategory="2"
+        app:showAsAction="never"
+        android:title="Feedback"
+        android:icon="@drawable/coffee_icon"
+        android:iconTint="@color/almostWhite"
+
+        android:visible="true"
+        android:enabled="true" />
+
 <!--    <item
         android:id="@+id/menu_settings"
-        android:orderInCategory="2"
+        android:orderInCategory=""
         app:showAsAction="never"
         android:title="Configuraciones"
         android:icon="@drawable/settings_icon"

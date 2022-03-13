@@ -100,7 +100,14 @@ DataMaster.findRamo(
     searchInUserList = false
 )!!.nombre} (NRC ${this.ramoNRC})
 Fecha: ${dateOrDay} (${this.startTime} - ${this.endTime})
-Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim()
+Sala: ${if (this.location != "") this.location else "(no informada)"}
+${
+    if (! this.isEvaluation() && (this.date != null)) {
+        "Inicia desde: %s".format(this.date)
+    } else {
+        ""
+    }
+}""".multilineTrim()
     }
 
     /**

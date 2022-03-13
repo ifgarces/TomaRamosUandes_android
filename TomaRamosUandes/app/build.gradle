@@ -37,7 +37,7 @@ android {
 
 dependencies {
     def material_version = "1.5.0"
-    def navigator_version = "2.4.0"
+    def navigator_version = "2.4.1"
     def room_version = "2.4.0"
     def firestore_version = "24.0.1"
 

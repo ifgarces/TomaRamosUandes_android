@@ -192,6 +192,25 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                     )
                     return@setOnMenuItemClickListener true
                 }
+                R.id.menu_feedback -> {
+                    this.infoDialog(
+                        title = "Feedback",
+                        message = """\
+Inicie sesión con su cuenta @miuandes para mandar un formulario de feedback. Gracias!
+""".multilineTrim(),
+                        onDismiss = {
+                            // Open the URL for the user to give feedback about the application
+                            this.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(AppMetadata.FEEDBACK_URL)
+                                )
+                            )
+                        },
+                        icon = R.drawable.coffee_icon
+                    )
+                    return@setOnMenuItemClickListener true
+                }
                 else -> {
                     Logf.warn(
                         this::class, "Unknown top toolbar element pressed (id=%d)", item.itemId
