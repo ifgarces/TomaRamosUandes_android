@@ -177,43 +177,56 @@ object DataMaster {
 
                 // Checking consistency of current catalog with existing data inscribed by the user found in
                 // local storage
-                val consistencyIssues :Set<Ramo> = this.checkUserAndCatalogConsistency()
-                Logf.debug(this::class, "%d consistency issues found", consistencyIssues.count())
-                if (consistencyIssues.count() > 0) {
-                    val auxConsistencyIssuesString :String = "- %s".format(
-                        consistencyIssues.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
+                val (consistencyIssuesRamos, consistencyIssuesEvents) = this.checkUserAndCatalogConsistency()
+                Logf.debug(this::class, "%d consistency issues found (%d events involved)", consistencyIssuesRamos.count(), consistencyIssuesEvents.count())
+                if (consistencyIssuesRamos.count() > 0) {
+                    val consistencySummaryReport :String = "- %s".format(
+                        consistencyIssuesRamos.map { "%s (NRC %d)".format(it.nombre, it.NRC) }
                             .joinToString("\n- ")
                     )
+                    val consistencyDetailedReport :String = consistencyIssuesEvents.map {
+                        "» [CATÁLOGO] %s\n» [DATOS GUARDADOS] %s\n".format(it.first.toShortString(), it.second.toShortString())
+                    }.joinToString("\n")
                     activity.runOnUiThread {
                         // Invoking `onSuccess` after that dialog is dismissed, so we can
                         // avoid the user from navigating to the next activity until they
                         // dismiss the dialog (otherwise it wouldn't be visible, as the next
                         // activity would be on top)
                         activity.infoDialog(
-                            title = "Error de sincronización de ramos",
+                            title = "Alerta de consistencia de ramos",
                             message = """\
 Se encontraron ramos tomados por ud. que son inconsistentes con el catálogo vigente. Esto se debe \
-a que el catálogo fue actualizado y algún ramo suyo fue modificado de alguna forma. \
-Alguno de los siguientes ramos está(n) siendo afectado(s):
-${auxConsistencyIssuesString}
+a que el catálogo fue actualizado y algún ramo suyo fue modificado de alguna forma en él:
+${consistencySummaryReport}
 
-Puede que existan diferencias de horario/pruebas con respecto a la última vez que abrió la app.""".multilineTrim(),
+${
+    if (consistencyIssuesEvents.count() > 0) {
+"""
+Detalle de eventos no consistentes:
+
+${consistencyDetailedReport}""".multilineTrim()
+    } else {
+        "" // this happens when the amount of events between conflictive `Ramo`s is different, or the `Ramo`s theirself differ
+    }
+}
+
+La información del catálogo vigente reemplazará a la antigua, automáticamente.""".multilineTrim(),
                             onDismiss = {
                                 // Removing `Ramo`s (and their events) conflicting with catalog
                                 Logf.debug(
                                     this::class,
                                     "Clearing user data from unconsistent Ramos with catalog"
                                 )
-                                consistencyIssues.forEach { conflictiveRamo :Ramo ->
+                                consistencyIssuesRamos.forEach { conflictiveRamo :Ramo ->
                                     this.unInscribeRamo(conflictiveRamo.NRC)
                                 }
 
                                 Logf.debug(
                                     this::class,
-                                    "Re-inscribed new catalog Ramos accordingly"
+                                    "Re-inscribing new catalog Ramos accordingly"
                                 )
                                 var catalogRamo :Ramo?
-                                consistencyIssues.forEach { conflictiveRamo :Ramo ->
+                                consistencyIssuesRamos.forEach { conflictiveRamo :Ramo ->
                                     catalogRamo = this.findRamo(
                                         NRC=conflictiveRamo.NRC, searchInUserList=false
                                     )
@@ -331,14 +344,16 @@ Puede que existan diferencias de horario/pruebas con respecto a la última vez q
     /**
      * Checks whether the user inscribed `Ramo`s (and their `RamoEvent`s) are consistent with the
      * current `DataMaster`'s catalog, i.e. whether all of them exist in the current catalog and
-     * there are no differences (due Uandes' SAF catalog updates).
+     * there are no differences (due Uandes' engineering faculty catalog updates).
      * Warning: time execution will grow explosively with lenght of `catalog_ramos` and
      * `catalog_events`...
-     * @returns A set containing all the user `Ramo`s conflicting with the catalog data. If the set
-     * is empty, no consistency issues exist.
+     * @returns A pair where the first item is a collection of all the user `Ramo`s conflicting with
+     * the catalog data. If that set is empty, no consistency issues exist. The second item of the
+     * pair is the list of conflicting `RamoEvent` pairs.
      */
-    private fun checkUserAndCatalogConsistency() :Set<Ramo> {
-        val consistencyIssues :MutableSet<Ramo> = mutableSetOf()
+    private fun checkUserAndCatalogConsistency() :Pair<Set<Ramo>, List<Pair<RamoEvent, RamoEvent>>> {
+        val consistencyIssuesSummary :MutableSet<Ramo> = mutableSetOf() // `Ramo`s affected
+        val consistencyIssuesDetail :MutableList<Pair<RamoEvent, RamoEvent>> = mutableListOf() // `RamoEvent`s colliding between them
         this.catalog_ramos.forEach { catalogRamo :Ramo ->
             this.user_ramos.forEach { userRamo :Ramo ->
                 if (userRamo.NRC == catalogRamo.NRC && (
@@ -359,9 +374,16 @@ Puede que existan diferencias de horario/pruebas con respecto a la última vez q
                         "Found a user-inscribed Ramo that is not consistent with catalog, respectively: %s != %s",
                         userRamo, catalogRamo
                     )
-                    consistencyIssues.add(userRamo)
+                    consistencyIssuesSummary.add(userRamo)
                 }
             }
+        }
+
+        // If the `Ramo`s itself are conflictive, we won't bother checking on the events. This is
+        // not likely to happen unless the user has inscribed `Ramo`s from a previous academic
+        // period
+        if (consistencyIssuesSummary.count() > 0) {
+            return Pair(consistencyIssuesSummary, listOf())
         }
 
         // Sorting `RamoEvent`s by ID, but relative to the `Ramo` they belong to, so as to better
@@ -379,7 +401,7 @@ Puede que existan diferencias de horario/pruebas con respecto a la última vez q
             }
 
         // At this point, `sorted_catalog_events` and `sorted_user_events` should have equal size
-        assert(sorted_catalog_events.count() == sorted_user_events.count())
+        //assert(sorted_catalog_events.count() == sorted_user_events.count())
 
         // Defining auxiliary variables
         var catRamoEvents :List<RamoEvent>
@@ -404,7 +426,7 @@ Puede que existan diferencias de horario/pruebas con respecto a la última vez q
                     "Amount of events for Ramo '%s' (NRC %s) differs between catalog (%d) and local user inscribed data (%d)".format(
                     ramo.nombre, ramo.NRC, catRamoEventsCount, usrRamoEventsCount
                 ))
-                consistencyIssues.add(ramo)
+                consistencyIssuesSummary.add(ramo)
             } else { // checking differency between individual events
                 for (eventIndex :Int in (0 until catRamoEventsCount)) {
                     catEvent = catRamoEvents[eventIndex]
@@ -422,13 +444,14 @@ Puede que existan diferencias de horario/pruebas con respecto a la última vez q
                             "Event #%d of ramo '%s' (NRC %s) differs between catalog and local user data.\n%s != %s".format(
                             eventIndex, ramo.nombre, ramo.NRC, catEvent, usrEvent
                         ))
-                        consistencyIssues.add(ramo)
+                        consistencyIssuesSummary.add(ramo)
+                        consistencyIssuesDetail.add(Pair(catEvent, usrEvent))
                     }
                 }
             }
         }
 
-        return consistencyIssues
+        return Pair(consistencyIssuesSummary, consistencyIssuesDetail)
     }
 
     /**
