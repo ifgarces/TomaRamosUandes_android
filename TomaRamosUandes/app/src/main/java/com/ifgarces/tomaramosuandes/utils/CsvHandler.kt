@@ -37,6 +37,7 @@ object CsvHandler {
     /**
      * Auxiliar method for transforming date with format e.g. "d/M/yyyy" to the right "dd/MM/yyyy".
      * Otherwise, date parsing will fail, as it would not perfectly match `CsvHandler.DATE_FORMAT`.
+     * The number of digits has to be 2 for day and month.
      */
     private fun preProcessTimeFormat(date :String) :String {
         var buff :String = ""
@@ -225,10 +226,11 @@ object CsvHandler {
                     } catch (e :NullPointerException) {
                         // NullPointerException on invalid type value, which requires manually
                         // change typos in the file
-                        Logf.error(this::class, "Error at line %d: unknown event type '%s'. Must be one of %s",
-                            rowNum + 1, row.tipo, csvEventTypesMap.keys
+                        throw Exception(
+                            "Error at line %d: unknown event type '%s'. Must be one of %s".format(
+                                rowNum + 1, row.tipo, csvEventTypesMap.keys
+                            )
                         )
-                        throw e
                     }
                 }
             }

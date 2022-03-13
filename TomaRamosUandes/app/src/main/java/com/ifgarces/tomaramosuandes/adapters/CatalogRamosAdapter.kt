@@ -88,8 +88,12 @@ class CatalogRamosAdapter(
                 // Setting `planEstudios` background color
                 this.planEstudios.setTextColor(
                     homeActivity.getColor(
-                        if (ramo.planEstudios == "PE2016") R.color.PE2016
-                        else R.color.PE2011 // for both values "PE2011" and "PE2011/PE2016"
+                        if (DataMaster.getUserStats().nightModeOn)
+                            if (ramo.planEstudios == "PE2016") R.color.nightPE2016
+                            else R.color.nightPE2011
+                        else
+                            if (ramo.planEstudios == "PE2016") R.color.PE2016
+                            else R.color.PE2011
                     )
                 )
 

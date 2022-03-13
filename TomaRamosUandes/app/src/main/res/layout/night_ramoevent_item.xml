@@ -7,7 +7,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/recyclerItems_margin"
-    app:cardBackgroundColor="@color/nightCardBackground">
+    app:cardBackgroundColor="#666267">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:padding="3dp"
@@ -20,6 +20,7 @@
         <TextView
             android:id="@+id/ramoEvent_when"
             style="@style/ramoEvent_dateOrDay"
+            android:background="#333333"
             android:text="[Date | Day]"
 
             android:layout_width="0dp"

@@ -238,7 +238,7 @@ Inicie sesión con su cuenta @miuandes para mandar un formulario de feedback. Gr
                 SchedulePortraitFragment::class -> 1
                 EvaluationsFragment::class -> 2
                 else -> throw Exception(
-                    "Invalid target fragment class %s for HomeActivity.setBottomNavItemSelected".format(
+                    "Invalid target fragment class '%s' for HomeActivity.setBottomNavItemSelected".format(
                         fragment.simpleName
                     )
                 )

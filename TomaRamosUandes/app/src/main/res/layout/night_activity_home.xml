@@ -9,6 +9,7 @@
     tools:context=".activities.HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
         android:id="@+id/home_topbar_layout"
         android:elevation="@dimen/toolbar_elevation"
         android:layout_width="match_parent"
@@ -18,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
             android:id="@+id/home_topbar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:backgroundTint="@color/gray"
@@ -44,6 +46,7 @@
         app:navGraph="@navigation/main_navigator" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
         android:id="@+id/home_bottomNavView"
         android:background="@color/gray"
         app:itemTextColor="@color/nightDefaultForeground"

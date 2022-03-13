@@ -65,6 +65,7 @@
             <TextView
                 android:id="@+id/ramoCatalog_static01"
                 style="@style/ramo_NRC"
+                android:background="@color/nightDefaultBackground"
                 android:paddingEnd="0dp"
                 android:text="NRC:"
                 android:textColor="@color/nightDefaultForeground"
@@ -79,6 +80,7 @@
             <TextView
                 android:id="@+id/ramoCatalog_NRC"
                 style="@style/ramo_NRC"
+                android:background="@color/nightDefaultBackground"
                 android:text="[NRC]"
                 android:textColor="@color/nightDefaultForeground"
 

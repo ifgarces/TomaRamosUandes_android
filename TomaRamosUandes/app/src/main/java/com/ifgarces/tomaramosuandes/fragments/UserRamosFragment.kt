@@ -109,9 +109,29 @@ class UserRamosFragment : Fragment() {
         val diagView :View = this.layoutInflater.inflate(R.layout.about_and_help_dialog, null)
         diagBuilder.setView(diagView)
 
+        // This is for the NightTheme
+        val hardcodedStyles :String =
+            if (DataMaster.getUserStats().nightModeOn) """
+<style>
+body {background-color: #333333; color: #CDCDCD;}
+h    {color: #FFE7E7;}
+p    {color: #CDCDCD;}
+a    {color: #CDCDCD;}
+</style>
+"""
+            else """
+<style>
+body {background-color: #FFFFFF; color: #252525;}
+h    {color: #252525;}
+p    {color: #252525;}
+a    {color: #00AAD4;}
+</style>
+"""
+
         val diagWebView :WebView = diagView.findViewById(R.id.about_webView)
         diagWebView.loadData( // loading HTML from asset file
-            this.requireActivity().assets.open("AboutAndHelp.html").bufferedReader().readText()
+            hardcodedStyles + this.requireActivity().assets.open("AboutAndHelp.html")
+                .bufferedReader().readText()
                 .format(this.getString(R.string.app_name), BuildConfig.VERSION_NAME),
             "text/html",
             "UTF-8"

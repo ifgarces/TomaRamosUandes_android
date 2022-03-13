@@ -7,7 +7,7 @@ package com.ifgarces.tomaramosuandes.models
  * checking for updates.
  * @property catalogCurrentPeriod Latest catalog period (e.g. "2021-10").
  * @property catalogLastUpdated Date in which the catalog was updated for the last time on Firebase.
- * Format: `DateTimeFormatter.ISO_DATE`. As string, for avoiding problems with serialization on DB.
+ * Free format, won't be parsed to a date object.
  * @property TABLE_NAME Firebase table name (won't use Room local database for this data class).
  * @property USER_APP_URL The main user link of this project (shortened), where general information
  * and latest release build are available.
@@ -22,8 +22,7 @@ data class AppMetadata(
     companion object {
         const val TABLE_NAME :String = "app_metadata"
         const val USER_APP_URL :String = "https://bit.ly/TomadorRamosUandes"
-        const val APK_DOWNLOAD_URL :String =
-            "https://drive.google.com/uc?id=1gogvbPvYdLbWYhXuaHhS9TFom5Us2Go0&export=download"
+        const val APK_DOWNLOAD_URL :String = "https://miuandescl-my.sharepoint.com/:u:/g/personal/ifgarces_miuandes_cl/EfsoeVHvbiROs7H0oqP-sNcBtFxUfgqKKvdrXhmvltH9lA?e=Cm9VhL?download=1"
         const val FEEDBACK_URL :String = "https://forms.gle/jwa2FcPSMeEcFwcXA"
     }
 }
