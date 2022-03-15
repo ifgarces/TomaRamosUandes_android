@@ -3,9 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottom_nav_ramos"
+        android:id="@+id/bottom_nav_dashboard"
         android:enabled="true"
         android:orderInCategory="0"
+        android:icon="@drawable/home_icon"
+        android:title="Ramos"
+        android:iconTint="@color/almostBlack" />
+
+    <item
+        android:id="@+id/bottom_nav_ramos"
+        android:enabled="true"
+        android:orderInCategory="1"
         android:icon="@drawable/checklist_icon"
         android:title="Ramos"
         android:iconTint="@color/almostBlack" />
@@ -13,7 +21,7 @@
     <item
         android:id="@+id/bottom_nav_schedule"
         android:enabled="true"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:icon="@drawable/calendar_icon"
         android:title="Horario"
         android:iconTint="@color/almostBlack" />
@@ -21,7 +29,7 @@
     <item
         android:id="@+id/bottom_nav_evaluations"
         android:enabled="true"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:icon="@drawable/exam_icon"
         android:title="Evaluaciones"
         android:iconTint="@color/almostBlack" />

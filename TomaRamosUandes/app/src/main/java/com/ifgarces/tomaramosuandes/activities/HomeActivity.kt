@@ -10,6 +10,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ifgarces.tomaramosuandes.BuildConfig
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.fragments.DashboardFragment
 import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
 import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
 import com.ifgarces.tomaramosuandes.fragments.UserRamosFragment
@@ -113,6 +114,11 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
         // Setting click listener for bottom navbar
         UI.bottomNavbar.setOnItemSelectedListener { item :MenuItem ->
             when (item.itemId) {
+                R.id.bottom_nav_dashboard -> {
+                    throw NotImplementedError()
+                    //TODO: navigate to DashboardFragment
+                    return@setOnItemSelectedListener true
+                }
                 R.id.bottom_nav_ramos -> {
                     this.navigator.toUserRamos()
                     return@setOnItemSelectedListener true
@@ -234,9 +240,10 @@ Inicie sesión con su cuenta @miuandes para mandar un formulario de feedback. Gr
     public fun setBottomNavItemSelected(fragment :KClass<*>) {
         UI.bottomNavbar.menu.getItem(
             when (fragment) {
-                UserRamosFragment::class -> 0
-                SchedulePortraitFragment::class -> 1
-                EvaluationsFragment::class -> 2
+                DashboardFragment::class -> 0
+                UserRamosFragment::class -> 1
+                SchedulePortraitFragment::class -> 2
+                EvaluationsFragment::class -> 3
                 else -> throw Exception(
                     "Invalid target fragment class '%s' for HomeActivity.setBottomNavItemSelected".format(
                         fragment.simpleName
