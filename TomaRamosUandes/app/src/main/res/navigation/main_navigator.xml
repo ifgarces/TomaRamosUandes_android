@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigator"
-    app:startDestination="@id/userRamosFragment">
+    app:startDestination="@id/dashboardFragment">
 
     <fragment
         android:id="@+id/userRamosFragment"
@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_evaluationsFragment"
             app:destination="@id/evaluationsFragment" />
+        <action
+            android:id="@+id/action_userRamosFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
     </fragment>
     <fragment
         android:id="@+id/catalogFragment"
@@ -33,6 +36,9 @@
         <action
             android:id="@+id/action_schedulePortraitFragment_to_evaluationsFragment2"
             app:destination="@id/evaluationsFragment" />
+        <action
+            android:id="@+id/action_schedulePortraitFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
     </fragment>
     <fragment
         android:id="@+id/evaluationsFragment"
@@ -41,6 +47,21 @@
         tools:layout="@layout/fragment_evaluations" >
         <action
             android:id="@+id/action_evaluationsFragment_to_schedulePortraitFragment2"
+            app:destination="@id/schedulePortraitFragment" />
+        <action
+            android:id="@+id/action_evaluationsFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.ifgarces.tomaramosuandes.fragments.DashboardFragment"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_userRamosFragment"
+            app:destination="@id/userRamosFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_schedulePortraitFragment"
             app:destination="@id/schedulePortraitFragment" />
     </fragment>
 </navigation>

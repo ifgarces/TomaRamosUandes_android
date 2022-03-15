@@ -115,8 +115,7 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
         UI.bottomNavbar.setOnItemSelectedListener { item :MenuItem ->
             when (item.itemId) {
                 R.id.bottom_nav_dashboard -> {
-                    throw NotImplementedError()
-                    //TODO: navigate to DashboardFragment
+                    this.navigator.toDashboard()
                     return@setOnItemSelectedListener true
                 }
                 R.id.bottom_nav_ramos -> {

@@ -8,6 +8,9 @@ import com.ifgarces.tomaramosuandes.activities.HomeActivity
 class HomeNavigator(private val homeActivity :HomeActivity) {
     fun up() = this.homeActivity.supportFragmentManager.popBackStack()
 
+    fun toDashboard() = this.homeActivity.findNavController(R.id.home_fragmentContainer)
+        .navigate(R.id.dashboardFragment)
+
     fun toUserRamos() = this.homeActivity.findNavController(R.id.home_fragmentContainer)
         .navigate(R.id.userRamosFragment)
 
