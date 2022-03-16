@@ -66,7 +66,7 @@ class CatalogFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Catálogo de Ramos",
                 subtitle = "${catalogPeriod}, actualizado el ${catalogLastUpdateDate}",
-                onClick = {
+                onHelpClick = {
                     this.showHelp()
                 }
             )

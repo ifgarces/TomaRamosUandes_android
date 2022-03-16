@@ -1,11 +1,16 @@
 package com.ifgarces.tomaramosuandes.activities
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ifgarces.tomaramosuandes.BuildConfig
@@ -166,15 +171,15 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
      * the toolbar to be loaded just once (on the activity) and its behaviour is updated on the fly
      * depending on the currently active fragment.
      * @author Ignacio F. Garcés.
-     * @param onClick Callback to run when the "help" toolbar menu item is clicked.
+     * @param onHelpClick Callback to run when the "help" toolbar menu item is clicked.
      */
-    public fun setTopToolbarValues(title :String, subtitle :String, onClick :() -> Unit) {
+    public fun setTopToolbarValues(title :String, subtitle :String, onHelpClick :() -> Unit) {
         UI.topToolbar.title = title
         UI.topToolbar.subtitle = subtitle
         UI.topToolbar.setOnMenuItemClickListener { item :MenuItem ->
             when (item.itemId) {
                 R.id.menu_help -> {
-                    onClick.invoke()
+                    onHelpClick.invoke()
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_night_mode -> {

@@ -78,7 +78,7 @@ class SchedulePortraitFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Horario",
                 subtitle = "",
-                onClick = {
+                onHelpClick = {
                     this.showHelp()
                 }
             )

@@ -51,7 +51,7 @@ class UserRamosFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Ver ramos",
                 subtitle = "",
-                onClick = {
+                onHelpClick = {
                     this.showHelp()
                 }
             )
@@ -83,15 +83,16 @@ class UserRamosFragment : Fragment() {
         }
     }
 
+
     /**
-     * Prompts a dialog with information/help about this view.
+     * Prompts a dialog with information/help about the application itself.
      */
     private fun showHelp() {
         val diagBuilder :AlertDialog.Builder =
             AlertDialog.Builder(
                 this.requireContext(),
                 if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
-                    else R.style.myDialogTheme
+                else R.style.myDialogTheme
             )
                 .setCancelable(true)
                 .setPositiveButton("Cerrar") { dialog :DialogInterface, _ :Int ->
@@ -129,15 +130,21 @@ a    {color: #00AAD4;}
 """
 
         val diagWebView :WebView = diagView.findViewById(R.id.about_webView)
+//        diagWebView.settings.domStorageEnabled = true // trying to solve #29...
+//        diagWebView.settings.allowContentAccess = true
+//        diagWebView.settings.allowFileAccess = true
+//        diagWebView.settings.allowFileAccessFromFileURLs = true
+//        diagWebView.settings.databaseEnabled = true
+//        diagWebView.settings.safeBrowsingEnabled = false
         diagWebView.loadData( // loading HTML from asset file
-            hardcodedStyles + this.requireActivity().assets.open("AboutAndHelp.html")
+            this.requireActivity().assets.open("AboutAndHelp.html")
                 .bufferedReader().readText()
-                .format(this.getString(R.string.app_name), BuildConfig.VERSION_NAME),
+                .format(hardcodedStyles, this.getString(R.string.app_name), BuildConfig.VERSION_NAME),
             "text/html",
             "UTF-8"
         )
         diagWebView.webViewClient = object :
-            WebViewClient() { // handling hyperlinks. References: https://stackoverflow.com/a/6343852
+            WebViewClient() { // handling hyperlink clicks. References: https://stackoverflow.com/a/6343852
             override fun shouldOverrideUrlLoading(view :WebView?, url :String?) :Boolean {
                 if (url != null) {
                     view!!.context.startActivity(

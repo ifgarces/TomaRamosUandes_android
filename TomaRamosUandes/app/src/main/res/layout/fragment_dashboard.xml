@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Incoming events section -->
             <LinearLayout
                 style="@style/dashboardSectionHeaderLayout"
                 android:layout_marginTop="0dp">
@@ -49,6 +50,7 @@
                     tools:listitem="@layout/ramoevent_item" />
             </androidx.cardview.widget.CardView>
 
+            <!-- Useful links section -->
             <LinearLayout
                 style="@style/dashboardSectionHeaderLayout">
                 <com.google.android.material.button.MaterialButton
@@ -68,15 +70,36 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dashboard_linksRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     tools:listitem="@layout/web_link_item"
                     android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                    app:spanCount="2"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
             </androidx.cardview.widget.CardView>
 
+            <!-- Advices section -->
+            <LinearLayout
+                style="@style/dashboardSectionHeaderLayout">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dashboard_advicesHeadBtn"
+                    style="@style/dashboardSectionHeaderButton"
+                    android:text="Consejos ING"
+                    app:cornerRadius="0dp"
+                    app:icon="@drawable/arrow_tip_down"
+                    app:iconGravity="end"
+                    app:iconPadding="0dp"
+                    app:iconSize="40dp" />
+            </LinearLayout>
 
-
-
+            <androidx.cardview.widget.CardView
+                android:id="@+id/dashboard_advicesContainer"
+                style="@style/dashboardSectionCard">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dashboard_advicesRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

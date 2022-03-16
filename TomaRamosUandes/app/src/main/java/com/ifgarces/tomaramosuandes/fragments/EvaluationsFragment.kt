@@ -46,7 +46,7 @@ class EvaluationsFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Evaluaciones",
                 subtitle = "",
-                onClick = {
+                onHelpClick = {
                     this.showHelp()
                 }
             )

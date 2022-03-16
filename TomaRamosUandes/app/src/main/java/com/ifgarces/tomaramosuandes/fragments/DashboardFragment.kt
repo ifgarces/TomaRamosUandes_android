@@ -6,15 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
-import com.ifgarces.tomaramosuandes.adapters.RamoEventsAdapter
+import com.ifgarces.tomaramosuandes.adapters.IncomingRamoEventsAdapter
 import com.ifgarces.tomaramosuandes.adapters.WebLinksAdapter
 import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
-import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.DataMaster
+import com.ifgarces.tomaramosuandes.utils.toastf
 
 
 class DashboardFragment : Fragment() {
@@ -44,42 +46,46 @@ class DashboardFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        Logf.debug(this::class, "I am ok")
         val fragView :View = inflater.inflate(R.layout.fragment_dashboard, container, false)
         this.UI = FragmentUI(owner=fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
-            // Defining constant collection of links. Didn't figure out a best way to do this simply.
-            val PrettyHyperlinks :List<PrettyHyperlink> = listOf(
-                PrettyHyperlink(
-                    image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_canvas)!!,
-                    name = "Canvas",
-                    uri = "https://uandes.instructure.com"
-                ),
-                PrettyHyperlink(
-                    image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_banner)!!,
-                    name = "Banner MiUandes",
-                    uri = "https://mi.uandes.cl/PROD/twbkwbis.P_WWWLogin"
-                ),
-                PrettyHyperlink(
-                    image = ContextCompat.getDrawable(this.requireContext(), R.drawable.uandes_logo_simple)!!,
-                    name = "SAF",
-                    uri = "https://saf.uandes.cl/ing"
-                )
+            homeActivity.setBottomNavItemSelected(this::class)
+            homeActivity.setTopToolbarValues(
+                title = "Inicio",
+                subtitle = "Dashboard principal",
+                onHelpClick = {} //TODO: show help
             )
 
             // Setting up recyclers
             UI.incomingEventsRecycler.layoutManager = LinearLayoutManager(
                 homeActivity, LinearLayoutManager.HORIZONTAL, false
             )
-            UI.incomingEventsRecycler.adapter = RamoEventsAdapter(
-                data = listOf(), showEventType = true
+            UI.incomingEventsRecycler.adapter = IncomingRamoEventsAdapter(
+                data = DataMaster.getUserEvaluations() //TODO: only show events in the next 31 days
             )
-            UI.usefulLinksRecycler.layoutManager = LinearLayoutManager(
-                homeActivity, LinearLayoutManager.HORIZONTAL, false
+            UI.usefulLinksRecycler.layoutManager = GridLayoutManager(
+                homeActivity, 2, LinearLayoutManager.HORIZONTAL, false
             )
             UI.usefulLinksRecycler.adapter = WebLinksAdapter(
-                data = PrettyHyperlinks, activity = this.requireActivity() as HomeActivity
+                data = listOf( // hardcoded because this is not supposed to change. Is this the way to do this?
+                    PrettyHyperlink(
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_canvas)!!,
+                        name = "Canvas",
+                        uri = "https://uandes.instructure.com"
+                    ),
+                    PrettyHyperlink(
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_banner)!!,
+                        name = "Banner MiUandes",
+                        uri = "https://mi.uandes.cl/PROD/twbkwbis.P_WWWLogin"
+                    ),
+                    PrettyHyperlink(
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.uandes_logo_simple)!!,
+                        name = "SAF",
+                        uri = "https://saf.uandes.cl/ing"
+                    )
+                ),
+                activity = this.requireActivity() as HomeActivity
             )
 
             //TODO: properly show the next events, e.g. the next 2 events this month, etc.

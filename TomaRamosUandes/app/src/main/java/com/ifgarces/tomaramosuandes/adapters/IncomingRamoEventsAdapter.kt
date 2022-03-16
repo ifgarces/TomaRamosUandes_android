@@ -1,19 +1,25 @@
 package com.ifgarces.tomaramosuandes.adapters
 
+import android.content.Context
+import android.graphics.Typeface
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
-import com.ifgarces.tomaramosuandes.utils.DataMaster
+import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
-import com.ifgarces.tomaramosuandes.utils.spanishUpperCase
+import com.ifgarces.tomaramosuandes.utils.infoDialog
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
+import java.time.temporal.ChronoUnit
 
 
+/**
+ * For displaying a set of nearly incoming events for the user, on `DashboardFragment`.
+ */
 class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
     RecyclerView.Adapter<IncomingRamoEventsAdapter.EventVH>() {
 
@@ -37,6 +43,7 @@ class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
         private val location   :TextView = v.findViewById(R.id.ramoEvent_location)
 
         fun bind(event :RamoEvent, position :Int) {
+            val context :Context = this.parentView.context
             this.ti.text = event.startTime.toString()
             this.tf.text = event.endTime.toString()
             if (event.location != "") {
@@ -45,16 +52,37 @@ class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
                 this.location.visibility = View.GONE
             }
 
-            // Date and DayOfWeek
-            val daysLeft :Long = TimeUnit.MILLISECONDS.toDays(
-                event.date!!.toEpochDay() - LocalDate.now().toEpochDay()
-            )
+            // Displaying string according to the time left for the event. Ref: https://discuss.kotlinlang.org/t/calculate-no-of-days-between-two-dates-kotlin/9826
+            val daysLeft :Long = LocalDate.now().until(event.date!!, ChronoUnit.DAYS)
+            if (daysLeft < 0) {
+                Logf.warn(this::class, "Negative daysLeft for the event")
+            }
 
-            this.dayData.text = when {
-                (daysLeft == 0L) -> "Hoy"
-                (daysLeft == 1L) -> "Mañana"
-                (daysLeft < 31L) -> "En %d días".format(daysLeft)
-                else -> "En más de 1 mes"
+            when {
+                (daysLeft == 0L) -> {
+                    this.dayData.text = "Hoy"
+                    this.dayData.setTypeface(null, Typeface.BOLD)
+                    this.dayData.setBackgroundColor(
+                        ContextCompat.getColor(context, android.R.color.holo_red_dark)
+                    )
+                }
+                (daysLeft == 1L) -> {
+                    this.dayData.text = "Mañana"
+                    this.dayData.setTypeface(null, Typeface.BOLD)
+                    this.dayData.setBackgroundColor(
+                        ContextCompat.getColor(context, android.R.color.holo_red_dark)
+                    )
+                }
+                (daysLeft < 31L) -> {
+                    this.dayData.text = "En %d días".format(daysLeft)
+                }
+                else -> {
+                    this.dayData.text = "En más de 1 mes"
+                    this.dayData.setBackgroundColor(
+                        ContextCompat.getColor(context, R.color.gray)
+
+                    )
+                }
             }
 
             // Event type
@@ -64,8 +92,12 @@ class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
             )
 
             this.parentView.setOnClickListener {
-                //TODO: show details of the event in a dialog
-                throw NotImplementedError()
+                context.infoDialog(
+                    title = "Detalle de evento",
+                    message = event.toLargeString(),
+                    onDismiss = {},
+                    icon = null
+                )
             }
         }
     }
