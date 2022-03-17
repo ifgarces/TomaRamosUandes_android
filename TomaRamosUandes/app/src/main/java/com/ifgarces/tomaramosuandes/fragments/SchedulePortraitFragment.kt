@@ -145,7 +145,7 @@ class SchedulePortraitFragment : Fragment() {
 
     private fun showHelp() {
         this.requireContext().infoDialog(
-            title = "Ayuda - Horario",
+            title = "Ayuda — Horario",
             message = """\
 En esta vista puede ver el horario semanal (clases, ayudantías y laboratorios) de sus ramos \
 actualmente inscritos.""".multilineTrim(),

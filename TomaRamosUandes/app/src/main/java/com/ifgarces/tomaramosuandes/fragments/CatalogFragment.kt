@@ -95,7 +95,7 @@ class CatalogFragment : Fragment() {
      */
     private fun showHelp() {
         this.requireContext().infoDialog(
-            title = "Ayuda - Catálogo de ramos",
+            title = "Ayuda — Catálogo de ramos",
             message = """\
 Presione un ramo para ver detalles y eventualmente tomarlo. Los ramos con fondo azul \
 son los que ud. ya ha tomado. Puede usar la caja de búsqueda para filtrar ramos por \

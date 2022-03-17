@@ -107,10 +107,11 @@ anotar sus pruebas/eventos, y Google Keep para tomar notas rápidas. Sáquele el
                     PrettyAdvice(
                         title = "Office 365 y OneDrive",
                         description = """\
-
+La Uandes también le orotga una cuenta Office 365 (Microsoft) @miuandes vinculada a la de Google. \
+Recuerde reclamar su Office gratis y usar OneDrive.\
 """.multilineTrim(),
-                        image = null,
-                        uri = null
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_office365)!!,
+                        uri = "https://www.office.com"
                     ),
                     PrettyAdvice(
                         title = "Acceso a software de JetBrains 🧠",
@@ -122,12 +123,13 @@ JetBrains (para Python, etc.). Inicie sesión con su cuenta en jetbrains.com.\
                         uri = "https://www.jetbrains.com"
                     ),
                     PrettyAdvice(
-                        title = "Software de AutoDesk (...)",
+                        title = "AutoDesk Fusion 360",
                         description = """\
-
+Con la cuenta @miuandes se puede obtener la licencia de estudiante de Fusion 360, un software para \
+hacer modelos en 3D.\
 """.multilineTrim(),
-                        image = null,
-                        uri = null
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_fusion360)!!,
+                        uri = "https://www.autodesk.com"
                     ),
                     PrettyAdvice(
                         title = "Resúmenes y material ING varios ⚙",
@@ -139,12 +141,23 @@ Uandes, además de material educacional de colegio.\
                         uri = "http://www.g-ayuda.net"
                     ),
                     PrettyAdvice(
-                        title = "Material académico CDI 📝",
-                        description = """
-
+                        title = "Material académico CDI",
+                        description = """\
+Carpeta de Google Drive con material de estudio variado de muchos ramos de ingeniería Uandes de \
+todas las especialidades.\
 """.multilineTrim(),
-                        image = null,
-                        uri = null
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_cdi)!!,
+                        uri = "https://drive.google.com/drive/folders/0B7fLfOr3MydSVGY5MGhJTHJUcGs?resourcekey=0-Nd0xQYNHlDUh4utj-K-9tA&usp=sharing"
+                    ),
+                    PrettyAdvice(
+                        title = "SCI-HUB y Library Genesis 📑",
+                        description = """\
+Existen sitios web para descargar gratis millones de libros y artículos de investigación \
+informativos/científicos (en inglés) que normalmente son pagados, en favor de la divulgación \
+científica libre. Uno es SCI-HUB y otro es Library Genesis ;)\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_scihub)!!,
+                        uri = "https://sci-hub.hkvisa.net"
                     ),
                     PrettyAdvice(
                         title = "CamScanner 📷",
@@ -158,16 +171,20 @@ Muy buena, qué puedo decir.\
                     ),
                     PrettyAdvice(
                         title = "WolframAlpha",
-                        description = """
-
+                        description = """\
+Calculadora científica inteligente que resuelve problemas de cálculo, sistemas de ecuaciones, \
+trigonometría, etc. y hasta puede graficar funciones. Incluso es capaz de mostrar los pasos a seguir \
+para resolver el problema, pero es una característica de pago.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_wolframalpha)!!,
-                        uri = null
+                        uri = "https://www.wolframalpha.com"
                     ),
                     PrettyAdvice(
                         title = "Symbolab",
-                        description = """
-
+                        description = """\
+Similar a WolframAlpha, un potente solucionador matemático, pero más sencillo de usar y no cobra por \
+ver la solución paso a paso de un problema! Es genial, muy recomendado para practicar problemas \
+matemáticos de todo tipo.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_symbolab)!!,
                         uri = null
@@ -175,18 +192,21 @@ Muy buena, qué puedo decir.\
                     PrettyAdvice(
                         title = "MyBib 📚",
                         description = """\
-
+MyBib es un generador de bibliografías y citaciones en varios formatos distintos que se elija. \
+Sirve muchísimo para los informes de ingeniería que exigen un formato (e.g. Harvard). Mucho mejor \
+que el gestor de bibliografías que tiene incorporado Microsoft Word. Sí.\
 """.multilineTrim(),
-                        image = null,
-                        uri = null
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_mybib)!!,
+                        uri = "https://www.mybib.com"
                     ),
                     PrettyAdvice(
                         title = "draw.io",
                         description = """\
-
+Sitio web para dibujar diagramas (colaborativamente en tiempo real). Sencillo y rápido, solo poner \
+draw.io en el navegador.\
 """.multilineTrim(),
-                        image = null,
-                        uri = null
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_drawio)!!,
+                        uri = "https://draw.io"
                     ),
                     PrettyAdvice(
                         title = "DroidCam",
@@ -194,8 +214,8 @@ Muy buena, qué puedo decir.\
 Si no tienes una webcam, con esta app puedes usar un teléfono Android como webcam, conectado por \
 cable al PC o inalámbricamente por WI-FI.\
 """.multilineTrim(),
-                        image = null,
-                        uri = null
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_droidcam)!!,
+                        uri = "https://play.google.com/store/apps/details?id=com.dev47apps.droidcam"
                     ),
                     PrettyAdvice(
                         title = "NightEye 🌙",
@@ -207,15 +227,15 @@ maravilla.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_nighteye)!!,
                         uri = "https://nighteye.app"
-                    ),
-                    PrettyAdvice(
-                        title = "",
-                        description = """\
-
-""".multilineTrim(),
-                        image = null,
-                        uri = null
                     )
+//                    PrettyAdvice(
+//                        title = "",
+//                        description = """\
+//
+//""".multilineTrim(),
+//                        image = null,
+//                        uri = null
+//                    )
                 ),
                 activity = homeActivity
             )

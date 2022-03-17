@@ -86,7 +86,7 @@ class EvaluationsFragment : Fragment() {
      */
     private fun showHelp() {
         this.requireContext().infoDialog(
-            title = "Ayuda - Evaluaciones",
+            title = "Ayuda — Evaluaciones",
             message = """\
 Aquí se ven las pruebas y exámenes de cada ramo que ud. haya tomado. \
 Use el botón "Exportar al calendario" para indexar las evaluaciones en su calendario (de Google, \
