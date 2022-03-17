@@ -5,35 +5,37 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.adapters.IncomingRamoEventsAdapter
-import com.ifgarces.tomaramosuandes.adapters.WebLinksAdapter
+import com.ifgarces.tomaramosuandes.adapters.PrettyAdvicesAdapter
+import com.ifgarces.tomaramosuandes.adapters.PrettyLinksAdapter
+import com.ifgarces.tomaramosuandes.models.PrettyAdvice
 import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
 import com.ifgarces.tomaramosuandes.utils.DataMaster
-import com.ifgarces.tomaramosuandes.utils.toastf
+import com.ifgarces.tomaramosuandes.utils.infoDialog
+import com.ifgarces.tomaramosuandes.utils.multilineTrim
+import kotlinx.android.synthetic.main.ramoevent_item.view.*
 
 
 class DashboardFragment : Fragment() {
 
     private class FragmentUI(owner :View) {
         // Incoming events section
-        val incomingEventsHeadBtn :MaterialButton = owner.findViewById(R.id.dashboard_incomingEventsHeadBtn)
-        val incomingEventsContainer :View = owner.findViewById(R.id.dashboard_incomingEventsContainer)
+        val incomingEventsHeadTxt :TextView = owner.findViewById(R.id.dashboard_incomingEventsHeadTxt)
         val incomingEventsRecycler :RecyclerView = owner.findViewById(R.id.dashboard_incomingEventsRecycler)
 
         // Useful links section
-        val usefulLinksHeadBtn :MaterialButton = owner.findViewById(R.id.dashboard_linksHeadBtn)
-        val usefulLinksContainer :View = owner.findViewById(R.id.dashboard_linksContainer)
+        val usefulLinksHeadTxt :TextView = owner.findViewById(R.id.dashboard_linksHeadTxt)
         val usefulLinksRecycler :RecyclerView = owner.findViewById(R.id.dashboard_linksRecycler)
 
         // Advices section
-        //TODO
+        val advicesHeadTxt :TextView = owner.findViewById(R.id.dashboard_advicesHeadTxt)
+        val advicesRecycler :RecyclerView = owner.findViewById(R.id.dashboard_advicesRecycler)
     }
 
     private lateinit var UI :FragmentUI
@@ -54,7 +56,7 @@ class DashboardFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Inicio",
                 subtitle = "Dashboard principal",
-                onHelpClick = {} //TODO: show help
+                onHelpClick = this::showHelp
             )
 
             // Setting up recyclers
@@ -64,11 +66,11 @@ class DashboardFragment : Fragment() {
             UI.incomingEventsRecycler.adapter = IncomingRamoEventsAdapter(
                 data = DataMaster.getUserEvaluations() //TODO: only show events in the next 31 days
             )
-            UI.usefulLinksRecycler.layoutManager = GridLayoutManager(
-                homeActivity, 2, LinearLayoutManager.HORIZONTAL, false
+            UI.usefulLinksRecycler.layoutManager = LinearLayoutManager(
+                homeActivity, LinearLayoutManager.HORIZONTAL, false
             )
-            UI.usefulLinksRecycler.adapter = WebLinksAdapter(
-                data = listOf( // hardcoded because this is not supposed to change. Is this the way to do this?
+            UI.usefulLinksRecycler.adapter = PrettyLinksAdapter(
+                data = listOf(
                     PrettyHyperlink(
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_canvas)!!,
                         name = "Canvas",
@@ -77,7 +79,7 @@ class DashboardFragment : Fragment() {
                     PrettyHyperlink(
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_banner)!!,
                         name = "Banner MiUandes",
-                        uri = "https://mi.uandes.cl/PROD/twbkwbis.P_WWWLogin"
+                        uri = "https://mi.uandes.cl"
                     ),
                     PrettyHyperlink(
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.uandes_logo_simple)!!,
@@ -85,50 +87,153 @@ class DashboardFragment : Fragment() {
                         uri = "https://saf.uandes.cl/ing"
                     )
                 ),
-                activity = this.requireActivity() as HomeActivity
+                activity = homeActivity
             )
+            UI.advicesRecycler.layoutManager = LinearLayoutManager(
+                homeActivity, LinearLayoutManager.VERTICAL, false
+            )
+            UI.advicesRecycler.adapter = PrettyAdvicesAdapter(
+                data = listOf(
+                    PrettyAdvice(
+                        title = "Beneficios cuenta de Google Uandes",
+                        description = """\
+La cuenta de Gmail @miuandes de cada estudiante es de tipo "Gsuite" y cuenta con espacio "ilimitado" \
+en Google Drive para almacenar archivos en la nube. Además, aproveche el calendario de Google para \
+anotar sus pruebas/eventos, y Google Keep para tomar notas rápidas. Sáquele el jugo.\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_gsuite)!!,
+                        uri = "https://drive.google.com"
+                    ),
+                    PrettyAdvice(
+                        title = "Office 365 y OneDrive",
+                        description = """\
 
-            //TODO: properly show the next events, e.g. the next 2 events this month, etc.
-            //TODO: SHOW RELATIVE TIME (e.g. "mañana", "en 6 días", etc.)
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "Acceso a software de JetBrains 🧠",
+                        description = """\
+Con la cuenta @miuandes puede acceder a licencias de estudiante en herramientas de programación de \
+JetBrains (para Python, etc.). Inicie sesión con su cuenta en jetbrains.com.\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webitem_jetbrains)!!,
+                        uri = "https://www.jetbrains.com"
+                    ),
+                    PrettyAdvice(
+                        title = "Software de AutoDesk (...)",
+                        description = """\
 
-            UI.incomingEventsHeadBtn.setOnClickListener {
-                this.onCollapseToggleButton(
-                    isCollapsed = this.isEventsSectionCollapsed,
-                    sectionButton = UI.incomingEventsHeadBtn,
-                    sectionContainer = UI.incomingEventsContainer
-                )
-                this.isEventsSectionCollapsed = !this.isEventsSectionCollapsed
-            }
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "Resúmenes y material ING varios ⚙",
+                        description = """\
+Great Ayuda es una página con resúmenes y material de apoyo de varios ramos de ing. civil plan común \
+Uandes, además de material educacional de colegio.\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_greatayuda)!!,
+                        uri = "http://www.g-ayuda.net"
+                    ),
+                    PrettyAdvice(
+                        title = "Material académico CDI 📝",
+                        description = """
 
-            UI.usefulLinksHeadBtn.setOnClickListener {
-                this.onCollapseToggleButton(
-                    isCollapsed = this.isLinksSectionCollapsed,
-                    sectionButton = UI.usefulLinksHeadBtn,
-                    sectionContainer = UI.usefulLinksContainer
-                )
-                this.isLinksSectionCollapsed = !this.isLinksSectionCollapsed
-            }
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "CamScanner 📷",
+                        description = """\
+Una app móbil gratuita que convierte el teléfono en un escáner de documentos. Además, la licencia de \
+estudiante es baratísima y es un pago único que mejora la calidad y quita marcas de agua de la app. \
+Muy buena, qué puedo decir.\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_camscanner)!!,
+                        uri = "https://play.google.com/store/apps/details?id=com.intsig.lic.camscanner"
+                    ),
+                    PrettyAdvice(
+                        title = "WolframAlpha",
+                        description = """
+
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_wolframalpha)!!,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "Symbolab",
+                        description = """
+
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_symbolab)!!,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "MyBib 📚",
+                        description = """\
+
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "draw.io",
+                        description = """\
+
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "DroidCam",
+                        description = """\
+Si no tienes una webcam, con esta app puedes usar un teléfono Android como webcam, conectado por \
+cable al PC o inalámbricamente por WI-FI.\
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    ),
+                    PrettyAdvice(
+                        title = "NightEye 🌙",
+                        description = """\
+Con esta extensión, puede convertir cualquier página web en modo oscuro para que sea más cómodo a la \
+vista, sobre todo ahora que pasamos más tiempo que nunca mirando pantallas... Por desgracia es \
+gratis sólo por tres meses, pero luego vale la pena pagar unos pocos dólares al año, es una \
+maravilla.\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_nighteye)!!,
+                        uri = "https://nighteye.app"
+                    ),
+                    PrettyAdvice(
+                        title = "",
+                        description = """\
+
+""".multilineTrim(),
+                        image = null,
+                        uri = null
+                    )
+                ),
+                activity = homeActivity
+            )
         }
 
         return fragView
     }
 
-    /**
-     * On-click behaviour for the buttons of the headers for collapsing/expanding sections, as well
-     * as for updating the button icon.
-     * @param isCollapsed Wether the current section is collapsed or not right when the user clicks
-     * the collapse/expand toggle button.
-     * @param sectionButton Button for collapsing/expanding the section.
-     * @param sectionContainer Container for the elements of the section.
-     */
-    private fun onCollapseToggleButton(
-        isCollapsed :Boolean, sectionButton :MaterialButton, sectionContainer :View
-    ) {
-        sectionContainer.visibility = if (isCollapsed) View.VISIBLE else View.GONE
-        //TODO: add basic animations
-        sectionButton.icon = ContextCompat.getDrawable(
-            this.requireContext(),
-            if (isCollapsed) R.drawable.arrow_tip_down else R.drawable.arrow_tip_right
+    private fun showHelp() {
+        this.requireContext().infoDialog(
+            title = "Ayuda — Inicio",
+            message = """\
+Este es el tablero principal donde aparecen secciones útiles, como las evaluaciones cercanas, \
+links útiles y consejos varios. Si tienes algo que decir, o quieres agregar un consejo, por ejemplo, \
+rellena el formulario de feedback! Está en la barra superior, en la esquina, presiona los tres \
+puntitos.""".multilineTrim(),
+            onDismiss = {},
+            icon = null
         )
     }
 }

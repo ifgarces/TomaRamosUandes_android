@@ -17,12 +17,13 @@ import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
  * Adapter for multiple big web links in `DashboardFragment`.
  * @property data The collection of "web links" with image, URI and display name.
  */
-class WebLinksAdapter(private val data :List<PrettyHyperlink>, private val activity :HomeActivity) :
-    RecyclerView.Adapter<WebLinksAdapter.LinkVH>() {
+class PrettyLinksAdapter(
+    private val data :List<PrettyHyperlink>, private val activity :HomeActivity
+) : RecyclerView.Adapter<PrettyLinksAdapter.LinkVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :LinkVH {
         return LinkVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.web_link_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.pretty_link_item, parent, false)
         )
     }
 
@@ -40,7 +41,7 @@ class WebLinksAdapter(private val data :List<PrettyHyperlink>, private val activ
             this.linkImageView.setImageDrawable(item.image)
             this.linkTextView.text = item.name
             this.parentView.setOnClickListener {
-                this@WebLinksAdapter.activity.startActivity(
+                this@PrettyLinksAdapter.activity.startActivity(
                     Intent(
                         Intent.ACTION_VIEW, Uri.parse(item.uri)
                     )

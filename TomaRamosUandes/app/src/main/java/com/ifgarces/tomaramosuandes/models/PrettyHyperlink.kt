@@ -11,6 +11,6 @@ import android.graphics.drawable.Drawable
  */
 data class PrettyHyperlink(
     val image :Drawable,
-    val name :String,
-    val uri :String
+    val name  :String,
+    val uri   :String
 )
