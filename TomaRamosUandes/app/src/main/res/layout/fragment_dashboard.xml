@@ -9,47 +9,63 @@
     tools:context=".fragments.DashboardFragment">
 
     <!-- Incoming events section (intended for evaluations) -->
-    <TextView
-        android:id="@+id/dashboard_incomingEventsHeadTxt"
-        style="@style/dashboardHeadTextView"
+    <LinearLayout
+        android:id="@+id/dashboard_eventsHeadLayout"
+        style="@style/dashboardSectionHeaderLayout"
         android:layout_marginTop="0dp"
-        android:text="Evaluaciones próximas"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dashboard_eventsHeadButton"
+            style="@style/dashboardSectionHeaderButton"
+            android:text="Evaluaciones próximas"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/arrow_tip_right"
+            app:iconGravity="end"
+            app:iconPadding="0dp"
+            app:iconSize="40dp" />
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/dashboard_incomingEventsContainer"
+        android:id="@+id/dashboard_eventsContainer"
         style="@style/dashboardSectionCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_incomingEventsHeadTxt">
-
+        app:layout_constraintTop_toBottomOf="@id/dashboard_eventsHeadLayout">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/dashboard_incomingEventsRecycler"
+            android:id="@+id/dashboard_eventsRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/ramoevent_item" />
     </androidx.cardview.widget.CardView>
-
+    
     <!-- Useful links section -->
-    <TextView
-        android:id="@+id/dashboard_linksHeadTxt"
-        style="@style/dashboardHeadTextView"
-        android:text="Links útiles"
+    <LinearLayout
+        android:id="@+id/dashboard_linksHeadLayout"
+        style="@style/dashboardSectionHeaderLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_incomingEventsContainer" />
+        app:layout_constraintTop_toBottomOf="@id/dashboard_eventsContainer">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dashboard_linksHeadButton"
+            style="@style/dashboardSectionHeaderButton"
+            android:text="Links útiles"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/arrow_tip_right"
+            app:iconGravity="end"
+            app:iconPadding="0dp"
+            app:iconSize="40dp" />
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/dashboard_linksContainer"
         style="@style/dashboardSectionCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_linksHeadTxt">
-
+        app:layout_constraintTop_toBottomOf="@id/dashboard_linksHeadLayout">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dashboard_linksRecycler"
             android:layout_width="match_parent"
@@ -60,13 +76,22 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Career advices section -->
-    <TextView
-        android:id="@+id/dashboard_advicesHeadTxt"
-        style="@style/dashboardHeadTextView"
-        android:text="Consejos"
+    <LinearLayout
+        android:id="@+id/dashvoard_advicesHeadLayout"
+        style="@style/dashboardSectionHeaderLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_linksContainer" />
+        app:layout_constraintTop_toBottomOf="@id/dashboard_linksContainer">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dashboard_advicesHeadButton"
+            style="@style/dashboardSectionHeaderButton"
+            android:text="Consejos"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/arrow_tip_right"
+            app:iconGravity="end"
+            app:iconPadding="0dp"
+            app:iconSize="40dp" />
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/dashboard_advicesContainer"
@@ -75,14 +100,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_advicesHeadTxt">
-
+        app:layout_constraintTop_toBottomOf="@id/dashvoard_advicesHeadLayout">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dashboard_advicesRecycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/pretty_advice_item" />
+            tools:listitem="@layout/career_advice_item" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

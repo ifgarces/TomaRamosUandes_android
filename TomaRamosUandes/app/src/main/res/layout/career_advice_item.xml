@@ -30,7 +30,7 @@
                 app:icon="@drawable/arrow_tip_right"
                 app:iconGravity="end"
                 app:iconPadding="0dp"
-                app:iconSize="36dp" />
+                app:iconSize="34dp" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

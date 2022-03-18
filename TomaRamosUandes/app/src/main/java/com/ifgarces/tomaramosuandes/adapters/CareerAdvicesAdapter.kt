@@ -12,19 +12,20 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
-import com.ifgarces.tomaramosuandes.models.PrettyAdvice
+import com.ifgarces.tomaramosuandes.models.CareerAdvice
+import com.ifgarces.tomaramosuandes.utils.toggleCollapseViewButton
 
 
 /**
  * RecyclerView adapter for career advices.
  */
-class PrettyAdvicesAdapter(
-    private val data :List<PrettyAdvice>, private val activity :HomeActivity
-) : RecyclerView.Adapter<PrettyAdvicesAdapter.AdviceVH>() {
+class CareerAdvicesAdapter(
+    private val data :List<CareerAdvice>, private val activity :HomeActivity
+) : RecyclerView.Adapter<CareerAdvicesAdapter.AdviceVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :AdviceVH {
         return AdviceVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.pretty_advice_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.career_advice_item, parent, false)
         )
     }
 
@@ -42,13 +43,13 @@ class PrettyAdvicesAdapter(
 
         private var isCollapsed :Boolean = true // collapsed on creation
 
-        fun bind(item :PrettyAdvice, position :Int) {
+        fun bind(item :CareerAdvice, position :Int) {
             // Displaying advice data
             if (item.image != null) {
                 this.imageView.setImageDrawable(item.image)
             } else {
                 this.imageView.setImageDrawable(ContextCompat.getDrawable(
-                    this@PrettyAdvicesAdapter.activity, R.drawable.idea_icon
+                    this@CareerAdvicesAdapter.activity, R.drawable.idea_icon
                 ))
             }
 
@@ -56,22 +57,21 @@ class PrettyAdvicesAdapter(
             this.descriptionTxt.text = item.description
 
             // The body starts collapsed when created
-            if (isCollapsed) {
+            if (this.isCollapsed) {
                 this.bodyContainer.visibility = View.GONE
                 this.headButton.icon = ContextCompat.getDrawable(
-                    this@PrettyAdvicesAdapter.activity, R.drawable.arrow_tip_right
+                    this@CareerAdvicesAdapter.activity, R.drawable.arrow_tip_right
                 )
             } else {
                 this.bodyContainer.visibility = View.VISIBLE
                 this.headButton.icon = ContextCompat.getDrawable(
-                    this@PrettyAdvicesAdapter.activity, R.drawable.arrow_tip_down
+                    this@CareerAdvicesAdapter.activity, R.drawable.arrow_tip_down
                 )
             }
-            //TODO: solve bolerplate code here!!
 
             // Handling collapse/expand click behaviour for the head button
             this.headButton.setOnClickListener {
-                this@PrettyAdvicesAdapter.onCollapseToggleButton(
+                this@CareerAdvicesAdapter.activity.toggleCollapseViewButton(
                     isCollapsed = this.isCollapsed,
                     toggleButton = this.headButton,
                     targetContainer = this.bodyContainer
@@ -82,7 +82,7 @@ class PrettyAdvicesAdapter(
             // Handling URI on-click, if existing
             this.parentView.setOnClickListener {
                 if (item.uri != null) {
-                    this@PrettyAdvicesAdapter.activity.startActivity(
+                    this@CareerAdvicesAdapter.activity.startActivity(
                         Intent(
                             Intent.ACTION_VIEW, Uri.parse(item.uri)
                         )
@@ -90,24 +90,5 @@ class PrettyAdvicesAdapter(
                 }
             }
         }
-    }
-
-    /**
-     * On-click behaviour for the buttons of the headers for collapsing/expanding `View`s, as well
-     * as for updating the button icon.
-     * @param isCollapsed Wether the current section is collapsed or not right when the user clicks
-     * the collapse/expand toggle button.
-     * @param toggleButton Button for collapsing/expanding.
-     * @param targetContainer Target view for the elements that are hidden/shown.
-     */
-    private fun onCollapseToggleButton(
-        isCollapsed :Boolean, toggleButton :MaterialButton, targetContainer :View
-    ) {
-        targetContainer.visibility = if (isCollapsed) View.VISIBLE else View.GONE
-        //TODO: add basic appear/dissapear animation
-        toggleButton.icon = ContextCompat.getDrawable(
-            this.activity,
-            if (isCollapsed) R.drawable.arrow_tip_down else R.drawable.arrow_tip_right
-        )
     }
 }

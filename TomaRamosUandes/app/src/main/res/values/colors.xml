@@ -53,6 +53,7 @@
     <color name="night_creditSum_bad">#E45F55</color>
 
     <!-- Dashboard colors -->
+    <color name="sectionHeaderBackground">#555555</color>
     <color name="adviceHeaderBackground">#7C446C</color>
 
 </resources>

@@ -10,7 +10,7 @@ import android.graphics.drawable.Drawable
  * @property image Optional image for displaying along with the advice.
  * @property uri Optioal URI for performing an on-click behaviour.
  */
-data class PrettyAdvice(
+data class CareerAdvice(
     val title       :String,
     val description :String,
     val image       :Drawable?,
