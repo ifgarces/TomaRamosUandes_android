@@ -96,7 +96,7 @@ class DashboardFragment : Fragment() {
                 homeActivity, LinearLayoutManager.VERTICAL, false
             )
             UI.careerAdvicesRecycler.adapter = CareerAdvicesAdapter(
-                data = listOf(
+                _rawData = listOf(
                     CareerAdvice(
                         title = "Beneficios cuenta de Google Uandes",
                         description = """\
