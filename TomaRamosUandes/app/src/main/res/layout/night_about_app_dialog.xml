@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/aboutDialog_appName"
+            style="@style/standardTextView"
+            android:textColor="@color/nightDefaultForeground"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingVertical="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="2sp"
+            android:text="@string/app_name" />
+
+        <TextView
+            android:id="@+id/aboutDialog_appVersion"
+            style="@style/standardTextView"
+            android:textColor="@color/nightDefaultForeground"
+            android:paddingVertical="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Versión: [app_version]" />
+
+        <TextView
+            android:id="@+id/aboutDialog_appAuthor"
+            style="@style/standardTextView"
+            android:textColor="@color/nightDefaultForeground"
+            android:paddingVertical="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="2sp"
+            android:text="Autor: [app_author]" />
+
+        <TextView
+            android:id="@+id/aboutDialog_staticParagraph1"
+            style="@style/standardTextView"
+            android:textColor="@color/nightDefaultForeground"
+            android:paddingVertical="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="2sp"
+            android:text="@string/aboutDialog_staticString1" />
+
+        <TextView
+            android:id="@+id/aboutDialog_staticParagraph2"
+            style="@style/standardTextView"
+            android:textColor="@color/nightDefaultForeground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4sp"
+            android:paddingStart="16dp"
+            android:paddingEnd="0dp"
+            android:text="@string/aboutDialog_staticString2" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            app:srcCompat="@drawable/feedbackbackground" />
+    </LinearLayout>
+</ScrollView>

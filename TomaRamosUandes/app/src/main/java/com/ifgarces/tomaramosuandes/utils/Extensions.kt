@@ -157,6 +157,7 @@ fun Context.yesNoDialog(
  * Enters "inmersive mode", hiding system UI elements (navigation and notification bars) and expanding
  * the app to fill all of the screen.
  */
+@Suppress("DEPRECATION")
 fun Activity.enterFullScreen() {
     if (Build.VERSION.SDK_INT >= 30) { // ref: https://stackoverflow.com/a/68055924/12684271
         with(
@@ -184,6 +185,7 @@ fun Activity.enterFullScreen() {
 /**
  * Undoes `Activity.enterFullScreen()`.
  */
+@Suppress("DEPRECATION")
 fun Activity.exitFullScreen() {
     if (Build.VERSION.SDK_INT >= 30) { // ref: https://stackoverflow.com/a/68055924/12684271
         WindowInsetsControllerCompat(

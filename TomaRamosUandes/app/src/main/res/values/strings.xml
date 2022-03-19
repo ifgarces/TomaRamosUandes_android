@@ -2,4 +2,21 @@
     <string name="app_name">Simulador Toma de Ramos Uandes</string>
     <string name="app_author">Ignacio F. Garcés</string>
     <string name="offline_catalog_period">2022-10</string>
+    <string name="aboutDialog_staticString1">
+Este es un simulador o planificador no oficial de la toma de ramos de la Universidad de los Andes.
+Inscribir ramos a través de esta app no tiene ninguna validez, debe tomar sus ramos a través de
+Banner miUandes, según indique la facultad.\n
+\n
+Funcionalidades:
+    </string>
+    <string name="aboutDialog_staticString2">
+» Construcción automática de horario.\n
+» Actualización automática del catálogo online y de sus ramos tomados de acuerdo con este.\n
+» Exportar horario como imagen (a la galería del teléfono).\n
+» Detección de conflictos de horario y de evaluaciones entre ramos.\n
+» Exportar evaluaciones al calendario del teléfono.\n
+» Persistencia de ramos tomados (quedan guardados en el celular).\n
+» Posibilidad de usar la app sin internet.\n
+» De momento sólo se dispone de la malla de las carreras de ingeniería, por ahora.
+    </string>
 </resources>

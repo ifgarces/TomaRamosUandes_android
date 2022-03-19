@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -83,78 +81,43 @@ class UserRamosFragment : Fragment() {
 
 
     /**
-     * Prompts a dialog with information/help about the application itself.
+     * Prompts a dialog with overall information/help about the application itself.
      */
     private fun showHelp() {
-        val diagBuilder :AlertDialog.Builder =
-            AlertDialog.Builder(
-                this.requireContext(),
-                if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
-                else R.style.myDialogTheme
+        // Setting the custom view layout for the dialog and button behaviors
+        (DataMaster.getUserStats().nightModeOn).let { isNightModeOn :Boolean ->
+            val diagView :View = this.layoutInflater.inflate(
+                if (isNightModeOn) R.layout.night_about_app_dialog else R.layout.about_app_dialog,
+                null
             )
+            val diagBuilder :AlertDialog.Builder = AlertDialog.Builder(
+                this.requireContext(),
+                if (isNightModeOn) R.style.myNightDialogTheme else R.style.myDialogTheme
+            )
+                .setView(diagView)
                 .setCancelable(true)
-                .setPositiveButton("Cerrar") { dialog :DialogInterface, _ :Int ->
+                .setPositiveButton("Ya") { dialog :DialogInterface, _ :Int ->
                     dialog.dismiss()
                 }
                 .setNegativeButton("Saber más") { dialog :DialogInterface, _ :Int ->
+                    // Opens the public application user URL
                     this.startActivity(
                         Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(AppMetadata.USER_APP_URL)
+                            Intent.ACTION_VIEW, Uri.parse(AppMetadata.USER_APP_URL)
                         )
                     )
                     dialog.dismiss()
                 }
-        val diagView :View = this.layoutInflater.inflate(R.layout.about_and_help_dialog, null)
-        diagBuilder.setView(diagView)
 
-        // This is for the NightTheme
-        val hardcodedStyles :String =
-            if (DataMaster.getUserStats().nightModeOn) """
-<style>
-body {background-color: #333333; color: #CDCDCD;}
-h    {color: #FFE7E7;}
-p    {color: #CDCDCD;}
-a    {color: #CDCDCD;}
-</style>
-"""
-            else """
-<style>
-body {background-color: #FFFFFF; color: #252525;}
-h    {color: #252525;}
-p    {color: #252525;}
-a    {color: #00AAD4;}
-</style>
-"""
+            // Setting UI elements for the dialog
+            //val appName    :TextView = diagView.findViewById(R.id.aboutDialog_appName) // unused for now
+            val appVersion :TextView = diagView.findViewById(R.id.aboutDialog_appVersion)
+            val appAuthor  :TextView = diagView.findViewById(R.id.aboutDialog_appAuthor)
+            appVersion.text = "Versión: %s".format(BuildConfig.VERSION_NAME)
+            appAuthor.text = "Autor: %s".format(this.getString(R.string.app_author))
 
-        val diagWebView :WebView = diagView.findViewById(R.id.about_webView)
-//        diagWebView.settings.domStorageEnabled = true // trying to solve #29...
-//        diagWebView.settings.allowContentAccess = true
-//        diagWebView.settings.allowFileAccess = true
-//        diagWebView.settings.allowFileAccessFromFileURLs = true
-//        diagWebView.settings.databaseEnabled = true
-//        diagWebView.settings.safeBrowsingEnabled = false
-        diagWebView.loadData( // loading HTML from asset file
-            this.requireActivity().assets.open("AboutAndHelp.html")
-                .bufferedReader().readText()
-                .format(hardcodedStyles, this.getString(R.string.app_name), BuildConfig.VERSION_NAME),
-            "text/html",
-            "UTF-8"
-        )
-        diagWebView.webViewClient = object :
-            WebViewClient() { // handling hyperlink clicks. References: https://stackoverflow.com/a/6343852
-            override fun shouldOverrideUrlLoading(view :WebView?, url :String?) :Boolean {
-                if (url != null) {
-                    view!!.context.startActivity(
-                        Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    )
-                    return true
-                } else {
-                    return false
-                }
-            }
+            // Displaying
+            diagBuilder.create().show()
         }
-
-        diagBuilder.create().show()
     }
 }
