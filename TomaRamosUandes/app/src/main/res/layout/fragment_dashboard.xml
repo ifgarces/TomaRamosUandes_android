@@ -52,7 +52,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dashboard_linksHeadButton"
             style="@style/dashboardSectionHeaderButton"
-            android:text="Links útiles"
+            android:text="Links rápidos"
             app:cornerRadius="0dp"
             app:icon="@drawable/arrow_tip_right"
             app:iconGravity="end"

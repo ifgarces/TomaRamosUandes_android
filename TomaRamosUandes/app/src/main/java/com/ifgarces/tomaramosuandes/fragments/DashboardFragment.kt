@@ -255,7 +255,7 @@ maravilla.\
                         description = """\
 Existen apps para PC de Google Drive y OneDrive para sincronizar carpetas. Úselo para evitar perder \
 archivos y fácilmente pasar datos importantes de un computador a otro mediante la nube. Si el PC \
-se le muere, así va a poder acceder a los archivos desde otro dispositivo mediante la nube, y así \
+se le muere, así va a poder acceder a los archivos desde otro dispositivo mediante la nube, y \
 evitar una tragedia como perder el progreso en una tarea.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.cloud_sync_icon)!!,

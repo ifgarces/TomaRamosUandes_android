@@ -94,8 +94,9 @@ class HomeActivity : AppCompatActivity() {
 Hay una nueva versión de esta app: ${gotMetadata.latestVersionName}.
 ¿Ir al link de descarga ahora?
 
-* Si tiene problemas para actualizar, borre los datos de la app (revise el documento 'LÉEME' \
-disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
+* Si tiene problemas para actualizar, desisntale la app antes de instalar la nueva versión (revise \
+el documento 'LÉEME' disponible en
+${AppMetadata.USER_APP_URL}""".multilineTrim(),
                             onYesClicked = {
                                 // Opens direct APK download link in web browser
                                 this.startActivity(
