@@ -26,6 +26,9 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 
+/**
+ * Home dashboard intended to be used during the semester, with links and useful stuff for students.
+ */
 class DashboardFragment : Fragment() {
 
     private class FragmentUI(owner :View) {
@@ -56,7 +59,7 @@ class DashboardFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_dashboard
+            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_dashboard
             else R.layout.fragment_dashboard,
             container, false
         )
@@ -71,7 +74,7 @@ class DashboardFragment : Fragment() {
             )
 
             // Applying stored user preferences on sections collapse/expanded status
-            DataMaster.getUserStats().let {
+            DataMaster.user_stats.let {
                 this.isEventsSectionCollapsed = it.dashboardEvalsSectionCollapsed
                 this.isLinksSectionCollapsed = it.dashboardLinksSectionCollapsed
                 this.isAdvicesSectionCollapsed = it.dashboardAdvicesSectionCollapsed

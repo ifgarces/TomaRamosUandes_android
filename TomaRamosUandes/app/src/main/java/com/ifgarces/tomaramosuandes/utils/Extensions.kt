@@ -98,7 +98,7 @@ fun Context.infoDialog(
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(
         this,
-        if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
+        if (DataMaster.user_stats.nightModeOn) R.style.myNightDialogTheme
             else R.style.myDialogTheme
     )
         .setTitle(title)
@@ -133,7 +133,7 @@ fun Context.yesNoDialog(
 ) {
     val diag :AlertDialog.Builder = AlertDialog.Builder(
         this,
-        if (DataMaster.getUserStats().nightModeOn) R.style.myNightDialogTheme
+        if (DataMaster.user_stats.nightModeOn) R.style.myNightDialogTheme
             else R.style.myDialogTheme
     )
         .setTitle(title)

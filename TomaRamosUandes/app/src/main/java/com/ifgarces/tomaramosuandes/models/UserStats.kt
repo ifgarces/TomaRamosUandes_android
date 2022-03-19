@@ -5,12 +5,18 @@ import androidx.room.PrimaryKey
 
 
 /**
- * Contains information related to usage of this app by the user.
+ * Contains information related to usage of this app by the user, and preferences.
  * Note: the constructor for this single-instance class is only called when there's no Room local
  * database and therefore the first run of the app. This is suppossed to be a one-row database table.
  * @property ID Primary key.
  * @property firstRunOfApp Ehether the app is currently at its first run or not.
  * @property nightModeOn `true` if the user decided to turn on the night theme in the app settings.
+ * @property dashboardEvalsSectionCollapsed Whether the "incoming events" section is collapsed in
+ * `DashboardFragment`.
+ * @property dashboardLinksSectionCollapsed Whether the "useful links" section is collapsed in
+ * `DashboardFragment`.
+ * @property dashboardAdvicesSectionCollapsed Whether the "career advices" section is collapsed in
+ * `DashboardFragment`.
  */
 @Entity(tableName = UserStats.TABLE_NAME)
 data class UserStats(

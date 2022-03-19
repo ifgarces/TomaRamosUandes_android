@@ -25,7 +25,7 @@ class PrettyLinksAdapter(
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :LinkVH {
         return LinkVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.getUserStats().nightModeOn) R.layout.night_pretty_link_item
+                if (DataMaster.user_stats.nightModeOn) R.layout.night_pretty_link_item
                 else R.layout.pretty_link_item,
                 parent, false
             )

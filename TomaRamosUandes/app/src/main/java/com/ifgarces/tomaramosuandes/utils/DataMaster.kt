@@ -31,27 +31,26 @@ object DataMaster {
 
     // Current catalog
     @Volatile
-    private lateinit var catalog_ramos :List<Ramo>
+    public lateinit var catalog_ramos :List<Ramo>
+        private set
     @Volatile
-    private lateinit var catalog_events :List<RamoEvent>
+    public lateinit var catalog_events :List<RamoEvent>
+        private set
 
     // User data
     @Volatile
-    private lateinit var user_stats :UserStats
+    public lateinit var user_stats :UserStats
+        private set
     @Volatile
-    private lateinit var user_ramos :MutableList<Ramo>
+    public lateinit var user_ramos :MutableList<Ramo>
+        private set
     @Volatile
-    private lateinit var user_events :MutableList<RamoEvent>
+    public lateinit var user_events :MutableList<RamoEvent>
+        private set
 
     // Locks for concurrency
     private lateinit var ramosLock :ReentrantLock
     private lateinit var eventsLock :ReentrantLock
-
-    // Getters (memory)
-    fun getCatalogRamos() = this.catalog_ramos
-    fun getCatalogEvents() = this.catalog_events
-    fun getUserStats() = this.user_stats
-    fun getUserRamos() = this.user_ramos
 
     /**
      * Fetches the catalog from a the internet, calling `WebManager` and processes it.

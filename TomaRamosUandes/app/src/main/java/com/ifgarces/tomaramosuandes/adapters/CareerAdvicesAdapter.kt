@@ -37,7 +37,7 @@ class CareerAdvicesAdapter(
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :AdviceVH {
         return AdviceVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.getUserStats().nightModeOn) R.layout.night_career_advice_item
+                if (DataMaster.user_stats.nightModeOn) R.layout.night_career_advice_item
                 else R.layout.career_advice_item,
                 parent, false
             )

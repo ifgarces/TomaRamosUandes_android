@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
  * Base activity for the app itself, when initialization is done in `MainActivity`.
  * @property navigator Navigator for this activity.
  * @property latestMetadata Latest got `AppMetadata` object from Firebase (if reachable), used to
- * checking for updates, etc.
+ * checking for updates, etc. Will remain null when Firebase Firestore is not reachable (offline).
  */
 class HomeActivity : AppCompatActivity() {
 
@@ -45,18 +45,16 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private lateinit var UI :ActivityUI
-    private lateinit var navigator :HomeNavigator
-    private var latestMetadata :AppMetadata? = null // will remain null when Firebase Firestore is not reachable
-
-    // Getters
-    public fun getNavigator() = this.navigator
-    public fun getLatestAppMetadata() = this.latestMetadata
+    public lateinit var navigator :HomeNavigator
+        private set
+    public var latestMetadata :AppMetadata? = null
+        private set
 
     override fun onCreate(savedInstanceState :Bundle?) {
         super.onCreate(savedInstanceState)
 
         this.setContentView(
-            if (DataMaster.getUserStats().nightModeOn) R.layout.night_activity_home
+            if (DataMaster.user_stats.nightModeOn) R.layout.night_activity_home
             else R.layout.activity_home
         )
         this.UI = ActivityUI(owner = this)
@@ -65,13 +63,13 @@ class HomeActivity : AppCompatActivity() {
         // -----------------------------------------------------------------------------------------
         /* For easily updating the hole online catalog itself from the offline catalog, when the faculty performs changes */
 //        FirebaseMaster.Developer.uploadRamoCollection(
-//            ramos = DataMaster.getCatalogRamos(),
+//            ramos = DataMaster.catalog_ramos,
 //            onFirstFailureCallback = {
 //                this.infoDialog("Error", "Couldn't upload ramos")
 //            }
 //        )
 //        FirebaseMaster.Developer.uploadEventCollection(
-//            events = DataMaster.getCatalogEvents(),
+//            events = DataMaster.catalog_events,
 //            onFirstFailureCallback = {
 //                this.infoDialog("Error", "Couldn't upload events")
 //            }
@@ -191,7 +189,7 @@ ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                             Logf.debug(
                                 this::class,
                                 "Switching night mode to %s (restarting this activity)".format(
-                                    if (DataMaster.getUserStats().nightModeOn) "ON" else "OFF"
+                                    if (DataMaster.user_stats.nightModeOn) "ON" else "OFF"
                                 )
                             )
                             // Restarting this activity (will avoid needing to wait for

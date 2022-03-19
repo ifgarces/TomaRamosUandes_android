@@ -2,7 +2,8 @@ package com.ifgarces.tomaramosuandes.models
 
 
 /**
- * Holds the representation for every `RamoEvent` type.
+ * Holds the representation for every `RamoEvent` type. Not an enum class because it would cause
+ * trouble when storing with Room database. Meh.
  */
 object RamoEventType {
     const val CLAS :Int = 0 // clase

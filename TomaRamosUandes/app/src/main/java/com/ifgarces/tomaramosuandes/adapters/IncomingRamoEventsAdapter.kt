@@ -28,7 +28,7 @@ class IncomingRamoEventsAdapter(private val data :List<Pair<RamoEvent, Long>>) :
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventVH {
         return EventVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramoevent_item
+                if (DataMaster.user_stats.nightModeOn) R.layout.night_ramoevent_item
                 else R.layout.ramoevent_item,
                 parent, false
             )

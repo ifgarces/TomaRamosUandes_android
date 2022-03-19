@@ -29,7 +29,7 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) :
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :ExpandedEventVH {
         return ExpandedEventVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramo_with_evals_item
+                if (DataMaster.user_stats.nightModeOn) R.layout.night_ramo_with_evals_item
                 else R.layout.ramo_with_evals_item,
                 parent, false
             )
@@ -52,7 +52,7 @@ class RamoEventsExpandedAdapter(private var data :List<Ramo>) :
 
             (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->
                 val recyclerData :List<RamoEvent> =
-                    DataMaster.getCatalogEvents().filter { it.ramoNRC == ramo.NRC }
+                    DataMaster.catalog_events.filter { it.ramoNRC == ramo.NRC }
                         .filter { it.isEvaluation() } // using this instead of roomDB should improve performance
 
                 // Deciding if to show empty recycler TextView or show the recycler

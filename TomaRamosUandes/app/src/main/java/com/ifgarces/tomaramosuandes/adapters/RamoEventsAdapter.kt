@@ -26,7 +26,7 @@ class RamoEventsAdapter(
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventVH {
         return EventVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramoevent_item
+                if (DataMaster.user_stats.nightModeOn) R.layout.night_ramoevent_item
                 else R.layout.ramoevent_item,
                 parent, false
             )
@@ -53,7 +53,7 @@ class RamoEventsAdapter(
             } else {
                 this.location.text = "(sala no informada)"
                 this.location.setTextColor(this.location.context.getColor(
-                    if (DataMaster.getUserStats().nightModeOn) R.color.nightDefaultForeground
+                    if (DataMaster.user_stats.nightModeOn) R.color.nightDefaultForeground
                     else R.color.lightGray
                 ))
             }

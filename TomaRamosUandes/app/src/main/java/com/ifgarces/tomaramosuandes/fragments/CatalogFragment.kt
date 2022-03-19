@@ -42,7 +42,7 @@ class CatalogFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_catalog
+            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_catalog
             else R.layout.fragment_catalog,
             container, false
         )
@@ -53,7 +53,7 @@ class CatalogFragment : Fragment() {
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
             val catalogPeriod :String
             val catalogLastUpdateDate :String
-            homeActivity.getLatestAppMetadata().let { meta :AppMetadata? ->
+            homeActivity.latestMetadata.let { meta :AppMetadata? ->
                 if (meta != null) {
                     catalogPeriod = meta.catalogCurrentPeriod
                     catalogLastUpdateDate = meta.catalogLastUpdated
@@ -70,7 +70,7 @@ class CatalogFragment : Fragment() {
             )
 
             this.catalogRamosAdapter = CatalogRamosAdapter(
-                data = DataMaster.getCatalogRamos().toMutableList(),
+                data = DataMaster.catalog_ramos.toMutableList(),
                 colorizeInscribed = false
             )
             UI.recycler.adapter = this.catalogRamosAdapter
@@ -108,7 +108,7 @@ nombre o NRC.""".multilineTrim()
     private fun applySearch(searchText :String) { // TODO: tests.
         val results :MutableList<Ramo> = mutableListOf()
         val sanitizedSearchText :String = searchText.spanishNonAccent().spanishUpperCase().trim()
-        DataMaster.getCatalogRamos().forEach {
+        DataMaster.catalog_ramos.forEach {
             // Considering `nombre` is upper-cased for each `Ramo`
             if (
                 it.nombre.spanishNonAccent().contains(sanitizedSearchText) ||
@@ -134,7 +134,7 @@ nombre o NRC.""".multilineTrim()
      */
     private fun clearSearch() {
         UI.searchBox.setText("")
-        this.catalogRamosAdapter.updateData(data = DataMaster.getCatalogRamos().toMutableList())
+        this.catalogRamosAdapter.updateData(data = DataMaster.catalog_ramos.toMutableList())
         UI.recycler.visibility = View.VISIBLE
         UI.emptyNoticeText.visibility = View.GONE
     }

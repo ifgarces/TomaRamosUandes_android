@@ -35,7 +35,7 @@ class EvaluationsFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_evaluations
+            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_evaluations
             else R.layout.fragment_evaluations,
             container, false
         )
@@ -50,7 +50,7 @@ class EvaluationsFragment : Fragment() {
             )
 
             UI.eventsRecycler.layoutManager = LinearLayoutManager(homeActivity)
-            val userRamos :List<Ramo> = DataMaster.getUserRamos()
+            val userRamos :List<Ramo> = DataMaster.user_ramos
             UI.eventsRecycler.adapter = RamoEventsExpandedAdapter(data = userRamos)
             if (userRamos.count() == 0) {
                 UI.eventsExportButton.isEnabled = false

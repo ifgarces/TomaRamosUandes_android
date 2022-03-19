@@ -56,7 +56,7 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View? {
         return inflater.inflate(
-            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_ramo_dialog
+            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_ramo_dialog
             else R.layout.fragment_ramo_dialog,
             container, false
         )
@@ -91,7 +91,7 @@ class RamoDialogFragment(private val onDismissAction :() -> Unit) : BottomSheetD
         UI.listaCruz.text = if (ramo.listaCruzada == "") "No" else ramo.listaCruzada
 
         Executors.newSingleThreadExecutor().execute {
-            val events :List<RamoEvent> = DataMaster.getCatalogEvents()
+            val events :List<RamoEvent> = DataMaster.catalog_events
                 .filter { it.ramoNRC == ramo.NRC }
 
             UI.clases.adapter = RamoEventsAdapter(
