@@ -13,7 +13,7 @@ import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.models.CareerAdvice
-import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.toggleCollapseViewButton
 
 
@@ -36,7 +36,11 @@ class CareerAdvicesAdapter(
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :AdviceVH {
         return AdviceVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.career_advice_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_career_advice_item
+                else R.layout.career_advice_item,
+                parent, false
+            )
         )
     }
 
@@ -53,9 +57,6 @@ class CareerAdvicesAdapter(
         private val descriptionTxt :TextView = v.findViewById(R.id.prettyAdvice_description)
 
         fun bind(item :Pair<CareerAdvice, Boolean>, position :Int) {
-            if (item.first.title == "Office 365 y OneDrive")
-                Logf.debug(this::class, "[TEST] item=(%s, %s)", item.first.title, item.second)
-
             // Displaying advice data
             if (item.first.image != null) {
                 this.imageView.setImageDrawable(item.first.image)

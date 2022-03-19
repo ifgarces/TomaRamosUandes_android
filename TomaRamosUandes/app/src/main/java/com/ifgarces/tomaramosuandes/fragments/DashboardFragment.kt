@@ -16,10 +16,13 @@ import com.ifgarces.tomaramosuandes.adapters.CareerAdvicesAdapter
 import com.ifgarces.tomaramosuandes.adapters.PrettyLinksAdapter
 import com.ifgarces.tomaramosuandes.models.CareerAdvice
 import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
+import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.infoDialog
 import com.ifgarces.tomaramosuandes.utils.multilineTrim
 import com.ifgarces.tomaramosuandes.utils.toggleCollapseViewButton
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 
 class DashboardFragment : Fragment() {
@@ -51,7 +54,11 @@ class DashboardFragment : Fragment() {
     override fun onCreateView(
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
-        val fragView :View = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        val fragView :View = inflater.inflate(
+            if (DataMaster.getUserStats().nightModeOn) R.layout.night_fragment_dashboard
+            else R.layout.fragment_dashboard,
+            container, false
+        )
         this.UI = FragmentUI(owner=fragView)
 
         (this.requireActivity() as HomeActivity).let { homeActivity :HomeActivity ->
@@ -66,8 +73,11 @@ class DashboardFragment : Fragment() {
             UI.incomingEventsRecycler.layoutManager = LinearLayoutManager(
                 homeActivity, LinearLayoutManager.HORIZONTAL, false
             )
+            // Displaying events in the next 31 days
             UI.incomingEventsRecycler.adapter = IncomingRamoEventsAdapter(
-                data = DataMaster.getUserEvaluations() //TODO: only show events in the next 31 days
+                data = DataMaster.getUserEvaluations().map { event :RamoEvent ->
+                    Pair(event, LocalDate.now().until(event.date!!, ChronoUnit.DAYS)) // Ref: https://discuss.kotlinlang.org/t/calculate-no-of-days-between-two-dates-kotlin/9826
+                }.filter { it.second <= 31L }
             )
             UI.usefulLinksRecycler.layoutManager = LinearLayoutManager(
                 homeActivity, LinearLayoutManager.HORIZONTAL, false

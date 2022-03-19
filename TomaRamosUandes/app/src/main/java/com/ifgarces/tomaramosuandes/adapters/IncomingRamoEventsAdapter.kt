@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
@@ -19,13 +20,18 @@ import java.time.temporal.ChronoUnit
 
 /**
  * For displaying a set of nearly incoming events for the user, on `DashboardFragment`.
+ * @property data List of mappings between events and the amount of days for them.
  */
-class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
+class IncomingRamoEventsAdapter(private val data :List<Pair<RamoEvent, Long>>) :
     RecyclerView.Adapter<IncomingRamoEventsAdapter.EventVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventVH {
         return EventVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.ramoevent_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_ramoevent_item
+                else R.layout.ramoevent_item,
+                parent, false
+            )
         )
     }
 
@@ -42,7 +48,8 @@ class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
         private val evType     :TextView = v.findViewById(R.id.ramoEvent_type)
         private val location   :TextView = v.findViewById(R.id.ramoEvent_location)
 
-        fun bind(event :RamoEvent, position :Int) {
+        fun bind(event :Pair<RamoEvent, Long>, position :Int) {
+            val (event :RamoEvent, daysLeft :Long) = event
             val context :Context = this.parentView.context
             this.ti.text = event.startTime.toString()
             this.tf.text = event.endTime.toString()
@@ -52,8 +59,7 @@ class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
                 this.location.visibility = View.GONE
             }
 
-            // Displaying string according to the time left for the event. Ref: https://discuss.kotlinlang.org/t/calculate-no-of-days-between-two-dates-kotlin/9826
-            val daysLeft :Long = LocalDate.now().until(event.date!!, ChronoUnit.DAYS)
+            // Displaying string according to the time left for the event.
             if (daysLeft < 0) {
                 Logf.warn(this::class, "Negative daysLeft for the event")
             }
@@ -73,7 +79,13 @@ class IncomingRamoEventsAdapter(private val data :List<RamoEvent>) :
                         ContextCompat.getColor(context, android.R.color.holo_red_dark)
                     )
                 }
-                (daysLeft < 31L) -> {
+                (daysLeft <= 7L) -> {
+                    this.dayData.text = "En %d días".format(daysLeft)
+                    this.dayData.setBackgroundColor(
+                        ContextCompat.getColor(context, android.R.color.holo_orange_dark)
+                    )
+                }
+                (daysLeft <= 31L) -> {
                     this.dayData.text = "En %d días".format(daysLeft)
                 }
                 else -> {

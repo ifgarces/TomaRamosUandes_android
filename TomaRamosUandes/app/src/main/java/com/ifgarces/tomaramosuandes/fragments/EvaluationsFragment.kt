@@ -46,9 +46,7 @@ class EvaluationsFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Evaluaciones",
                 subtitle = "",
-                onHelpClick = {
-                    this.showHelp()
-                }
+                onHelpClick = this::showHelp
             )
 
             UI.eventsRecycler.layoutManager = LinearLayoutManager(homeActivity)

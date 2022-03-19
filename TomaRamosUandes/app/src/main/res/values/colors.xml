@@ -55,5 +55,6 @@
     <!-- Dashboard colors -->
     <color name="sectionHeaderBackground">#555555</color>
     <color name="adviceHeaderBackground">#7C446C</color>
+    <color name="night_adviceHeaderBackground">#49283f</color>
 
 </resources>

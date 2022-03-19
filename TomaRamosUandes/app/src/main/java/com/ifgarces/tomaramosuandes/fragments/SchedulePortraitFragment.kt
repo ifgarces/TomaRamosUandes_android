@@ -78,9 +78,7 @@ class SchedulePortraitFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Horario",
                 subtitle = "",
-                onHelpClick = {
-                    this.showHelp()
-                }
+                onHelpClick = this::showHelp
             )
 
             homeActivity.hideLoadingScreen()

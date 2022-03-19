@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
+import com.ifgarces.tomaramosuandes.utils.DataMaster
 
 
 /**
@@ -23,7 +24,11 @@ class PrettyLinksAdapter(
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :LinkVH {
         return LinkVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.pretty_link_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                if (DataMaster.getUserStats().nightModeOn) R.layout.night_pretty_link_item
+                else R.layout.pretty_link_item,
+                parent, false
+            )
         )
     }
 

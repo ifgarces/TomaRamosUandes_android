@@ -51,9 +51,7 @@ class UserRamosFragment : Fragment() {
             homeActivity.setTopToolbarValues(
                 title = "Ver ramos",
                 subtitle = "",
-                onHelpClick = {
-                    this.showHelp()
-                }
+                onHelpClick = this::showHelp
             )
 
             UI.ramosRecycler.layoutManager = LinearLayoutManager(homeActivity)
