@@ -13,6 +13,7 @@ import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
 import com.ifgarces.tomaramosuandes.models.CareerAdvice
+import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.toggleCollapseViewButton
 
 
@@ -52,21 +53,23 @@ class CareerAdvicesAdapter(
         private val descriptionTxt :TextView = v.findViewById(R.id.prettyAdvice_description)
 
         fun bind(item :Pair<CareerAdvice, Boolean>, position :Int) {
-            val (advice :CareerAdvice, isCollapsed :Boolean) = item
+            if (item.first.title == "Office 365 y OneDrive")
+                Logf.debug(this::class, "[TEST] item=(%s, %s)", item.first.title, item.second)
+
             // Displaying advice data
-            if (advice.image != null) {
-                this.imageView.setImageDrawable(advice.image)
+            if (item.first.image != null) {
+                this.imageView.setImageDrawable(item.first.image)
             } else {
                 this.imageView.setImageDrawable(ContextCompat.getDrawable(
                     this@CareerAdvicesAdapter.activity, R.drawable.idea_icon
                 ))
             }
 
-            this.headButton.text = advice.title
-            this.descriptionTxt.text = advice.description
+            this.headButton.text = item.first.title
+            this.descriptionTxt.text = item.first.description
 
             // The body starts collapsed when created
-            if (isCollapsed) {
+            if (item.second) {
                 this.bodyContainer.visibility = View.GONE
                 this.headButton.icon = ContextCompat.getDrawable(
                     this@CareerAdvicesAdapter.activity, R.drawable.arrow_tip_right
@@ -81,19 +84,22 @@ class CareerAdvicesAdapter(
             // Handling collapse/expand click behaviour for the head button
             this.headButton.setOnClickListener {
                 this@CareerAdvicesAdapter.activity.toggleCollapseViewButton(
-                    isCollapsed = isCollapsed,
+                    isCollapsed = this@CareerAdvicesAdapter.data[position].second,
                     toggleButton = this.headButton,
                     targetContainer = this.bodyContainer
                 )
-                this@CareerAdvicesAdapter.data[position] = Pair(advice, !isCollapsed) // ~ isCollapsed = !this.isCollapsed
+                this@CareerAdvicesAdapter.data[position] = Pair(
+                    this@CareerAdvicesAdapter.data[position].first,
+                    !this@CareerAdvicesAdapter.data[position].second
+                ) // ~ isCollapsed = !this.isCollapsed
             }
 
             // Handling URI on-click, if existing
             this.parentView.setOnClickListener {
-                if (advice.uri != null) {
+                if (item.first.uri != null) {
                     this@CareerAdvicesAdapter.activity.startActivity(
                         Intent(
-                            Intent.ACTION_VIEW, Uri.parse(advice.uri)
+                            Intent.ACTION_VIEW, Uri.parse(item.first.uri)
                         )
                     )
                 }
