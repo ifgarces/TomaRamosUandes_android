@@ -10,7 +10,7 @@ import com.ifgarces.tomaramosuandes.models.UserStats
 
 @Database(
     entities = [Ramo::class, RamoEvent::class, UserStats::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(

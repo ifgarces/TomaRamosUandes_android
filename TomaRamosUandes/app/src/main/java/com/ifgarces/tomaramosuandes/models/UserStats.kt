@@ -16,7 +16,10 @@ import androidx.room.PrimaryKey
 data class UserStats(
     @PrimaryKey(autoGenerate = false) val ID :Int = 0,
     var firstRunOfApp :Boolean = true,
-    var nightModeOn :Boolean = false
+    var nightModeOn :Boolean = false,
+    var dashboardEvalsSectionCollapsed :Boolean = false,
+    var dashboardLinksSectionCollapsed :Boolean = false,
+    var dashboardAdvicesSectionCollapsed :Boolean = false
 ) {
     companion object {
         const val TABLE_NAME :String = "user_stats"

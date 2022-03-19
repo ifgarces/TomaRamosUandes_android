@@ -11,14 +11,14 @@
     <!-- Incoming events section (intended for evaluations) -->
     <LinearLayout
         android:id="@+id/dashboard_eventsHeadLayout"
-        style="@style/dashboardSectionHeaderLayout"
+        style="@style/night_dashboardSectionHeaderLayout"
         android:layout_marginTop="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dashboard_eventsHeadButton"
-            style="@style/dashboardSectionHeaderButton"
+            style="@style/night_dashboardSectionHeaderButton"
             android:text="Evaluaciones próximas"
             app:cornerRadius="0dp"
             app:icon="@drawable/arrow_tip_right"
@@ -46,13 +46,13 @@
     <!-- Useful links section -->
     <LinearLayout
         android:id="@+id/dashboard_linksHeadLayout"
-        style="@style/dashboardSectionHeaderLayout"
+        style="@style/night_dashboardSectionHeaderLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dashboard_eventsContainer">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dashboard_linksHeadButton"
-            style="@style/dashboardSectionHeaderButton"
+            style="@style/night_dashboardSectionHeaderButton"
             android:text="Links útiles"
             app:cornerRadius="0dp"
             app:icon="@drawable/arrow_tip_right"
@@ -80,13 +80,13 @@
     <!-- Career advices section -->
     <LinearLayout
         android:id="@+id/dashvoard_advicesHeadLayout"
-        style="@style/dashboardSectionHeaderLayout"
+        style="@style/night_dashboardSectionHeaderLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dashboard_linksContainer">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dashboard_advicesHeadButton"
-            style="@style/dashboardSectionHeaderButton"
+            style="@style/night_dashboardSectionHeaderButton"
             android:text="Consejos"
             app:cornerRadius="0dp"
             app:icon="@drawable/arrow_tip_right"

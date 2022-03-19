@@ -4,6 +4,8 @@ import android.app.Activity
 import androidx.room.Room
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
+import com.ifgarces.tomaramosuandes.models.CareerAdvice
+import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
@@ -11,6 +13,7 @@ import com.ifgarces.tomaramosuandes.networking.FirebaseMaster
 import java.time.DayOfWeek
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.reflect.KClass
 
 
 /**
@@ -286,6 +289,33 @@ La información del catálogo vigente reemplazará a la antigua, automáticament
             this.user_stats.nightModeOn = !this.user_stats.nightModeOn
             this.localDB.userStatsDAO().update(this.user_stats)
             onFinish.invoke()
+        }
+    }
+
+    /**
+     * Updated the visibility status for a section of `DashboardFragment`. Requires the class for
+     * the model involved in each section. This is just for not using a hardcoded string.
+     * @param modelClass Class under `models` package.
+     */
+    public fun toggleSectionCollapsed(modelClass :KClass<*>) {
+        Executors.newSingleThreadExecutor().execute {
+            when (modelClass) {
+                RamoEvent::class -> {
+                    this.user_stats.dashboardEvalsSectionCollapsed = !this.user_stats.dashboardEvalsSectionCollapsed
+                }
+                PrettyHyperlink::class -> {
+                    this.user_stats.dashboardLinksSectionCollapsed = !this.user_stats.dashboardLinksSectionCollapsed
+                }
+                CareerAdvice::class -> {
+                    this.user_stats.dashboardAdvicesSectionCollapsed = !this.user_stats.dashboardAdvicesSectionCollapsed
+                }
+                else -> {
+                    throw Exception("Invalid class '%s' passed on DataMaster.toggleSectionCollapsed".format( // only happens on dumb coding mistake
+                        modelClass.simpleName
+                    ))
+                }
+            }
+            this.localDB.userStatsDAO().update(this.user_stats)
         }
     }
 

@@ -192,6 +192,10 @@
         <item name="android:layout_marginTop">10dp</item>
     </style>
 
+    <style name="night_dashboardSectionHeaderLayout" parent="dashboardSectionHeaderLayout">
+        <item name="android:background">@color/night_sectionHeaderBackground</item>
+    </style>
+
     <style name="adviceHeaderButton" parent="@style/Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -213,6 +217,10 @@
         <item name="android:textScaleX">1.1</item>
         <item name="android:textStyle">bold</item>
         <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="night_dashboardSectionHeaderButton" parent="dashboardSectionHeaderButton">
+        <item name="android:backgroundTint">@color/night_sectionHeaderBackground</item>
     </style>
 
 </resources>

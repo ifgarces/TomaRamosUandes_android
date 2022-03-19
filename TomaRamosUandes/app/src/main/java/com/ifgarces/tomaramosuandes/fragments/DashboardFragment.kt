@@ -1,5 +1,6 @@
 package com.ifgarces.tomaramosuandes.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -69,6 +70,14 @@ class DashboardFragment : Fragment() {
                 onHelpClick = this::showHelp
             )
 
+            // Applying stored user preferences on sections collapse/expanded status
+            DataMaster.getUserStats().let {
+                this.isEventsSectionCollapsed = it.dashboardEvalsSectionCollapsed
+                this.isLinksSectionCollapsed = it.dashboardLinksSectionCollapsed
+                this.isAdvicesSectionCollapsed = it.dashboardAdvicesSectionCollapsed
+            }
+            this.applyVisibilityUserSettings(homeActivity)
+
             // Setting up recyclers
             UI.incomingEventsRecycler.layoutManager = LinearLayoutManager(
                 homeActivity, LinearLayoutManager.HORIZONTAL, false
@@ -127,7 +136,7 @@ Recuerde reclamar su Office gratis y usar OneDrive.\
                         uri = "https://www.office.com"
                     ),
                     CareerAdvice(
-                        title = "Acceso a software de JetBrains 🧠",
+                        title = "Acceso a software de JetBrains",
                         description = """\
 Con la cuenta @miuandes puede acceder a licencias de estudiante en herramientas de programación de \
 JetBrains (para Python, etc.). Inicie sesión con su cuenta en jetbrains.com.\
@@ -187,7 +196,7 @@ Muy buena, qué puedo decir.\
                         description = """\
 Calculadora científica inteligente que resuelve problemas de cálculo, sistemas de ecuaciones, \
 trigonometría, etc. y hasta puede graficar funciones. Incluso es capaz de mostrar los pasos a seguir \
-para resolver el problema, pero es una característica de pago.\
+para resolver el problema, pero esa última es una característica de pago, ojo.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_wolframalpha)!!,
                         uri = "https://www.wolframalpha.com"
@@ -195,9 +204,9 @@ para resolver el problema, pero es una característica de pago.\
                     CareerAdvice(
                         title = "Symbolab",
                         description = """\
-Similar a WolframAlpha, un potente solucionador matemático, pero más sencillo de usar y no cobra por \
-ver la solución paso a paso de un problema! Es genial, muy recomendado para practicar problemas \
-matemáticos de todo tipo.\
+Similar a WolframAlpha, un potente solucionador matemático general, pero mucho más sencillo de usar \
+y no cobra por ver la solución paso a paso de un problema. Es excelente, muy recomendado para \
+practicar problemas matemáticos de todo tipo.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_symbolab)!!,
                         uri = null
@@ -205,7 +214,7 @@ matemáticos de todo tipo.\
                     CareerAdvice(
                         title = "MyBib 📚",
                         description = """\
-MyBib es un generador de bibliografías y citaciones en varios formatos distintos que se elija. \
+MyBib es un generador de bibliografías y citaciones en varios formatos distintos a elección. \
 Sirve muchísimo para los informes de ingeniería que exigen un formato (e.g. Harvard). Mucho mejor \
 que el gestor de bibliografías que tiene incorporado Microsoft Word. Sí.\
 """.multilineTrim(),
@@ -216,7 +225,7 @@ que el gestor de bibliografías que tiene incorporado Microsoft Word. Sí.\
                         title = "draw.io",
                         description = """\
 Sitio web para dibujar diagramas (colaborativamente en tiempo real). Sencillo y rápido, solo poner \
-draw.io en el navegador.\
+"draw.io" en el navegador.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_drawio)!!,
                         uri = "https://draw.io"
@@ -224,7 +233,7 @@ draw.io en el navegador.\
                     CareerAdvice(
                         title = "DroidCam",
                         description = """\
-Si no tienes una webcam, con esta app puedes usar un teléfono Android como webcam, conectado por \
+Si ud. no tiene una webcam, con esta app puede usar un teléfono Android como webcam, conectado por \
 cable al PC o inalámbricamente por WI-FI.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_droidcam)!!,
@@ -240,6 +249,17 @@ maravilla.\
 """.multilineTrim(),
                         image = ContextCompat.getDrawable(this.requireContext(), R.drawable.webicon_nighteye)!!,
                         uri = "https://nighteye.app"
+                    ),
+                    CareerAdvice(
+                        title = "Sincronización de archivos importantes con la nube ☁",
+                        description = """\
+Existen apps para PC de Google Drive y OneDrive para sincronizar carpetas. Úselo para evitar perder \
+archivos y fácilmente pasar datos importantes de un computador a otro mediante la nube. Si el PC \
+se le muere, así va a poder acceder a los archivos desde otro dispositivo mediante la nube, y así \
+evitar una tragedia como perder el progreso en una tarea.\
+""".multilineTrim(),
+                        image = ContextCompat.getDrawable(this.requireContext(), R.drawable.cloud_sync_icon)!!,
+                        uri = null
                     )
 //                    CareerAdvice(
 //                        title = "",
@@ -261,6 +281,7 @@ maravilla.\
                     targetContainer = UI.incomingEventsContainer
                 )
                 this.isEventsSectionCollapsed = !this.isEventsSectionCollapsed
+                DataMaster.toggleSectionCollapsed(RamoEvent::class)
             }
             UI.usefulLinksHeadButton.setOnClickListener {
                 homeActivity.toggleCollapseViewButton(
@@ -269,6 +290,7 @@ maravilla.\
                     targetContainer = UI.usefulLinksContainer
                 )
                 this.isLinksSectionCollapsed = !this.isLinksSectionCollapsed
+                DataMaster.toggleSectionCollapsed(PrettyHyperlink::class)
             }
             UI.careerAdvicesHeadButton.setOnClickListener {
                 homeActivity.toggleCollapseViewButton(
@@ -277,10 +299,27 @@ maravilla.\
                     targetContainer = UI.careerAdvicesContainer
                 )
                 this.isAdvicesSectionCollapsed = !this.isAdvicesSectionCollapsed
+                DataMaster.toggleSectionCollapsed(CareerAdvice::class)
             }
         }
 
         return fragView
+    }
+
+    /**
+     * Sets visibility for sections according to the data stored in `UserStats` table (Room).
+     */
+    private fun applyVisibilityUserSettings(context :Context) {
+        listOf(
+            Triple(this.isEventsSectionCollapsed, UI.incomingEventsHeadButton, UI.incomingEventsContainer),
+            Triple(this.isLinksSectionCollapsed, UI.usefulLinksHeadButton, UI.usefulLinksContainer),
+            Triple(this.isAdvicesSectionCollapsed, UI.careerAdvicesHeadButton, UI.careerAdvicesContainer)
+        ).forEach { (collapsed :Boolean, toggleButton :MaterialButton, container :View) ->
+            container.visibility = if (collapsed) View.GONE else View.VISIBLE
+            toggleButton.icon = ContextCompat.getDrawable(
+                context, if (collapsed) R.drawable.arrow_tip_right else R.drawable.arrow_tip_down
+            )
+        }
     }
 
     private fun showHelp() {
