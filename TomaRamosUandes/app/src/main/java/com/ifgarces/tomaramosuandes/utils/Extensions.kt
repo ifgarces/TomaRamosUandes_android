@@ -10,8 +10,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.WindowInsetsControllerCompat
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.AppMetadata
@@ -221,5 +223,23 @@ fun QueryDocumentSnapshot.toAppMetadata() :AppMetadata {
         latestVersionName = this.data.getValue("latestVersionName")!!.toString(),
         catalogCurrentPeriod = this.data.getValue("catalogCurrentPeriod")!!.toString(),
         catalogLastUpdated = this.data.getValue("catalogLastUpdated")!!.toString(),
+    )
+}
+
+/**
+ * On-click behaviour for a button `toggleButton` that should collapse/expand (hide/unhide) a
+ * given target view `targetContainer` (likely to be a Layout).
+ * @param isCollapsed Wether the current section is collapsed or not right when the user clicks
+ * the collapse/expand toggle button.
+ * @param toggleButton Button for collapsing/expanding.
+ * @param targetContainer Target view for the elements that are hidden/shown.
+ */
+fun Context.toggleCollapseViewButton(
+    isCollapsed :Boolean, toggleButton :MaterialButton, targetContainer :View
+) {
+    targetContainer.visibility = if (isCollapsed) View.VISIBLE else View.GONE
+    //TODO: add basic appear/dissapear animation
+    toggleButton.icon = ContextCompat.getDrawable(
+        this, if (isCollapsed) R.drawable.arrow_tip_down else R.drawable.arrow_tip_right
     )
 }

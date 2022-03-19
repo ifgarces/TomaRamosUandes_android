@@ -99,7 +99,7 @@ DataMaster.findRamo(
     NRC = this.ramoNRC,
     searchInUserList = false
 )!!.nombre} (NRC ${this.ramoNRC})
-Fecha: ${dateOrDay} (${this.startTime} - ${this.endTime})
+Fecha: ${dateOrDay} (${this.startTime} – ${this.endTime})
 Sala: ${if (this.location != "") this.location else "(no informada)"}
 ${
     if (! this.isEvaluation() && (this.date != null)) {
@@ -126,7 +126,7 @@ DataMaster.findRamo(
     NRC = this.ramoNRC,
     searchInUserList = false
 )!!.nombre}
-${dateOrDay} ${this.startTime} - ${this.endTime}
+${dateOrDay} ${this.startTime} – ${this.endTime}
 Sala: ${if (this.location != "") this.location else "(no informada)"}""".multilineTrim()
     }
 

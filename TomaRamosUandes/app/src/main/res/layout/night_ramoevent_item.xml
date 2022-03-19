@@ -54,7 +54,7 @@
             <TextView
                 android:id="@+id/ramoEvent_tStatic"
                 style="@style/standardTextView"
-                android:text=" - "
+                android:text=" – "
                 android:textColor="@color/nightDefaultForeground"
 
                 android:layout_width="wrap_content"

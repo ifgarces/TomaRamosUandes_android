@@ -1,15 +1,21 @@
 package com.ifgarces.tomaramosuandes.activities
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ifgarces.tomaramosuandes.BuildConfig
 import com.ifgarces.tomaramosuandes.R
+import com.ifgarces.tomaramosuandes.fragments.DashboardFragment
 import com.ifgarces.tomaramosuandes.fragments.EvaluationsFragment
 import com.ifgarces.tomaramosuandes.fragments.SchedulePortraitFragment
 import com.ifgarces.tomaramosuandes.fragments.UserRamosFragment
@@ -113,6 +119,10 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
         // Setting click listener for bottom navbar
         UI.bottomNavbar.setOnItemSelectedListener { item :MenuItem ->
             when (item.itemId) {
+                R.id.bottom_nav_dashboard -> {
+                    this.navigator.toDashboard()
+                    return@setOnItemSelectedListener true
+                }
                 R.id.bottom_nav_ramos -> {
                     this.navigator.toUserRamos()
                     return@setOnItemSelectedListener true
@@ -161,15 +171,15 @@ disponible en ${AppMetadata.USER_APP_URL}""".multilineTrim(),
      * the toolbar to be loaded just once (on the activity) and its behaviour is updated on the fly
      * depending on the currently active fragment.
      * @author Ignacio F. Garcés.
-     * @param onClick Callback to run when the "help" toolbar menu item is clicked.
+     * @param onHelpClick Callback to run when the "help" toolbar menu item is clicked.
      */
-    public fun setTopToolbarValues(title :String, subtitle :String, onClick :() -> Unit) {
+    public fun setTopToolbarValues(title :String, subtitle :String, onHelpClick :() -> Unit) {
         UI.topToolbar.title = title
         UI.topToolbar.subtitle = subtitle
         UI.topToolbar.setOnMenuItemClickListener { item :MenuItem ->
             when (item.itemId) {
                 R.id.menu_help -> {
-                    onClick.invoke()
+                    onHelpClick.invoke()
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_night_mode -> {
@@ -234,9 +244,10 @@ Inicie sesión con su cuenta @miuandes para mandar un formulario de feedback. Gr
     public fun setBottomNavItemSelected(fragment :KClass<*>) {
         UI.bottomNavbar.menu.getItem(
             when (fragment) {
-                UserRamosFragment::class -> 0
-                SchedulePortraitFragment::class -> 1
-                EvaluationsFragment::class -> 2
+                DashboardFragment::class -> 0
+                UserRamosFragment::class -> 1
+                SchedulePortraitFragment::class -> 2
+                EvaluationsFragment::class -> 3
                 else -> throw Exception(
                     "Invalid target fragment class '%s' for HomeActivity.setBottomNavItemSelected".format(
                         fragment.simpleName

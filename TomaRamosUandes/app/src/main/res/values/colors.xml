@@ -5,7 +5,7 @@
     <color name="colorPrimaryDark">#A7731A</color>
     <color name="colorAccent">#00AAD4</color>
 
-    <!-- Night/dark theme colors -->
+    <!-- General Night/dark theme colors -->
     <color name="nightPrimary">#E3960F</color>
     <color name="nightPrimaryDark">#333333</color>
     <color name="nightAccent">#0C8EAE</color>
@@ -13,8 +13,6 @@
     <color name="nightDefaultForeground">#CDCDCD</color>
     <color name="nightCardBackground">#565357</color>
     <color name="prettyPurpleForNight">#DABFED</color>
-    <color name="nightPE2016">#7BD3A6</color>
-    <color name="nightPE2011">#7E94E3</color>
 
     <!-- General colors -->
     <color name="lighterGray">#CDCDCD</color>
@@ -27,6 +25,8 @@
     <!-- Text color of `Ramo.planEstudios` -->
     <color name="PE2016">#004924</color>
     <color name="PE2011">#001150</color>
+    <color name="nightPE2016">#7BD3A6</color>
+    <color name="nightPE2011">#7E94E3</color>
 
     <!-- Background tint for event type boxes in `SchedulePortraitFragment` -->
     <color name="blockColor_clas">@android:color/transparent</color>
@@ -49,6 +49,12 @@
     <!-- Text color of user credit sum in `HomeActivity` -->
     <color name="creditSum_ok">#1F5100</color>
     <color name="creditSum_bad">#CD1414</color>
-    <color name="night_creditSum_ok">#8BC34A</color>
-    <color name="night_creditSum_bad">#F65549</color>
+    <color name="night_creditSum_ok">#92C35A</color>
+    <color name="night_creditSum_bad">#E45F55</color>
+
+    <!-- Dashboard colors -->
+    <color name="sectionHeaderBackground">#555555</color>
+    <color name="adviceHeaderBackground">#7C446C</color>
+    <color name="night_adviceHeaderBackground">#49283f</color>
+
 </resources>
