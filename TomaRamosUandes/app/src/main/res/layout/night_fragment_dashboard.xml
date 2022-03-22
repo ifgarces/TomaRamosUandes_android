@@ -74,7 +74,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/night_pretty_link_item" />
+            tools:listitem="@layout/night_quick_hyperlink_item" />
     </androidx.cardview.widget.CardView>
 
     <!-- Career advices section -->

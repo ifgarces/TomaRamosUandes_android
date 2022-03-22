@@ -8,7 +8,7 @@ import androidx.room.Update
 import com.ifgarces.tomaramosuandes.models.UserStats
 
 
-// Note: it is supossed to be just one instance of the `UserStats` class in the Room local database, i.e. its table should contain one row.
+// Note: it is supossed to be just one instance of the `UserStats` table in the Room local database.
 @Dao
 interface UserStatsDAO {
     @Query(value = "DELETE FROM ${UserStats.TABLE_NAME}")

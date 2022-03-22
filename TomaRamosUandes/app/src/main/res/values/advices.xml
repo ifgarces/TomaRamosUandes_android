@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- String bodies for the `CareerAdvice`s on `DashboardFragment` -->
+
+<resources>
+    <string name="advice_GSuite">
+La cuenta de Gmail @miuandes de cada estudiante es de tipo "Gsuite" y cuenta con espacio "ilimitado"
+en Google Drive para almacenar archivos en la nube. Además, aproveche el calendario de Google para
+anotar sus pruebas/eventos, y Google Keep para tomar notas rápidas. Sáquele el jugo.
+    </string>
+    <string name="advice_OneDrive">
+La Uandes también le orotga una cuenta Office 365 (Microsoft) @miuandes vinculada a la de Google.
+Recuerde reclamar su Office gratis y usar OneDrive.
+    </string>
+    <string name="advice_JetBrains">
+Con la cuenta @miuandes puede acceder a licencias de estudiante en herramientas de programación de
+JetBrains (para Python, etc.). Inicie sesión con su cuenta en jetbrains.com.
+    </string>
+    <string name="advice_Autodesk">
+Con la cuenta @miuandes se puede obtener la licencia de estudiante de Fusion 360, un software para
+hacer modelos en 3D.
+    </string>
+    <string name="advice_GreatAyuda">
+Great Ayuda es una página con resúmenes y material de apoyo de varios ramos de ing. civil plan común
+Uandes, además de material educacional de colegio.
+    </string>
+    <string name="advice_CdiFolder">
+Carpeta de Google Drive con material de estudio variado de muchos ramos de ingeniería Uandes de
+todas las especialidades.
+    </string>
+    <string name="advice_SciHub">
+Existen sitios web para descargar gratis millones de libros y artículos de investigación
+informativos/científicos (en inglés) que normalmente son pagados, en favor de la divulgación
+científica libre. Uno es SCI-HUB y otro es Library Genesis ;)
+    </string>
+    <string name="advice_CamScanner">
+Una app móbil gratuita que convierte el teléfono en un escáner de documentos. Además, la licencia de
+estudiante es baratísima y es un pago único que mejora la calidad y quita marcas de agua de la app.
+Muy buena, qué puedo decir.
+    </string>
+    <string name="advice_WolframAlpha">
+Calculadora científica inteligente que resuelve problemas de cálculo, sistemas de ecuaciones,
+trigonometría, etc. y hasta puede graficar funciones. Incluso es capaz de mostrar los pasos a seguir
+para resolver el problema, pero esa última es una característica de pago, ojo.
+    </string>
+    <string name="advice_Symbolab">
+Similar a WolframAlpha, un potente solucionador matemático general, pero mucho más sencillo de usar
+y no cobra por ver la solución paso a paso de un problema. Es excelente, muy recomendado para
+practicar problemas matemáticos de todo tipo.
+    </string>
+    <string name="advice_MyBib">
+MyBib es un generador de bibliografías y citaciones en varios formatos distintos a elección.
+Sirve muchísimo para los informes de ingeniería que exigen un formato (e.g. Harvard). Mucho mejor
+que el gestor de bibliografías que tiene incorporado Microsoft Word. Sí.
+    </string>
+    <string name="advice_DrawIo">
+Sitio web para dibujar diagramas (colaborativamente en tiempo real). Sencillo y rápido, solo poner
+"draw.io" en el navegador.
+    </string>
+    <string name="advice_DroidCam">
+Si ud. no tiene una webcam, con esta app puede usar un teléfono Android como webcam, conectado por
+cable al PC o inalámbricamente por WI-FI.
+    </string>
+    <string name="advice_NightEye">
+Con esta extensión, puede convertir cualquier página web en modo oscuro para que sea más cómodo a la
+vista, sobre todo ahora que pasamos más tiempo que nunca mirando pantallas… Por desgracia es
+gratis sólo por tres meses, pero luego vale la pena pagar unos pocos dólares al año, es una
+maravilla.
+    </string>
+    <string name="advice_FolderCloudSync">
+Existen apps para PC de Google Drive y OneDrive para sincronizar carpetas. Úselo para evitar perder
+archivos y fácilmente pasar datos importantes de un computador a otro mediante la nube. Si el PC
+se le muere, así va a poder acceder a los archivos desde otro dispositivo mediante la nube, y
+evitar una tragedia como perder el progreso en una tarea.
+    </string>
+</resources>

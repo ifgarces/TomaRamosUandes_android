@@ -96,14 +96,16 @@ class CareerAdvicesAdapter(
             }
 
             // Handling URI on-click, if existing
-            this.parentView.setOnClickListener {
-                if (item.first.uri != null) {
+            if (item.first.uri != null) {
+                this.parentView.setOnClickListener {
                     this@CareerAdvicesAdapter.activity.startActivity(
                         Intent(
                             Intent.ACTION_VIEW, Uri.parse(item.first.uri)
                         )
                     )
                 }
+            } else {
+                this.parentView.isClickable = false
             }
         }
     }

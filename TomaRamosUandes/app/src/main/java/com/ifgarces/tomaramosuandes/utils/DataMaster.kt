@@ -2,10 +2,11 @@ package com.ifgarces.tomaramosuandes.utils
 
 import android.app.Activity
 import androidx.room.Room
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.local_db.LocalRoomDB
 import com.ifgarces.tomaramosuandes.models.CareerAdvice
-import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
+import com.ifgarces.tomaramosuandes.models.QuickHyperlink
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.UserStats
@@ -269,8 +270,17 @@ La información del catálogo vigente reemplazará a la antigua, automáticament
                     this.user_stats.firstRunOfApp = false
                     this.localDB.userStatsDAO().insert(this.user_stats)
                     this.user_stats.firstRunOfApp = true
-                } else {
+                } else if (stats.count() == 1) {
                     this.user_stats = stats.first()
+                } else {
+                    // Reporting non-fatal error to firebase
+                    val errorMessage :String = "%s table has more than one row".format(
+                        UserStats::class.simpleName
+                    )
+                    Logf.error(this::class, "Reporting to Firebase: %s", errorMessage)
+                    FirebaseCrashlytics.getInstance().recordException(
+                        Exception(errorMessage)
+                    )
                 }
                 Logf.debug(this::class, this.user_stats.toString())
                 onFinish.invoke()
@@ -302,7 +312,7 @@ La información del catálogo vigente reemplazará a la antigua, automáticament
                 RamoEvent::class -> {
                     this.user_stats.dashboardEvalsSectionCollapsed = !this.user_stats.dashboardEvalsSectionCollapsed
                 }
-                PrettyHyperlink::class -> {
+                QuickHyperlink::class -> {
                     this.user_stats.dashboardLinksSectionCollapsed = !this.user_stats.dashboardLinksSectionCollapsed
                 }
                 CareerAdvice::class -> {

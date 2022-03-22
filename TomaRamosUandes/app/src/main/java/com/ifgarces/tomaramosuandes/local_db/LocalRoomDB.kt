@@ -1,5 +1,6 @@
 package com.ifgarces.tomaramosuandes.local_db
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -11,7 +12,10 @@ import com.ifgarces.tomaramosuandes.models.UserStats
 @Database(
     entities = [Ramo::class, RamoEvent::class, UserStats::class],
     version = 3,
-    exportSchema = false
+    exportSchema = true
+//    autoMigrations = [
+//        AutoMigration(from = 3, to = 4)
+//    ]
 )
 @TypeConverters(
     RoomConverter_DayOfWeek::class,

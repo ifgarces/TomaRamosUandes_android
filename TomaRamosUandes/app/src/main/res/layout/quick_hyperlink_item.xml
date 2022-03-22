@@ -14,7 +14,7 @@
 
         <!-- Image for the web link -->
         <ImageView
-            android:id="@+id/linkItem_image"
+            android:id="@+id/quickLinkItem_image"
             android:layout_width="60dp"
             android:layout_height="60dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +23,7 @@
             app:srcCompat="@android:drawable/ic_menu_gallery" />
 
         <TextView
-            android:id="@+id/linkItem_text"
+            android:id="@+id/quickLinkItem_text"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:text="[Link name]"
@@ -32,8 +32,8 @@
             android:fontFamily="@font/ubuntu_condensed"
             android:textColor="@color/almostBlack"
             android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="@+id/linkItem_image"
-            app:layout_constraintStart_toStartOf="@+id/linkItem_image"
-            app:layout_constraintTop_toBottomOf="@+id/linkItem_image" />
+            app:layout_constraintEnd_toEndOf="@+id/quickLinkItem_image"
+            app:layout_constraintStart_toStartOf="@+id/quickLinkItem_image"
+            app:layout_constraintTop_toBottomOf="@+id/quickLinkItem_image" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

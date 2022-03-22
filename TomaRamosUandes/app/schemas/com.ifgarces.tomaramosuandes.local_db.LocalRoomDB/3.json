@@ -1,0 +1,200 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "7c97c150b7ec236ee71d734290367eb1",
+    "entities": [
+      {
+        "tableName": "ramo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`NRC` INTEGER NOT NULL, `nombre` TEXT NOT NULL, `profesor` TEXT NOT NULL, `créditos` INTEGER NOT NULL, `materia` TEXT NOT NULL, `curso` INTEGER NOT NULL, `sección` TEXT NOT NULL, `planEstudios` TEXT NOT NULL, `conectLiga` TEXT NOT NULL, `listaCruzada` TEXT NOT NULL, PRIMARY KEY(`NRC`))",
+        "fields": [
+          {
+            "fieldPath": "NRC",
+            "columnName": "NRC",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profesor",
+            "columnName": "profesor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "créditos",
+            "columnName": "créditos",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "materia",
+            "columnName": "materia",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "curso",
+            "columnName": "curso",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sección",
+            "columnName": "sección",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planEstudios",
+            "columnName": "planEstudios",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conectLiga",
+            "columnName": "conectLiga",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listaCruzada",
+            "columnName": "listaCruzada",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "NRC"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ramo_event",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER NOT NULL, `ramoNRC` INTEGER NOT NULL, `type` INTEGER NOT NULL, `location` TEXT NOT NULL, `dayOfWeek` TEXT NOT NULL, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, `date` TEXT, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "ID",
+            "columnName": "ID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ramoNRC",
+            "columnName": "ramoNRC",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayOfWeek",
+            "columnName": "dayOfWeek",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_stats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER NOT NULL, `firstRunOfApp` INTEGER NOT NULL, `nightModeOn` INTEGER NOT NULL, `dashboardEvalsSectionCollapsed` INTEGER NOT NULL, `dashboardLinksSectionCollapsed` INTEGER NOT NULL, `dashboardAdvicesSectionCollapsed` INTEGER NOT NULL, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "ID",
+            "columnName": "ID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstRunOfApp",
+            "columnName": "firstRunOfApp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nightModeOn",
+            "columnName": "nightModeOn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dashboardEvalsSectionCollapsed",
+            "columnName": "dashboardEvalsSectionCollapsed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dashboardLinksSectionCollapsed",
+            "columnName": "dashboardLinksSectionCollapsed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dashboardAdvicesSectionCollapsed",
+            "columnName": "dashboardAdvicesSectionCollapsed",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c97c150b7ec236ee71d734290367eb1')"
+    ]
+  }
+}

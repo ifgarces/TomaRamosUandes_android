@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
-import com.ifgarces.tomaramosuandes.models.PrettyHyperlink
+import com.ifgarces.tomaramosuandes.models.QuickHyperlink
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 
 
@@ -18,15 +18,15 @@ import com.ifgarces.tomaramosuandes.utils.DataMaster
  * Adapter for multiple big web links in `DashboardFragment`.
  * @property data The collection of "web links" with image, URI and display name.
  */
-class PrettyLinksAdapter(
-    private val data :List<PrettyHyperlink>, private val activity :HomeActivity
-) : RecyclerView.Adapter<PrettyLinksAdapter.LinkVH>() {
+class QuickHiperlinksAdapter(
+    private val data :List<QuickHyperlink>, private val activity :HomeActivity
+) : RecyclerView.Adapter<QuickHiperlinksAdapter.LinkVH>() {
 
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :LinkVH {
         return LinkVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.user_stats.nightModeOn) R.layout.night_pretty_link_item
-                else R.layout.pretty_link_item,
+                if (DataMaster.user_stats.nightModeOn) R.layout.night_quick_hyperlink_item
+                else R.layout.quick_hyperlink_item,
                 parent, false
             )
         )
@@ -39,14 +39,14 @@ class PrettyLinksAdapter(
 
     inner class LinkVH(v :View) : RecyclerView.ViewHolder(v) {
         private val parentView :View = v
-        private val linkImageView :ImageView = v.findViewById(R.id.linkItem_image)
-        private val linkTextView :TextView = v.findViewById(R.id.linkItem_text)
+        private val linkImageView :ImageView = v.findViewById(R.id.quickLinkItem_image)
+        private val linkTextView :TextView = v.findViewById(R.id.quickLinkItem_text)
 
-        fun bind(item :PrettyHyperlink, position :Int) {
+        fun bind(item :QuickHyperlink, position :Int) {
             this.linkImageView.setImageDrawable(item.image)
             this.linkTextView.text = item.name
             this.parentView.setOnClickListener {
-                this@PrettyLinksAdapter.activity.startActivity(
+                this@QuickHiperlinksAdapter.activity.startActivity(
                     Intent(
                         Intent.ACTION_VIEW, Uri.parse(item.uri)
                     )
