@@ -24,13 +24,13 @@ import com.ifgarces.tomaramosuandes.utils.toggleCollapseViewButton
  * expanded (show). Hidden by default.
  */
 class CareerAdvicesAdapter(
-    private val _rawData :List<CareerAdvice>, private val activity :HomeActivity
+    rawData :List<CareerAdvice>, private val activity :HomeActivity
 ) : RecyclerView.Adapter<CareerAdvicesAdapter.AdviceVH>() {
     companion object {
         const val DEFAULT_COLLAPSED_STATUS :Boolean = true
     }
 
-    private val data :MutableList<Pair<CareerAdvice, Boolean>> = _rawData.map { advice :CareerAdvice ->
+    private val data :MutableList<Pair<CareerAdvice, Boolean>> = rawData.map { advice :CareerAdvice ->
         Pair(advice, DEFAULT_COLLAPSED_STATUS)
     }.toMutableList()
 

@@ -81,7 +81,6 @@ class DashboardFragment : Fragment() {
             }
             this.applyVisibilityUserSettings(homeActivity)
 
-            // Setting up recyclers
             UI.incomingEventsRecycler.layoutManager = LinearLayoutManager(
                 homeActivity, LinearLayoutManager.HORIZONTAL, false
             )
@@ -102,11 +101,11 @@ class DashboardFragment : Fragment() {
                 homeActivity, LinearLayoutManager.VERTICAL, false
             )
             UI.careerAdvicesRecycler.adapter = CareerAdvicesAdapter(
-                _rawData = CareerAdvice.getStaticAdvices(context = homeActivity),
+                rawData = CareerAdvice.getStaticAdvices(context = homeActivity),
                 activity = homeActivity
             )
 
-            // Setting on-click toggle events for sections (not easy to avoid boilerplate!)
+            // Setting on-click toggle events for sections (not easy to avoid boilerplate code!)
             UI.incomingEventsHeadButton.setOnClickListener {
                 homeActivity.toggleCollapseViewButton(
                     isCollapsed = this.isEventsSectionCollapsed,
