@@ -67,7 +67,7 @@ class SchedulePortraitFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_schedule_portrait
+            if (DataMaster.userStats.nightModeOn) R.layout.night_fragment_schedule_portrait
             else R.layout.fragment_schedule_portrait,
             container, false
         )
@@ -124,7 +124,7 @@ class SchedulePortraitFragment : Fragment() {
             }
 
             // Disabling floating actions when there is not a single `Ramo` to display
-            if (DataMaster.user_ramos.count() == 0) {
+            if (DataMaster.userRamos.count() == 0) {
                 listOf(UI.saveAsImgButton, UI.fullScreenButton).forEach { floatingButt :FloatingActionButton ->
                     floatingButt.isEnabled = false
                 }

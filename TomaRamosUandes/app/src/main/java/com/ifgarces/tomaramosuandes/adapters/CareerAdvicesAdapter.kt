@@ -2,13 +2,13 @@ package com.ifgarces.tomaramosuandes.adapters
 
 import android.content.Intent
 import android.net.Uri
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
@@ -37,7 +37,7 @@ class CareerAdvicesAdapter(
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :AdviceVH {
         return AdviceVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.user_stats.nightModeOn) R.layout.night_career_advice_item
+                if (DataMaster.userStats.nightModeOn) R.layout.night_career_advice_item
                 else R.layout.career_advice_item,
                 parent, false
             )

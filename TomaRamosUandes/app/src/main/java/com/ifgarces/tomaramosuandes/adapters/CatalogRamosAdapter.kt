@@ -36,7 +36,7 @@ class CatalogRamosAdapter(
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :CatalogVH {
         return CatalogVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.user_stats.nightModeOn) R.layout.night_ramo_item
+                if (DataMaster.userStats.nightModeOn) R.layout.night_ramo_item
                 else R.layout.ramo_item,
                 parent, false
             )
@@ -69,13 +69,13 @@ class CatalogRamosAdapter(
             this.sección.text = ramo.sección
 
             (this.parentView.context as HomeActivity).let { homeActivity :HomeActivity ->
-                val isInscribed :Boolean = ramo in DataMaster.user_ramos
+                val isInscribed :Boolean = ramo in DataMaster.userRamos
 
                 // Setting card background color based on inscribe status
                 if (!this@CatalogRamosAdapter.colorizeInscribed) {
                     this.parentView.setBackgroundColor(
                         homeActivity.getColor(
-                            if (DataMaster.user_stats.nightModeOn)
+                            if (DataMaster.userStats.nightModeOn)
                                 if (isInscribed) R.color.night_catalog_inscribed
                                 else R.color.night_catalog_unInscribed
                             else
@@ -88,7 +88,7 @@ class CatalogRamosAdapter(
                 // Setting `planEstudios` background color
                 this.planEstudios.setTextColor(
                     homeActivity.getColor(
-                        if (DataMaster.user_stats.nightModeOn)
+                        if (DataMaster.userStats.nightModeOn)
                             if (ramo.planEstudios == "PE2016") R.color.nightPE2016
                             else R.color.nightPE2011
                         else

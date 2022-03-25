@@ -1,16 +1,11 @@
 package com.ifgarces.tomaramosuandes.activities
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ifgarces.tomaramosuandes.BuildConfig
@@ -54,7 +49,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         this.setContentView(
-            if (DataMaster.user_stats.nightModeOn) R.layout.night_activity_home
+            if (DataMaster.userStats.nightModeOn) R.layout.night_activity_home
             else R.layout.activity_home
         )
         this.UI = ActivityUI(owner = this)
@@ -189,7 +184,7 @@ ${AppMetadata.USER_APP_URL}""".multilineTrim(),
                             Logf.debug(
                                 this::class,
                                 "Switching night mode to %s (restarting this activity)".format(
-                                    if (DataMaster.user_stats.nightModeOn) "ON" else "OFF"
+                                    if (DataMaster.userStats.nightModeOn) "ON" else "OFF"
                                 )
                             )
                             // Restarting this activity (will avoid needing to wait for

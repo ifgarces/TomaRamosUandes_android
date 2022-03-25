@@ -25,7 +25,7 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) :
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventCardVH {
         return EventCardVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.user_stats.nightModeOn) R.layout.night_schedule_portrait_block
+                if (DataMaster.userStats.nightModeOn) R.layout.night_schedule_portrait_block
                 else R.layout.schedule_portrait_block,
                 parent, false
             )
@@ -57,7 +57,7 @@ class SchedulePortraitAdapter(private var data :List<RamoEvent>) :
                 )
                 this.location.text = event.location
 
-                val isNightModeOn :Boolean = (DataMaster.user_stats.nightModeOn)
+                val isNightModeOn :Boolean = (DataMaster.userStats.nightModeOn)
                 // Colorizing event box according to theme and event type
                 if (isNightModeOn) this.type.setTextColor(
                     ContextCompat.getColor(homeActivity, R.color.nightDefaultForeground)

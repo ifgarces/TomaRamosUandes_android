@@ -42,7 +42,7 @@ class CatalogFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_catalog
+            if (DataMaster.userStats.nightModeOn) R.layout.night_fragment_catalog
             else R.layout.fragment_catalog,
             container, false
         )
@@ -70,7 +70,7 @@ class CatalogFragment : Fragment() {
             )
 
             this.catalogRamosAdapter = CatalogRamosAdapter(
-                data = DataMaster.catalog_ramos.toMutableList(),
+                data = DataMaster.catalogRamos.toMutableList(),
                 colorizeInscribed = false
             )
             UI.recycler.adapter = this.catalogRamosAdapter
@@ -108,7 +108,7 @@ nombre o NRC.""".multilineTrim()
     private fun applySearch(searchText :String) { // TODO: tests.
         val results :MutableList<Ramo> = mutableListOf()
         val sanitizedSearchText :String = searchText.spanishNonAccent().spanishUpperCase().trim()
-        DataMaster.catalog_ramos.forEach {
+        DataMaster.catalogRamos.forEach {
             // Considering `nombre` is upper-cased for each `Ramo`
             if (
                 it.nombre.spanishNonAccent().contains(sanitizedSearchText) ||
@@ -134,7 +134,7 @@ nombre o NRC.""".multilineTrim()
      */
     private fun clearSearch() {
         UI.searchBox.setText("")
-        this.catalogRamosAdapter.updateData(data = DataMaster.catalog_ramos.toMutableList())
+        this.catalogRamosAdapter.updateData(data = DataMaster.catalogRamos.toMutableList())
         UI.recycler.visibility = View.VISIBLE
         UI.emptyNoticeText.visibility = View.GONE
     }

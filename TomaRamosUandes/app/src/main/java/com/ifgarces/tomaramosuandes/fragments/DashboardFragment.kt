@@ -2,18 +2,18 @@ package com.ifgarces.tomaramosuandes.fragments
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.activities.HomeActivity
-import com.ifgarces.tomaramosuandes.adapters.IncomingRamoEventsAdapter
 import com.ifgarces.tomaramosuandes.adapters.CareerAdvicesAdapter
+import com.ifgarces.tomaramosuandes.adapters.IncomingRamoEventsAdapter
 import com.ifgarces.tomaramosuandes.adapters.QuickHiperlinksAdapter
 import com.ifgarces.tomaramosuandes.models.CareerAdvice
 import com.ifgarces.tomaramosuandes.models.QuickHyperlink
@@ -59,7 +59,7 @@ class DashboardFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_dashboard
+            if (DataMaster.userStats.nightModeOn) R.layout.night_fragment_dashboard
             else R.layout.fragment_dashboard,
             container, false
         )
@@ -74,7 +74,7 @@ class DashboardFragment : Fragment() {
             )
 
             // Applying stored user preferences on sections collapse/expanded status
-            DataMaster.user_stats.let {
+            DataMaster.userStats.let {
                 this.isEventsSectionCollapsed = it.dashboardEvalsSectionCollapsed
                 this.isLinksSectionCollapsed = it.dashboardLinksSectionCollapsed
                 this.isAdvicesSectionCollapsed = it.dashboardAdvicesSectionCollapsed

@@ -2,20 +2,18 @@ package com.ifgarces.tomaramosuandes.adapters
 
 import android.content.Context
 import android.graphics.Typeface
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.utils.DataMaster
 import com.ifgarces.tomaramosuandes.utils.Logf
 import com.ifgarces.tomaramosuandes.utils.SpanishToStringOf
 import com.ifgarces.tomaramosuandes.utils.infoDialog
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 
 /**
@@ -28,7 +26,7 @@ class IncomingRamoEventsAdapter(private val data :List<Pair<RamoEvent, Long>>) :
     override fun onCreateViewHolder(parent :ViewGroup, viewType :Int) :EventVH {
         return EventVH(
             LayoutInflater.from(parent.context).inflate(
-                if (DataMaster.user_stats.nightModeOn) R.layout.night_ramoevent_item
+                if (DataMaster.userStats.nightModeOn) R.layout.night_ramoevent_item
                 else R.layout.ramoevent_item,
                 parent, false
             )

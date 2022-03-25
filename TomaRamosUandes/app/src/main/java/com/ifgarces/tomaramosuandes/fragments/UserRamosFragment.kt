@@ -38,7 +38,7 @@ class UserRamosFragment : Fragment() {
         inflater :LayoutInflater, container :ViewGroup?, savedInstanceState :Bundle?
     ) :View {
         val fragView :View = inflater.inflate(
-            if (DataMaster.user_stats.nightModeOn) R.layout.night_fragment_user_ramos
+            if (DataMaster.userStats.nightModeOn) R.layout.night_fragment_user_ramos
             else R.layout.fragment_user_ramos,
             container, false
         )
@@ -54,7 +54,7 @@ class UserRamosFragment : Fragment() {
 
             UI.ramosRecycler.layoutManager = LinearLayoutManager(homeActivity)
             UI.ramosRecycler.adapter = CatalogRamosAdapter(
-                data = DataMaster.user_ramos,
+                data = DataMaster.userRamos,
                 colorizeInscribed = true
             )
 
@@ -85,7 +85,7 @@ class UserRamosFragment : Fragment() {
      */
     private fun showHelp() {
         // Setting the custom view layout for the dialog and button behaviors
-        (DataMaster.user_stats.nightModeOn).let { isNightModeOn :Boolean ->
+        (DataMaster.userStats.nightModeOn).let { isNightModeOn :Boolean ->
             val diagView :View = this.layoutInflater.inflate(
                 if (isNightModeOn) R.layout.night_about_app_dialog else R.layout.about_app_dialog,
                 null

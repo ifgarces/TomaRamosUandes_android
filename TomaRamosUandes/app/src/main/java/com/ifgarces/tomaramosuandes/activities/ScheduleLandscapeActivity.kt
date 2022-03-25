@@ -12,7 +12,12 @@ import com.ifgarces.tomaramosuandes.R
 import com.ifgarces.tomaramosuandes.models.Ramo
 import com.ifgarces.tomaramosuandes.models.RamoEvent
 import com.ifgarces.tomaramosuandes.models.RamoEventType
-import com.ifgarces.tomaramosuandes.utils.*
+import com.ifgarces.tomaramosuandes.utils.DataMaster
+import com.ifgarces.tomaramosuandes.utils.ImageExportHandler
+import com.ifgarces.tomaramosuandes.utils.Logf
+import com.ifgarces.tomaramosuandes.utils.enterFullScreen
+import com.ifgarces.tomaramosuandes.utils.exitFullScreen
+import com.ifgarces.tomaramosuandes.utils.infoDialog
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.util.concurrent.Executors
@@ -132,7 +137,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         this.setContentView(
-            if (DataMaster.user_stats.nightModeOn) R.layout.night_activity_schedule_landscape
+            if (DataMaster.userStats.nightModeOn) R.layout.night_activity_schedule_landscape
             else R.layout.activity_schedule_landscape
         )
         this.UI = ActivityUI(owner = this)
@@ -191,7 +196,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
         ScheduleWorker.buildSchedule(activity = this, blocksMap = UI.blocksMap)
 
         // Disabling floating actions when there is not a single `Ramo` to display
-        if (DataMaster.user_ramos.count() == 0) {
+        if (DataMaster.userRamos.count() == 0) {
             listOf(UI.saveAsImgButton, UI.toggleFullScreenButton).forEach { floatingButt :FloatingActionButton ->
                 floatingButt.isEnabled = false
             }
@@ -273,7 +278,7 @@ class ScheduleLandscapeActivity : AppCompatActivity() {
         public fun buildSchedule(activity :Activity, blocksMap :Map<DayOfWeek, List<Button>>) {
             Logf.debug(this::class, "Building week schedule...")
             val startMillis :Long = System.currentTimeMillis()
-            val isNightModeOn :Boolean = (DataMaster.user_stats.nightModeOn)
+            val isNightModeOn :Boolean = (DataMaster.userStats.nightModeOn)
 
             // Initializing
             this.scheduleData.clear()
