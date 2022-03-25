@@ -88,7 +88,9 @@ class DashboardFragment : Fragment() {
             UI.incomingEventsRecycler.adapter = IncomingRamoEventsAdapter(
                 data = DataMaster.getUserEvaluations().map { event :RamoEvent ->
                     Pair(event, LocalDate.now().until(event.date!!, ChronoUnit.DAYS)) // Ref: https://discuss.kotlinlang.org/t/calculate-no-of-days-between-two-dates-kotlin/9826
-                }.filter { (it.second <= 31L) && (it.second >= 0L) }
+                }
+                    .filter { (it.second <= 31L) && (it.second >= 0L) } // only incoming events
+                    .sortedBy { it.second } // sorting by proximity
             )
             UI.usefulLinksRecycler.layoutManager = LinearLayoutManager(
                 homeActivity, LinearLayoutManager.HORIZONTAL, false

@@ -73,8 +73,15 @@ class CareerAdvice(
             CareerAdvice(
                 title = "Material académico CDI",
                 descriptionStringId = R.string.advice_CdiFolder,
-                imageDrawableId = R.drawable.webicon_cdi,
+                imageDrawableId = R.drawable.webicon_books,
                 uri = "https://drive.google.com/drive/folders/0B7fLfOr3MydSVGY5MGhJTHJUcGs?resourcekey=0-Nd0xQYNHlDUh4utj-K-9tA&usp=sharing",
+                context = context
+            ),
+            CareerAdvice(
+                title = "Instagram CDI",
+                descriptionStringId = R.string.advice_CdiInstagram,
+                imageDrawableId = R.drawable.webicon_cdi,
+                uri = "https://www.instagram.com/cdiuandes/",
                 context = context
             ),
             CareerAdvice(

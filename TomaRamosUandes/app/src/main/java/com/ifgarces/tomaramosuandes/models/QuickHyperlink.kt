@@ -46,6 +46,12 @@ class QuickHyperlink(
                 name = "Calendario académico Uandes",
                 uri = "https://www.uandes.cl/alumnos/informacion-academica/calendario-academico",
                 context = context
+            ),
+            QuickHyperlink(
+                imageDrawableId = R.drawable.handshake_icon,
+                name = "Apoyo académico Uandes",
+                uri = "https://www.uandes.cl/alumnos/apoyo-academico",
+                context = context
             )
         )
     }
