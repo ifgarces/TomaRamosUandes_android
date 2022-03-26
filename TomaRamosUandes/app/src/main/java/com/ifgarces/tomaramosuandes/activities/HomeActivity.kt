@@ -58,15 +58,15 @@ class HomeActivity : AppCompatActivity() {
         // -----------------------------------------------------------------------------------------
         /* For easily updating the hole online catalog itself from the offline catalog, when the faculty performs changes */
 //        FirebaseMaster.Developer.uploadRamoCollection(
-//            ramos = DataMaster.catalog_ramos,
+//            ramos = DataMaster.catalogRamos,
 //            onFirstFailureCallback = {
-//                this.infoDialog("Error", "Couldn't upload ramos")
+//                this.infoDialog("Error", "Couldn't upload ramos...")
 //            }
 //        )
 //        FirebaseMaster.Developer.uploadEventCollection(
-//            events = DataMaster.catalog_events,
+//            events = DataMaster.catalogEvents,
 //            onFirstFailureCallback = {
-//                this.infoDialog("Error", "Couldn't upload events")
+//                this.infoDialog("Error", "Couldn't upload events...")
 //            }
 //        )
         // -----------------------------------------------------------------------------------------
