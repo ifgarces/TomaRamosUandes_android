@@ -134,6 +134,13 @@ class CareerAdvice(
                 context = context
             ),
             CareerAdvice(
+                title = "Miro",
+                descriptionStringId = R.string.advice_Miro,
+                imageDrawableId = R.drawable.webicon_miro,
+                uri = "https://miro.com",
+                context = context
+            ),
+            CareerAdvice(
                 title = "DroidCam",
                 descriptionStringId = R.string.advice_DroidCam,
                 imageDrawableId = R.drawable.webicon_droidcam,

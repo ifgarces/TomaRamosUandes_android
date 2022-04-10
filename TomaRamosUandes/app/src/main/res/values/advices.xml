@@ -60,6 +60,11 @@ que el gestor de bibliografías que tiene incorporado Microsoft Word. Sí.
 Sitio web para dibujar diagramas (colaborativamente en tiempo real). Sencillo y rápido, solo poner
 "draw.io" en el navegador.
     </string>
+    <string name="advice_Miro">
+Similar a draw.io pero con mucho más cómodo para trabajar de forma colaborativa. Aunque tiene
+características de pago, no así draw.io. Pero con su cuenta @miuades puede obtener la licencia de
+estudiante.
+    </string>
     <string name="advice_DroidCam">
 Si ud. no tiene una webcam, con esta app puede usar un teléfono Android como webcam, conectado por
 cable al PC o inalámbricamente por WI-FI.

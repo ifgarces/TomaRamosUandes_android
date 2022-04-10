@@ -6,7 +6,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ifgarces.tomaramosuandes.R
-import com.ifgarces.tomaramosuandes.activities.MainActivity.Companion.PROGRESSBAR_SPAWN_TIMEOUT
 import com.ifgarces.tomaramosuandes.utils.*
 
 
