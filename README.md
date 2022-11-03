@@ -1,6 +1,6 @@
 # *Simulador de toma de ramos Uandes - Android*
 
-*END-OF-LIFE, GO TO THE NEW VERSION OF THIS PROJECT [tomaramos.app](https://tomaramos.app)*
+**END-OF-LIFE, GO TO THE NEW VERSION OF THIS PROJECT [tomaramos.app](https://tomaramos.app)**
 
 Android application for automating weekly schedule construction and other features when inscribing Uandes' courses.
 
